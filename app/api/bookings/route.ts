@@ -15,6 +15,9 @@ import {
 import { notifyBooking, parseBookingContact } from "@/lib/bookingNotify";
 import { getSupabaseServerClient, withSupabaseTimeout } from "@/lib/supabase/server";
 
+export const runtime = "nodejs";
+export const maxDuration = 30;
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);

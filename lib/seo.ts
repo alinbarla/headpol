@@ -1,10 +1,21 @@
 import { CONTACT_EMAIL, CONTACT_PHONE } from "@/lib/booking";
 import { routing, type Locale } from "@/lib/i18n";
 
+function resolveSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  if (explicit) return explicit;
+
+  const vercelHost =
+    process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+  if (vercelHost) {
+    return `https://${vercelHost.replace(/^https?:\/\//, "")}`;
+  }
+
+  return "https://stralkastpolering.se";
+}
+
 /** Canonical production origin (no trailing slash). */
-export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://stralkastpolering.se"
-).replace(/\/$/, "");
+export const SITE_URL = resolveSiteUrl();
 
 export const BRAND = "Strålkastpolering";
 export const LEGAL_NAME = "Strålkastpolering";

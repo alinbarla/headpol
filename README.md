@@ -1,4 +1,4 @@
-# Strålkraft — Headlight Restoration Website
+# Strålkastpolering — Headlight Restoration Website
 
 A bilingual (Swedish / English) marketing site for a headlight restoration business. Built with Next.js 16, TypeScript, Tailwind CSS, next-intl, and Framer Motion.
 
@@ -8,7 +8,7 @@ A bilingual (Swedish / English) marketing site for a headlight restoration busin
 - **Hero before/after slider** — [img-comparison-slider](https://github.com/sneas/img-comparison-slider) in the header
 - **Process storyboard** — vertical cinematic timeline of restoration steps
 - **Booking picker** — Supabase-backed slots (Sun–Fri 16:00–20:00), booked times greyed out
-- **Contact** — phone `+46 76 344 11 68`, email `info@exposia.se`
+- **Contact** — phone `+46 76 344 11 68`, email `teo@stralkastpolering.se`
 
 ## Development
 
@@ -25,6 +25,24 @@ Open [http://localhost:3000/sv](http://localhost:3000/sv) or [http://localhost:3
 npm run build
 npm start
 ```
+
+## Vercel
+
+Import [alinbarla/headpol](https://github.com/alinbarla/headpol) in Vercel (Next.js is detected automatically). Hosting region is Stockholm (`arn1`).
+
+Add these environment variables for Production and Preview:
+
+| Name | Notes |
+|---|---|
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin, no trailing slash. Use `https://stralkastpolering.se` once the domain is attached, or the `*.vercel.app` URL until then. |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key |
+| `GMAIL_USER` | `teo@stralkastpolering.se` |
+| `GMAIL_APP_PASSWORD` | Gmail app password (server-only) |
+
+`NEXT_PUBLIC_*` values are baked in at **build** time, so set them before the first production deploy.
+
+Do not upload `.env` — it is gitignored. After the first deploy, attach the custom domain in Vercel and point DNS to it.
 
 ## Customization
 
@@ -63,7 +81,7 @@ All process photos are served through `next/image`, so they are automatically re
 
 ### Brand name
 
-Search for `Strålkraft` in the message files and components to rename.
+Search for `Strålkastpolering` in the message files and components to rename.
 
 ## Project structure
 
