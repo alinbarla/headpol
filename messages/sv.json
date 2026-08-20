@@ -1,0 +1,239 @@
+{
+  "metadata": {
+    "title": "Strålkastarepolering Stockholm | Strålkastpolering",
+    "description": "Professionell strålkastarepolering och restaurering i Stockholm. Vi tar bort gulnade och matta strålkastare, lägger UV-skydd och ger garanti. Boka från 799 kr."
+  },
+  "nav": {
+    "brand": "Strålkastpolering",
+    "skipToContent": "Hoppa till innehåll",
+    "benefits": "Fördelar",
+    "process": "Process",
+    "services": "Priser",
+    "faq": "Frågor",
+    "booking": "Boka",
+    "contact": "Kontakt"
+  },
+  "hero": {
+    "eyebrow": "Strålkastarepolering · Stockholm",
+    "title": "Strålkastarepolering som ger nya strålkastare igen",
+    "subtitle": "Vi slipar bort gulnad och matt plast, polerar till glasklart och lägger ett UV-skydd som håller. Resultatet: klarare ljus, säkrare körning och godkänd besiktning — utan att byta hela strålkastaren.",
+    "ctaPrimary": "Boka tid",
+    "ctaSecondary": "Se priser",
+    "scroll": "Scrolla",
+    "before": "Före",
+    "after": "Efter",
+    "sliderHint": "Dra reglaget för att se skillnaden före och efter polering",
+    "sliderAltBefore": "Gulnad och matt bilstrålkastare före polering i Stockholm",
+    "sliderAltAfter": "Glasklar bilstrålkastare efter professionell strålkastarepolering",
+    "videoHint": "Se strålkastarepoleringen live — från matt och gult till glasklart",
+    "videoAlt": "Film som visar strålkastarepolering i Stockholm, från gulnad plast till glasklar finish",
+    "stats": [
+      { "value": "60 min", "label": "Per bil, medan du väntar" },
+      { "value": "799 kr", "label": "Pris för två strålkastare" },
+      { "value": "Garanti", "label": "Nöjd-kund-garanti" }
+    ]
+  },
+  "benefits": {
+    "title": "Därför polerar du strålkastarna istället för att byta",
+    "subtitle": "Matta och gula strålkastare ger sämre ljus, sänker värdet på bilen och kan stoppa besiktningen. Polering löser allt detta till en bråkdel av priset för nya enheter.",
+    "items": [
+      {
+        "title": "Upp till 70 % mer ljus",
+        "description": "Klar plast släpper igenom betydligt mer ljus än oxiderad. Du ser bättre i mörker och dimma — och möter mötande trafik tryggare."
+      },
+      {
+        "title": "Klarar besiktningen",
+        "description": "Kraftigt gulnade eller spruckna glas är en vanlig anmärkning. Vi återställer ljusbilden så att bilen går igenom kontrollen."
+      },
+      {
+        "title": "Spara tusenlappar",
+        "description": "Nya strålkastare kostar ofta 5 000–20 000 kr styck med montering. Polering ger samma klarhet från 799 kr för hela bilen."
+      },
+      {
+        "title": "Högre andrahandsvärde",
+        "description": "Blanka, fräscha strålkastare gör att hela bilen ser nyare ut och höjer värdet inför försäljning eller inbyte."
+      }
+    ]
+  },
+  "process": {
+    "title": "Så går strålkastarepoleringen till",
+    "subtitle": "Sex steg från matt och gul plast till fabriksklar finish. Varje strålkastare slipas, poleras och skyddas för hand med professionella material.",
+    "stepLabel": "Steg {step}",
+    "sequenceLabel": "Process · Steg 01–06",
+    "steps": [
+      {
+        "title": "Maskering & förberedelse",
+        "description": "Vi rengör och maskerar lacken runt strålkastaren så att slipningen aldrig skadar omgivande delar.",
+        "alt": "Maskering av lack runt strålkastare inför slipning"
+      },
+      {
+        "title": "Våtslipning",
+        "description": "Oxiderad och gulnad plast slipas bort stegvis med allt finare papper, från grovt P400 upp till P3000.",
+        "alt": "Våtslipning av oxiderad strålkastare med slippapper"
+      },
+      {
+        "title": "Maskinpolering",
+        "description": "Finpolering med roterande maskin och poleringsmedel återställer djup, klarhet och glans i plasten.",
+        "alt": "Maskinpolering av strålkastare till glasklar yta"
+      },
+      {
+        "title": "UV-skydd",
+        "description": "Ett professionellt UV-lack försluter ytan och skyddar mot solens UV-strålar så att glansen håller i åratal.",
+        "alt": "Påläggning av UV-skydd på nypolerad strålkastare"
+      },
+      {
+        "title": "Kvalitetskontroll",
+        "description": "Vi kontrollerar ljusbild, jämnhet och finish i dagsljus och mot ljuskälla innan bilen lämnas tillbaka.",
+        "alt": "Kvalitetskontroll av ljusbilden på en polerad strålkastare"
+      },
+      {
+        "title": "Klar att köra",
+        "description": "Du får tillbaka bilen med strålkastare som lyser som nya — direkt redo för väg och besiktning.",
+        "alt": "Bil med glasklara strålkastare klar för leverans"
+      }
+    ]
+  },
+  "services": {
+    "title": "Priser för strålkastarepolering",
+    "subtitle": "Exempelpriser för polering av båda strålkastarna inklusive UV-skydd. Slutpris beror på skick och modell — du får alltid pris innan vi börjar.",
+    "exampleNote": "Tjänster & priser",
+    "guaranteeNote": "Alla jobb ingår nöjd-kund-garanti och betalas först när du är nöjd med resultatet.",
+    "items": [
+      {
+        "title": "Personbil",
+        "description": "Komplett polering och restaurering av båda strålkastarna med UV-skydd. Klart medan du väntar.",
+        "price": "Från 799 kr"
+      },
+      {
+        "title": "MC & moped",
+        "description": "Polering av kompakta enheter med samma material och finish som för bil.",
+        "price": "Från 499 kr"
+      },
+      {
+        "title": "Företag & fordonsflotta",
+        "description": "Volympris för åkerier, bilhandlare och företag med flera fordon. Vi kommer till er.",
+        "price": "Offert"
+      }
+    ]
+  },
+  "trust": {
+    "title": "Trygg strålkastarepolering du kan lita på",
+    "subtitle": "Vi har polerat strålkastare på allt från vardagsbilar till bilhandlares hela lager. Du vet alltid vad du betalar och vad du får.",
+    "items": [
+      {
+        "title": "Fast pris i förväg",
+        "description": "Du får ett tydligt pris innan arbetet börjar. Inga överraskningar och inga dolda avgifter."
+      },
+      {
+        "title": "Nöjd-kund-garanti",
+        "description": "Är du inte nöjd med klarheten gör vi om jobbet. Vi är klara först när strålkastarna är det."
+      },
+      {
+        "title": "Vi kommer till dig",
+        "description": "Mobil service i hela Stockholm med omnejd — på din uppfart, garage eller arbetsplats."
+      }
+    ]
+  },
+  "serviceArea": {
+    "title": "Strålkastarepolering i hela Stockholm",
+    "subtitle": "Vi är en mobil tjänst och kör till dig i Stockholm med omnejd. Bor du i något av dessa områden är vi snabbt på plats.",
+    "note": "Bor du strax utanför listan? Hör av dig ändå — vi täcker stora delar av Stockholms län."
+  },
+  "reviews": {
+    "title": "Vad kunderna säger",
+    "subtitle": "Riktiga omdömen från bilägare i Stockholm.",
+    "disclaimer": "Exempelomdömen — ersätt med dina riktiga kundrecensioner.",
+    "items": [
+      {
+        "quote": "Strålkastarna var helt gula och matta. Efter en timme såg de ut som nya och bilen klarade besiktningen utan anmärkning.",
+        "author": "Johan L.",
+        "location": "Solna"
+      },
+      {
+        "quote": "Smidigt att de kom hem till mig. Enorm skillnad på ljuset när jag kör i mörker nu.",
+        "author": "Maria K.",
+        "location": "Nacka"
+      },
+      {
+        "quote": "Vi anlitar dem för hela vår bilflotta. Snabbt, prisvärt och alltid samma fina resultat.",
+        "author": "Erik S.",
+        "location": "Täby"
+      }
+    ]
+  },
+  "faq": {
+    "title": "Vanliga frågor om strålkastarepolering",
+    "subtitle": "Svar på det bilägare i Stockholm undrar mest om polering och restaurering av strålkastare.",
+    "items": [
+      {
+        "question": "Hur länge håller en strålkastarepolering?",
+        "answer": "Med vårt professionella UV-skydd håller resultatet normalt i 2–3 år eller längre, beroende på hur mycket bilen står i solen. Utan UV-skydd börjar plasten gulna igen inom några månader, därför ingår skyddet alltid hos oss."
+      },
+      {
+        "question": "Klarar bilen besiktningen efter polering?",
+        "answer": "Ja. Kraftigt gulnade, matta eller spruckna strålkastare är en vanlig besiktningsanmärkning eftersom de försämrar ljusbilden. Vi återställer klarheten så att ljuset uppfyller kraven — i de allra flesta fall räcker polering för att gå igenom kontrollen."
+      },
+      {
+        "question": "Vad kostar det att polera strålkastarna?",
+        "answer": "Polering av båda strålkastarna på en personbil kostar från 799 kr inklusive UV-skydd. MC och moped från 499 kr. För företag och fordonsflottor lämnar vi offert. Du får alltid fast pris innan vi börjar."
+      },
+      {
+        "question": "Hur lång tid tar det?",
+        "answer": "En vanlig personbil tar ungefär 45–60 minuter. Du kan oftast vänta medan vi arbetar, eller låta bilen stå medan du gör annat."
+      },
+      {
+        "question": "Kan alla strålkastare poleras?",
+        "answer": "De allra flesta moderna strålkastare är gjorda av polykarbonatplast och kan poleras med mycket gott resultat. Är glaset sprucket eller skadat på insidan kan polering inte hjälpa — då säger vi det direkt och tar inte betalt i onödan."
+      },
+      {
+        "question": "Måste jag lämna in bilen eller kommer ni till mig?",
+        "answer": "Vi är en mobil tjänst och kommer till dig i hela Stockholm med omnejd — hemma, på jobbet eller i garaget. Vi behöver bara plats att arbeta på och tillgång till el."
+      },
+      {
+        "question": "Vad är skillnaden mot att byta strålkastare?",
+        "answer": "Nya strålkastare kostar ofta flera tusen kronor styck plus montering. Polering ger samma klara plast och ljusbild från 799 kr för hela bilen, och tar en timme istället för flera dagars väntan på reservdelar."
+      },
+      {
+        "question": "Hur bokar jag tid?",
+        "answer": "Välj datum och tid i bokningskalendern här på sidan, eller ring oss direkt. Vi har öppet söndag till fredag mellan 16:00 och 20:00."
+      }
+    ]
+  },
+  "booking": {
+    "title": "Boka strålkastarepolering",
+    "subtitle": "Välj datum och tid. Du får en bekräftelse på e-post och upptagna tider visas utgråade.",
+    "selectDate": "Välj datum",
+    "selectTime": "Välj tid",
+    "yourDetails": "Dina uppgifter",
+    "name": "Namn",
+    "email": "E-post",
+    "phone": "Telefon",
+    "selected": "Vald tid",
+    "requestBooking": "Begär bokning",
+    "noDate": "Välj ett datum först",
+    "noTime": "Välj en tid",
+    "missingDetails": "Fyll i namn, e-post och telefon",
+    "availabilityNote": "Öppet söndag–fredag · 16:00–20:00. Lördag stängt. Upptagna tider är utgråade.",
+    "slotBooked": "{time} är redan bokad",
+    "slotTaken": "Den här tiden hann bokas av någon annan. Välj en annan tid.",
+    "loadingSlots": "Hämtar tillgängliga tider…",
+    "submitting": "Bokar…",
+    "bookingSuccess": "Din tid är reserverad. Vi har skickat en bekräftelse till {email}.",
+    "bookingError": "Kunde inte slutföra bokningen. Försök igen eller kontakta oss.",
+    "loadError": "Kunde inte hämta bokningar just nu."
+  },
+  "contact": {
+    "title": "Kontakt",
+    "phone": "+46 76 344 11 68",
+    "email": "teo@stralkastpolering.se",
+    "area": "Stockholm & omnejd",
+    "hours": "Öppet sön–fre 16:00–20:00",
+    "call": "Ring oss",
+    "emailAction": "Skicka e-post"
+  },
+  "footer": {
+    "tagline": "Klarare ljus. Säkrare körning. Strålkastarepolering i Stockholm.",
+    "copyright": "© {year} Strålkastpolering. Alla rättigheter förbehållna.",
+    "navLabel": "Sidlänkar"
+  }
+}
