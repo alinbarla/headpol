@@ -30,7 +30,7 @@ function escapeHtml(value: string): string {
 
 function priceLine(locale: "sv" | "en"): string {
   if (locale === "en") {
-    return `${BOOKING_PRICE.replace("/par", "/pair")} (was ${BOOKING_OLD_PRICE.replace("/par", "/pair")})`;
+    return `${BOOKING_PRICE.replace("/par", "/pair")}`;
   }
   return `${BOOKING_PRICE} (tidigare ${BOOKING_OLD_PRICE})`;
 }
