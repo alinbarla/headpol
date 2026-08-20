@@ -76,6 +76,19 @@ body {
   outline-offset: 3px;
 }
 
+a,
+button,
+summary,
+[role="button"],
+label {
+  cursor: pointer;
+}
+
+button:disabled,
+a[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
 .grain-overlay {
   pointer-events: none;
   position: fixed;
@@ -199,6 +212,46 @@ body {
   object-fit: cover;
 }
 
+.price-sticker {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 9.5rem;
+  padding: 0.85rem 1.15rem 0.95rem;
+  transform: rotate(-8deg);
+  background: var(--beam);
+  color: var(--void);
+  border-radius: 1.35rem 2.4rem 1.5rem 2.1rem;
+  box-shadow: 0 18px 40px rgba(255, 243, 38, 0.28);
+  line-height: 1;
+}
+
+.price-sticker-old {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  opacity: 0.72;
+}
+
+.price-sticker-now {
+  margin-top: 0.2rem;
+  font-family: var(--font-libre), system-ui, sans-serif;
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.guarantee-chip {
+  display: inline-block;
+  margin-left: 0.15rem;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  background: var(--beam);
+  color: var(--void);
+  font-weight: 700;
+}
+
 .hero-comparison-handle {
   display: flex;
   align-items: center;
@@ -224,6 +277,7 @@ body {
 }
 
 .booking-calendar .rdp-day_button {
+  cursor: pointer;
   border-radius: 9999px;
 }
 
@@ -237,6 +291,7 @@ body {
 }
 
 .booking-calendar .rdp-disabled .rdp-day_button {
+  cursor: not-allowed;
   opacity: 0.35;
 }
 

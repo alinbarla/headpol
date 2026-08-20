@@ -25,7 +25,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const base =
-    "inline-flex min-h-11 items-center justify-center rounded-full px-7 py-3 text-sm font-semibold font-display transition-all duration-300 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-beam disabled:cursor-not-allowed disabled:opacity-45 motion-reduce:transform-none motion-reduce:hover:scale-100";
+    "inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full px-7 py-3 text-sm font-semibold font-display transition-all duration-300 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-beam disabled:cursor-not-allowed disabled:opacity-45 motion-reduce:transform-none motion-reduce:hover:scale-100";
 
   if (href) {
     return (

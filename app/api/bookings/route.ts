@@ -68,6 +68,7 @@ export async function POST(request: Request) {
       name?: string;
       email?: string;
       phone?: string;
+      address?: string;
       locale?: string;
     };
     const { date, time } = body;
@@ -116,6 +117,7 @@ export async function POST(request: Request) {
           customer_name: contact.name,
           customer_email: contact.email,
           customer_phone: contact.phone,
+          customer_address: contact.address,
           locale: contact.locale,
         })
         .select("id, booking_date, booking_time")
@@ -138,6 +140,7 @@ export async function POST(request: Request) {
       name: contact.name,
       email: contact.email,
       phone: contact.phone,
+      address: contact.address,
       locale: contact.locale,
     });
 

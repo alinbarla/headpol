@@ -38,7 +38,7 @@ export function Footer() {
               <ul className="mt-4 space-y-2 text-sm text-text-secondary">
                 {footerLinks.map((link) => (
                   <li key={link.id}>
-                    <a href={`#${link.id}`} className="transition-colors hover:text-beam">
+                    <a href={`#${link.id}`} className="cursor-pointer transition-colors hover:text-beam">
                       {tNav(link.key)}
                     </a>
                   </li>
@@ -52,12 +52,12 @@ export function Footer() {
               </h3>
               <ul className="mt-4 space-y-2 text-sm text-text-secondary">
                 <li>
-                  <a href={`tel:${CONTACT_PHONE}`} className="transition-colors hover:text-beam">
+                  <a href={`tel:${CONTACT_PHONE}`} className="cursor-pointer transition-colors hover:text-beam">
                     {CONTACT_PHONE_DISPLAY}
                   </a>
                 </li>
                 <li>
-                  <a href={`mailto:${CONTACT_EMAIL}`} className="transition-colors hover:text-beam">
+                  <a href={`mailto:${CONTACT_EMAIL}`} className="cursor-pointer transition-colors hover:text-beam">
                     {CONTACT_EMAIL}
                   </a>
                 </li>

@@ -3,8 +3,10 @@
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { useMounted } from "@/lib/useMounted";
+import { CONTACT_PHONE } from "@/lib/booking";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { PriceSticker } from "@/components/ui/PriceSticker";
 import { HeroShowcaseVideo } from "./HeroShowcaseVideo";
 
 export function LightBeamHero() {
@@ -15,7 +17,7 @@ export function LightBeamHero() {
   return (
     <section
       id="hero"
-      className="section-anchor relative overflow-hidden pt-24 pb-16 sm:pt-28 sm:pb-24"
+      className="section-anchor relative overflow-x-hidden pt-24 pb-16 sm:pt-28 sm:pb-24"
     >
       <div className="absolute inset-0 beam-glow" aria-hidden="true" />
 
@@ -35,23 +37,27 @@ export function LightBeamHero() {
             animate={mounted ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 0.7, ease: "easeOut" }}
           >
-            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-beam font-display">
+            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-beam font-display">
               {t("eyebrow")}
             </p>
             <h1 className="headline-display text-5xl font-bold text-text-primary sm:text-6xl lg:text-7xl">
               {t("title")}
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
-              {t("subtitle")}
+              {t.rich("subtitle", {
+                guarantee: (chunks) => (
+                  <span className="guarantee-chip">{chunks}</span>
+                ),
+              })}
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Button href="#booking">{t("ctaPrimary")}</Button>
-              <Button href="#services" variant="outline">
+              <Button href={`tel:${CONTACT_PHONE}`}>{t("ctaPrimary")}</Button>
+              <Button href="#booking" variant="outline">
                 {t("ctaSecondary")}
               </Button>
             </div>
 
-            <dl className="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t border-white/10 pt-8">
+            <dl className="mt-12 grid max-w-lg grid-cols-2 gap-6 border-t border-white/10 pt-8 sm:grid-cols-3">
               {stats.map((stat) => (
                 <div key={stat.label}>
                   <dt className="sr-only">{stat.label}</dt>
@@ -78,8 +84,17 @@ export function LightBeamHero() {
               className="pointer-events-none absolute -inset-4 rounded-3xl bg-beam/10 blur-3xl"
               aria-hidden="true"
             />
-            <HeroShowcaseVideo />
-            <p className="mt-4 text-center text-sm text-text-muted">{t("videoHint")}</p>
+            <div className="relative">
+              <HeroShowcaseVideo />
+              <div className="absolute -bottom-5 left-3 z-10 sm:left-6">
+                <PriceSticker
+                  oldPrice={t("oldPrice")}
+                  price={t("price")}
+                  unit={t("priceUnit")}
+                />
+              </div>
+            </div>
+            <p className="mt-10 text-center text-sm text-text-muted">{t("videoHint")}</p>
           </motion.div>
         </div>
       </Container>

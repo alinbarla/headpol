@@ -1,6 +1,10 @@
-export const CONTACT_EMAIL = "teo@stralkastpolering.se";
+export const CONTACT_EMAIL = "teo@stralkastarpolering.se";
 export const CONTACT_PHONE = "+46763441168";
-export const CONTACT_PHONE_DISPLAY = "+46 76 344 11 68";
+export const CONTACT_PHONE_DISPLAY = "076-344 11 68";
+
+/** Pair price shown on the flyer and in booking emails. */
+export const BOOKING_PRICE = "799kr/par";
+export const BOOKING_OLD_PRICE = "1499kr/par";
 
 /** Hourly slots from 16:00 through 19:00 (service window ends at 20:00). */
 export const BOOKING_HOURS = {

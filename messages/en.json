@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "Headlight Restoration Stockholm | Strålkastpolering",
-    "description": "Professional headlight restoration and polishing in Stockholm. We remove yellow, cloudy and foggy headlights, seal with UV protection and guarantee the result. From 799 SEK."
+    "description": "Crystal-clear headlights again. Premium restoration + UV ceramic protection, 799 SEK/pair and a 5-year warranty. We come to you in Stockholm."
   },
   "nav": {
     "brand": "Strålkastpolering",
@@ -14,11 +14,14 @@
     "contact": "Contact"
   },
   "hero": {
-    "eyebrow": "Headlight restoration · Stockholm",
-    "title": "Headlight restoration that makes them look new again",
-    "subtitle": "We sand away yellowed, cloudy plastic, polish it crystal clear and seal it with lasting UV protection. The result: brighter light, safer driving and a passed inspection — without replacing the whole headlight.",
-    "ctaPrimary": "Book now",
-    "ctaSecondary": "See pricing",
+    "eyebrow": "Limited spots this week",
+    "title": "Crystal-clear headlights again!",
+    "subtitle": "Premium restoration + UV ceramic protection = headlights like new, money saved and a <guarantee>5-year warranty</guarantee>.",
+    "ctaPrimary": "Call now — we come to you!",
+    "ctaSecondary": "Book a time",
+    "oldPrice": "1499kr",
+    "price": "799kr",
+    "priceUnit": "pair",
     "scroll": "Scroll",
     "before": "Before",
     "after": "After",
@@ -28,9 +31,9 @@
     "videoHint": "Watch the headlight restoration live — from cloudy and yellow to crystal clear",
     "videoAlt": "Video showing headlight restoration in Stockholm, from yellowed plastic to a crystal-clear finish",
     "stats": [
-      { "value": "60 min", "label": "Per car, while you wait" },
-      { "value": "799 SEK", "label": "Price for both headlights" },
-      { "value": "Guarantee", "label": "Satisfaction guarantee" }
+      { "value": "799kr/pair", "label": "Premium restoration" },
+      { "value": "5 years", "label": "Warranty" },
+      { "value": "We come to you", "label": "Mobile service" }
     ]
   },
   "benefits": {
@@ -47,7 +50,7 @@
       },
       {
         "title": "Save thousands",
-        "description": "New headlights often cost 5,000–20,000 SEK each fitted. Restoration delivers the same clarity from 799 SEK for the whole car."
+        "description": "New headlights often cost 5,000–20,000 SEK each fitted. Premium restoration gives you headlights like new for 799kr/pair."
       },
       {
         "title": "Higher resale value",
@@ -77,8 +80,8 @@
         "alt": "Machine polishing a headlight to a crystal clear finish"
       },
       {
-        "title": "UV protection",
-        "description": "A professional UV sealant locks in the surface and shields it from the sun's UV rays so the gloss lasts for years.",
+        "title": "UV ceramic protection",
+        "description": "A UV ceramic coating seals the surface and shields it from the sun so the gloss lasts — with a 5-year warranty.",
         "alt": "Applying UV protection to a freshly polished headlight"
       },
       {
@@ -95,14 +98,16 @@
   },
   "services": {
     "title": "Headlight restoration pricing",
-    "subtitle": "Example prices for restoring both headlights including UV protection. The final price depends on condition and model — you always get a price before we start.",
+    "subtitle": "Premium restoration + UV ceramic protection for both headlights. 799kr/pair.",
     "exampleNote": "Services & pricing",
-    "guaranteeNote": "Every job includes our satisfaction guarantee and is only paid once you're happy with the result.",
+    "guaranteeNote": "Premium restoration + UV ceramic protection = headlights like new, money saved and a 5-year warranty.",
+    "priceUnit": "pair",
     "items": [
       {
         "title": "Cars",
-        "description": "Full restoration of both headlights with UV protection. Done while you wait.",
-        "price": "From 799 SEK"
+        "description": "Premium restoration + UV ceramic protection for both headlights. We come to you.",
+        "oldPrice": "1499kr",
+        "price": "799kr"
       },
       {
         "title": "Motorcycles & mopeds",
@@ -125,18 +130,18 @@
         "description": "You get a clear price before work begins. No surprises and no hidden fees."
       },
       {
-        "title": "Satisfaction guarantee",
-        "description": "Not happy with the clarity? We redo the job. We're only finished when your headlights are."
+        "title": "5-year warranty",
+        "description": "Premium restoration + UV ceramic protection with a 5-year warranty. Headlights like new that last."
       },
       {
         "title": "We come to you",
-        "description": "Mobile service across Greater Stockholm — at your driveway, garage or workplace."
+        "description": "Call now — we come to you. Mobile service at your driveway, garage or workplace."
       }
     ]
   },
   "serviceArea": {
     "title": "Headlight restoration across Stockholm",
-    "subtitle": "We're a mobile service and drive to you across Greater Stockholm. If you live in one of these areas we're with you quickly.",
+    "subtitle": "We come to you across Greater Stockholm. If you live in one of these areas we're with you quickly.",
     "note": "Just outside the list? Get in touch anyway — we cover large parts of Stockholm County."
   },
   "reviews": {
@@ -167,7 +172,7 @@
     "items": [
       {
         "question": "How long does headlight restoration last?",
-        "answer": "With our professional UV protection the result normally lasts 2–3 years or more, depending on how much sun the car gets. Without UV protection the plastic starts to yellow again within months, which is why the sealant is always included."
+        "answer": "With UV ceramic protection a 5-year warranty is included. Without protection the plastic starts to yellow again within months, which is why the coating is always included."
       },
       {
         "question": "Will the car pass inspection after restoration?",
@@ -175,7 +180,7 @@
       },
       {
         "question": "How much does it cost to restore headlights?",
-        "answer": "Restoring both headlights on a car costs from 799 SEK including UV protection. Motorcycles and mopeds from 499 SEK. For businesses and fleets we provide a quote. You always get a fixed price before we start."
+        "answer": "Premium restoration of both headlights is 799kr/pair, down from 1499kr/pair. UV ceramic protection and a 5-year warranty are included. Motorcycles and mopeds from 499 SEK. For businesses we provide a quote."
       },
       {
         "question": "How long does it take?",
@@ -187,11 +192,11 @@
       },
       {
         "question": "Do I drop the car off or do you come to me?",
-        "answer": "We're a mobile service and come to you across Greater Stockholm — at home, at work or in the garage. We just need space to work and access to power."
+        "answer": "We come to you across Greater Stockholm — at home, at work or in the garage. Call now — we come to you."
       },
       {
         "question": "What's the difference versus replacing the headlights?",
-        "answer": "New headlights often cost several thousand SEK each plus fitting. Restoration delivers the same clear plastic and light pattern from 799 SEK for the whole car, and takes an hour instead of days waiting for parts."
+        "answer": "New headlights often cost several thousand SEK each plus fitting. Premium restoration gives you headlights like new for 799kr/pair, down from 1499kr/pair."
       },
       {
         "question": "How do I book?",
@@ -208,11 +213,12 @@
     "name": "Name",
     "email": "Email",
     "phone": "Phone",
+    "address": "Address where we should polish",
     "selected": "Selected slot",
     "requestBooking": "Request booking",
     "noDate": "Select a date first",
     "noTime": "Select a time",
-    "missingDetails": "Fill in your name, email and phone",
+    "missingDetails": "Fill in your name, email, phone and address",
     "availabilityNote": "Open Sunday–Friday · 16:00–20:00. Closed Saturdays. Booked slots are greyed out.",
     "slotBooked": "{time} is already booked",
     "slotTaken": "That slot was just taken. Please choose another time.",
@@ -224,15 +230,15 @@
   },
   "contact": {
     "title": "Contact",
-    "phone": "+46 76 344 11 68",
-    "email": "teo@stralkastpolering.se",
-    "area": "Stockholm & surrounding area",
+    "phone": "076-344 11 68",
+    "email": "teo@stralkastarpolering.se",
+    "area": "We come to you",
     "hours": "Open Sun–Fri 16:00–20:00",
-    "call": "Call us",
+    "call": "Call now",
     "emailAction": "Send email"
   },
   "footer": {
-    "tagline": "Clearer light. Safer driving. Headlight restoration in Stockholm.",
+    "tagline": "Crystal-clear headlights again. We come to you.",
     "copyright": "© {year} Strålkastpolering. All rights reserved.",
     "navLabel": "Site links"
   }

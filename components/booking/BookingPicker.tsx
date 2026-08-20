@@ -40,6 +40,7 @@ export function BookingPicker() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null);
 
   const timeSlots = getTimeSlots();
@@ -131,7 +132,8 @@ export function BookingPicker() {
   const detailsReady =
     name.trim().length >= 2 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) &&
-    phone.replace(/\D/g, "").length >= 8;
+    phone.replace(/\D/g, "").length >= 8 &&
+    address.trim().length >= 8;
 
   const canSubmit =
     selectedDate &&
@@ -159,6 +161,7 @@ export function BookingPicker() {
           name: name.trim(),
           email: email.trim(),
           phone: phone.trim(),
+          address: address.trim(),
           locale,
         }),
       });
@@ -261,10 +264,10 @@ export function BookingPicker() {
                       isBooked
                         ? "cursor-not-allowed border-white/5 bg-void-surface/40 text-text-muted line-through opacity-45"
                         : active
-                          ? "border-beam bg-beam font-semibold text-void"
+                          ? "cursor-pointer border-beam bg-beam font-semibold text-void"
                           : disabled
                             ? "cursor-not-allowed border-white/5 text-text-muted"
-                            : "border-white/10 text-text-secondary hover:border-beam hover:text-text-primary"
+                            : "cursor-pointer border-white/10 text-text-secondary hover:border-beam hover:text-text-primary"
                     }`}
                   >
                     {slot}
@@ -285,7 +288,7 @@ export function BookingPicker() {
               <div className="mt-6 space-y-4">
                 <a
                   href={`tel:${CONTACT_PHONE}`}
-                  className="block rounded-2xl border border-white/10 bg-void-surface/60 px-4 py-4 transition-colors hover:border-beam"
+                  className="block cursor-pointer rounded-2xl border border-white/10 bg-void-surface/60 px-4 py-4 transition-colors hover:border-beam"
                 >
                   <span className="text-xs uppercase tracking-wider text-text-muted">
                     {tContact("call")}
@@ -296,7 +299,7 @@ export function BookingPicker() {
                 </a>
                 <a
                   href={`mailto:${CONTACT_EMAIL}`}
-                  className="block rounded-2xl border border-white/10 bg-void-surface/60 px-4 py-4 transition-colors hover:border-beam"
+                  className="block cursor-pointer rounded-2xl border border-white/10 bg-void-surface/60 px-4 py-4 transition-colors hover:border-beam"
                 >
                   <span className="text-xs uppercase tracking-wider text-text-muted">
                     {tContact("emailAction")}
@@ -358,6 +361,21 @@ export function BookingPicker() {
                     value={phone}
                     onChange={(event) => {
                       setPhone(event.target.value);
+                      if (status === "success") setStatus("idle");
+                    }}
+                  />
+                </label>
+                <label className="block text-xs text-text-muted">
+                  {t("address")}
+                  <textarea
+                    className="booking-field mt-1 min-h-20 resize-y"
+                    name="address"
+                    autoComplete="street-address"
+                    required
+                    maxLength={200}
+                    value={address}
+                    onChange={(event) => {
+                      setAddress(event.target.value);
                       if (status === "success") setStatus("idle");
                     }}
                   />

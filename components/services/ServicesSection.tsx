@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
+import { PriceSticker } from "@/components/ui/PriceSticker";
 
 const serviceIcons: ReactNode[] = [
   <svg key="car" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -30,6 +31,7 @@ export function ServicesSection() {
     title: string;
     description: string;
     price: string;
+    oldPrice?: string;
   }>;
 
   return (
@@ -65,9 +67,19 @@ export function ServicesSection() {
               <p className="mt-3 text-sm leading-relaxed text-text-secondary">
                 {item.description}
               </p>
-              <p className="headline-display mt-6 text-2xl font-bold text-beam">
-                {item.price}
-              </p>
+              {item.oldPrice ? (
+                <div className="mt-6">
+                  <PriceSticker
+                    oldPrice={item.oldPrice}
+                    price={item.price}
+                    unit={t("priceUnit")}
+                  />
+                </div>
+              ) : (
+                <p className="headline-display mt-6 text-2xl font-bold text-beam">
+                  {item.price}
+                </p>
+              )}
             </article>
           ))}
         </div>

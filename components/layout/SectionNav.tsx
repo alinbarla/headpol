@@ -50,7 +50,7 @@ export function SectionNav() {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 sm:px-8">
         <a
           href="#hero"
-          className="headline-display text-xl font-bold tracking-tight text-beam"
+          className="headline-display cursor-pointer text-xl font-bold tracking-tight text-beam"
         >
           {t("brand")}
         </a>
@@ -61,7 +61,7 @@ export function SectionNav() {
               key={id}
               href={`#${id}`}
               aria-current={active === id ? "true" : undefined}
-              className={`font-display text-sm font-semibold transition-colors ${
+              className={`cursor-pointer font-display text-sm font-semibold transition-colors ${
                 active === id
                   ? "text-beam"
                   : "text-text-secondary hover:text-beam"

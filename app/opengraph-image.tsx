@@ -52,10 +52,10 @@ export default function OpengraphImage() {
               maxWidth: 980,
             }}
           >
-            Strålkastarepolering i Stockholm
+            Kristallklara strålkastare igen
           </div>
           <div style={{ color: "#aaaaaa", fontSize: 34, fontWeight: 500, maxWidth: 900 }}>
-            Klarare ljus, säkrare körning och godkänd besiktning — utan att byta enhet.
+            Premiumrestaurering + UV-keramiskt skydd. 5 års garanti. Vi kommer till dig.
           </div>
         </div>
 
@@ -70,9 +70,9 @@ export default function OpengraphImage() {
               borderRadius: 999,
             }}
           >
-            Från 799 kr
+            799kr/par
           </div>
-          <div style={{ color: "#888888", fontSize: 26 }}>stralkastpolering.se</div>
+          <div style={{ color: "#888888", fontSize: 26 }}>stralkastarpolering.se</div>
         </div>
       </div>
     ),

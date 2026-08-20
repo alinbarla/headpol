@@ -11,7 +11,7 @@ function resolveSiteUrl(): string {
     return `https://${vercelHost.replace(/^https?:\/\//, "")}`;
   }
 
-  return "https://stralkastpolering.se";
+  return "https://stralkastarpolering.se";
 }
 
 /** Canonical production origin (no trailing slash). */
@@ -59,7 +59,7 @@ export const NAP = {
   geo: { latitude: 59.3293, longitude: 18.0686 },
   /** Travel radius in metres (~40 km around Stockholm). */
   serviceRadius: 40000,
-  priceRange: "799–2000 SEK",
+  priceRange: "799 kr",
   currency: "SEK",
 } as const;
 

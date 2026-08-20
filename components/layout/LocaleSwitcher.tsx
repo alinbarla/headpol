@@ -28,7 +28,7 @@ export function LocaleSwitcher() {
           type="button"
           onClick={() => switchLocale(loc)}
           aria-pressed={locale === loc}
-          className={`min-h-9 min-w-9 rounded-full px-3 text-xs font-semibold uppercase tracking-wider transition-colors ${
+          className={`min-h-9 min-w-9 cursor-pointer rounded-full px-3 text-xs font-semibold uppercase tracking-wider transition-colors ${
             locale === loc
               ? "bg-beam text-void"
               : "text-text-secondary hover:text-text-primary"

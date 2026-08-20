@@ -8,7 +8,7 @@ A bilingual (Swedish / English) marketing site for a headlight restoration busin
 - **Hero before/after slider** — [img-comparison-slider](https://github.com/sneas/img-comparison-slider) in the header
 - **Process storyboard** — vertical cinematic timeline of restoration steps
 - **Booking picker** — Supabase-backed slots (Sun–Fri 16:00–20:00), booked times greyed out
-- **Contact** — phone `+46 76 344 11 68`, email `teo@stralkastpolering.se`
+- **Contact** — phone `+46 76 344 11 68`, email `teo@stralkastarpolering.se`
 
 ## Development
 
@@ -34,10 +34,10 @@ Add these environment variables for Production and Preview:
 
 | Name | Notes |
 |---|---|
-| `NEXT_PUBLIC_SITE_URL` | Canonical origin, no trailing slash. Use `https://stralkastpolering.se` once the domain is attached, or the `*.vercel.app` URL until then. |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin, no trailing slash. Use `https://stralkastarpolering.se` once the domain is attached, or the `*.vercel.app` URL until then. |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key |
-| `GMAIL_USER` | `teo@stralkastpolering.se` |
+| `GMAIL_USER` | `teo@stralkastarpolering.se` |
 | `GMAIL_APP_PASSWORD` | Gmail app password (server-only) |
 
 `NEXT_PUBLIC_*` values are baked in at **build** time, so set them before the first production deploy.

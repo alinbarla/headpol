@@ -1,12 +1,14 @@
 import nodemailer from "nodemailer";
 import {
+  BOOKING_OLD_PRICE,
+  BOOKING_PRICE,
   CONTACT_PHONE_DISPLAY,
   formatBookingDate,
   parseDateKey,
 } from "@/lib/booking";
 import { BRAND } from "@/lib/seo";
 
-export const BOOKING_MAILBOX = "teo@stralkastpolering.se";
+export const BOOKING_MAILBOX = "teo@stralkastarpolering.se";
 
 export type BookingNotice = {
   date: string;
@@ -14,6 +16,7 @@ export type BookingNotice = {
   name: string;
   email: string;
   phone: string;
+  address: string;
   locale: "sv" | "en";
 };
 
@@ -23,6 +26,13 @@ function escapeHtml(value: string): string {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
+}
+
+function priceLine(locale: "sv" | "en"): string {
+  if (locale === "en") {
+    return `${BOOKING_PRICE.replace("/par", "/pair")} (was ${BOOKING_OLD_PRICE.replace("/par", "/pair")})`;
+  }
+  return `${BOOKING_PRICE} (tidigare ${BOOKING_OLD_PRICE})`;
 }
 
 function formattedDate(notice: BookingNotice): string {
@@ -46,6 +56,9 @@ function getTransporter() {
 
 function clientEmailCopy(notice: BookingNotice) {
   const dateLabel = formattedDate(notice);
+  const when = `${escapeHtml(dateLabel)} · ${escapeHtml(notice.time)}`;
+  const address = escapeHtml(notice.address);
+  const price = escapeHtml(priceLine(notice.locale));
 
   if (notice.locale === "en") {
     return {
@@ -53,8 +66,10 @@ function clientEmailCopy(notice: BookingNotice) {
       html: `
         <p>Hi ${escapeHtml(notice.name)},</p>
         <p>Your headlight restoration slot is reserved.</p>
-        <p><strong>${escapeHtml(dateLabel)} · ${escapeHtml(notice.time)}</strong></p>
-        <p>We come to you in Greater Stockholm. If you need to change the time, call ${escapeHtml(CONTACT_PHONE_DISPLAY)} or reply to this email.</p>
+        <p><strong>${when}</strong></p>
+        <p>Price: <strong>${price}</strong></p>
+        <p>We come to you at:<br/>${address}</p>
+        <p>If you need to change the time, call ${escapeHtml(CONTACT_PHONE_DISPLAY)} or reply to this email.</p>
         <p>${escapeHtml(BRAND)}<br/>${escapeHtml(BOOKING_MAILBOX)}</p>
       `,
     };
@@ -65,8 +80,10 @@ function clientEmailCopy(notice: BookingNotice) {
     html: `
       <p>Hej ${escapeHtml(notice.name)},</p>
       <p>Din tid för strålkastarepolering är reserverad.</p>
-      <p><strong>${escapeHtml(dateLabel)} · ${escapeHtml(notice.time)}</strong></p>
-      <p>Vi kommer till dig i Stockholm med omnejd. Behöver du ändra tiden, ring ${escapeHtml(CONTACT_PHONE_DISPLAY)} eller svara på det här mejlet.</p>
+      <p><strong>${when}</strong></p>
+      <p>Pris: <strong>${price}</strong></p>
+      <p>Vi kommer till dig på:<br/>${address}</p>
+      <p>Behöver du ändra tiden, ring ${escapeHtml(CONTACT_PHONE_DISPLAY)} eller svara på det här mejlet.</p>
       <p>${escapeHtml(BRAND)}<br/>${escapeHtml(BOOKING_MAILBOX)}</p>
     `,
   };
@@ -74,14 +91,34 @@ function clientEmailCopy(notice: BookingNotice) {
 
 function ownerEmailCopy(notice: BookingNotice) {
   const dateLabel = formattedDate(notice);
+  const when = `${escapeHtml(dateLabel)} · ${escapeHtml(notice.time)}`;
+  const price = escapeHtml(priceLine(notice.locale));
+
+  if (notice.locale === "en") {
+    return {
+      subject: `New booking ${notice.date} ${notice.time} — ${notice.name}`,
+      html: `
+        <p>New booking from the English site.</p>
+        <p><strong>${when}</strong></p>
+        <p>Price: <strong>${price}</strong></p>
+        <p>Name: ${escapeHtml(notice.name)}<br/>
+        Email: ${escapeHtml(notice.email)}<br/>
+        Phone: ${escapeHtml(notice.phone)}<br/>
+        Address: ${escapeHtml(notice.address)}</p>
+      `,
+    };
+  }
+
   return {
     subject: `Ny bokning ${notice.date} ${notice.time} — ${notice.name}`,
     html: `
       <p>Ny bokning via webbplatsen.</p>
-      <p><strong>${escapeHtml(dateLabel)} · ${escapeHtml(notice.time)}</strong></p>
+      <p><strong>${when}</strong></p>
+      <p>Pris: <strong>${price}</strong></p>
       <p>Namn: ${escapeHtml(notice.name)}<br/>
       E-post: ${escapeHtml(notice.email)}<br/>
-      Telefon: ${escapeHtml(notice.phone)}</p>
+      Telefon: ${escapeHtml(notice.phone)}<br/>
+      Adress: ${escapeHtml(notice.address)}</p>
     `,
   };
 }
@@ -134,11 +171,15 @@ export function parseBookingContact(body: {
   name?: string;
   email?: string;
   phone?: string;
+  address?: string;
   locale?: string;
-}): { name: string; email: string; phone: string; locale: "sv" | "en" } | { error: string } {
+}):
+  | { name: string; email: string; phone: string; address: string; locale: "sv" | "en" }
+  | { error: string } {
   const name = (body.name ?? "").trim();
   const email = (body.email ?? "").trim().toLowerCase();
   const phone = (body.phone ?? "").trim();
+  const address = (body.address ?? "").trim().replace(/\s+/g, " ");
   const locale = body.locale === "en" ? "en" : "sv";
 
   if (name.length < 2 || name.length > 80) {
@@ -154,5 +195,9 @@ export function parseBookingContact(body: {
     return { error: "Invalid phone" };
   }
 
-  return { name, email, phone, locale };
+  if (address.length < 8 || address.length > 200) {
+    return { error: "Invalid address" };
+  }
+
+  return { name, email, phone, address, locale };
 }
