@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Strålkastpolering — Strålkastarepolering i Stockholm";
+export const alt = "Strålkastarpolering — Strålkastarepolering i Stockholm";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -38,7 +38,7 @@ export default function OpengraphImage() {
             S
           </div>
           <div style={{ color: "#fff326", fontSize: 22, fontWeight: 700, letterSpacing: 2 }}>
-            STRÅLKASTPOLERING
+            STRÅLKASTARPOLERING
           </div>
         </div>
 

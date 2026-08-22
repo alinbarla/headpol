@@ -1,10 +1,10 @@
 {
   "metadata": {
-    "title": "Headlight Restoration Stockholm | Strålkastpolering",
+    "title": "Headlight Restoration Stockholm | Strålkastarpolering",
     "description": "Crystal-clear headlights again. Premium restoration + UV ceramic protection, 799 SEK/pair and a 5-year warranty. We come to you in Stockholm."
   },
   "nav": {
-    "brand": "Strålkastpolering",
+    "brand": "Strålkastarpolering",
     "skipToContent": "Skip to content",
     "benefits": "Benefits",
     "process": "Process",
@@ -147,7 +147,6 @@
   "reviews": {
     "title": "What customers say",
     "subtitle": "Real reviews from car owners in Stockholm.",
-    "disclaimer": "Example reviews — replace with your real customer testimonials.",
     "items": [
       {
         "quote": "The headlights were completely yellow and cloudy. After an hour they looked brand new and the car passed inspection without a remark.",
@@ -243,7 +242,7 @@
   },
   "footer": {
     "tagline": "Crystal-clear headlights again. We come to you.",
-    "copyright": "© {year} Strålkastpolering. All rights reserved.",
+    "copyright": "© {year} Strålkastarpolering. All rights reserved.",
     "navLabel": "Site links"
   }
 }

@@ -17,8 +17,8 @@ function resolveSiteUrl(): string {
 /** Canonical production origin (no trailing slash). */
 export const SITE_URL = resolveSiteUrl();
 
-export const BRAND = "Strålkastpolering";
-export const LEGAL_NAME = "Strålkastpolering";
+export const BRAND = "Strålkastarpolering";
+export const LEGAL_NAME = "Strålkastarpolering";
 
 /** Stable first-publish date for the site (ISO 8601), used in WebPage schema. */
 export const PUBLISHED_DATE =

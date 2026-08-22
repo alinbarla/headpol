@@ -1,4 +1,4 @@
-# Strålkastpolering — Headlight Restoration Website
+# Strålkastarpolering — Headlight Restoration Website
 
 A bilingual (Swedish / English) marketing site for a headlight restoration business. Built with Next.js 16, TypeScript, Tailwind CSS, next-intl, and Framer Motion.
 
@@ -81,7 +81,7 @@ All process photos are served through `next/image`, so they are automatically re
 
 ### Brand name
 
-Search for `Strålkastpolering` in the message files and components to rename.
+Search for `Strålkastarpolering` in the message files and components to rename.
 
 ## Project structure
 

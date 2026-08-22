@@ -1,10 +1,10 @@
 {
   "metadata": {
-    "title": "Strålkastarepolering Stockholm | Strålkastpolering",
+    "title": "Strålkastarepolering Stockholm | Strålkastarpolering",
     "description": "Kristallklara strålkastare igen. Premiumrestaurering + UV-keramiskt skydd, 799kr/par och 5 års garanti. Vi kommer till dig i Stockholm."
   },
   "nav": {
-    "brand": "Strålkastpolering",
+    "brand": "Strålkastarpolering",
     "skipToContent": "Hoppa till innehåll",
     "benefits": "Fördelar",
     "process": "Process",
@@ -147,7 +147,6 @@
   "reviews": {
     "title": "Vad kunderna säger",
     "subtitle": "Riktiga omdömen från bilägare i Stockholm.",
-    "disclaimer": "Exempelomdömen — ersätt med dina riktiga kundrecensioner.",
     "items": [
       {
         "quote": "Strålkastarna var helt gula och matta. Efter en timme såg de ut som nya och bilen klarade besiktningen utan anmärkning.",
@@ -243,7 +242,7 @@
   },
   "footer": {
     "tagline": "Kristallklara strålkastare igen. Vi kommer till dig.",
-    "copyright": "© {year} Strålkastpolering. Alla rättigheter förbehållna.",
+    "copyright": "© {year} Strålkastarpolering. Alla rättigheter förbehållna.",
     "navLabel": "Sidlänkar"
   }
 }

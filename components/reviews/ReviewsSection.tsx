@@ -44,8 +44,6 @@ export function ReviewsSection() {
             </figure>
           ))}
         </div>
-
-        <p className="mt-6 text-xs text-text-muted">{t("disclaimer")}</p>
       </Container>
     </section>
   );
