@@ -4,6 +4,9 @@ import {
   BOOKING_PRICE,
   CONTACT_PHONE_DISPLAY,
   formatBookingDate,
+  formatSwedishPostalCode,
+  isCompletePostalCode,
+  isStockholmCountyPostalCode,
   parseDateKey,
 } from "@/lib/booking";
 import { BRAND } from "@/lib/seo";
@@ -17,6 +20,7 @@ export type BookingNotice = {
   email: string;
   phone: string;
   address: string;
+  postalCode: string;
   locale: "sv" | "en";
 };
 
@@ -58,6 +62,7 @@ function clientEmailCopy(notice: BookingNotice) {
   const dateLabel = formattedDate(notice);
   const when = `${escapeHtml(dateLabel)} · ${escapeHtml(notice.time)}`;
   const address = escapeHtml(notice.address);
+  const postalCode = escapeHtml(notice.postalCode);
   const price = escapeHtml(priceLine(notice.locale));
 
   if (notice.locale === "en") {
@@ -68,7 +73,7 @@ function clientEmailCopy(notice: BookingNotice) {
         <p>Your headlight restoration slot is reserved.</p>
         <p><strong>${when}</strong></p>
         <p>Price: <strong>${price}</strong></p>
-        <p>We come to you at:<br/>${address}</p>
+        <p>We come to you at:<br/>${address}<br/>${postalCode}</p>
         <p>If you need to change the time, call ${escapeHtml(CONTACT_PHONE_DISPLAY)} or reply to this email.</p>
         <p>${escapeHtml(BRAND)}<br/>${escapeHtml(BOOKING_MAILBOX)}</p>
       `,
@@ -82,7 +87,7 @@ function clientEmailCopy(notice: BookingNotice) {
       <p>Din tid för strålkastarepolering är reserverad.</p>
       <p><strong>${when}</strong></p>
       <p>Pris: <strong>${price}</strong></p>
-      <p>Vi kommer till dig på:<br/>${address}</p>
+      <p>Vi kommer till dig på:<br/>${address}<br/>${postalCode}</p>
       <p>Behöver du ändra tiden, ring ${escapeHtml(CONTACT_PHONE_DISPLAY)} eller svara på det här mejlet.</p>
       <p>${escapeHtml(BRAND)}<br/>${escapeHtml(BOOKING_MAILBOX)}</p>
     `,
@@ -104,7 +109,8 @@ function ownerEmailCopy(notice: BookingNotice) {
         <p>Name: ${escapeHtml(notice.name)}<br/>
         Email: ${escapeHtml(notice.email)}<br/>
         Phone: ${escapeHtml(notice.phone)}<br/>
-        Address: ${escapeHtml(notice.address)}</p>
+        Address: ${escapeHtml(notice.address)}<br/>
+        Postal code: ${escapeHtml(notice.postalCode)}</p>
       `,
     };
   }
@@ -118,7 +124,8 @@ function ownerEmailCopy(notice: BookingNotice) {
       <p>Namn: ${escapeHtml(notice.name)}<br/>
       E-post: ${escapeHtml(notice.email)}<br/>
       Telefon: ${escapeHtml(notice.phone)}<br/>
-      Adress: ${escapeHtml(notice.address)}</p>
+      Adress: ${escapeHtml(notice.address)}<br/>
+      Postnummer: ${escapeHtml(notice.postalCode)}</p>
     `,
   };
 }
@@ -172,14 +179,23 @@ export function parseBookingContact(body: {
   email?: string;
   phone?: string;
   address?: string;
+  postalCode?: string;
   locale?: string;
 }):
-  | { name: string; email: string; phone: string; address: string; locale: "sv" | "en" }
+  | {
+      name: string;
+      email: string;
+      phone: string;
+      address: string;
+      postalCode: string;
+      locale: "sv" | "en";
+    }
   | { error: string } {
   const name = (body.name ?? "").trim();
   const email = (body.email ?? "").trim().toLowerCase();
   const phone = (body.phone ?? "").trim();
   const address = (body.address ?? "").trim().replace(/\s+/g, " ");
+  const postalCode = formatSwedishPostalCode(body.postalCode ?? "");
   const locale = body.locale === "en" ? "en" : "sv";
 
   if (name.length < 2 || name.length > 80) {
@@ -199,5 +215,13 @@ export function parseBookingContact(body: {
     return { error: "Invalid address" };
   }
 
-  return { name, email, phone, address, locale };
+  if (!isCompletePostalCode(postalCode)) {
+    return { error: "Invalid postal code" };
+  }
+
+  if (!isStockholmCountyPostalCode(postalCode)) {
+    return { error: "OUT_OF_SERVICE_AREA" };
+  }
+
+  return { name, email, phone, address, postalCode, locale };
 }

@@ -324,3 +324,11 @@ a[aria-disabled="true"] {
   outline-offset: 2px;
   border-color: transparent;
 }
+
+.booking-field[aria-invalid="true"] {
+  border-color: var(--pulse);
+}
+
+.booking-field[aria-invalid="true"]:focus {
+  outline-color: var(--pulse-hot);
+}

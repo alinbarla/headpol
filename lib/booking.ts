@@ -17,6 +17,38 @@ export const BOOKING_WEEKDAYS = [0, 1, 2, 3, 4, 5] as const;
 
 export const BOOKING_HORIZON_DAYS = 60;
 
+/**
+ * Stockholms län postal codes (PostNord / Swedish postcode system):
+ * 10xxx–19xxx covers the county except Norrtälje; 76xxx is Norrtälje.
+ */
+export const STOCKHOLM_COUNTY_POSTAL_RANGES = [
+  { min: 10000, max: 19999 },
+  { min: 76000, max: 76999 },
+] as const;
+
+export function digitsFromPostalCode(value: string): string {
+  return value.replace(/\D/g, "").slice(0, 5);
+}
+
+export function formatSwedishPostalCode(value: string): string {
+  const digits = digitsFromPostalCode(value);
+  if (digits.length !== 5) return digits;
+  return `${digits.slice(0, 3)} ${digits.slice(3)}`;
+}
+
+export function isCompletePostalCode(value: string): boolean {
+  return digitsFromPostalCode(value).length === 5;
+}
+
+export function isStockholmCountyPostalCode(value: string): boolean {
+  const digits = digitsFromPostalCode(value);
+  if (digits.length !== 5) return false;
+  const numeric = Number(digits);
+  return STOCKHOLM_COUNTY_POSTAL_RANGES.some(
+    (range) => numeric >= range.min && numeric <= range.max
+  );
+}
+
 export function getTimeSlots(): string[] {
   const slots: string[] = [];
   for (let hour = BOOKING_HOURS.start; hour < BOOKING_HOURS.end; hour++) {

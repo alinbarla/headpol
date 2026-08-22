@@ -69,13 +69,17 @@ export async function POST(request: Request) {
       email?: string;
       phone?: string;
       address?: string;
+      postalCode?: string;
       locale?: string;
     };
     const { date, time } = body;
     const contact = parseBookingContact(body);
 
     if ("error" in contact) {
-      return NextResponse.json({ error: contact.error }, { status: 400 });
+      return NextResponse.json(
+        { error: contact.error },
+        { status: contact.error === "OUT_OF_SERVICE_AREA" ? 422 : 400 }
+      );
     }
 
     if (!date || !time) {
@@ -117,7 +121,7 @@ export async function POST(request: Request) {
           customer_name: contact.name,
           customer_email: contact.email,
           customer_phone: contact.phone,
-          customer_address: contact.address,
+          customer_address: `${contact.address}, ${contact.postalCode}`,
           locale: contact.locale,
         })
         .select("id, booking_date, booking_time")
@@ -141,6 +145,7 @@ export async function POST(request: Request) {
       email: contact.email,
       phone: contact.phone,
       address: contact.address,
+      postalCode: contact.postalCode,
       locale: contact.locale,
     });
 

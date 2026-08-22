@@ -10,12 +10,16 @@ import {
   CONTACT_EMAIL,
   CONTACT_PHONE,
   CONTACT_PHONE_DISPLAY,
+  digitsFromPostalCode,
   formatBookingDate,
+  formatSwedishPostalCode,
   getBookedTimesForDate,
   getFullyBookedDates,
   getTimeSlots,
   isBookableWeekday,
+  isCompletePostalCode,
   isPastDate,
+  isStockholmCountyPostalCode,
   toDateKey,
 } from "@/lib/booking";
 import { useMounted } from "@/lib/useMounted";
@@ -41,6 +45,8 @@ export function BookingPicker() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [postalTouched, setPostalTouched] = useState(false);
   const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null);
 
   const timeSlots = getTimeSlots();
@@ -129,11 +135,17 @@ export function BookingPicker() {
     ? getBookedTimesForDate(bookedSlots, selectedDate)
     : new Set<string>();
 
+  const postalInArea = isStockholmCountyPostalCode(postalCode);
+  const postalInvalidFormat =
+    postalTouched && postalCode.trim().length > 0 && !isCompletePostalCode(postalCode);
+  const showOutOfArea = isCompletePostalCode(postalCode) && !postalInArea;
+
   const detailsReady =
     name.trim().length >= 2 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) &&
     phone.replace(/\D/g, "").length >= 8 &&
-    address.trim().length >= 8;
+    address.trim().length >= 8 &&
+    postalInArea;
 
   const canSubmit =
     selectedDate &&
@@ -162,6 +174,7 @@ export function BookingPicker() {
           email: email.trim(),
           phone: phone.trim(),
           address: address.trim(),
+          postalCode: formatSwedishPostalCode(postalCode),
           locale,
         }),
       });
@@ -172,6 +185,12 @@ export function BookingPicker() {
         setStatus("error");
         setErrorMessage(t("slotTaken"));
         await loadBookings();
+        return;
+      }
+
+      if (response.status === 422 || data.error === "OUT_OF_SERVICE_AREA") {
+        setStatus("error");
+        setErrorMessage(t("outOfArea"));
         return;
       }
 
@@ -380,6 +399,58 @@ export function BookingPicker() {
                     }}
                   />
                 </label>
+                <label className="block text-xs text-text-muted">
+                  {t("postalCode")}
+                  <input
+                    className="booking-field mt-1"
+                    type="text"
+                    name="postal-code"
+                    inputMode="numeric"
+                    autoComplete="postal-code"
+                    required
+                    maxLength={6}
+                    placeholder={t("postalCodePlaceholder")}
+                    value={postalCode}
+                    aria-invalid={showOutOfArea || postalInvalidFormat}
+                    aria-describedby={
+                      showOutOfArea
+                        ? "booking-postal-out-of-area"
+                        : postalInvalidFormat
+                          ? "booking-postal-invalid"
+                          : undefined
+                    }
+                    onChange={(event) => {
+                      const next = event.target.value.replace(/[^\d\s]/g, "");
+                      setPostalCode(next);
+                      if (status === "success") setStatus("idle");
+                    }}
+                    onBlur={() => {
+                      setPostalTouched(true);
+                      const digits = digitsFromPostalCode(postalCode);
+                      if (digits.length === 5) {
+                        setPostalCode(formatSwedishPostalCode(digits));
+                      }
+                    }}
+                  />
+                </label>
+                {showOutOfArea && (
+                  <p
+                    id="booking-postal-out-of-area"
+                    role="alert"
+                    className="text-sm font-medium text-pulse-hot"
+                  >
+                    {t("outOfArea")}
+                  </p>
+                )}
+                {postalInvalidFormat && (
+                  <p
+                    id="booking-postal-invalid"
+                    role="alert"
+                    className="text-sm font-medium text-pulse-hot"
+                  >
+                    {t("invalidPostalCode")}
+                  </p>
+                )}
               </div>
 
               <p className="mt-6 text-xs uppercase tracking-wider text-text-muted">{t("selected")}</p>
