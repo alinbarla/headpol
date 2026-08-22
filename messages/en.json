@@ -28,8 +28,8 @@
     "sliderHint": "Drag the handle to compare before and after restoration",
     "sliderAltBefore": "Yellowed and cloudy car headlight before restoration in Stockholm",
     "sliderAltAfter": "Crystal clear car headlight after professional headlight restoration",
-    "videoHint": "Watch the headlight restoration live — from cloudy and yellow to crystal clear",
-    "videoAlt": "Video showing headlight restoration in Stockholm, from yellowed plastic to a crystal-clear finish",
+    "imageHint": "Before and after — from cloudy and yellow to crystal clear",
+    "imageAlt": "Before and after of a restored headlight in Stockholm",
     "stats": [
       { "value": "799kr/pair", "label": "Premium restoration" },
       { "value": "5 years", "label": "Warranty" },
@@ -75,9 +75,9 @@
         "alt": "Wet sanding an oxidised headlight with sandpaper"
       },
       {
-        "title": "Machine polishing",
-        "description": "Fine polishing with a rotary machine and compound restores depth, clarity and gloss to the plastic.",
-        "alt": "Machine polishing a headlight to a crystal clear finish"
+        "title": "Polymer polishing",
+        "description": "Fine polishing with a polymer compound restores depth, clarity and gloss to the plastic.",
+        "alt": "Polymer polishing a headlight to a crystal clear finish"
       },
       {
         "title": "UV ceramic protection",

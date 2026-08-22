@@ -28,8 +28,8 @@
     "sliderHint": "Dra reglaget för att se skillnaden före och efter polering",
     "sliderAltBefore": "Gulnad och matt bilstrålkastare före polering i Stockholm",
     "sliderAltAfter": "Glasklar bilstrålkastare efter professionell strålkastarepolering",
-    "videoHint": "Se strålkastarepoleringen live — från matt och gult till glasklart",
-    "videoAlt": "Film som visar strålkastarepolering i Stockholm, från gulnad plast till glasklar finish",
+    "imageHint": "Före och efter — från matt och gult till glasklart",
+    "imageAlt": "Före och efter polering av strålkastare i Stockholm",
     "stats": [
       { "value": "799kr/par", "label": "Premiumrestaurering" },
       { "value": "5 år", "label": "Garanti" },
@@ -75,9 +75,9 @@
         "alt": "Våtslipning av oxiderad strålkastare med slippapper"
       },
       {
-        "title": "Maskinpolering",
-        "description": "Finpolering med roterande maskin och poleringsmedel återställer djup, klarhet och glans i plasten.",
-        "alt": "Maskinpolering av strålkastare till glasklar yta"
+        "title": "Polymerpolering",
+        "description": "Finpolering med polymerpolermedel återställer djup, klarhet och glans i plasten.",
+        "alt": "Polymerpolering av strålkastare till glasklar yta"
       },
       {
         "title": "UV-keramiskt skydd",

@@ -7,7 +7,7 @@ import { CONTACT_PHONE } from "@/lib/booking";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { PriceSticker } from "@/components/ui/PriceSticker";
-import { HeroShowcaseVideo } from "./HeroShowcaseVideo";
+import { HeroShowcaseImage } from "./HeroShowcaseImage";
 
 export function LightBeamHero() {
   const t = useTranslations("hero");
@@ -85,7 +85,7 @@ export function LightBeamHero() {
               aria-hidden="true"
             />
             <div className="relative">
-              <HeroShowcaseVideo />
+              <HeroShowcaseImage />
               <div className="absolute -bottom-5 left-3 z-10 sm:left-6">
                 <PriceSticker
                   oldPrice={t("oldPrice")}
@@ -94,7 +94,7 @@ export function LightBeamHero() {
                 />
               </div>
             </div>
-            <p className="mt-10 text-center text-sm text-text-muted">{t("videoHint")}</p>
+            <p className="mt-10 text-center text-sm text-text-muted">{t("imageHint")}</p>
           </motion.div>
         </div>
       </Container>
