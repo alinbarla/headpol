@@ -1,34 +1,17 @@
 import type { MetadataRoute } from "next";
-import { routing } from "@/lib/i18n";
 import { LOCALES, localeUrl } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
-/** Single-page site: home route per locale, cross-linked via hreflang alternates. */
-const ROUTES: { path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
-  { path: "", priority: 1, changeFrequency: "weekly" },
-];
-
+/** Single-page site: home route per locale. Hreflang lives in page <head>, not here —
+ *  xhtml:link in a sitemap makes Chrome parse it as HTML (tags disappear). */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
+  const lastModified = new Date().toISOString().slice(0, 10);
 
-  return ROUTES.flatMap((route) =>
-    LOCALES.map((locale) => ({
-      url: localeUrl(locale, route.path),
-      lastModified,
-      changeFrequency: route.changeFrequency,
-      priority: route.priority,
-      alternates: {
-        languages: {
-          "x-default": localeUrl(routing.defaultLocale, route.path),
-          ...Object.fromEntries(
-            LOCALES.map((loc) => [
-              loc === "sv" ? "sv-SE" : "en-US",
-              localeUrl(loc, route.path),
-            ])
-          ),
-        },
-      },
-    }))
-  );
+  return LOCALES.map((locale) => ({
+    url: localeUrl(locale),
+    lastModified,
+    changeFrequency: "weekly",
+    priority: 1,
+  }));
 }
