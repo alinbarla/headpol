@@ -14,6 +14,8 @@ export const maxDuration = 30;
 
 const HANDLED_EVENTS = new Set<string>([
   "checkout.session.completed",
+  "checkout.session.async_payment_succeeded",
+  "checkout.session.async_payment_failed",
   "checkout.session.expired",
   "charge.refunded",
   "refund.updated",
@@ -68,7 +70,11 @@ export async function POST(request: Request) {
   try {
     switch (event.type) {
       case "checkout.session.completed":
+      case "checkout.session.async_payment_succeeded":
         await handleCheckoutCompleted(event.data.object);
+        break;
+      case "checkout.session.async_payment_failed":
+        await handleAsyncPaymentFailed(event.data.object);
         break;
       case "checkout.session.expired":
         await handleCheckoutExpired(event.data.object);
@@ -95,7 +101,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const bookingId = session.metadata?.booking_id ?? session.client_reference_id;
   if (!bookingId) return;
 
-  // `unpaid` here means an async method (Swish, Klarna) has not settled yet.
+  // `unpaid` here means a delayed method has not settled yet; the booking is
+  // confirmed later from checkout.session.async_payment_succeeded instead.
   if (session.payment_status === "unpaid") return;
 
   const supabase = getSupabaseAdminClient();
@@ -154,6 +161,29 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       source: "web",
     });
   }
+}
+
+/**
+ * A delayed payment method reported failure after Checkout closed. The session
+ * is spent, so nothing more can arrive against it and the slot has to go back.
+ */
+async function handleAsyncPaymentFailed(session: Stripe.Checkout.Session) {
+  const bookingId = session.metadata?.booking_id ?? session.client_reference_id;
+  if (!bookingId) return;
+
+  const supabase = getSupabaseAdminClient();
+
+  await supabase
+    .from("payments")
+    .update({ status: "failed" })
+    .eq("stripe_checkout_session_id", session.id);
+
+  await supabase
+    .from("bookings")
+    .update({ status: "expired", hold_expires_at: null })
+    .eq("id", bookingId)
+    .eq("status", "pending")
+    .eq("payment_status", "awaiting_payment");
 }
 
 async function handleCheckoutExpired(session: Stripe.Checkout.Session) {

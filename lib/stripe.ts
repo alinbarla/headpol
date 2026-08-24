@@ -5,8 +5,18 @@ import { formatDateKey } from "@/lib/time";
 
 let client: Stripe | null = null;
 
+/**
+ * The Stripe dashboard lists an `mk_`-prefixed id next to every key, which is
+ * easy to copy in place of the token itself. Checking the prefix turns that
+ * mistake into a clear "not configured" everywhere instead of an
+ * authentication failure at the moment a customer tries to pay.
+ */
+function isSecretKeyShaped(value: string | undefined): value is string {
+  return /^(sk|rk)_/.test(value ?? "");
+}
+
 export function isStripeConfigured(): boolean {
-  return Boolean(process.env.STRIPE_SECRET_KEY);
+  return isSecretKeyShaped(process.env.STRIPE_SECRET_KEY);
 }
 
 export function getStripe(): Stripe {
@@ -14,6 +24,12 @@ export function getStripe(): Stripe {
 
   if (!secretKey) {
     throw new Error("Missing STRIPE_SECRET_KEY");
+  }
+
+  if (!isSecretKeyShaped(secretKey)) {
+    throw new Error(
+      "STRIPE_SECRET_KEY is not a secret key; expected an sk_ or rk_ token"
+    );
   }
 
   if (!client) {

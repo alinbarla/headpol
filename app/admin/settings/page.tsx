@@ -43,7 +43,7 @@ export default async function SettingsPage() {
                 label="Stripe"
                 ok={isStripeConfigured()}
                 okLabel="Enabled"
-                offLabel="STRIPE_SECRET_KEY missing"
+                offLabel="STRIPE_SECRET_KEY missing or not an sk_/rk_ token"
               />
               <StatusRow
                 label="Email"
