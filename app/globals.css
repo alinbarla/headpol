@@ -375,6 +375,18 @@ a[aria-disabled="true"] {
   background: rgba(30, 30, 30, 0.6);
   padding: 0.65rem 0.9rem;
   color: #ffffff;
+  /*
+   * Safari on iOS zooms the whole page when a focused field is under 16px, and
+   * these inputs would otherwise inherit the 12px label around them. The label
+   * itself stays small; only the typed value grows.
+   */
+  font-size: 1rem;
+}
+
+@media (min-width: 768px) {
+  .booking-field {
+    font-size: 0.875rem;
+  }
 }
 
 .booking-field::placeholder {

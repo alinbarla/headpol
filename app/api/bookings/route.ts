@@ -19,8 +19,13 @@ import {
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
-/** How long a slot is held while the customer completes Stripe Checkout. */
-const CHECKOUT_HOLD_MINUTES = 20;
+/**
+ * How long a slot is held while the customer completes Stripe Checkout. A
+ * Checkout Session cannot live less than 30 minutes, and releasing the slot
+ * while the session is still payable would let a second customer book a time
+ * the first one can still pay for, so the hold has to outlast the session.
+ */
+const CHECKOUT_HOLD_MINUTES = 31;
 
 export type BookingsGetResponse = {
   /** Slot keys already taken, in `YYYY-MM-DDTHH:MM` form. */

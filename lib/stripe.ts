@@ -65,6 +65,23 @@ export type CheckoutSessionResult = {
 };
 
 /**
+ * Stripe accepts an expiry between 30 minutes and 24 hours after the session is
+ * created, measured against its own clock when the request lands. Asking for
+ * exactly 30 minutes therefore fails: truncating to whole seconds and the
+ * round trip both push the timestamp back under the floor. The bounds below
+ * keep a minute of slack at each end.
+ */
+const MIN_SESSION_MINUTES = 31;
+const MAX_SESSION_MINUTES = 23 * 60;
+
+function sessionMinutes(input: CheckoutSessionInput): number {
+  return Math.min(
+    Math.max(input.holdMinutes, MIN_SESSION_MINUTES),
+    MAX_SESSION_MINUTES
+  );
+}
+
+/**
  * Hosted Checkout rather than Elements: no Stripe.js in the browser, so the
  * site's CSP needs no script-src or frame-src exceptions. Payment methods come
  * from the Stripe Dashboard, so enabling Swish later needs no code change.
@@ -78,10 +95,7 @@ export async function createBookingCheckoutSession(
   const locale = input.locale === "en" ? "en" : "sv";
   const when = `${formatDateKey(input.dateKey, locale)} ${input.time}`;
 
-  // Stripe rejects expires_at below 30 minutes from now.
-  const expiresAt = new Date(
-    Date.now() + Math.max(input.holdMinutes, 30) * 60_000
-  );
+  const expiresAt = new Date(Date.now() + sessionMinutes(input) * 60_000);
 
   try {
     const session = await getStripe().checkout.sessions.create({
@@ -126,7 +140,17 @@ export async function createBookingCheckoutSession(
 
     return { id: session.id, url: session.url, expiresAt };
   } catch (error) {
-    console.error("[stripe] could not create checkout session", error);
+    // The booking API turns this into a generic message for the customer, so
+    // the log line is the only place the cause survives. Stripe puts the
+    // actionable part in type/code/param, which a bare object dump buries.
+    console.error(
+      "[stripe] could not create checkout session:",
+      error instanceof Stripe.errors.StripeError
+        ? `${error.type}${error.code ? ` ${error.code}` : ""}${
+            error.param ? ` (${error.param})` : ""
+          }: ${error.message}`
+        : error
+    );
     return null;
   }
 }
