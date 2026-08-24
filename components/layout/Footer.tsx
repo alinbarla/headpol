@@ -1,6 +1,7 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import { Container } from "@/components/ui/Container";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_DISPLAY } from "@/lib/booking";
@@ -17,6 +18,8 @@ export function Footer() {
   const t = useTranslations("footer");
   const tContact = useTranslations("contact");
   const tNav = useTranslations("nav");
+  const tLegal = useTranslations("legal");
+  const locale = useLocale();
   const year = new Date().getFullYear();
 
   return (
@@ -68,6 +71,24 @@ export function Footer() {
 
             <div className="flex flex-col items-start gap-4">
               <LocaleSwitcher />
+              <ul className="space-y-2 text-sm text-text-secondary">
+                <li>
+                  <Link
+                    href={`/${locale}/villkor`}
+                    className="cursor-pointer transition-colors hover:text-beam"
+                  >
+                    {tLegal("terms")}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href={`/${locale}/integritetspolicy`}
+                    className="cursor-pointer transition-colors hover:text-beam"
+                  >
+                    {tLegal("privacy")}
+                  </Link>
+                </li>
+              </ul>
               <p className="text-xs text-text-muted" suppressHydrationWarning>
                 {t("copyright", { year })}
               </p>

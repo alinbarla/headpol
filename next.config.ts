@@ -58,6 +58,13 @@ const securityHeaders = [
   { key: "X-DNS-Prefetch-Control", value: "on" },
 ];
 
+/**
+ * The admin shares this deployment, so robots.txt and the sitemap are served
+ * from the same handlers as the public site. A host-scoped header keeps the
+ * admin out of search indexes regardless of what those handlers return.
+ */
+const adminHost = process.env.ADMIN_HOST ?? "admin.stralkastarpolering.se";
+
 const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
@@ -72,6 +79,14 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: securityHeaders,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: adminHost }],
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+          { key: "Cache-Control", value: "no-store, max-age=0" },
+        ],
       },
     ];
   },

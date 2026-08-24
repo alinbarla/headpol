@@ -2,88 +2,123 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DayPicker, type Matcher } from "react-day-picker";
-import { addDays, startOfDay } from "date-fns";
 import { sv, enGB } from "date-fns/locale";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  BOOKING_HORIZON_DAYS,
+  DEFAULT_BOOKING_RULES,
+  type AvailabilityMap,
+  type BookingRules,
+} from "@/lib/availability";
+import {
   CONTACT_EMAIL,
   CONTACT_PHONE,
   CONTACT_PHONE_DISPLAY,
   digitsFromPostalCode,
   formatBookingDate,
+  formatOre,
   formatSwedishPostalCode,
-  getBookedTimesForDate,
-  getFullyBookedDates,
-  getTimeSlots,
-  isBookableWeekday,
   isCompletePostalCode,
-  isPastDate,
   isStockholmCountyPostalCode,
+  parseDateKey,
+  slotKey,
   toDateKey,
 } from "@/lib/booking";
+import { addDaysToDateKey } from "@/lib/time";
 import { useMounted } from "@/lib/useMounted";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import "react-day-picker/style.css";
 
-type BookingStatus = "idle" | "submitting" | "success" | "error";
+type BookingStatus = "idle" | "submitting" | "error";
+
+type BookingsResponse = {
+  slots?: string[];
+  availability?: AvailabilityMap;
+  rules?: BookingRules;
+  error?: string;
+};
 
 export function BookingPicker() {
   const t = useTranslations("booking");
   const tContact = useTranslations("contact");
   const locale = useLocale();
   const mounted = useMounted();
+
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [bookedSlots, setBookedSlots] = useState<Set<string>>(new Set());
+  const [availability, setAvailability] = useState<AvailabilityMap>({});
+  const [rules, setRules] = useState<BookingRules>(DEFAULT_BOOKING_RULES);
   const [slotsLoading, setSlotsLoading] = useState(true);
   const [status, setStatus] = useState<BookingStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [rangeStart, setRangeStart] = useState<Date | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [postalTouched, setPostalTouched] = useState(false);
-  const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null);
+  const [withdrawalConsent, setWithdrawalConsent] = useState(false);
 
-  const timeSlots = getTimeSlots();
   const dateLocale = locale === "sv" ? sv : enGB;
 
-  useEffect(() => {
-    setRangeStart(startOfDay(new Date()));
-  }, []);
+  // Derived rather than stored: today's date differs between the server render
+  // and the client, so it can only be read once the component has mounted.
+  const today = mounted ? toDateKey(new Date()) : null;
 
-  const rangeEnd = useMemo(
-    () => (rangeStart ? addDays(rangeStart, BOOKING_HORIZON_DAYS) : null),
-    [rangeStart]
+  const horizonKey = useMemo(
+    () => (today ? addDaysToDateKey(today, rules.horizonDays) : null),
+    [today, rules.horizonDays]
   );
-  const fromKey = useMemo(() => (rangeStart ? toDateKey(rangeStart) : null), [rangeStart]);
-  const toKey = useMemo(() => (rangeEnd ? toDateKey(rangeEnd) : null), [rangeEnd]);
 
   const loadBookings = useCallback(async () => {
-    if (!fromKey || !toKey) return false;
+    if (!today || !horizonKey) return false;
 
     try {
-      const response = await fetch(`/api/bookings?from=${fromKey}&to=${toKey}`);
-      const data = (await response.json()) as { slots?: string[]; error?: string };
+      const response = await fetch(
+        `/api/bookings?from=${today}&to=${horizonKey}`
+      );
+      const data = (await response.json()) as BookingsResponse;
 
       if (!response.ok) {
         throw new Error(data.error ?? "Failed to load bookings");
       }
 
       setBookedSlots(new Set(data.slots ?? []));
+      if (data.availability) setAvailability(data.availability);
+      if (data.rules) setRules(data.rules);
       return true;
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : t("loadError"));
       return false;
     }
-  }, [fromKey, toKey, t]);
+  }, [today, horizonKey, t]);
+
+  // Stripe sends the customer back here with a marker on the URL. Derived
+  // rather than stored so the banner survives the cleanup below.
+  const stripeOutcome = useMemo<"paid" | "cancelled" | null>(() => {
+    if (!mounted) return null;
+    const value = new URLSearchParams(window.location.search).get("booking");
+    return value === "paid" || value === "cancelled" ? value : null;
+  }, [mounted]);
+
+  // Drop the marker so a refresh does not resurrect the banner.
+  useEffect(() => {
+    if (!stripeOutcome) return;
+
+    const params = new URLSearchParams(window.location.search);
+    params.delete("booking");
+    params.delete("session_id");
+    const query = params.toString();
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${query ? `?${query}` : ""}#booking`
+    );
+  }, [stripeOutcome]);
 
   useEffect(() => {
-    if (!fromKey || !toKey) return;
+    if (!today || !horizonKey) return;
 
     let cancelled = false;
 
@@ -92,8 +127,10 @@ export function BookingPicker() {
       setErrorMessage(null);
 
       try {
-        const response = await fetch(`/api/bookings?from=${fromKey}&to=${toKey}`);
-        const data = (await response.json()) as { slots?: string[]; error?: string };
+        const response = await fetch(
+          `/api/bookings?from=${today}&to=${horizonKey}`
+        );
+        const data = (await response.json()) as BookingsResponse;
 
         if (cancelled) return;
 
@@ -102,6 +139,8 @@ export function BookingPicker() {
         }
 
         setBookedSlots(new Set(data.slots ?? []));
+        setAvailability(data.availability ?? {});
+        if (data.rules) setRules(data.rules);
       } catch (error) {
         if (cancelled) return;
         setErrorMessage(error instanceof Error ? error.message : t("loadError"));
@@ -114,30 +153,69 @@ export function BookingPicker() {
     return () => {
       cancelled = true;
     };
-    // fromKey/toKey are stable for the session; t omitted to avoid re-fetch loops
-  }, [fromKey, toKey]);
+    // today/horizonKey are stable for the session; t omitted to avoid re-fetch loops
+  }, [today, horizonKey]);
 
-  const fullyBookedDates = useMemo(() => {
-    if (!rangeStart || !rangeEnd) return [];
-    return getFullyBookedDates(bookedSlots, rangeStart, rangeEnd);
-  }, [bookedSlots, rangeEnd, rangeStart]);
+  const selectedKey = selectedDate ? toDateKey(selectedDate) : null;
 
-  const disabledDays: Matcher[] = rangeStart && rangeEnd
-    ? [
-        { before: rangeStart },
-        { after: rangeEnd },
-        { dayOfWeek: [6] },
-        ...fullyBookedDates,
-      ]
-    : [{ dayOfWeek: [0, 1, 2, 3, 4, 5, 6] }];
+  /** Open slots for the selected day, driven by the server's availability map. */
+  const openTimes = useMemo(
+    () => (selectedKey ? (availability[selectedKey] ?? []) : []),
+    [availability, selectedKey]
+  );
 
-  const bookedTimesForSelected = selectedDate
-    ? getBookedTimesForDate(bookedSlots, selectedDate)
-    : new Set<string>();
+  /**
+   * The time grid shows every slot the schedule can offer, so the layout does
+   * not jump when a day has extra or reduced hours.
+   */
+  const displayTimes = useMemo(() => {
+    const all = new Set<string>();
+    for (const times of Object.values(availability)) {
+      for (const time of times) all.add(time);
+    }
+    if (all.size === 0) {
+      for (let hour = rules.startHour; hour < rules.endHour; hour++) {
+        all.add(`${String(hour).padStart(2, "0")}:00`);
+      }
+    }
+    return [...all].sort();
+  }, [availability, rules.startHour, rules.endHour]);
+
+  /** Days with no open slots at all, or where every open slot is taken. */
+  const closedDates = useMemo(() => {
+    if (!today || !horizonKey) return [];
+
+    const closed: Date[] = [];
+    let cursor = today;
+
+    for (let i = 0; i <= 400 && cursor <= horizonKey; i++) {
+      const times = availability[cursor];
+      const allTaken =
+        !times ||
+        times.length === 0 ||
+        times.every((time) => bookedSlots.has(slotKey(cursor, time)));
+
+      if (allTaken) closed.push(parseDateKey(cursor));
+      cursor = addDaysToDateKey(cursor, 1);
+    }
+
+    return closed;
+  }, [availability, bookedSlots, today, horizonKey]);
+
+  const disabledDays: Matcher[] =
+    today && horizonKey
+      ? [
+          { before: parseDateKey(today) },
+          { after: parseDateKey(horizonKey) },
+          ...closedDates,
+        ]
+      : [{ dayOfWeek: [0, 1, 2, 3, 4, 5, 6] }];
 
   const postalInArea = isStockholmCountyPostalCode(postalCode);
   const postalInvalidFormat =
-    postalTouched && postalCode.trim().length > 0 && !isCompletePostalCode(postalCode);
+    postalTouched &&
+    postalCode.trim().length > 0 &&
+    !isCompletePostalCode(postalCode);
   const showOutOfArea = isCompletePostalCode(postalCode) && !postalInArea;
 
   const detailsReady =
@@ -147,18 +225,19 @@ export function BookingPicker() {
     address.trim().length >= 8 &&
     postalInArea;
 
-  const canSubmit =
-    selectedDate &&
-    selectedTime &&
-    detailsReady &&
-    isBookableWeekday(selectedDate) &&
-    !isPastDate(selectedDate) &&
-    !bookedTimesForSelected.has(selectedTime) &&
-    status !== "submitting" &&
-    !slotsLoading;
+  const canSubmit = Boolean(
+    selectedKey &&
+      selectedTime &&
+      detailsReady &&
+      withdrawalConsent &&
+      openTimes.includes(selectedTime) &&
+      !bookedSlots.has(slotKey(selectedKey, selectedTime)) &&
+      status !== "submitting" &&
+      !slotsLoading
+  );
 
   async function handleBooking() {
-    if (!selectedDate || !selectedTime || !detailsReady) return;
+    if (!selectedKey || !selectedTime || !detailsReady) return;
 
     setStatus("submitting");
     setErrorMessage(null);
@@ -168,7 +247,7 @@ export function BookingPicker() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          date: toDateKey(selectedDate),
+          date: selectedKey,
           time: selectedTime,
           name: name.trim(),
           email: email.trim(),
@@ -176,10 +255,14 @@ export function BookingPicker() {
           address: address.trim(),
           postalCode: formatSwedishPostalCode(postalCode),
           locale,
+          withdrawalConsent,
         }),
       });
 
-      const data = (await response.json()) as { error?: string };
+      const data = (await response.json()) as {
+        error?: string;
+        checkoutUrl?: string;
+      };
 
       if (response.status === 409) {
         setStatus("error");
@@ -198,13 +281,18 @@ export function BookingPicker() {
         throw new Error(data.error ?? t("bookingError"));
       }
 
-      setStatus("success");
-      setConfirmedEmail(email.trim());
-      setSelectedTime(null);
-      await loadBookings();
+      if (!data.checkoutUrl) {
+        throw new Error(t("bookingError"));
+      }
+
+      // A plain navigation rather than a form post, so the site's
+      // `form-action 'self'` CSP needs no exception for Stripe.
+      window.location.assign(data.checkoutUrl);
     } catch (error) {
       setStatus("error");
-      setErrorMessage(error instanceof Error ? error.message : t("bookingError"));
+      setErrorMessage(
+        error instanceof Error ? error.message : t("bookingError")
+      );
     }
   }
 
@@ -224,7 +312,7 @@ export function BookingPicker() {
               {t("selectDate")}
             </h3>
             <div className="booking-calendar mt-4 min-h-[280px]">
-              {mounted && rangeStart ? (
+              {mounted && today ? (
                 <DayPicker
                   mode="single"
                   selected={selectedDate}
@@ -232,12 +320,11 @@ export function BookingPicker() {
                     setSelectedDate(date);
                     setSelectedTime(null);
                     setErrorMessage(null);
-                    if (status === "success") setStatus("idle");
                   }}
                   disabled={disabledDays}
                   locale={dateLocale}
                   weekStartsOn={1}
-                  modifiers={{ fullyBooked: fullyBookedDates }}
+                  modifiers={{ fullyBooked: closedDates }}
                   modifiersClassNames={{
                     selected: "rdp-selected-custom",
                     today: "rdp-today-custom",
@@ -251,34 +338,33 @@ export function BookingPicker() {
                 />
               )}
             </div>
-            <p className="mt-3 text-xs text-text-muted">{t("availabilityNote")}</p>
+            <p className="mt-3 text-xs text-text-muted">
+              {t("availabilityNote")}
+            </p>
 
             <h3 className="mt-8 text-sm font-semibold uppercase tracking-wider text-beam">
               {t("selectTime")}
             </h3>
             <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {timeSlots.map((slot) => {
-                const noDate = !selectedDate;
-                const invalidDay =
-                  selectedDate &&
-                  (!isBookableWeekday(selectedDate) || isPastDate(selectedDate));
-                const isBooked = bookedTimesForSelected.has(slot);
-                const disabled = noDate || invalidDay || isBooked || slotsLoading;
+              {displayTimes.map((slot) => {
+                const isOpen = openTimes.includes(slot);
+                const isBooked = Boolean(
+                  selectedKey && bookedSlots.has(slotKey(selectedKey, slot))
+                );
+                const disabled =
+                  !selectedKey || !isOpen || isBooked || slotsLoading;
                 const active = selectedTime === slot;
 
                 return (
                   <button
                     key={slot}
                     type="button"
-                    disabled={Boolean(disabled)}
+                    disabled={disabled}
                     onClick={() => {
                       setSelectedTime(slot);
                       setErrorMessage(null);
-                      if (status === "success") setStatus("idle");
                     }}
-                    aria-label={
-                      isBooked ? t("slotBooked", { time: slot }) : slot
-                    }
+                    aria-label={isBooked ? t("slotBooked", { time: slot }) : slot}
                     className={`min-h-11 rounded-xl border px-2 py-2 text-sm font-medium transition-colors ${
                       isBooked
                         ? "cursor-not-allowed border-white/5 bg-void-surface/40 text-text-muted line-through opacity-45"
@@ -328,7 +414,9 @@ export function BookingPicker() {
                   </span>
                 </a>
               </div>
-              <p className="mt-4 text-sm text-text-secondary">{tContact("area")}</p>
+              <p className="mt-4 text-sm text-text-secondary">
+                {tContact("area")}
+              </p>
             </div>
 
             <div className="glass-panel rounded-3xl p-6 sm:p-8">
@@ -348,7 +436,6 @@ export function BookingPicker() {
                     value={name}
                     onChange={(event) => {
                       setName(event.target.value);
-                      if (status === "success") setStatus("idle");
                     }}
                   />
                 </label>
@@ -364,7 +451,6 @@ export function BookingPicker() {
                     value={email}
                     onChange={(event) => {
                       setEmail(event.target.value);
-                      if (status === "success") setStatus("idle");
                     }}
                   />
                 </label>
@@ -380,7 +466,6 @@ export function BookingPicker() {
                     value={phone}
                     onChange={(event) => {
                       setPhone(event.target.value);
-                      if (status === "success") setStatus("idle");
                     }}
                   />
                 </label>
@@ -395,7 +480,6 @@ export function BookingPicker() {
                     value={address}
                     onChange={(event) => {
                       setAddress(event.target.value);
-                      if (status === "success") setStatus("idle");
                     }}
                   />
                 </label>
@@ -422,7 +506,6 @@ export function BookingPicker() {
                     onChange={(event) => {
                       const next = event.target.value.replace(/[^\d\s]/g, "");
                       setPostalCode(next);
-                      if (status === "success") setStatus("idle");
                     }}
                     onBlur={() => {
                       setPostalTouched(true);
@@ -453,7 +536,36 @@ export function BookingPicker() {
                 )}
               </div>
 
-              <p className="mt-6 text-xs uppercase tracking-wider text-text-muted">{t("selected")}</p>
+              <fieldset className="mt-6">
+                <legend className="text-xs uppercase tracking-wider text-text-muted">
+                  {t("paymentTitle")}
+                </legend>
+                <div className="mt-3 rounded-2xl border border-beam/40 bg-beam/5 px-4 py-3">
+                  <p className="text-sm font-semibold text-text-primary">
+                    {t("payNow", { price: formatOre(rules.priceOre) })}
+                  </p>
+                  <p className="mt-0.5 text-xs text-text-muted">
+                    {t("payNowHint")}
+                  </p>
+                </div>
+
+                <label className="mt-3 flex cursor-pointer items-start gap-2 text-xs text-text-secondary">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 size-4 accent-[var(--beam)]"
+                    checked={withdrawalConsent}
+                    onChange={(event) => {
+                      setWithdrawalConsent(event.target.checked);
+                      setErrorMessage(null);
+                    }}
+                  />
+                  <span>{t("withdrawalConsent")}</span>
+                </label>
+              </fieldset>
+
+              <p className="mt-6 text-xs uppercase tracking-wider text-text-muted">
+                {t("selected")}
+              </p>
               <p className="mt-2 text-lg font-medium text-text-primary">
                 {selectedDate && selectedTime
                   ? `${formatBookingDate(selectedDate, locale)} · ${selectedTime}`
@@ -462,21 +574,21 @@ export function BookingPicker() {
                     : t("noTime")}
               </p>
 
-              {status === "success" && (
+              {stripeOutcome === "paid" && (
                 <p
                   role="status"
                   className="mt-4 rounded-xl border border-success/30 bg-success/10 px-4 py-3 text-sm text-success"
                 >
-                  {t("bookingSuccess", { email: confirmedEmail ?? email })}
+                  {t("bookingSuccess")}
                 </p>
               )}
 
-              {errorMessage && (
+              {(errorMessage ?? stripeOutcome === "cancelled") && (
                 <p
                   role="alert"
                   className="mt-4 rounded-xl border border-pulse/40 bg-pulse/10 px-4 py-3 text-sm text-pulse-hot"
                 >
-                  {errorMessage}
+                  {errorMessage ?? t("paymentCancelled")}
                 </p>
               )}
 
@@ -485,7 +597,9 @@ export function BookingPicker() {
                 disabled={!canSubmit}
                 onClick={() => void handleBooking()}
               >
-                {status === "submitting" ? t("submitting") : t("requestBooking")}
+                {status === "submitting"
+                  ? t("submitting")
+                  : t("continueToPayment")}
               </Button>
             </div>
           </div>

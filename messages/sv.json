@@ -203,6 +203,10 @@
       }
     ]
   },
+  "legal": {
+    "terms": "Villkor och avbokning",
+    "privacy": "Integritetspolicy"
+  },
   "booking": {
     "title": "Boka strålkastarepolering",
     "subtitle": "Välj datum och tid. Du får en bekräftelse på e-post och upptagna tider visas utgråade.",
@@ -218,7 +222,6 @@
     "outOfArea": "Tyvärr är vi inte i ditt område ännu.",
     "invalidPostalCode": "Ange ett svenskt postnummer med fem siffror.",
     "selected": "Vald tid",
-    "requestBooking": "Begär bokning",
     "noDate": "Välj ett datum först",
     "noTime": "Välj en tid",
     "missingDetails": "Fyll i namn, e-post, telefon, adress och postnummer",
@@ -227,9 +230,15 @@
     "slotTaken": "Den här tiden hann bokas av någon annan. Välj en annan tid.",
     "loadingSlots": "Hämtar tillgängliga tider…",
     "submitting": "Bokar…",
-    "bookingSuccess": "Din tid är reserverad. Vi har skickat en bekräftelse till {email}.",
+    "bookingSuccess": "Betalningen är klar och din tid är bokad. Kvitto och bekräftelse har skickats till din e-post.",
     "bookingError": "Kunde inte slutföra bokningen. Försök igen eller kontakta oss.",
-    "loadError": "Kunde inte hämta bokningar just nu."
+    "paymentCancelled": "Betalningen avbröts, så ingen tid bokades. Du kan välja en tid och försöka igen.",
+    "loadError": "Kunde inte hämta bokningar just nu.",
+    "paymentTitle": "Betalning",
+    "payNow": "Betala vid bokning · {price}",
+    "payNowHint": "Kort eller Swish via Stripe. Tiden hålls i 20 minuter medan du betalar.",
+    "continueToPayment": "Gå vidare till betalning",
+    "withdrawalConsent": "Jag godkänner att arbetet påbörjas före ångerfristens slut och är införstådd med att ångerrätten upphör när tjänsten är fullgjord."
   },
   "contact": {
     "title": "Kontakt",

@@ -203,6 +203,10 @@
       }
     ]
   },
+  "legal": {
+    "terms": "Terms and cancellation",
+    "privacy": "Privacy policy"
+  },
   "booking": {
     "title": "Book headlight restoration",
     "subtitle": "Pick a date and time. We'll email you a confirmation and you'll see booked slots greyed out.",
@@ -218,7 +222,6 @@
     "outOfArea": "We're sorry, we're not in your area yet.",
     "invalidPostalCode": "Enter a 5-digit Swedish postal code.",
     "selected": "Selected slot",
-    "requestBooking": "Request booking",
     "noDate": "Select a date first",
     "noTime": "Select a time",
     "missingDetails": "Fill in your name, email, phone, address and postal code",
@@ -227,9 +230,15 @@
     "slotTaken": "That slot was just taken. Please choose another time.",
     "loadingSlots": "Loading available slots…",
     "submitting": "Booking…",
-    "bookingSuccess": "Your slot is reserved. We sent a confirmation to {email}.",
+    "bookingSuccess": "Payment complete and your slot is booked. A receipt and confirmation are on their way to your email.",
     "bookingError": "Could not complete the booking. Try again or contact us.",
-    "loadError": "Could not load bookings right now."
+    "paymentCancelled": "The payment was cancelled, so no slot was booked. Pick a time and try again.",
+    "loadError": "Could not load bookings right now.",
+    "paymentTitle": "Payment",
+    "payNow": "Pay when booking · {price}",
+    "payNowHint": "Card or Swish via Stripe. Your slot is held for 20 minutes while you pay.",
+    "continueToPayment": "Continue to payment",
+    "withdrawalConsent": "I agree that the work may begin before the 14-day withdrawal period ends, and I understand the right of withdrawal lapses once the service is complete."
   },
   "contact": {
     "title": "Contact",
