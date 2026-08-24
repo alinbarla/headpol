@@ -29,16 +29,15 @@ export default async function CalendarPage() {
     <AdminShell>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Kalender</h1>
+          <h1 className="text-2xl font-bold">Calendar</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Dra en bokning till en ny ruta för att flytta den. Grå rutor är
-            stängda.
+            Drag a booking onto another slot to move it. Grey slots are closed.
           </p>
         </div>
         <Button asChild size="sm">
           <Link href="/admin/bookings/new">
             <PlusIcon className="size-4" />
-            Ny bokning
+            New booking
           </Link>
         </Button>
       </div>

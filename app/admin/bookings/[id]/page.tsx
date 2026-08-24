@@ -8,6 +8,7 @@ import {
   getRefundsForBooking,
 } from "@/lib/admin/data";
 import {
+  ADMIN_LOCALE,
   BOOKING_STATUS_LABELS,
   PAYMENT_STATUS_LABELS,
   PAYMENT_TONE,
@@ -19,7 +20,7 @@ import {
 } from "@/lib/admin/labels";
 import { formatOre, fromDbTime } from "@/lib/booking";
 import { isStripeConfigured } from "@/lib/stripe";
-import { formatDateKey } from "@/lib/time";
+import { formatDateKey, formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
 import {
   CancelCard,
@@ -80,16 +81,16 @@ export default async function BookingDetailPage({
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeftIcon className="size-4" />
-        Alla bokningar
+        All bookings
       </Link>
 
       <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">
-            {booking.customer_name ?? "Utan namn"}
+            {booking.customer_name ?? "No name"}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {formatDateKey(booking.booking_date, "sv")} ·{" "}
+            {formatDateKey(booking.booking_date, ADMIN_LOCALE)} ·{" "}
             {fromDbTime(booking.booking_time)}
           </p>
         </div>
@@ -124,7 +125,7 @@ export default async function BookingDetailPage({
               className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-secondary/50 text-sm font-medium hover:border-primary"
             >
               <PhoneIcon className="size-4" />
-              Ring {booking.customer_phone}
+              Call {booking.customer_phone}
             </a>
           )}
           {maps && (
@@ -135,7 +136,7 @@ export default async function BookingDetailPage({
               className="flex min-h-12 flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-secondary/50 text-sm font-medium hover:border-primary"
             >
               <MapPinIcon className="size-4" />
-              Navigera
+              Navigate
             </a>
           )}
         </div>
@@ -144,23 +145,23 @@ export default async function BookingDetailPage({
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm">Kunduppgifter</CardTitle>
+            <CardTitle className="text-sm">Customer details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <Row label="Namn" value={booking.customer_name} />
-            <Row label="Telefon" value={booking.customer_phone} />
-            <Row label="E-post" value={booking.customer_email} />
-            <Row label="Adress" value={booking.customer_address} />
-            <Row label="Språk" value={booking.locale === "en" ? "Engelska" : "Svenska"} />
-            <Row label="Pris" value={formatOre(booking.price_ore)} />
+            <Row label="Name" value={booking.customer_name} />
+            <Row label="Phone" value={booking.customer_phone} />
+            <Row label="Email" value={booking.customer_email} />
+            <Row label="Address" value={booking.customer_address} />
             <Row
-              label="Bokad"
-              value={new Date(booking.created_at).toLocaleString("sv-SE")}
+              label="Language"
+              value={booking.locale === "en" ? "English" : "Swedish"}
             />
+            <Row label="Price" value={formatOre(booking.price_ore)} />
+            <Row label="Booked" value={formatTimestamp(booking.created_at)} />
             {booking.cancelled_at && (
               <Row
-                label="Avbokad"
-                value={`${new Date(booking.cancelled_at).toLocaleString("sv-SE")}${
+                label="Cancelled"
+                value={`${formatTimestamp(booking.cancelled_at)}${
                   booking.cancellation_reason
                     ? ` — ${booking.cancellation_reason}`
                     : ""
@@ -184,7 +185,7 @@ export default async function BookingDetailPage({
       {(payments.length > 0 || refunds.length > 0) && (
         <Card className="mt-4">
           <CardHeader>
-            <CardTitle className="text-sm">Betalningshistorik</CardTitle>
+            <CardTitle className="text-sm">Payment history</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             {payments.map((payment) => (
@@ -193,7 +194,7 @@ export default async function BookingDetailPage({
                 className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2 last:border-0"
               >
                 <span className="text-muted-foreground">
-                  {new Date(payment.created_at).toLocaleString("sv-SE")} ·{" "}
+                  {formatTimestamp(payment.created_at)} ·{" "}
                   {paymentMethodLabel(payment.method)} · {payment.status}
                 </span>
                 <span className="flex items-center gap-3 font-medium tabular-nums">
@@ -206,7 +207,7 @@ export default async function BookingDetailPage({
                         rel="noreferrer"
                         className="text-xs text-primary hover:underline"
                       >
-                        Öppna betallänk
+                        Open payment link
                       </a>
                     )}
                   {payment.receipt_url && (
@@ -216,7 +217,7 @@ export default async function BookingDetailPage({
                       rel="noreferrer"
                       className="text-xs text-primary hover:underline"
                     >
-                      Kvitto
+                      Receipt
                     </a>
                   )}
                 </span>
@@ -229,8 +230,8 @@ export default async function BookingDetailPage({
                 className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2 text-violet-200 last:border-0"
               >
                 <span>
-                  {new Date(refund.created_at).toLocaleString("sv-SE")} ·
-                  Återbetalning · {refund.status}
+                  {formatTimestamp(refund.created_at)} · Refund ·{" "}
+                  {refund.status}
                   {refund.reason ? ` · ${refund.reason}` : ""}
                 </span>
                 <span className="font-medium tabular-nums">

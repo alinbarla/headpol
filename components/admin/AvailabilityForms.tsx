@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/shadcn/select";
 import type { AvailabilityOverride } from "@/lib/availability";
+import { ADMIN_LOCALE } from "@/lib/admin/labels";
 import { formatDateKey } from "@/lib/time";
 
 const initial: ActionState = { ok: true };
@@ -44,32 +45,32 @@ export function OverrideForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm">Lägg till undantag</CardTitle>
+        <CardTitle className="text-sm">Add an exception</CardTitle>
       </CardHeader>
       <CardContent>
         <ActionToast state={state} />
         <form action={formAction} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="kind">Typ</Label>
+            <Label htmlFor="kind">Type</Label>
             <Select name="kind" value={kind} onValueChange={setKind}>
               <SelectTrigger id="kind">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="block">Stäng tid</SelectItem>
-                <SelectItem value="open">Öppna extra tid</SelectItem>
+                <SelectItem value="block">Close time</SelectItem>
+                <SelectItem value="open">Open extra time</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
               {kind === "block"
-                ? "Semester, sjukdom eller en enskild timme du behöver för dig själv."
-                : "Öppnar tid som annars är stängd, till exempel en lördag."}
+                ? "Holiday, illness, or a single hour you need for yourself."
+                : "Opens time that is normally closed, such as a Saturday."}
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="date">Från datum</Label>
+              <Label htmlFor="date">From date</Label>
               <Input
                 id="date"
                 name="date"
@@ -79,7 +80,7 @@ export function OverrideForm({
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="endDate">Till datum (valfritt)</Label>
+              <Label htmlFor="endDate">To date (optional)</Label>
               <Input id="endDate" name="endDate" type="date" />
             </div>
           </div>
@@ -92,13 +93,13 @@ export function OverrideForm({
               onChange={(event) => setWholeDay(event.target.checked)}
               className="size-4 accent-[var(--primary)]"
             />
-            Hela dagen
+            All day
           </label>
 
           {!wholeDay && (
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="startTime">Från kl</Label>
+                <Label htmlFor="startTime">From</Label>
                 <Input
                   id="startTime"
                   name="startTime"
@@ -108,7 +109,7 @@ export function OverrideForm({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="endTime">Till kl</Label>
+                <Label htmlFor="endTime">To</Label>
                 <Input
                   id="endTime"
                   name="endTime"
@@ -121,11 +122,11 @@ export function OverrideForm({
           )}
 
           <div className="space-y-1.5">
-            <Label htmlFor="note">Notering (valfritt)</Label>
-            <Input id="note" name="note" maxLength={200} placeholder="Semester" />
+            <Label htmlFor="note">Note (optional)</Label>
+            <Input id="note" name="note" maxLength={200} placeholder="Holiday" />
           </div>
 
-          <SubmitButton className="w-full">Spara undantag</SubmitButton>
+          <SubmitButton className="w-full">Save exception</SubmitButton>
         </form>
       </CardContent>
     </Card>
@@ -144,7 +145,7 @@ export function OverrideList({
   if (overrides.length === 0) {
     return (
       <p className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-        Inga undantag. Ordinarie öppettider gäller.
+        No exceptions. Regular opening hours apply.
       </p>
     );
   }
@@ -167,17 +168,17 @@ export function OverrideList({
                   : "border-emerald-500/40 bg-emerald-500/15 text-emerald-200"
               }`}
             >
-              {override.kind === "block" ? "Stängt" : "Extra"}
+              {override.kind === "block" ? "Closed" : "Extra"}
             </span>
 
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium">
-                {formatDateKey(override.override_date, "sv")}
+                {formatDateKey(override.override_date, ADMIN_LOCALE)}
               </p>
               <p className="text-xs text-muted-foreground">
                 {override.start_time && override.end_time
                   ? `${override.start_time}–${override.end_time}`
-                  : "Hela dagen"}
+                  : "All day"}
                 {override.note ? ` · ${override.note}` : ""}
               </p>
             </div>
@@ -188,7 +189,7 @@ export function OverrideList({
                 variant="ghost"
                 size="icon"
                 pendingLabel="…"
-                aria-label="Ta bort"
+                aria-label="Delete"
               >
                 <Trash2Icon className="size-4" />
               </SubmitButton>

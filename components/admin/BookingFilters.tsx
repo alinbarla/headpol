@@ -52,7 +52,7 @@ export function BookingFilters({
         <Input
           value={value}
           onChange={(event) => setValue(event.target.value)}
-          placeholder="Sök namn, telefon, e-post eller adress"
+          placeholder="Search name, phone, email or address"
           className="pl-9"
           type="search"
           inputMode="search"
@@ -61,10 +61,10 @@ export function BookingFilters({
 
       <Select value={status} onValueChange={changeStatus}>
         <SelectTrigger className="sm:w-52">
-          <SelectValue placeholder="Alla statusar" />
+          <SelectValue placeholder="All statuses" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">Alla statusar</SelectItem>
+          <SelectItem value="all">All statuses</SelectItem>
           {Object.entries(BOOKING_STATUS_LABELS).map(([key, label]) => (
             <SelectItem key={key} value={key}>
               {label}

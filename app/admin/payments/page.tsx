@@ -58,59 +58,59 @@ export default async function PaymentsPage({
     <AdminShell>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Betalningar</h1>
+          <h1 className="text-2xl font-bold">Payments</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {from} till {to}
+            {from} to {to}
           </p>
         </div>
         <Button asChild variant="outline" size="sm">
           <a href={`/api/admin/export?from=${from}&to=${to}`}>
             <DownloadIcon className="size-4" />
-            Exportera CSV
+            Export CSV
           </a>
         </Button>
       </div>
 
       <form className="mt-4 flex flex-wrap items-end gap-2" method="get">
         <label className="text-xs text-muted-foreground">
-          Från
+          From
           <input
             type="date"
             name="from"
             defaultValue={from}
-            className="mt-1 block h-9 rounded-md border border-input bg-transparent px-3 text-sm text-foreground"
+            className="mt-1 block h-9 rounded-md border border-input bg-transparent px-3 text-base text-foreground md:text-sm"
           />
         </label>
         <label className="text-xs text-muted-foreground">
-          Till
+          To
           <input
             type="date"
             name="to"
             defaultValue={to}
-            className="mt-1 block h-9 rounded-md border border-input bg-transparent px-3 text-sm text-foreground"
+            className="mt-1 block h-9 rounded-md border border-input bg-transparent px-3 text-base text-foreground md:text-sm"
           />
         </label>
         <Button type="submit" variant="secondary" size="sm">
-          Visa
+          Show
         </Button>
       </form>
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <Stat label="Inbetalt" value={formatOre(paidOre)} />
-        <Stat label="Återbetalt" value={`−${formatOre(refundedOre)}`} />
-        <Stat label="Netto" value={formatOre(paidOre - refundedOre)} />
+        <Stat label="Received" value={formatOre(paidOre)} />
+        <Stat label="Refunded" value={`−${formatOre(refundedOre)}`} />
+        <Stat label="Net" value={formatOre(paidOre - refundedOre)} />
       </div>
 
       <div className="mt-6 overflow-x-auto rounded-xl border border-border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Datum</TableHead>
-              <TableHead>Kund</TableHead>
-              <TableHead>Bokning</TableHead>
-              <TableHead>Metod</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Booking</TableHead>
+              <TableHead>Method</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-right">Belopp</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -120,7 +120,7 @@ export default async function PaymentsPage({
                   colSpan={6}
                   className="py-8 text-center text-muted-foreground"
                 >
-                  Inga betalningar i perioden.
+                  No payments in this period.
                 </TableCell>
               </TableRow>
             )}
@@ -153,16 +153,16 @@ export default async function PaymentsPage({
       {refunds.length > 0 && (
         <>
           <h2 className="mt-8 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-            Återbetalningar
+            Refunds
           </h2>
           <div className="mt-3 overflow-x-auto rounded-xl border border-border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Datum</TableHead>
-                  <TableHead>Anledning</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Reason</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Belopp</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

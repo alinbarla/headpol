@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AlertTriangleIcon, PlusIcon } from "lucide-react";
 import { requireAdmin } from "@/lib/admin/auth";
 import { getDashboardData } from "@/lib/admin/data";
+import { ADMIN_LOCALE } from "@/lib/admin/labels";
 import { formatOre } from "@/lib/booking";
 import { formatDateKey } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -18,34 +19,34 @@ export default async function AdminTodayPage() {
     <AdminShell>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Idag</h1>
+          <h1 className="text-2xl font-bold">Today</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {formatDateKey(data.today, "sv")}
+            {formatDateKey(data.today, ADMIN_LOCALE)}
           </p>
         </div>
         <Button asChild size="sm">
           <Link href="/admin/bookings/new">
             <PlusIcon className="size-4" />
-            Ny bokning
+            New booking
           </Link>
         </Button>
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Stat label="Jobb idag" value={String(data.todayBookings.length)} />
-        <Stat label="Imorgon" value={String(data.tomorrowBookings.length)} />
-        <Stat label="Betalt 7 dagar" value={formatOre(data.weekRevenueOre)} />
-        <Stat label="Betalt denna månad" value={formatOre(data.monthRevenueOre)} />
+        <Stat label="Jobs today" value={String(data.todayBookings.length)} />
+        <Stat label="Tomorrow" value={String(data.tomorrowBookings.length)} />
+        <Stat label="Paid, 7 days" value={formatOre(data.weekRevenueOre)} />
+        <Stat label="Paid this month" value={formatOre(data.monthRevenueOre)} />
       </div>
 
       {data.needsAttention.length > 0 && (
         <section className="mt-8">
           <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-amber-300">
             <AlertTriangleIcon className="size-4" />
-            Behöver åtgärd
+            Needs attention
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Bokningar som fortfarande är obekräftade trots att datumet passerat.
+            Bookings still unconfirmed even though the date has passed.
           </p>
           <div className="mt-3 space-y-3">
             {data.needsAttention.map((booking) => (
@@ -56,14 +57,14 @@ export default async function AdminTodayPage() {
       )}
 
       <DaySection
-        title="Dagens jobb"
-        emptyLabel="Inga bokningar idag."
+        title="Today's jobs"
+        emptyLabel="No bookings today."
         bookings={data.todayBookings}
       />
 
       <DaySection
-        title={`Imorgon · ${formatDateKey(data.tomorrow, "sv")}`}
-        emptyLabel="Inga bokningar imorgon."
+        title={`Tomorrow · ${formatDateKey(data.tomorrow, ADMIN_LOCALE)}`}
+        emptyLabel="No bookings tomorrow."
         bookings={data.tomorrowBookings}
       />
     </AdminShell>

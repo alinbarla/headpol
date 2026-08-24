@@ -20,13 +20,13 @@ export default async function NewBookingPage() {
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeftIcon className="size-4" />
-        Alla bokningar
+        All bookings
       </Link>
 
-      <h1 className="mt-4 text-2xl font-bold">Ny bokning</h1>
+      <h1 className="mt-4 text-2xl font-bold">New booking</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        För bokningar som kommer in via telefon eller på plats. Tiden bekräftas
-        direkt.
+        For bookings taken by phone or in person. The slot is confirmed
+        immediately.
       </p>
 
       <div className="mt-6 max-w-xl">

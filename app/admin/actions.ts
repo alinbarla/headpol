@@ -29,9 +29,9 @@ function fail(message: string): ActionState {
   return { ok: false, message };
 }
 
-const dateKey = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Ogiltigt datum");
-const timeKey = z.string().regex(/^\d{2}:\d{2}$/, "Ogiltig tid");
-const uuid = z.uuid("Ogiltigt id");
+const dateKey = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date");
+const timeKey = z.string().regex(/^\d{2}:\d{2}$/, "Invalid time");
+const uuid = z.uuid("Invalid id");
 
 function refreshAdmin(bookingId?: string) {
   revalidatePath("/admin");
@@ -61,18 +61,18 @@ export async function loginAction(
   formData: FormData
 ): Promise<ActionState> {
   const parsed = loginSchema.safeParse({ pin: formData.get("pin") });
-  if (!parsed.success) return fail("Ange din PIN-kod");
+  if (!parsed.success) return fail("Enter your PIN");
 
   const result = await login(parsed.data.pin);
 
   if (!result.ok) {
     if (result.reason === "locked") {
-      return fail("För många försök. Vänta 15 minuter och försök igen.");
+      return fail("Too many attempts. Wait 15 minutes and try again.");
     }
     if (result.reason === "misconfigured") {
-      return fail("Inloggning är inte konfigurerad. Kontrollera miljövariabler.");
+      return fail("Sign-in is not configured. Check the environment variables.");
     }
-    return fail("Fel PIN-kod");
+    return fail("Wrong PIN");
   }
 
   redirect("/admin");
@@ -148,7 +148,7 @@ export async function createBookingAction(
     .single();
 
   if (error) {
-    if (error.code === "23505") return fail("Tiden är redan bokad");
+    if (error.code === "23505") return fail("That slot is already booked");
     return fail(error.message);
   }
 
@@ -174,12 +174,12 @@ export async function createBookingAction(
     const linkResult = await issuePaymentLink(bookingId);
     refreshAdmin(bookingId);
     return linkResult.ok
-      ? { ok: true, message: "Bokning skapad och betallänk skickad" }
-      : { ok: true, message: `Bokning skapad, men betallänk misslyckades` };
+      ? { ok: true, message: "Booking created and payment link sent" }
+      : { ok: true, message: "Booking created, but the payment link failed" };
   }
 
   refreshAdmin(bookingId);
-  return { ok: true, message: "Bokning skapad" };
+  return { ok: true, message: "Booking created" };
 }
 
 const rescheduleSchema = z.object({
@@ -226,12 +226,12 @@ export async function rescheduleBooking(input: {
   if (!parsed.success) return fail(firstIssue(parsed.error));
 
   const booking = await getBookingById(parsed.data.id);
-  if (!booking) return fail("Bokningen finns inte");
+  if (!booking) return fail("That booking does not exist");
 
   const unchanged =
     booking.booking_date === parsed.data.date &&
     fromDbTime(booking.booking_time) === parsed.data.time;
-  if (unchanged) return { ok: true, message: "Tiden är oförändrad" };
+  if (unchanged) return { ok: true, message: "The slot is unchanged" };
 
   const conflict = await slotConflict(
     parsed.data.date,
@@ -250,7 +250,7 @@ export async function rescheduleBooking(input: {
     .eq("id", parsed.data.id);
 
   if (error) {
-    if (error.code === "23505") return fail("Tiden är redan bokad");
+    if (error.code === "23505") return fail("That slot is already booked");
     return fail(error.message);
   }
 
@@ -276,7 +276,7 @@ export async function rescheduleBooking(input: {
   }
 
   refreshAdmin(parsed.data.id);
-  return { ok: true, message: "Bokningen är flyttad" };
+  return { ok: true, message: "Booking moved" };
 }
 
 const cancelSchema = z.object({
@@ -302,7 +302,7 @@ export async function cancelBookingAction(
   if (!parsed.success) return fail(firstIssue(parsed.error));
 
   const booking = await getBookingById(parsed.data.id);
-  if (!booking) return fail("Bokningen finns inte");
+  if (!booking) return fail("That booking does not exist");
 
   const supabase = getSupabaseAdminClient();
   const { error } = await supabase
@@ -328,11 +328,11 @@ export async function cancelBookingAction(
     const result = await refundBooking({
       bookingId: parsed.data.id,
       amountOre: booking.price_ore,
-      reason: parsed.data.reason ?? "Avbokad",
+      reason: parsed.data.reason ?? "Cancelled",
     });
     refundNote = result.ok
-      ? " och återbetalning påbörjad"
-      : ` (återbetalning misslyckades: ${result.message})`;
+      ? " and a refund has been started"
+      : ` (refund failed: ${result.message})`;
   }
 
   if (parsed.data.notify && booking.customer_email) {
@@ -347,7 +347,7 @@ export async function cancelBookingAction(
   }
 
   refreshAdmin(parsed.data.id);
-  return { ok: true, message: `Bokningen är avbokad${refundNote}` };
+  return { ok: true, message: `Booking cancelled${refundNote}` };
 }
 
 const statusSchema = z.object({
@@ -383,7 +383,7 @@ export async function setBookingStatusAction(
   });
 
   refreshAdmin(parsed.data.id);
-  return { ok: true, message: "Status uppdaterad" };
+  return { ok: true, message: "Status updated" };
 }
 
 const notesSchema = z.object({
@@ -418,7 +418,7 @@ export async function updateNotesAction(
   });
 
   refreshAdmin(parsed.data.id);
-  return { ok: true, message: "Anteckning sparad" };
+  return { ok: true, message: "Note saved" };
 }
 
 // -- Payments ---------------------------------------------------------------
@@ -472,7 +472,7 @@ export async function markPaidOnSiteAction(
   });
 
   refreshAdmin(parsed.data.id);
-  return { ok: true, message: "Betalning registrerad" };
+  return { ok: true, message: "Payment recorded" };
 }
 
 export async function sendPaymentLinkAction(
@@ -490,11 +490,11 @@ export async function sendPaymentLinkAction(
 }
 
 async function issuePaymentLink(bookingId: string): Promise<ActionState> {
-  if (!isStripeConfigured()) return fail("Stripe är inte konfigurerat");
+  if (!isStripeConfigured()) return fail("Stripe is not configured");
 
   const booking = await getBookingById(bookingId);
-  if (!booking) return fail("Bokningen finns inte");
-  if (!booking.customer_email) return fail("Bokningen saknar e-postadress");
+  if (!booking) return fail("That booking does not exist");
+  if (!booking.customer_email) return fail("That booking has no email address");
 
   const session = await createBookingCheckoutSession({
     bookingId,
@@ -508,7 +508,7 @@ async function issuePaymentLink(bookingId: string): Promise<ActionState> {
     holdMinutes: 60 * 24,
   });
 
-  if (!session) return fail("Kunde inte skapa betallänk");
+  if (!session) return fail("Could not create a payment link");
 
   const supabase = getSupabaseAdminClient();
   const { error } = await supabase.from("payments").insert({
@@ -545,13 +545,13 @@ async function issuePaymentLink(bookingId: string): Promise<ActionState> {
     details: { amountOre: booking.price_ore },
   });
 
-  return { ok: true, message: "Betallänk skickad" };
+  return { ok: true, message: "Payment link sent" };
 }
 
 const refundSchema = z.object({
   id: uuid,
   amountOre: z.coerce.number().int().min(1).max(10_000_000),
-  reason: z.string().trim().min(3, "Ange en anledning").max(500),
+  reason: z.string().trim().min(3, "Give a reason").max(500),
 });
 
 export async function refundAction(
@@ -591,12 +591,12 @@ async function refundBooking(input: {
   );
 
   if (!paid?.stripe_payment_intent_id) {
-    return fail("Ingen Stripe-betalning att återbetala");
+    return fail("No Stripe payment to refund");
   }
 
   const alreadyRefunded = await sumSucceededRefunds(paid.id);
   if (input.amountOre + alreadyRefunded > paid.amount_ore) {
-    return fail("Beloppet överstiger det som är betalt");
+    return fail("The amount is more than what was paid");
   }
 
   const refund = await createRefund({
@@ -606,7 +606,7 @@ async function refundBooking(input: {
     reason: input.reason,
   });
 
-  if (!refund) return fail("Stripe nekade återbetalningen");
+  if (!refund) return fail("Stripe declined the refund");
 
   const status = mapRefundStatus(refund.status);
   const supabase = getSupabaseAdminClient();
@@ -638,8 +638,8 @@ async function refundBooking(input: {
     ok: true,
     message:
       status === "succeeded"
-        ? "Återbetalning genomförd"
-        : "Återbetalning påbörjad, bekräftas av Stripe",
+        ? "Refund completed"
+        : "Refund started, Stripe will confirm it",
   };
 }
 
@@ -675,7 +675,7 @@ const overrideSchema = z
       (Boolean(value.startTime) &&
         Boolean(value.endTime) &&
         value.startTime! < value.endTime!),
-    { message: "Sluttiden måste vara efter starttiden" }
+    { message: "The end time must be after the start time" }
   );
 
 export async function createOverrideAction(
@@ -729,8 +729,8 @@ export async function createOverrideAction(
     ok: true,
     message:
       rows.length > 1
-        ? `${rows.length} dagar uppdaterade`
-        : "Undantaget är sparat",
+        ? `${rows.length} days updated`
+        : "Exception saved",
   };
 }
 
@@ -757,21 +757,21 @@ export async function deleteOverrideAction(
   });
 
   refreshAdmin();
-  return { ok: true, message: "Undantaget är borttaget" };
+  return { ok: true, message: "Exception deleted" };
 }
 
 // -- Settings ---------------------------------------------------------------
 
 const rulesSchema = z
   .object({
-    weekdays: z.array(z.coerce.number().int().min(0).max(6)).min(1, "Välj minst en dag"),
+    weekdays: z.array(z.coerce.number().int().min(0).max(6)).min(1, "Pick at least one day"),
     startHour: z.coerce.number().int().min(0).max(23),
     endHour: z.coerce.number().int().min(1).max(24),
     horizonDays: z.coerce.number().int().min(1).max(365),
     priceOre: z.coerce.number().int().min(0).max(10_000_000),
   })
   .refine((value) => value.endHour > value.startHour, {
-    message: "Stängningstiden måste vara efter öppningstiden",
+    message: "The closing time must be after the opening time",
   });
 
 export async function updateRulesAction(
@@ -806,7 +806,7 @@ export async function updateRulesAction(
 
   revalidatePath("/admin/settings");
   refreshAdmin();
-  return { ok: true, message: "Inställningarna är sparade" };
+  return { ok: true, message: "Settings saved" };
 }
 
 // -- Shared helpers ---------------------------------------------------------
@@ -833,7 +833,7 @@ async function slotConflict(
   if (ignoreBookingId) request = request.neq("id", ignoreBookingId);
 
   const { data } = await request;
-  return (data ?? []).length > 0 ? "Tiden är redan bokad" : null;
+  return (data ?? []).length > 0 ? "That slot is already booked" : null;
 }
 
 /** Used by the new-booking form to warn about times outside the schedule. */

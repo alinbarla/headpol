@@ -4,50 +4,57 @@ import type {
   PaymentStatus,
 } from "@/lib/supabase/server";
 
+/**
+ * The admin is English-only, unlike the customer-facing site. en-GB keeps the
+ * day-before-month ordering and Monday-first weeks the shop actually works to.
+ */
+export const ADMIN_LOCALE = "en";
+export const ADMIN_INTL_LOCALE = "en-GB";
+
 export const BOOKING_STATUS_LABELS: Record<BookingStatus, string> = {
-  pending: "Ej bekräftad",
-  confirmed: "Bekräftad",
-  completed: "Utförd",
-  cancelled: "Avbokad",
-  no_show: "Uteblev",
-  expired: "Förfallen",
+  pending: "Unconfirmed",
+  confirmed: "Confirmed",
+  completed: "Completed",
+  cancelled: "Cancelled",
+  no_show: "No-show",
+  expired: "Expired",
 };
 
 export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
-  unpaid: "Obetald",
-  awaiting_payment: "Väntar på betalning",
-  paid: "Betald",
-  refunded: "Återbetald",
-  partially_refunded: "Delvis återbetald",
+  unpaid: "Unpaid",
+  awaiting_payment: "Awaiting payment",
+  paid: "Paid",
+  refunded: "Refunded",
+  partially_refunded: "Partially refunded",
 };
 
 export const SOURCE_LABELS: Record<BookingSource, string> = {
-  web: "Webb",
-  phone: "Telefon",
-  walk_in: "Drop-in",
+  web: "Web",
+  phone: "Phone",
+  walk_in: "Walk-in",
   admin: "Admin",
 };
 
 export const PAYMENT_METHOD_LABELS: Record<string, string> = {
-  card: "Kort",
+  card: "Card",
   swish: "Swish",
   klarna: "Klarna",
-  cash: "Kontant",
-  swish_manual: "Swish (manuell)",
-  card_manual: "Kort (manuell)",
+  cash: "Cash",
+  swish_manual: "Swish (manual)",
+  card_manual: "Card (manual)",
 };
 
 export const WEEKDAY_LABELS = [
-  "Söndag",
-  "Måndag",
-  "Tisdag",
-  "Onsdag",
-  "Torsdag",
-  "Fredag",
-  "Lördag",
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
 ];
 
-/** Monday-first ordering for the settings form, matching Swedish convention. */
+/** Monday-first ordering, matching the Swedish working week the shop runs on. */
 export const WEEKDAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
 
 export function paymentMethodLabel(method: string | null): string {

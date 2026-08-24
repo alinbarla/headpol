@@ -10,7 +10,7 @@ type ButtonProps = React.ComponentProps<typeof Button>;
 
 export function SubmitButton({
   children,
-  pendingLabel = "Sparar…",
+  pendingLabel = "Saving…",
   ...props
 }: ButtonProps & { pendingLabel?: string }) {
   const { pending } = useFormStatus();

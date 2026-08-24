@@ -35,7 +35,7 @@ export function RescheduleCard({ booking }: { booking: BookingRecord }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm">Flytta bokningen</CardTitle>
+        <CardTitle className="text-sm">Reschedule</CardTitle>
       </CardHeader>
       <CardContent>
         <ActionToast state={state} />
@@ -43,7 +43,7 @@ export function RescheduleCard({ booking }: { booking: BookingRecord }) {
           <input type="hidden" name="id" value={booking.id} />
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="reschedule-date">Datum</Label>
+              <Label htmlFor="reschedule-date">Date</Label>
               <Input
                 id="reschedule-date"
                 name="date"
@@ -53,7 +53,7 @@ export function RescheduleCard({ booking }: { booking: BookingRecord }) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="reschedule-time">Tid</Label>
+              <Label htmlFor="reschedule-time">Time</Label>
               <Input
                 id="reschedule-time"
                 name="time"
@@ -65,8 +65,8 @@ export function RescheduleCard({ booking }: { booking: BookingRecord }) {
             </div>
           </div>
           <NotifyToggle id="reschedule-notify" />
-          <SubmitButton className="w-full" pendingLabel="Flyttar…">
-            Flytta
+          <SubmitButton className="w-full" pendingLabel="Moving…">
+            Move booking
           </SubmitButton>
         </form>
       </CardContent>
@@ -78,10 +78,10 @@ export function StatusCard({ booking }: { booking: BookingRecord }) {
   const [state, formAction] = useActionState(setBookingStatusAction, initial);
 
   const options: Array<{ value: string; label: string }> = [
-    { value: "confirmed", label: "Bekräftad" },
-    { value: "completed", label: "Utförd" },
-    { value: "no_show", label: "Uteblev" },
-    { value: "pending", label: "Ej bekräftad" },
+    { value: "confirmed", label: "Confirmed" },
+    { value: "completed", label: "Completed" },
+    { value: "no_show", label: "No-show" },
+    { value: "pending", label: "Unconfirmed" },
   ];
 
   return (
@@ -119,19 +119,19 @@ export function CancelCard({ booking }: { booking: BookingRecord }) {
   return (
     <Card className="border-destructive/30">
       <CardHeader>
-        <CardTitle className="text-sm text-destructive">Avboka</CardTitle>
+        <CardTitle className="text-sm text-destructive">Cancel</CardTitle>
       </CardHeader>
       <CardContent>
         <ActionToast state={state} />
         <form action={formAction} className="space-y-3">
           <input type="hidden" name="id" value={booking.id} />
           <div className="space-y-1.5">
-            <Label htmlFor="cancel-reason">Anledning</Label>
+            <Label htmlFor="cancel-reason">Reason</Label>
             <Input
               id="cancel-reason"
               name="reason"
               maxLength={500}
-              placeholder="Kunden ombokade, regn, sjukdom…"
+              placeholder="Customer rebooked, rain, illness…"
             />
           </div>
           <NotifyToggle id="cancel-notify" />
@@ -143,15 +143,15 @@ export function CancelCard({ booking }: { booking: BookingRecord }) {
                 defaultChecked
                 className="size-4 accent-[var(--primary)]"
               />
-              Återbetala {formatOre(booking.price_ore)} samtidigt
+              Refund {formatOre(booking.price_ore)} at the same time
             </label>
           )}
           <SubmitButton
             variant="destructive"
             className="w-full"
-            pendingLabel="Avbokar…"
+            pendingLabel="Cancelling…"
           >
-            Avboka bokningen
+            Cancel booking
           </SubmitButton>
         </form>
       </CardContent>
@@ -165,7 +165,7 @@ export function NotesCard({ booking }: { booking: BookingRecord }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm">Interna anteckningar</CardTitle>
+        <CardTitle className="text-sm">Internal notes</CardTitle>
       </CardHeader>
       <CardContent>
         <ActionToast state={state} />
@@ -176,10 +176,10 @@ export function NotesCard({ booking }: { booking: BookingRecord }) {
             rows={4}
             maxLength={2000}
             defaultValue={booking.internal_notes ?? ""}
-            placeholder="Portkod, bilmodell, var bilen står, kundens önskemål…"
+            placeholder="Door code, car model, where the car is parked, customer requests…"
           />
           <SubmitButton variant="outline" className="w-full">
-            Spara anteckning
+            Save note
           </SubmitButton>
         </form>
       </CardContent>
@@ -211,7 +211,7 @@ export function PaymentCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm">Betalning</CardTitle>
+        <CardTitle className="text-sm">Payment</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <ActionToast state={manualState} />
@@ -227,10 +227,10 @@ export function PaymentCard({
               value={String(booking.price_ore)}
             />
             <div className="space-y-1.5">
-              <Label htmlFor="paid-method">Registrera betalning manuellt</Label>
+              <Label htmlFor="paid-method">Record payment manually</Label>
               <p className="text-xs text-muted-foreground">
-                Webbokningar betalas alltid i förväg. Använd det här bara för
-                telefonbokningar som betalats utanför Stripe.
+                Web bookings are always prepaid. Use this only for phone
+                bookings settled outside Stripe.
               </p>
               <Select name="method" defaultValue="swish_manual">
                 <SelectTrigger id="paid-method">
@@ -238,13 +238,13 @@ export function PaymentCard({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="swish_manual">Swish</SelectItem>
-                  <SelectItem value="cash">Kontant</SelectItem>
-                  <SelectItem value="card_manual">Kortterminal</SelectItem>
+                  <SelectItem value="cash">Cash</SelectItem>
+                  <SelectItem value="card_manual">Card terminal</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <SubmitButton variant="outline" className="w-full">
-              Markera som betald ({formatOre(booking.price_ore)})
+              Mark as paid ({formatOre(booking.price_ore)})
             </SubmitButton>
           </form>
         )}
@@ -255,9 +255,9 @@ export function PaymentCard({
             <SubmitButton
               variant="secondary"
               className="w-full"
-              pendingLabel="Skickar…"
+              pendingLabel="Sending…"
             >
-              Skicka betallänk till {booking.customer_email}
+              Send payment link to {booking.customer_email}
             </SubmitButton>
           </form>
         )}
@@ -268,7 +268,7 @@ export function PaymentCard({
               <form action={refundAct} className="space-y-3">
                 <input type="hidden" name="id" value={booking.id} />
                 <div className="space-y-1.5">
-                  <Label htmlFor="refund-amount">Belopp i öre</Label>
+                  <Label htmlFor="refund-amount">Amount in öre</Label>
                   <Input
                     id="refund-amount"
                     name="amountOre"
@@ -284,7 +284,7 @@ export function PaymentCard({
                   </p>
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="refund-reason">Anledning (krävs)</Label>
+                  <Label htmlFor="refund-reason">Reason (required)</Label>
                   <Input
                     id="refund-reason"
                     name="reason"
@@ -297,16 +297,16 @@ export function PaymentCard({
                   <SubmitButton
                     variant="destructive"
                     className="flex-1"
-                    pendingLabel="Återbetalar…"
+                    pendingLabel="Refunding…"
                   >
-                    Återbetala
+                    Refund
                   </SubmitButton>
                   <Button
                     type="button"
                     variant="ghost"
                     onClick={() => setShowRefund(false)}
                   >
-                    Avbryt
+                    Cancel
                   </Button>
                 </div>
               </form>
@@ -317,7 +317,7 @@ export function PaymentCard({
                 className="w-full"
                 onClick={() => setShowRefund(true)}
               >
-                Återbetala (upp till {formatOre(refundableOre)})
+                Refund (up to {formatOre(refundableOre)})
               </Button>
             )}
           </div>
@@ -337,7 +337,7 @@ function NotifyToggle({ id }: { id: string }) {
         defaultChecked
         className="size-4 accent-[var(--primary)]"
       />
-      Meddela kunden via e-post
+      Notify the customer by email
     </label>
   );
 }

@@ -30,7 +30,7 @@ export const viewport: Viewport = {
  */
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="sv" className={`${publicSans.variable} h-full`}>
+    <html lang="en" className={`${publicSans.variable} h-full`}>
       <body className="admin-root min-h-full font-[family-name:var(--font-public)] antialiased">
         {children}
         <Toaster position="top-center" richColors />

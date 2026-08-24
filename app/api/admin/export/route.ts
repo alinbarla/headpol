@@ -30,25 +30,25 @@ export async function GET(request: Request) {
 
   const rows: string[][] = [
     [
-      "typ",
-      "datum",
-      "bokningsdatum",
-      "bokningstid",
-      "kund",
-      "epost",
-      "metod",
+      "type",
+      "date",
+      "booking_date",
+      "booking_time",
+      "customer",
+      "email",
+      "method",
       "status",
-      "belopp_ore",
-      "belopp_sek",
-      "moms_ore",
+      "amount_ore",
+      "amount_sek",
+      "vat_ore",
       "stripe_id",
-      "anledning",
+      "reason",
     ],
   ];
 
   for (const payment of payments) {
     rows.push([
-      "betalning",
+      "payment",
       payment.created_at.slice(0, 10),
       payment.booking?.booking_date ?? "",
       payment.booking ? fromDbTime(payment.booking.booking_time) : "",
@@ -67,7 +67,7 @@ export async function GET(request: Request) {
 
   for (const refund of refunds) {
     rows.push([
-      "återbetalning",
+      "refund",
       refund.created_at.slice(0, 10),
       "",
       "",
@@ -94,7 +94,7 @@ export async function GET(request: Request) {
   return new Response(`\uFEFF${csv}`, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="betalningar-${from}-${to}.csv"`,
+      "Content-Disposition": `attachment; filename="payments-${from}-${to}.csv"`,
       "Cache-Control": "no-store",
     },
   });

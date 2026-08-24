@@ -40,7 +40,7 @@ export function NewBookingForm({
         <form action={formAction} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="date">Datum</Label>
+              <Label htmlFor="date">Date</Label>
               <Input
                 id="date"
                 name="date"
@@ -50,7 +50,7 @@ export function NewBookingForm({
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="time">Tid</Label>
+              <Label htmlFor="time">Time</Label>
               <Input
                 id="time"
                 name="time"
@@ -63,12 +63,12 @@ export function NewBookingForm({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="name">Namn</Label>
+            <Label htmlFor="name">Name</Label>
             <Input id="name" name="name" required minLength={2} maxLength={80} />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="phone">Telefon</Label>
+            <Label htmlFor="phone">Phone</Label>
             <Input
               id="phone"
               name="phone"
@@ -80,7 +80,7 @@ export function NewBookingForm({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="email">E-post (valfritt)</Label>
+            <Label htmlFor="email">Email (optional)</Label>
             <Input
               id="email"
               name="email"
@@ -90,12 +90,12 @@ export function NewBookingForm({
               onChange={(event) => setEmail(event.target.value)}
             />
             <p className="text-xs text-muted-foreground">
-              Krävs för bekräftelse, påminnelse och betallänk.
+              Required for the confirmation, reminder and payment link.
             </p>
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="address">Adress</Label>
+            <Label htmlFor="address">Address</Label>
             <Textarea
               id="address"
               name="address"
@@ -103,40 +103,40 @@ export function NewBookingForm({
               rows={2}
               minLength={4}
               maxLength={200}
-              placeholder="Gata 12, 123 45 Stockholm"
+              placeholder="Street 12, 123 45 Stockholm"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="source">Kanal</Label>
+              <Label htmlFor="source">Channel</Label>
               <Select name="source" defaultValue="phone">
                 <SelectTrigger id="source">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="phone">Telefon</SelectItem>
-                  <SelectItem value="walk_in">Drop-in</SelectItem>
+                  <SelectItem value="phone">Phone</SelectItem>
+                  <SelectItem value="walk_in">Walk-in</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="locale">Språk</Label>
+              <Label htmlFor="locale">Customer language</Label>
               <Select name="locale" defaultValue="sv">
                 <SelectTrigger id="locale">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="sv">Svenska</SelectItem>
-                  <SelectItem value="en">Engelska</SelectItem>
+                  <SelectItem value="sv">Swedish</SelectItem>
+                  <SelectItem value="en">English</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="priceOre">Pris i öre</Label>
+            <Label htmlFor="priceOre">Price in öre</Label>
             <Input
               id="priceOre"
               name="priceOre"
@@ -153,13 +153,13 @@ export function NewBookingForm({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="notes">Interna anteckningar</Label>
+            <Label htmlFor="notes">Internal notes</Label>
             <Textarea
               id="notes"
               name="notes"
               rows={3}
               maxLength={2000}
-              placeholder="Portkod, bilmodell, var bilen står…"
+              placeholder="Door code, car model, where the car is parked…"
             />
           </div>
 
@@ -173,18 +173,18 @@ export function NewBookingForm({
                 className="mt-0.5 size-4 accent-[var(--primary)] disabled:opacity-40"
               />
               <span>
-                Skicka betallänk direkt
+                Send a payment link now
                 {!email && (
                   <span className="block text-xs text-muted-foreground">
-                    Kräver en e-postadress.
+                    Requires an email address.
                   </span>
                 )}
               </span>
             </label>
           )}
 
-          <SubmitButton className="w-full" pendingLabel="Skapar…">
-            Skapa bokning
+          <SubmitButton className="w-full" pendingLabel="Creating…">
+            Create booking
           </SubmitButton>
         </form>
       </CardContent>

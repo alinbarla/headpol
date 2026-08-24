@@ -68,15 +68,15 @@ export default async function BookingsPage({
     <AdminShell>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Bokningar</h1>
+          <h1 className="text-2xl font-bold">Bookings</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {total} träffar. Sök på namn, telefon, e-post eller adress.
+            {total} results. Search by name, phone, email or address.
           </p>
         </div>
         <Button asChild size="sm">
           <Link href="/admin/bookings/new">
             <PlusIcon className="size-4" />
-            Ny
+            New
           </Link>
         </Button>
       </div>
@@ -85,7 +85,7 @@ export default async function BookingsPage({
 
       {rows.length === 0 ? (
         <p className="mt-6 rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          Inga bokningar matchar sökningen.
+          No bookings match this search.
         </p>
       ) : (
         <ul className="mt-4 divide-y divide-border overflow-hidden rounded-xl border border-border">
@@ -106,7 +106,7 @@ export default async function BookingsPage({
 
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">
-                    {booking.customer_name ?? "Utan namn"}
+                    {booking.customer_name ?? "No name"}
                   </p>
                   <p className="truncate text-xs text-muted-foreground">
                     {booking.customer_phone ?? booking.customer_email ?? "—"}
@@ -148,10 +148,10 @@ export default async function BookingsPage({
             status={status}
             disabled={page <= 1}
           >
-            Föregående
+            Previous
           </PageLink>
           <span className="text-sm text-muted-foreground">
-            Sida {page} av {pageCount}
+            Page {page} of {pageCount}
           </span>
           <PageLink
             page={page + 1}
@@ -159,7 +159,7 @@ export default async function BookingsPage({
             status={status}
             disabled={page >= pageCount}
           >
-            Nästa
+            Next
           </PageLink>
         </div>
       )}

@@ -31,7 +31,7 @@ export function BookingCard({ booking }: { booking: BookingRecord }) {
             href={`/admin/bookings/${booking.id}`}
             className="mt-0.5 block truncate text-base font-medium hover:text-primary"
           >
-            {booking.customer_name ?? "Utan namn"}
+            {booking.customer_name ?? "No name"}
           </Link>
         </div>
 
@@ -76,7 +76,7 @@ export function BookingCard({ booking }: { booking: BookingRecord }) {
             className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-secondary/50 text-sm font-medium transition-colors hover:border-primary"
           >
             <PhoneIcon className="size-4" />
-            Ring
+            Call
           </a>
         )}
         {maps && (
@@ -87,14 +87,14 @@ export function BookingCard({ booking }: { booking: BookingRecord }) {
             className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-secondary/50 text-sm font-medium transition-colors hover:border-primary"
           >
             <MapPinIcon className="size-4" />
-            Navigera
+            Navigate
           </a>
         )}
         <Link
           href={`/admin/bookings/${booking.id}`}
           className="flex min-h-11 flex-1 items-center justify-center rounded-lg border border-border text-sm font-medium transition-colors hover:border-primary"
         >
-          Öppna
+          Open
         </Link>
       </div>
     </div>

@@ -24,13 +24,13 @@ export function RulesForm({ rules }: { rules: BookingRules }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm">Öppettider och pris</CardTitle>
+        <CardTitle className="text-sm">Opening hours and price</CardTitle>
       </CardHeader>
       <CardContent>
         <ActionToast state={state} />
         <form action={formAction} className="space-y-4">
           <fieldset>
-            <legend className="text-sm font-medium">Öppna dagar</legend>
+            <legend className="text-sm font-medium">Open days</legend>
             <div className="mt-2 grid grid-cols-2 gap-1.5">
               {WEEKDAY_ORDER.map((day) => (
                 <label
@@ -52,7 +52,7 @@ export function RulesForm({ rules }: { rules: BookingRules }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="startHour">Öppnar (timme)</Label>
+              <Label htmlFor="startHour">Opens (hour)</Label>
               <Input
                 id="startHour"
                 name="startHour"
@@ -64,7 +64,7 @@ export function RulesForm({ rules }: { rules: BookingRules }) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="endHour">Stänger (timme)</Label>
+              <Label htmlFor="endHour">Closes (hour)</Label>
               <Input
                 id="endHour"
                 name="endHour"
@@ -75,13 +75,13 @@ export function RulesForm({ rules }: { rules: BookingRules }) {
                 defaultValue={rules.endHour}
               />
               <p className="text-xs text-muted-foreground">
-                Sista tiden startar timmen innan.
+                The last slot starts an hour before this.
               </p>
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="horizonDays">Bokningsbart antal dagar framåt</Label>
+            <Label htmlFor="horizonDays">Days bookable ahead</Label>
             <Input
               id="horizonDays"
               name="horizonDays"
@@ -94,7 +94,7 @@ export function RulesForm({ rules }: { rules: BookingRules }) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="priceOre">Pris i öre</Label>
+            <Label htmlFor="priceOre">Price in öre</Label>
             <Input
               id="priceOre"
               name="priceOre"
@@ -106,12 +106,12 @@ export function RulesForm({ rules }: { rules: BookingRules }) {
               onChange={(event) => setPriceOre(Number(event.target.value))}
             />
             <p className="text-xs text-muted-foreground">
-              {formatOre(Number.isFinite(priceOre) ? priceOre : 0)} inklusive
-              moms.
+              {formatOre(Number.isFinite(priceOre) ? priceOre : 0)} including
+              VAT.
             </p>
           </div>
 
-          <SubmitButton className="w-full">Spara inställningar</SubmitButton>
+          <SubmitButton className="w-full">Save settings</SubmitButton>
         </form>
       </CardContent>
     </Card>

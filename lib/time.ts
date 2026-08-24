@@ -104,3 +104,23 @@ export function formatDateKey(dateKey: string, locale: string): string {
     timeZone: "UTC",
   }).format(new Date(Date.UTC(year, month - 1, day, 12, 0, 0)));
 }
+
+const stockholmTimestampFormatter = new Intl.DateTimeFormat("en-GB", {
+  timeZone: STOCKHOLM_TIME_ZONE,
+  dateStyle: "short",
+  timeStyle: "short",
+});
+
+/**
+ * Renders a stored timestamp in Stockholm time. These are `timestamptz` values
+ * read on a server running as UTC, so formatting without an explicit zone would
+ * show the owner times an hour or two off their own clock.
+ */
+export function formatTimestamp(value: string | null | undefined): string {
+  if (!value) return "—";
+
+  const instant = new Date(value);
+  if (Number.isNaN(instant.getTime())) return "—";
+
+  return stockholmTimestampFormatter.format(instant);
+}

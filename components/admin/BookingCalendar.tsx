@@ -17,6 +17,7 @@ import {
   type AvailabilityOverride,
   type BookingRules,
 } from "@/lib/availability";
+import { ADMIN_INTL_LOCALE, ADMIN_LOCALE } from "@/lib/admin/labels";
 import { formatOre, fromDbTime } from "@/lib/booking";
 import { addDaysToDateKey, formatDateKey, weekdayForDateKey } from "@/lib/time";
 import type { BookingRecord } from "@/lib/supabase/server";
@@ -42,12 +43,12 @@ type PendingMove = {
   time: string;
 };
 
-const WEEKDAY_SHORT = ["mån", "tis", "ons", "tor", "fre", "lör", "sön"];
+const WEEKDAY_SHORT = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 /**
  * Forked from a generic event manager and reworked for bookings: it is fully
  * controlled by server data (no local event state to drift out of sync),
- * Monday-first sv-SE, and its hour grid is clamped to the working day instead
+ * Monday-first, and its hour grid is clamped to the working day instead
  * of rendering all 24 hours.
  */
 export function BookingCalendar({
@@ -161,12 +162,12 @@ export function BookingCalendar({
       });
 
       if (result.ok) {
-        toast.success(result.message ?? "Bokningen är flyttad");
+        toast.success(result.message ?? "Booking moved");
         // Server data is the single source of truth, so refetch rather than
         // patching a local copy.
         router.refresh();
       } else {
-        toast.error(result.message ?? "Kunde inte flytta bokningen");
+        toast.error(result.message ?? "Could not move the booking");
       }
     });
   }
@@ -179,7 +180,7 @@ export function BookingCalendar({
             variant="outline"
             size="icon"
             onClick={() => shift(-1)}
-            aria-label="Föregående"
+            aria-label="Previous"
           >
             <ChevronLeftIcon className="size-4" />
           </Button>
@@ -187,7 +188,7 @@ export function BookingCalendar({
             variant="outline"
             size="icon"
             onClick={() => shift(1)}
-            aria-label="Nästa"
+            aria-label="Next"
           >
             <ChevronRightIcon className="size-4" />
           </Button>
@@ -196,7 +197,7 @@ export function BookingCalendar({
             size="sm"
             onClick={() => setCursor(anchorDate)}
           >
-            Idag
+            Today
           </Button>
           <span className="ml-2 text-sm font-medium">
             {rangeLabel(view, cursor)}
@@ -205,9 +206,9 @@ export function BookingCalendar({
 
         <Tabs value={view} onValueChange={(value) => setView(value as View)}>
           <TabsList>
-            <TabsTrigger value="day">Dag</TabsTrigger>
-            <TabsTrigger value="week">Vecka</TabsTrigger>
-            <TabsTrigger value="month">Månad</TabsTrigger>
+            <TabsTrigger value="day">Day</TabsTrigger>
+            <TabsTrigger value="week">Week</TabsTrigger>
+            <TabsTrigger value="month">Month</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
@@ -252,23 +253,23 @@ export function BookingCalendar({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Flytta bokningen?</AlertDialogTitle>
+            <AlertDialogTitle>Move this booking?</AlertDialogTitle>
             <AlertDialogDescription>
               {pending && (
                 <>
-                  {pending.booking.customer_name ?? "Bokningen"} flyttas från{" "}
-                  {formatDateKey(pending.booking.booking_date, "sv")} kl{" "}
-                  {fromDbTime(pending.booking.booking_time)} till{" "}
-                  {formatDateKey(pending.date, "sv")} kl {pending.time}. Kunden
-                  får ett mejl om ändringen.
+                  {pending.booking.customer_name ?? "This booking"} moves from{" "}
+                  {formatDateKey(pending.booking.booking_date, ADMIN_LOCALE)} at{" "}
+                  {fromDbTime(pending.booking.booking_time)} to{" "}
+                  {formatDateKey(pending.date, ADMIN_LOCALE)} at {pending.time}.
+                  The customer gets an email about the change.
                 </>
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Avbryt</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={confirmMove}>
-              Flytta tiden
+              Move booking
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -411,7 +412,7 @@ function BookingBlock({
       )}
     >
       <span className="block truncate font-medium">
-        {booking.customer_name ?? "Utan namn"}
+        {booking.customer_name ?? "No name"}
       </span>
       <span className="block truncate opacity-80">
         {PAYMENT_STATUS_LABELS[booking.payment_status]}
@@ -487,7 +488,7 @@ function MonthView({
                 ))}
                 {dayBookings.length > 3 && (
                   <span className="block text-[10px] text-muted-foreground">
-                    +{dayBookings.length - 3} till
+                    +{dayBookings.length - 3} more
                   </span>
                 )}
               </span>
@@ -518,7 +519,7 @@ function weekDays(cursor: string): string[] {
 }
 
 function rangeLabel(view: View, cursor: string): string {
-  if (view === "day") return formatDateKey(cursor, "sv");
+  if (view === "day") return formatDateKey(cursor, ADMIN_LOCALE);
 
   if (view === "week") {
     const start = startOfWeekKey(cursor);
@@ -527,7 +528,7 @@ function rangeLabel(view: View, cursor: string): string {
   }
 
   const [year, month] = cursor.split("-").map(Number);
-  return new Intl.DateTimeFormat("sv-SE", {
+  return new Intl.DateTimeFormat(ADMIN_INTL_LOCALE, {
     month: "long",
     year: "numeric",
     timeZone: "UTC",

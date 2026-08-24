@@ -17,16 +17,16 @@ import { Button } from "@/components/shadcn/button";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { href: "/admin", label: "Idag", icon: HomeIcon, exact: true },
-  { href: "/admin/calendar", label: "Kalender", icon: CalendarDaysIcon },
-  { href: "/admin/bookings", label: "Bokningar", icon: ListIcon },
-  { href: "/admin/payments", label: "Betalningar", icon: CreditCardIcon },
+  { href: "/admin", label: "Today", icon: HomeIcon, exact: true },
+  { href: "/admin/calendar", label: "Calendar", icon: CalendarDaysIcon },
+  { href: "/admin/bookings", label: "Bookings", icon: ListIcon },
+  { href: "/admin/payments", label: "Payments", icon: CreditCardIcon },
   {
     href: "/admin/availability",
-    label: "Tillgänglighet",
+    label: "Availability",
     icon: SlidersHorizontalIcon,
   },
-  { href: "/admin/settings", label: "Inställningar", icon: SettingsIcon },
+  { href: "/admin/settings", label: "Settings", icon: SettingsIcon },
 ];
 
 export function AdminShell({ children }: { children: ReactNode }) {
@@ -65,7 +65,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <form action={logoutAction}>
             <Button type="submit" variant="ghost" size="sm">
               <LogOutIcon className="size-4" />
-              <span className="hidden sm:inline">Logga ut</span>
+              <span className="hidden sm:inline">Log out</span>
             </Button>
           </form>
         </div>

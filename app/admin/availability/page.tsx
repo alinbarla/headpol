@@ -27,12 +27,12 @@ export default async function AvailabilityPage() {
 
   return (
     <AdminShell>
-      <h1 className="text-2xl font-bold">Tillgänglighet</h1>
+      <h1 className="text-2xl font-bold">Availability</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Ordinarie öppettider: {openDays || "inga dagar"} ·{" "}
+        Regular opening hours: {openDays || "no days"} ·{" "}
         {String(rules.startHour).padStart(2, "0")}:00–
-        {String(rules.endHour).padStart(2, "0")}:00. Ändra dem under
-        Inställningar.
+        {String(rules.endHour).padStart(2, "0")}:00. Change them under
+        Settings.
       </p>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,24rem)_1fr]">

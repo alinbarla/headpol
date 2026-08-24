@@ -18,7 +18,7 @@ export function LoginForm() {
       <CardContent className="pt-6">
         <form action={formAction} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="pin">PIN-kod</Label>
+            <Label htmlFor="pin">PIN code</Label>
             <Input
               id="pin"
               name="pin"
@@ -42,7 +42,7 @@ export function LoginForm() {
           <SubmitButton />
 
           <p className="text-center text-xs text-muted-foreground">
-            Fem felaktiga försök låser inloggningen i 15 minuter.
+            Five wrong attempts lock sign-in for 15 minutes.
           </p>
         </form>
       </CardContent>
@@ -55,7 +55,7 @@ function SubmitButton() {
 
   return (
     <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? "Loggar in…" : "Logga in"}
+      {pending ? "Signing in…" : "Sign in"}
     </Button>
   );
 }

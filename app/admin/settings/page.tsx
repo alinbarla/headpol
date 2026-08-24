@@ -2,6 +2,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { listRecentAudit } from "@/lib/admin/data";
 import { getBookingRules } from "@/lib/bookingRules";
 import { isStripeConfigured } from "@/lib/stripe";
+import { formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { RulesForm } from "@/components/admin/RulesForm";
 import {
@@ -23,9 +24,10 @@ export default async function SettingsPage() {
 
   return (
     <AdminShell>
-      <h1 className="text-2xl font-bold">Inställningar</h1>
+      <h1 className="text-2xl font-bold">Settings</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Öppettider och pris gäller nya bokningar direkt, utan ny driftsättning.
+        Opening hours and price apply to new bookings immediately, with no
+        redeploy.
       </p>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,26rem)_1fr]">
@@ -34,26 +36,26 @@ export default async function SettingsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-sm">Integrationer</CardTitle>
+              <CardTitle className="text-sm">Integrations</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
               <StatusRow
                 label="Stripe"
                 ok={isStripeConfigured()}
-                okLabel="Aktiverat"
-                offLabel="STRIPE_SECRET_KEY saknas"
+                okLabel="Enabled"
+                offLabel="STRIPE_SECRET_KEY missing"
               />
               <StatusRow
-                label="E-post"
+                label="Email"
                 ok={Boolean(process.env.GMAIL_APP_PASSWORD)}
-                okLabel="Aktiverat"
-                offLabel="GMAIL_APP_PASSWORD saknas"
+                okLabel="Enabled"
+                offLabel="GMAIL_APP_PASSWORD missing"
               />
               <StatusRow
                 label="Cron"
                 ok={Boolean(process.env.CRON_SECRET)}
-                okLabel="Aktiverat"
-                offLabel="CRON_SECRET saknas"
+                okLabel="Enabled"
+                offLabel="CRON_SECRET missing"
               />
             </CardContent>
           </Card>
@@ -61,15 +63,15 @@ export default async function SettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm">Händelselogg</CardTitle>
+            <CardTitle className="text-sm">Activity log</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="mb-3 text-xs text-muted-foreground">
-              PIN-koden är delad, så loggen visar vad som gjorts men inte av
-              vem.
+              The PIN is shared, so the log shows what was done but not by
+              whom.
             </p>
             {audit.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Inget loggat ännu.</p>
+              <p className="text-sm text-muted-foreground">Nothing logged yet.</p>
             ) : (
               <ul className="space-y-1.5 text-sm">
                 {audit.map((entry) => (
@@ -79,7 +81,7 @@ export default async function SettingsPage() {
                   >
                     <span className="font-mono text-xs">{entry.action}</span>
                     <span className="text-xs text-muted-foreground">
-                      {new Date(entry.created_at).toLocaleString("sv-SE")}
+                      {formatTimestamp(entry.created_at)}
                     </span>
                   </li>
                 ))}
