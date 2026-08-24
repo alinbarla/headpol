@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Strålkastarepolering Stockholm | Strålkastarpolering",
-    "description": "Kristallklara strålkastare igen. Premiumrestaurering + UV-keramiskt skydd, 799kr/par och 5 års garanti. Vi kommer till dig i Stockholm."
+    "title": "Strålkastarepolering & strålkastarrenovering Stockholm",
+    "description": "Strålkastarrenovering och polering i Stockholm. Kristallklara strålkastare igen med UV-keramiskt skydd, 799kr/par och 5 års garanti. Vi kommer till dig."
   },
   "nav": {
     "brand": "Strålkastarpolering",
@@ -37,8 +37,8 @@
     ]
   },
   "benefits": {
-    "title": "Därför polerar du strålkastarna istället för att byta",
-    "subtitle": "Matta och gula strålkastare ger sämre ljus, sänker värdet på bilen och kan stoppa besiktningen. Polering löser allt detta till en bråkdel av priset för nya enheter.",
+    "title": "Därför renoverar du strålkastarna istället för att byta",
+    "subtitle": "Matta och gula strålkastare ger sämre ljus, sänker värdet på bilen och kan stoppa besiktningen. En strålkastarrenovering löser allt detta till en bråkdel av priset för nya enheter.",
     "items": [
       {
         "title": "Upp till 70 % mer ljus",
@@ -59,7 +59,7 @@
     ]
   },
   "process": {
-    "title": "Så går strålkastarepoleringen till",
+    "title": "Så går en komplett strålkastarrenovering till",
     "subtitle": "Sex steg från matt och gul plast till fabriksklar finish. Varje strålkastare slipas, poleras och skyddas för hand med professionella material.",
     "stepLabel": "Steg {step}",
     "sequenceLabel": "Process · Steg 01–06",
@@ -97,7 +97,7 @@
     ]
   },
   "services": {
-    "title": "Priser för strålkastarepolering",
+    "title": "Priser för strålkastarepolering och renovering",
     "subtitle": "Premiumrestaurering + UV-keramiskt skydd för båda strålkastarna. 799kr/par.",
     "exampleNote": "Tjänster & priser",
     "guaranteeNote": "Premiumrestaurering + UV-keramiskt skydd = nyskickade strålkastare, sparade pengar och 5 års garanti.",
@@ -167,11 +167,15 @@
   },
   "faq": {
     "title": "Vanliga frågor om strålkastarepolering",
-    "subtitle": "Svar på det bilägare i Stockholm undrar mest om polering och restaurering av strålkastare.",
+    "subtitle": "Svar på det bilägare i Stockholm undrar mest om polering och renovering av strålkastare.",
     "items": [
       {
         "question": "Hur länge håller en strålkastarepolering?",
         "answer": "Med UV-keramiskt skydd ingår 5 års garanti. Utan skydd börjar plasten gulna igen inom några månader, därför ingår skyddet alltid."
+      },
+      {
+        "question": "Vad är skillnaden mellan strålkastarpolering och strålkastarrenovering?",
+        "answer": "I praktiken menar de flesta samma sak. Strålkastarrenovering beskriver hela jobbet med att återställa gulnade och matta strålkastare, medan polering är momentet som tar bort oxidationen. Hos oss ingår alltid hela kedjan — maskering, våtslipning, polymerpolering och UV-keramiskt skydd — så du får en komplett renovering och inte bara en ytlig polering."
       },
       {
         "question": "Klarar bilen besiktningen efter polering?",
@@ -196,6 +200,10 @@
       {
         "question": "Vad är skillnaden mot att byta strålkastare?",
         "answer": "Nya strålkastare kostar ofta flera tusen kronor styck plus montering. Premiumrestaurering ger nyskickade strålkastare för 799kr/par, tidigare 1499kr/par."
+      },
+      {
+        "question": "Kan man renovera strålkastare själv?",
+        "answer": "Det går att köpa gör-det-själv-kit, men de flesta saknar UV-skydd. Slipningen tar bort strålkastarens ursprungliga fabriksskydd, och utan ett nytt skydd gulnar plasten igen inom några månader. Vi slipar stegvis upp till P3000 och förseglar med UV-keramiskt skydd — därför kan vi lämna 5 års garanti på en renovering."
       },
       {
         "question": "Hur bokar jag tid?",

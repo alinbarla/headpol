@@ -42,6 +42,11 @@ export async function buildStructuredData(
   const serviceTypeName =
     locale === "sv" ? "Strålkastarepolering" : "Headlight restoration";
 
+  // Swedish customers search for the job under two different nouns. Naming both
+  // keeps the schema honest about what the service is rather than picking one.
+  const serviceAlternateName =
+    locale === "sv" ? "Strålkastarrenovering" : "Headlight polishing";
+
   const faqItems = tFaq.raw("items") as Array<{ question: string; answer: string }>;
   const serviceItems = tServices.raw("items") as Array<{
     title: string;
@@ -119,6 +124,7 @@ export async function buildStructuredData(
     "@type": "Service",
     "@id": serviceId,
     serviceType: serviceTypeName,
+    alternateName: serviceAlternateName,
     name: tServices("title"),
     description: tServices("subtitle"),
     provider: { "@id": businessId },

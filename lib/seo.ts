@@ -103,6 +103,8 @@ export const KEYWORDS: Record<Locale, string[]> = {
     "strålkastare restaurering",
     "polera strålkastare",
     "strålkastarrenovering",
+    "strålkastarrenovering Stockholm",
+    "renovera strålkastare",
     "blanka strålkastare",
     "gulnade strålkastare",
     "matta strålkastare",
