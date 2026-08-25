@@ -28,6 +28,10 @@ export const PUBLISHED_DATE =
 export const GOOGLE_SITE_VERIFICATION =
   process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? "";
 
+/** Google Ads account for the gtag.js tag. Set to "" to disable tracking. */
+export const GOOGLE_ADS_ID =
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "AW-18407352152";
+
 export const LOCALES = routing.locales;
 export const DEFAULT_LOCALE = routing.defaultLocale;
 

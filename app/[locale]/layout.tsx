@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Libre_Franklin, Public_Sans } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { MotionProvider } from "@/components/motion/MotionProvider";
+import { GoogleTag } from "@/components/analytics/GoogleTag";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing, type Locale } from "@/lib/i18n";
@@ -145,6 +146,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         <NextIntlClientProvider messages={messages}>
           <MotionProvider>{children}</MotionProvider>
         </NextIntlClientProvider>
+        <GoogleTag />
       </body>
     </html>
   );

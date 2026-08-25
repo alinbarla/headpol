@@ -17,6 +17,19 @@ const supabaseOrigin = (() => {
 })();
 
 /**
+ * Origins the Google tag (gtag.js) needs for Google Ads. Conversion pings are
+ * sent to the visitor's local Google domain, hence google.com plus google.se.
+ */
+const googleTag = {
+  script:
+    "https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net",
+  img: "https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google.com https://www.google.se https://*.google-analytics.com",
+  connect:
+    "https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://www.google.com https://www.google.se https://googleads.g.doubleclick.net",
+  frame: "https://www.googletagmanager.com https://td.doubleclick.net",
+};
+
+/**
  * CSP without nonces so pages stay statically rendered (fast TTFB + CDN cacheable).
  * `'unsafe-inline'` is required for Next.js hydration, next/font styles and
  * framer-motion inline styles. A nonce/strict-dynamic policy is the further
@@ -24,12 +37,13 @@ const supabaseOrigin = (() => {
  */
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self' 'unsafe-inline' ${googleTag.script}${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' blob: data:",
+  `img-src 'self' blob: data: ${googleTag.img}`,
   "media-src 'self'",
   "font-src 'self'",
-  `connect-src 'self'${supabaseOrigin ? ` ${supabaseOrigin}` : ""}`,
+  `connect-src 'self' ${googleTag.connect}${supabaseOrigin ? ` ${supabaseOrigin}` : ""}`,
+  `frame-src 'self' ${googleTag.frame}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
