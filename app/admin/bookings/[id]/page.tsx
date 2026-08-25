@@ -19,6 +19,7 @@ import {
   telLink,
 } from "@/lib/admin/labels";
 import { formatOre, fromDbTime } from "@/lib/booking";
+import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
 import { isStripeConfigured } from "@/lib/stripe";
 import { formatDateKey, formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -48,8 +49,17 @@ export default async function BookingDetailPage({
   await requireAdmin();
   const { id } = await params;
 
-  const booking = await getBookingById(id);
+  let booking = await getBookingById(id);
   if (!booking) notFound();
+
+  if (
+    isStripeConfigured() &&
+    (booking.payment_status === "awaiting_payment" ||
+      booking.payment_status === "unpaid")
+  ) {
+    await settleOpenPaymentsForBooking(id);
+    booking = (await getBookingById(id)) ?? booking;
+  }
 
   const [payments, refunds] = await Promise.all([
     getPaymentsForBooking(id),

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { fromDbTime } from "@/lib/booking";
+import { settlePaidCheckoutSession } from "@/lib/settleStripePayment";
 import { isCheckoutSessionPaid } from "@/lib/stripe";
 import {
   getSupabaseAdminClient,
@@ -51,10 +52,9 @@ type BookingRow = {
 };
 
 /**
- * Resolves the booking behind a Stripe Checkout Session so the customer can be
- * shown what they just paid for. Read-only on purpose: confirming the booking
- * and sending the receipt stay with the webhook, so a customer who never
- * returns from Checkout is treated exactly like one who does.
+ * Resolves the booking behind a Stripe Checkout Session. If Stripe already
+ * captured the money but the webhook has not landed, settle the booking here
+ * so admin and the customer see the same paid state.
  */
 export async function getConfirmationBySession(
   sessionId: string
@@ -62,6 +62,7 @@ export async function getConfirmationBySession(
   if (!SESSION_ID.test(sessionId)) return null;
 
   try {
+    await settlePaidCheckoutSession(sessionId);
     const supabase = getSupabaseAdminClient();
 
     const { data: payment } = await withSupabaseTimeout(

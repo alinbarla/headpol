@@ -4,6 +4,8 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { getDashboardData } from "@/lib/admin/data";
 import { ADMIN_LOCALE } from "@/lib/admin/labels";
 import { formatOre } from "@/lib/booking";
+import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
+import { isStripeConfigured } from "@/lib/stripe";
 import { formatDateKey } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BookingCard } from "@/components/admin/BookingCard";
@@ -13,7 +15,26 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminTodayPage() {
   await requireAdmin();
-  const data = await getDashboardData();
+  let data = await getDashboardData();
+
+  if (isStripeConfigured()) {
+    const unpaidIds = [
+      ...new Set(
+        [...data.todayBookings, ...data.tomorrowBookings, ...data.needsAttention]
+          .filter(
+            (booking) =>
+              booking.payment_status === "awaiting_payment" ||
+              booking.payment_status === "unpaid"
+          )
+          .map((booking) => booking.id)
+      ),
+    ];
+
+    if (unpaidIds.length > 0) {
+      await Promise.all(unpaidIds.map((id) => settleOpenPaymentsForBooking(id)));
+      data = await getDashboardData();
+    }
+  }
 
   return (
     <AdminShell>

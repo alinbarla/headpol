@@ -10,6 +10,7 @@ import {
   rescheduleBookingAction,
   sendPaymentLinkAction,
   setBookingStatusAction,
+  syncStripePaymentAction,
   updateNotesAction,
   type ActionState,
 } from "@/app/admin/actions";
@@ -273,6 +274,10 @@ export function PaymentCard({
     initial
   );
   const [linkState, linkAction] = useActionState(sendPaymentLinkAction, initial);
+  const [syncState, syncAction] = useActionState(
+    syncStripePaymentAction,
+    initial
+  );
   const [refundState, refundAct] = useActionState(refundAction, initial);
   const [showRefund, setShowRefund] = useState(false);
 
@@ -288,7 +293,25 @@ export function PaymentCard({
       <CardContent className="space-y-4">
         <ActionToast state={manualState} />
         <ActionToast state={linkState} />
+        <ActionToast state={syncState} />
         <ActionToast state={refundState} />
+
+        {unpaid && stripeEnabled && (
+          <form action={syncAction}>
+            <input type="hidden" name="id" value={booking.id} />
+            <p className="text-xs text-muted-foreground">
+              If the customer already paid in Stripe, this checks Stripe and
+              marks the booking paid without recording a second payment.
+            </p>
+            <SubmitButton
+              variant="outline"
+              className="mt-2 w-full"
+              pendingLabel="Checking Stripe…"
+            >
+              Confirm payment from Stripe
+            </SubmitButton>
+          </form>
+        )}
 
         {unpaid && (
           <form action={manualAction} className="space-y-3">

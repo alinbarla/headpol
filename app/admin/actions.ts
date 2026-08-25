@@ -20,6 +20,7 @@ import {
   isStripeConfigured,
   mapRefundStatus,
 } from "@/lib/stripe";
+import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
 import { addDaysToDateKey } from "@/lib/time";
 
@@ -556,9 +557,19 @@ export async function markPaidOnSiteAction(
 
   if (paymentError) return fail(paymentError.message);
 
+  const { data: booking } = await supabase
+    .from("bookings")
+    .select("status")
+    .eq("id", parsed.data.id)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("bookings")
-    .update({ payment_status: "paid" })
+    .update({
+      payment_status: "paid",
+      hold_expires_at: null,
+      ...(booking?.status === "pending" ? { status: "confirmed" } : {}),
+    })
     .eq("id", parsed.data.id);
 
   if (error) return fail(error.message);
@@ -585,6 +596,31 @@ export async function sendPaymentLinkAction(
   const result = await issuePaymentLink(parsed.data.id);
   refreshAdmin(parsed.data.id);
   return result;
+}
+
+export async function syncStripePaymentAction(
+  _prev: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  await requireAdmin();
+
+  const parsed = z.object({ id: uuid }).safeParse({ id: formData.get("id") });
+  if (!parsed.success) return fail(firstIssue(parsed.error));
+  if (!isStripeConfigured()) return fail("Stripe is not configured");
+
+  const result = await settleOpenPaymentsForBooking(parsed.data.id);
+  refreshAdmin(parsed.data.id);
+
+  if (result === "settled") {
+    return { ok: true, message: "Stripe payment found. Booking is now paid." };
+  }
+  if (result === "already") {
+    return { ok: true, message: "This booking was already marked paid." };
+  }
+  if (result === "unpaid") {
+    return fail("Stripe has not captured this payment yet.");
+  }
+  return fail("No paid Stripe checkout was found for this booking.");
 }
 
 async function issuePaymentLink(bookingId: string): Promise<ActionState> {

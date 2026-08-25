@@ -1,12 +1,9 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { fromDbTime } from "@/lib/booking";
-import {
-  notifyOwnerBooking,
-  notifyPaymentReceipt,
-  notifyRefund,
-} from "@/lib/bookingNotify";
-import { getStripe, mapRefundStatus, readPaymentMethod } from "@/lib/stripe";
+import { notifyRefund } from "@/lib/bookingNotify";
+import { getStripe, mapRefundStatus } from "@/lib/stripe";
+import { settlePaidCheckout } from "@/lib/settleStripePayment";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
@@ -98,69 +95,7 @@ export async function POST(request: Request) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  const bookingId = session.metadata?.booking_id ?? session.client_reference_id;
-  if (!bookingId) return;
-
-  // `unpaid` here means a delayed method has not settled yet; the booking is
-  // confirmed later from checkout.session.async_payment_succeeded instead.
-  if (session.payment_status === "unpaid") return;
-
-  const supabase = getSupabaseAdminClient();
-  const paymentIntentId =
-    typeof session.payment_intent === "string"
-      ? session.payment_intent
-      : (session.payment_intent?.id ?? null);
-
-  await supabase
-    .from("payments")
-    .update({
-      status: "paid",
-      method: readPaymentMethod(session),
-      stripe_payment_intent_id: paymentIntentId,
-      paid_at: new Date().toISOString(),
-    })
-    .eq("stripe_checkout_session_id", session.id);
-
-  // Payment confirms the slot and lifts the hold.
-  await supabase
-    .from("bookings")
-    .update({
-      status: "confirmed",
-      payment_status: "paid",
-      hold_expires_at: null,
-    })
-    .eq("id", bookingId);
-
-  const booking = await loadBooking(bookingId);
-  if (!booking) return;
-
-  const time = fromDbTime(booking.booking_time);
-  const amountOre = session.amount_total ?? booking.price_ore;
-
-  await notifyPaymentReceipt({
-    date: booking.booking_date,
-    time,
-    name: booking.customer_name ?? "",
-    email: booking.customer_email ?? "",
-    locale: booking.locale ?? "sv",
-    amountOre,
-    address: booking.customer_address ?? "",
-  });
-
-  // Web bookings only become real once paid, so this is the owner's first
-  // notice of them. Phone bookings were already announced when created.
-  if (booking.source === "web") {
-    await notifyOwnerBooking({
-      date: booking.booking_date,
-      time,
-      name: booking.customer_name ?? "",
-      phone: booking.customer_phone ?? "",
-      address: booking.customer_address ?? "",
-      email: booking.customer_email ?? "",
-      amountOre,
-      source: "web",
-    });
-  }
+  await settlePaidCheckout(session);
 }
 
 /**
