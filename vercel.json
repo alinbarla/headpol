@@ -3,7 +3,6 @@
   "framework": "nextjs",
   "regions": ["arn1"],
   "crons": [
-    { "path": "/api/cron/reminders", "schedule": "0 16 * * *" },
-    { "path": "/api/cron/complete-past", "schedule": "30 22 * * *" }
+    { "path": "/api/cron/reminders", "schedule": "0 16 * * *" }
   ]
 }

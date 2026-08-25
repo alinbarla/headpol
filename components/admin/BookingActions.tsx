@@ -82,7 +82,7 @@ export function StatusCard({ booking }: { booking: BookingRecord }) {
   const [state, formAction] = useActionState(setBookingStatusAction, initial);
 
   const options: Array<{ value: string; label: string }> = [
-    { value: "confirmed", label: "Confirmed" },
+    { value: "confirmed", label: "To do" },
     { value: "completed", label: "Completed" },
     { value: "no_show", label: "No-show" },
     { value: "pending", label: "Unconfirmed" },

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { logAdminAction, login, logout, requireAdmin } from "@/lib/admin/auth";
 import { getBookingById, getPaymentsForBooking } from "@/lib/admin/data";
+import { BOOKING_STATUS_LABELS } from "@/lib/admin/labels";
 import { isSlotOpen, parseBookingRules } from "@/lib/availability";
 import { fromDbTime, toDbTime } from "@/lib/booking";
 import { getAvailabilityOverrides, getBookingRules } from "@/lib/bookingRules";
@@ -482,7 +483,10 @@ export async function setBookingStatusAction(
   });
 
   refreshAdmin(parsed.data.id);
-  return { ok: true, message: "Status updated" };
+  return {
+    ok: true,
+    message: `Marked as ${BOOKING_STATUS_LABELS[parsed.data.status]}`,
+  };
 }
 
 const notesSchema = z.object({
@@ -568,7 +572,9 @@ export async function markPaidOnSiteAction(
     .update({
       payment_status: "paid",
       hold_expires_at: null,
-      ...(booking?.status === "pending" ? { status: "confirmed" } : {}),
+      ...((booking?.status === "pending" || booking?.status === "expired")
+        ? { status: "confirmed" }
+        : {}),
     })
     .eq("id", parsed.data.id);
 

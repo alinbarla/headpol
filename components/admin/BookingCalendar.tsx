@@ -1,16 +1,16 @@
 "use client";
 
-import { Fragment, useCallback, useMemo, useState, useTransition } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { toast } from "sonner";
 import { rescheduleBooking } from "@/app/admin/actions";
 import {
-  BOOKING_STATUS_LABELS,
+  calendarJobLabel,
+  calendarJobTone,
   PAYMENT_STATUS_LABELS,
   SOURCE_LABELS,
-  STATUS_TONE,
 } from "@/lib/admin/labels";
 import {
   openSlotsForDate,
@@ -19,7 +19,7 @@ import {
 } from "@/lib/availability";
 import { ADMIN_INTL_LOCALE, ADMIN_LOCALE } from "@/lib/admin/labels";
 import { formatOre, fromDbTime } from "@/lib/booking";
-import { addDaysToDateKey, formatDateKey, weekdayForDateKey } from "@/lib/time";
+import { addDaysToDateKey, formatDateKey, slotIsPast, stockholmDateKey, stockholmTime, weekdayForDateKey } from "@/lib/time";
 import type { BookingRecord } from "@/lib/supabase/server";
 import { Button } from "@/components/shadcn/button";
 import {
@@ -56,11 +56,14 @@ export function BookingCalendar({
   overrides,
   rules,
   anchorDate,
+  anchorTime,
 }: {
   bookings: BookingRecord[];
   overrides: AvailabilityOverride[];
   rules: BookingRules;
   anchorDate: string;
+  /** Stockholm `HH:MM` when the page was rendered. */
+  anchorTime: string;
 }) {
   const router = useRouter();
   const [view, setView] = useState<View>("week");
@@ -68,6 +71,18 @@ export function BookingCalendar({
   const [pending, setPending] = useState<PendingMove | null>(null);
   const [dragging, setDragging] = useState<string | null>(null);
   const [isMoving, startMove] = useTransition();
+  const [nowDate, setNowDate] = useState(anchorDate);
+  const [nowTime, setNowTime] = useState(anchorTime);
+
+  useEffect(() => {
+    const tick = () => {
+      setNowDate(stockholmDateKey());
+      setNowTime(stockholmTime());
+    };
+    tick();
+    const id = window.setInterval(tick, 30_000);
+    return () => window.clearInterval(id);
+  }, []);
 
   // Keyed by `YYYY-MM-DDTHH:MM` so the grid can look up a cell in O(1).
   const bySlot = useMemo(() => {
@@ -219,6 +234,7 @@ export function BookingCalendar({
             cursor={cursor}
             byDate={byDate}
             openSlots={openSlotCache}
+            nowDate={nowDate}
             onSelectDay={(dateKey) => {
               setCursor(dateKey);
               setView("day");
@@ -237,6 +253,8 @@ export function BookingCalendar({
             bySlot={bySlot}
             openSlots={openSlotCache}
             dragging={dragging}
+            nowDate={nowDate}
+            nowTime={nowTime}
             onDragStart={setDragging}
             onDragEnd={() => setDragging(null)}
             onDrop={requestMove}
@@ -284,6 +302,8 @@ function TimeGrid({
   bySlot,
   openSlots,
   dragging,
+  nowDate,
+  nowTime,
   onDragStart,
   onDragEnd,
   onDrop,
@@ -294,6 +314,8 @@ function TimeGrid({
   bySlot: Map<string, BookingRecord>;
   openSlots: (dateKey: string) => string[];
   dragging: string | null;
+  nowDate: string;
+  nowTime: string;
   onDragStart: (id: string) => void;
   onDragEnd: () => void;
   onDrop: (booking: BookingRecord, date: string, time: string) => void;
@@ -348,6 +370,7 @@ function TimeGrid({
               {days.map((dateKey) => {
                 const booking = bySlot.get(`${dateKey}T${time}`);
                 const isOpen = openSlots(dateKey).includes(time);
+                const passed = slotIsPast(dateKey, time, nowDate, nowTime);
 
                 return (
                   <div
@@ -364,7 +387,8 @@ function TimeGrid({
                     }}
                     className={cn(
                       "min-h-16 border-b border-l border-border p-1 transition-colors",
-                      !isOpen && "bg-secondary/30",
+                      !isOpen && !passed && "bg-secondary/30",
+                      passed && "bg-zinc-900/80",
                       dragging && !booking && "hover:bg-primary/10"
                     )}
                   >
@@ -401,21 +425,21 @@ function BookingBlock({
       draggable
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
-      title={`${booking.customer_name ?? ""} · ${
-        BOOKING_STATUS_LABELS[booking.status]
-      } · ${PAYMENT_STATUS_LABELS[booking.payment_status]} · ${formatOre(
+      title={`${booking.customer_name ?? ""} · ${calendarJobLabel(
+        booking
+      )} · ${PAYMENT_STATUS_LABELS[booking.payment_status]} · ${formatOre(
         booking.price_ore
       )} · ${SOURCE_LABELS[booking.source]}`}
       className={cn(
         "block h-full cursor-grab rounded-md border px-1.5 py-1 text-[11px] leading-tight active:cursor-grabbing",
-        STATUS_TONE[booking.status]
+        calendarJobTone(booking)
       )}
     >
       <span className="block truncate font-medium">
         {booking.customer_name ?? "No name"}
       </span>
       <span className="block truncate opacity-80">
-        {PAYMENT_STATUS_LABELS[booking.payment_status]}
+        {calendarJobLabel(booking)}
       </span>
     </Link>
   );
@@ -425,11 +449,13 @@ function MonthView({
   cursor,
   byDate,
   openSlots,
+  nowDate,
   onSelectDay,
 }: {
   cursor: string;
   byDate: Map<string, BookingRecord[]>;
   openSlots: (dateKey: string) => string[];
+  nowDate: string;
   onSelectDay: (dateKey: string) => void;
 }) {
   const month = cursor.slice(0, 7);
@@ -458,6 +484,7 @@ function MonthView({
           const inMonth = dateKey.slice(0, 7) === month;
           const dayBookings = byDate.get(dateKey) ?? [];
           const closed = openSlots(dateKey).length === 0;
+          const passed = dateKey < nowDate;
 
           return (
             <button
@@ -467,7 +494,8 @@ function MonthView({
               className={cn(
                 "min-h-24 border-b border-l border-border p-1.5 text-left align-top transition-colors hover:bg-secondary/50",
                 !inMonth && "opacity-35",
-                closed && "bg-secondary/30"
+                closed && !passed && "bg-secondary/30",
+                passed && "bg-zinc-900/80"
               )}
             >
               <span className="text-xs font-medium tabular-nums">
@@ -479,11 +507,13 @@ function MonthView({
                     key={booking.id}
                     className={cn(
                       "block truncate rounded border px-1 text-[10px]",
-                      STATUS_TONE[booking.status]
+                      calendarJobTone(booking)
                     )}
                   >
                     {fromDbTime(booking.booking_time)}{" "}
                     {booking.customer_name ?? ""}
+                    {" · "}
+                    {calendarJobLabel(booking)}
                   </span>
                 ))}
                 {dayBookings.length > 3 && (

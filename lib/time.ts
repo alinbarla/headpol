@@ -77,6 +77,18 @@ export function compareDateKeys(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0;
 }
 
+/** Whether a calendar slot start is already behind Stockholm local time. */
+export function slotIsPast(
+  dateKey: string,
+  time: string,
+  nowDate: string = stockholmDateKey(),
+  nowTime: string = stockholmTime()
+): boolean {
+  if (dateKey < nowDate) return true;
+  if (dateKey > nowDate) return false;
+  return time < nowTime;
+}
+
 /**
  * Converts a Stockholm-local date and time into a real instant, resolving the
  * UTC offset that applies on that date rather than assuming one.

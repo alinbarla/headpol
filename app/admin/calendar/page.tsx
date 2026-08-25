@@ -3,7 +3,7 @@ import { PlusIcon } from "lucide-react";
 import { requireAdmin } from "@/lib/admin/auth";
 import { listBookingsBetween, listOverrides } from "@/lib/admin/data";
 import { getBookingRules } from "@/lib/bookingRules";
-import { addDaysToDateKey, stockholmDateKey } from "@/lib/time";
+import { addDaysToDateKey, stockholmDateKey, stockholmTime } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BookingCalendar } from "@/components/admin/BookingCalendar";
 import { Button } from "@/components/shadcn/button";
@@ -31,7 +31,23 @@ export default async function CalendarPage() {
         <div>
           <h1 className="text-2xl font-bold">Calendar</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Drag a booking onto another slot to move it. Grey slots are closed.
+            Blue is To do, green is Completed. Grey slots have already passed
+            or are closed. Mark Completed on the booking — it is never set
+            automatically.
+          </p>
+          <p className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="size-2.5 rounded-sm border border-blue-500/40 bg-blue-500/20" />
+              To do
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="size-2.5 rounded-sm border border-emerald-500/40 bg-emerald-500/20" />
+              Completed
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="size-2.5 rounded-sm border border-border bg-zinc-900/80" />
+              Passed
+            </span>
           </p>
         </div>
         <Button asChild size="sm">
@@ -48,6 +64,7 @@ export default async function CalendarPage() {
           overrides={overrides}
           rules={rules}
           anchorDate={today}
+          anchorTime={stockholmTime()}
         />
       </div>
     </AdminShell>

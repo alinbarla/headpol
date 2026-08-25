@@ -13,7 +13,7 @@ export const ADMIN_INTL_LOCALE = "en-GB";
 
 export const BOOKING_STATUS_LABELS: Record<BookingStatus, string> = {
   pending: "Unconfirmed",
-  confirmed: "Confirmed",
+  confirmed: "To do",
   completed: "Completed",
   cancelled: "Cancelled",
   no_show: "No-show",
@@ -65,12 +65,38 @@ export function paymentMethodLabel(method: string | null): string {
 /** Tailwind classes per status, used for badges and calendar blocks. */
 export const STATUS_TONE: Record<BookingStatus, string> = {
   pending: "border-amber-500/40 bg-amber-500/15 text-amber-200",
-  confirmed: "border-emerald-500/40 bg-emerald-500/15 text-emerald-200",
-  completed: "border-sky-500/40 bg-sky-500/15 text-sky-200",
+  confirmed: "border-blue-500/40 bg-blue-500/20 text-blue-100",
+  completed: "border-emerald-500/40 bg-emerald-500/20 text-emerald-200",
   cancelled: "border-white/15 bg-white/5 text-muted-foreground line-through",
   no_show: "border-red-500/40 bg-red-500/15 text-red-200",
   expired: "border-white/15 bg-white/5 text-muted-foreground",
 };
+
+/**
+ * Calendar chips: paid work is To do (blue) until the admin marks it
+ * Completed (green). Other statuses keep their usual tones.
+ */
+export function calendarJobLabel(booking: {
+  status: BookingStatus;
+  payment_status: PaymentStatus;
+}): string {
+  if (booking.status === "completed") return BOOKING_STATUS_LABELS.completed;
+  if (booking.payment_status === "paid" || booking.status === "confirmed") {
+    return BOOKING_STATUS_LABELS.confirmed;
+  }
+  return BOOKING_STATUS_LABELS[booking.status];
+}
+
+export function calendarJobTone(booking: {
+  status: BookingStatus;
+  payment_status: PaymentStatus;
+}): string {
+  if (booking.status === "completed") return STATUS_TONE.completed;
+  if (booking.payment_status === "paid" || booking.status === "confirmed") {
+    return STATUS_TONE.confirmed;
+  }
+  return STATUS_TONE[booking.status];
+}
 
 export const PAYMENT_TONE: Record<PaymentStatus, string> = {
   unpaid: "border-white/15 bg-white/5 text-muted-foreground",
