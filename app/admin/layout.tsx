@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Public_Sans } from "next/font/google";
 import { Toaster } from "@/components/shadcn/sonner";
+import { GoogleTagManager, GoogleTagManagerNoscript } from "@/components/analytics/GoogleTagManager";
 import "../globals.css";
 
 const publicSans = Public_Sans({
@@ -31,7 +32,9 @@ export const viewport: Viewport = {
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${publicSans.variable} h-full`}>
+      <GoogleTagManager />
       <body className="admin-root min-h-full font-[family-name:var(--font-public)] antialiased">
+        <GoogleTagManagerNoscript />
         {children}
         <Toaster position="top-center" richColors />
       </body>

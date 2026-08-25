@@ -23,8 +23,8 @@ const supabaseOrigin = (() => {
  */
 const googleTag = {
   script:
-    "https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net",
-  img: "https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google.com https://www.google.se https://*.google-analytics.com",
+    "https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://tagmanager.google.com",
+  img: "https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google.com https://www.google.se https://*.google-analytics.com https://ssl.gstatic.com",
   connect:
     "https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://www.google.com https://www.google.se https://googleads.g.doubleclick.net",
   frame: "https://www.googletagmanager.com https://td.doubleclick.net",

@@ -32,6 +32,9 @@ export const GOOGLE_SITE_VERIFICATION =
 export const GOOGLE_ADS_ID =
   process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "AW-18407352152";
 
+/** Google Tag Manager container. Set to "" to disable GTM. */
+export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "GTM-WKQJ9N3L";
+
 /** Purchase conversion send_to (account / conversion label). */
 export const GOOGLE_ADS_PURCHASE_SEND_TO =
   process.env.NEXT_PUBLIC_GOOGLE_ADS_PURCHASE_SEND_TO ??
