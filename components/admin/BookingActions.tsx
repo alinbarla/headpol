@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import {
   cancelBookingAction,
   deleteAllExpiredBookingsAction,
-  deleteExpiredBookingAction,
+  deleteBookingAction,
   markPaidOnSiteAction,
   refundAction,
   rescheduleBookingAction,
@@ -27,7 +27,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/shadcn/select";
-import { formatOre } from "@/lib/booking";
+import { Trash2Icon } from "lucide-react";
+import { formatOre, fromDbTime } from "@/lib/booking";
 import type { BookingRecord } from "@/lib/supabase/server";
 
 const initial: ActionState = { ok: true };
@@ -166,13 +167,11 @@ export function CancelCard({ booking }: { booking: BookingRecord }) {
   );
 }
 
-export function DeleteExpiredCard({ booking }: { booking: BookingRecord }) {
-  const [state, formAction] = useActionState(
-    deleteExpiredBookingAction,
-    initial
-  );
-
-  if (booking.status !== "expired") return null;
+export function DeleteBookingCard({ booking }: { booking: BookingRecord }) {
+  const [state, formAction] = useActionState(deleteBookingAction, initial);
+  const paid =
+    booking.payment_status === "paid" ||
+    booking.payment_status === "partially_refunded";
 
   return (
     <Card className="border-destructive/30">
@@ -182,10 +181,28 @@ export function DeleteExpiredCard({ booking }: { booking: BookingRecord }) {
       <CardContent>
         <ActionToast state={state} />
         <p className="mb-3 text-sm text-muted-foreground">
-          This expired hold will be removed completely, including any leftover
-          payment attempts. This cannot be undone.
+          Removes this booking from the calendar and lists, including payment
+          history here. This cannot be undone
+          {paid
+            ? ", and it does not refund the customer in Stripe."
+            : "."}
         </p>
-        <form action={formAction}>
+        <form
+          action={formAction}
+          onSubmit={(event) => {
+            const when = `${booking.booking_date} ${fromDbTime(booking.booking_time)}`;
+            const name = booking.customer_name ?? "this booking";
+            if (
+              !window.confirm(
+                `Delete ${name} on ${when}? This cannot be undone.${
+                  paid ? " This does not refund Stripe." : ""
+                }`
+              )
+            ) {
+              event.preventDefault();
+            }
+          }}
+        >
           <input type="hidden" name="id" value={booking.id} />
           <SubmitButton
             variant="destructive"
@@ -197,6 +214,51 @@ export function DeleteExpiredCard({ booking }: { booking: BookingRecord }) {
         </form>
       </CardContent>
     </Card>
+  );
+}
+
+export function DeleteBookingButton({
+  booking,
+}: {
+  booking: BookingRecord;
+}) {
+  const [state, formAction] = useActionState(deleteBookingAction, initial);
+  const paid =
+    booking.payment_status === "paid" ||
+    booking.payment_status === "partially_refunded";
+
+  return (
+    <form
+      action={formAction}
+      className="flex items-center"
+      onSubmit={(event) => {
+        const when = `${booking.booking_date} ${fromDbTime(booking.booking_time)}`;
+        const name = booking.customer_name ?? "this booking";
+        const extra = paid
+          ? " This does not refund Stripe."
+          : "";
+        if (
+          !window.confirm(
+            `Delete ${name} on ${when}? This cannot be undone.${extra}`
+          )
+        ) {
+          event.preventDefault();
+        }
+      }}
+    >
+      <ActionToast state={state} />
+      <input type="hidden" name="id" value={booking.id} />
+      <input type="hidden" name="stay" value="1" />
+      <SubmitButton
+        variant="ghost"
+        size="icon-sm"
+        className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+        pendingLabel="…"
+        aria-label={`Delete ${booking.customer_name ?? "booking"}`}
+      >
+        <Trash2Icon />
+      </SubmitButton>
+    </form>
   );
 }
 

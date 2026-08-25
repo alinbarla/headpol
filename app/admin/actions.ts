@@ -351,30 +351,31 @@ export async function cancelBookingAction(
   return { ok: true, message: `Booking cancelled${refundNote}` };
 }
 
-const deleteExpiredSchema = z.object({
+const deleteBookingSchema = z.object({
   id: uuid,
+  stay: z.enum(["1"]).optional(),
 });
 
 /**
- * Expired rows are abandoned Stripe holds, not real jobs. Hard-delete is
- * allowed only in that status; payments/refunds cascade with the booking.
+ * Hard-deletes a booking from admin. Payments and refunds cascade with the
+ * row. This does not refund Stripe; it only removes the record here.
  */
-export async function deleteExpiredBookingAction(
+export async function deleteBookingAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
   await requireAdmin();
 
-  const parsed = deleteExpiredSchema.safeParse({ id: formData.get("id") });
+  const parsed = deleteBookingSchema.safeParse({
+    id: formData.get("id"),
+    stay: formData.get("stay") || undefined,
+  });
   if (!parsed.success) return fail(firstIssue(parsed.error));
 
   const booking = await getBookingById(parsed.data.id);
   if (!booking) return fail("That booking does not exist");
-  if (booking.status !== "expired") {
-    return fail("Only expired bookings can be deleted");
-  }
 
-  const result = await deleteExpiredByIds([parsed.data.id]);
+  const result = await deleteBookingsByIds([parsed.data.id]);
   if (!result.ok) return result;
 
   await logAdminAction("booking.delete", {
@@ -384,11 +385,14 @@ export async function deleteExpiredBookingAction(
       date: booking.booking_date,
       time: booking.booking_time,
       name: booking.customer_name,
+      status: booking.status,
+      paymentStatus: booking.payment_status,
     },
   });
 
   refreshAdmin();
-  redirect("/admin/bookings?status=expired");
+  if (parsed.data.stay !== "1") redirect("/admin/bookings");
+  return { ok: true, message: "Booking deleted" };
 }
 
 export async function deleteAllExpiredBookingsAction(
@@ -408,7 +412,7 @@ export async function deleteAllExpiredBookingsAction(
   const ids = (data ?? []).map((row) => row.id as string);
   if (ids.length === 0) return fail("There are no expired bookings to delete");
 
-  const result = await deleteExpiredByIds(ids);
+  const result = await deleteBookingsByIds(ids);
   if (!result.ok) return result;
 
   await logAdminAction("booking.delete_expired", {
@@ -426,12 +430,12 @@ export async function deleteAllExpiredBookingsAction(
   };
 }
 
-async function deleteExpiredByIds(ids: string[]): Promise<ActionState> {
+async function deleteBookingsByIds(ids: string[]): Promise<ActionState> {
   if (ids.length === 0) return { ok: true };
 
   const supabase = getSupabaseAdminClient();
 
-  // Later bookings may still point at an expired row via reschedule history.
+  // Later bookings may still point at a deleted row via reschedule history.
   const { error: unlinkError } = await supabase
     .from("bookings")
     .update({ rescheduled_from_id: null })
@@ -439,11 +443,7 @@ async function deleteExpiredByIds(ids: string[]): Promise<ActionState> {
 
   if (unlinkError) return fail(unlinkError.message);
 
-  const { error } = await supabase
-    .from("bookings")
-    .delete()
-    .in("id", ids)
-    .eq("status", "expired");
+  const { error } = await supabase.from("bookings").delete().in("id", ids);
 
   if (error) return fail(error.message);
   return { ok: true };

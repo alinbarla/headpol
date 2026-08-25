@@ -13,7 +13,7 @@ import { formatOre, fromDbTime } from "@/lib/booking";
 import type { BookingStatus } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BookingFilters } from "@/components/admin/BookingFilters";
-import { DeleteAllExpiredForm } from "@/components/admin/BookingActions";
+import { DeleteAllExpiredForm, DeleteBookingButton } from "@/components/admin/BookingActions";
 import { Button } from "@/components/shadcn/button";
 import { cn } from "@/lib/utils";
 
@@ -101,10 +101,10 @@ export default async function BookingsPage({
       ) : (
         <ul className="mt-4 divide-y divide-border overflow-hidden rounded-xl border border-border">
           {rows.map((booking) => (
-            <li key={booking.id}>
+            <li key={booking.id} className="flex items-stretch bg-card">
               <Link
                 href={`/admin/bookings/${booking.id}`}
-                className="flex items-center gap-3 bg-card px-4 py-3 transition-colors hover:bg-secondary/50"
+                className="flex min-w-0 flex-1 items-center gap-3 px-4 py-3 transition-colors hover:bg-secondary/50"
               >
                 <div className="w-24 shrink-0">
                   <p className="text-sm font-semibold tabular-nums">
@@ -146,6 +146,9 @@ export default async function BookingsPage({
                   </span>
                 </div>
               </Link>
+              <div className="flex items-center border-l border-border px-1">
+                <DeleteBookingButton booking={booking} />
+              </div>
             </li>
           ))}
         </ul>
