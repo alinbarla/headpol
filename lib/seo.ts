@@ -32,6 +32,11 @@ export const GOOGLE_SITE_VERIFICATION =
 export const GOOGLE_ADS_ID =
   process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "AW-18407352152";
 
+/** Purchase conversion send_to (account / conversion label). */
+export const GOOGLE_ADS_PURCHASE_SEND_TO =
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_PURCHASE_SEND_TO ??
+  "AW-18407352152/nfWqCO7v0eccENjOp8lE";
+
 export const LOCALES = routing.locales;
 export const DEFAULT_LOCALE = routing.defaultLocale;
 

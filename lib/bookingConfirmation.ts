@@ -17,6 +17,8 @@ const SESSION_ID = /^cs_[A-Za-z0-9_-]{8,250}$/;
 
 export type BookingConfirmation = {
   paid: boolean;
+  /** Full booking UUID, used as the Google Ads transaction id. */
+  id: string;
   /** Short, human-readable prefix of the booking id. */
   reference: string;
   /** `YYYY-MM-DD`, Stockholm local. */
@@ -91,6 +93,7 @@ export async function getConfirmationBySession(
 
     return {
       paid: settled || (await isCheckoutSessionPaid(sessionId)),
+      id: bookingRow.id,
       reference: bookingRow.id.slice(0, 8).toUpperCase(),
       date: bookingRow.booking_date,
       time: fromDbTime(bookingRow.booking_time),

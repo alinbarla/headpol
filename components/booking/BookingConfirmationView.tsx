@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { PendingPaymentPoller } from "@/components/booking/PendingPaymentPoller";
+import { PurchaseConversion } from "@/components/analytics/GoogleTag";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import type { BookingConfirmation } from "@/lib/bookingConfirmation";
@@ -64,6 +65,12 @@ export async function BookingConfirmationView({
 
   return (
     <main className="relative overflow-hidden py-16 sm:py-24">
+      {paid && confirmation ? (
+        <PurchaseConversion
+          transactionId={confirmation.id}
+          valueSek={confirmation.amountOre / 100}
+        />
+      ) : null}
       {pending ? <PendingPaymentPoller /> : null}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-[radial-gradient(ellipse_at_top,rgba(255,243,38,0.12),transparent_65%)]"
