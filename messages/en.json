@@ -248,6 +248,52 @@
     "continueToPayment": "Continue to payment",
     "withdrawalConsent": "I agree that the work may begin before the 14-day withdrawal period ends, and I understand the right of withdrawal lapses once the service is complete."
   },
+  "bookingConfirmation": {
+    "metaTitle": "Booking confirmation",
+    "metaDescription": "Receipt and details for your headlight restoration booking.",
+    "back": "Back to the site",
+    "badgePaid": "Payment complete",
+    "badgePending": "Payment processing",
+    "titlePaid": "Thank you {name}, your slot is booked!",
+    "titlePaidGeneric": "Thank you, your slot is booked!",
+    "leadPaid": "We've sent a confirmation and receipt to {email}. If nothing arrives within a few minutes, check your spam folder.",
+    "titlePending": "We're waiting for your payment",
+    "leadPending": "The payment hasn't reached us yet. Your slot is held, and we'll email a confirmation to {email} as soon as it clears.",
+    "titleMissing": "We can't find a booking for this link",
+    "leadMissing": "The link may have expired. If you paid but never got a confirmation email, call us and we'll sort it out right away.",
+    "detailsTitle": "Your booking",
+    "serviceLabel": "Service",
+    "serviceValue": "Premium restoration + UV ceramic protection, both headlights",
+    "whenLabel": "Date and time",
+    "durationNote": "Takes about 45–60 minutes",
+    "whereLabel": "We come to you",
+    "contactLabel": "Your details",
+    "contactNote": "Something wrong? Call us and we'll change it.",
+    "paidLabel": "Paid",
+    "vatNote": "including 25% VAT: {vat}",
+    "pendingAmountLabel": "To pay",
+    "referenceLabel": "Booking reference",
+    "nextTitle": "What happens next?",
+    "nextSteps": [
+      {
+        "title": "Confirmation by email",
+        "description": "Your receipt and all the details are in the email we've sent you."
+      },
+      {
+        "title": "Reminder the day before",
+        "description": "We get in touch the day before to make sure the time still suits you."
+      },
+      {
+        "title": "We restore them on site",
+        "description": "Just make sure the car is parked outside and accessible at your address."
+      }
+    ],
+    "changeTitle": "Need to change or cancel?",
+    "changeBody": "Call {phone} or email {email} and we'll move your slot. Cancellation rules and the right of withdrawal are in our terms.",
+    "termsLink": "Read the terms",
+    "callCta": "Call {phone}",
+    "homeCta": "Back to the site"
+  },
   "contact": {
     "title": "Contact",
     "phone": "076-344 11 68",

@@ -1,6 +1,7 @@
 import "server-only";
 
 import Stripe from "stripe";
+import { CONFIRMATION_PATH } from "@/lib/routes";
 import { formatDateKey } from "@/lib/time";
 
 let client: Stripe | null = null;
@@ -120,7 +121,7 @@ export async function createBookingCheckoutSession(
       customer_email: input.email,
       client_reference_id: input.bookingId,
       expires_at: Math.floor(expiresAt.getTime() / 1000),
-      success_url: `${site}/${locale}?booking=paid&session_id={CHECKOUT_SESSION_ID}#booking`,
+      success_url: `${site}/${locale}/${CONFIRMATION_PATH}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${site}/${locale}?booking=cancelled#booking`,
       line_items: [
         {
@@ -168,6 +169,29 @@ export async function createBookingCheckoutSession(
         : error
     );
     return null;
+  }
+}
+
+/**
+ * Whether Stripe itself considers the session paid. The webhook is what marks
+ * the booking confirmed, but Stripe redirects the customer back at the same
+ * moment it sends the event, so the confirmation page would otherwise report a
+ * paid booking as pending for as long as the webhook takes to land.
+ */
+export async function isCheckoutSessionPaid(
+  sessionId: string
+): Promise<boolean> {
+  if (!isStripeConfigured()) return false;
+
+  try {
+    const session = await getStripe().checkout.sessions.retrieve(sessionId);
+    return (
+      session.payment_status === "paid" ||
+      session.payment_status === "no_payment_required"
+    );
+  } catch (error) {
+    console.error("[stripe] could not read checkout session", error);
+    return false;
   }
 }
 

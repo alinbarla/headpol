@@ -248,6 +248,52 @@
     "continueToPayment": "Gå vidare till betalning",
     "withdrawalConsent": "Jag godkänner att arbetet påbörjas före ångerfristens slut och är införstådd med att ångerrätten upphör när tjänsten är fullgjord."
   },
+  "bookingConfirmation": {
+    "metaTitle": "Bokningsbekräftelse",
+    "metaDescription": "Kvitto och detaljer för din bokade strålkastarpolering.",
+    "back": "Till startsidan",
+    "badgePaid": "Betalning genomförd",
+    "badgePending": "Betalningen behandlas",
+    "titlePaid": "Tack {name}, din tid är bokad!",
+    "titlePaidGeneric": "Tack, din tid är bokad!",
+    "leadPaid": "Vi har skickat bekräftelse och kvitto till {email}. Dyker inget upp inom några minuter, titta i skräpposten.",
+    "titlePending": "Vi väntar in din betalning",
+    "leadPending": "Betalningen har inte landat hos oss ännu. Tiden är reserverad, och så fort betalningen går igenom skickar vi en bekräftelse till {email}.",
+    "titleMissing": "Vi hittar ingen bokning på den här länken",
+    "leadMissing": "Länken kan ha gått ut. Har du betalat utan att få en bekräftelse på mejlen, ring oss så reder vi ut det direkt.",
+    "detailsTitle": "Din bokning",
+    "serviceLabel": "Tjänst",
+    "serviceValue": "Premiumrestaurering + UV-keramiskt skydd, båda strålkastarna",
+    "whenLabel": "Datum och tid",
+    "durationNote": "Tar ungefär 45–60 minuter",
+    "whereLabel": "Vi kommer till dig",
+    "contactLabel": "Dina uppgifter",
+    "contactNote": "Stämmer något inte? Ring oss så ändrar vi det.",
+    "paidLabel": "Betalt",
+    "vatNote": "varav moms 25 %: {vat}",
+    "pendingAmountLabel": "Att betala",
+    "referenceLabel": "Bokningsreferens",
+    "nextTitle": "Vad händer nu?",
+    "nextSteps": [
+      {
+        "title": "Bekräftelse på mejl",
+        "description": "Kvitto och alla uppgifter finns i mejlet vi skickat till dig."
+      },
+      {
+        "title": "Påminnelse dagen innan",
+        "description": "Vi hör av oss dagen före besöket så att tiden fortfarande passar."
+      },
+      {
+        "title": "Vi polerar på plats",
+        "description": "Se till att bilen står tillgänglig utomhus vid din adress när vi kommer."
+      }
+    ],
+    "changeTitle": "Behöver du ändra eller avboka?",
+    "changeBody": "Ring {phone} eller mejla {email}, så flyttar vi tiden. Avbokningsregler och ångerrätt står i våra villkor.",
+    "termsLink": "Läs villkoren",
+    "callCta": "Ring {phone}",
+    "homeCta": "Till startsidan"
+  },
   "contact": {
     "title": "Kontakt",
     "phone": "076-344 11 68",

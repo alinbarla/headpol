@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { CONFIRMATION_PATH } from "./lib/routes";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
@@ -93,6 +94,13 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: securityHeaders,
+      },
+      {
+        source: `/:locale/${CONFIRMATION_PATH}`,
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+          { key: "Cache-Control", value: "private, no-store, max-age=0" },
+        ],
       },
       {
         source: "/:path*",
