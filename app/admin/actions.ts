@@ -350,6 +350,104 @@ export async function cancelBookingAction(
   return { ok: true, message: `Booking cancelled${refundNote}` };
 }
 
+const deleteExpiredSchema = z.object({
+  id: uuid,
+});
+
+/**
+ * Expired rows are abandoned Stripe holds, not real jobs. Hard-delete is
+ * allowed only in that status; payments/refunds cascade with the booking.
+ */
+export async function deleteExpiredBookingAction(
+  _prev: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  await requireAdmin();
+
+  const parsed = deleteExpiredSchema.safeParse({ id: formData.get("id") });
+  if (!parsed.success) return fail(firstIssue(parsed.error));
+
+  const booking = await getBookingById(parsed.data.id);
+  if (!booking) return fail("That booking does not exist");
+  if (booking.status !== "expired") {
+    return fail("Only expired bookings can be deleted");
+  }
+
+  const result = await deleteExpiredByIds([parsed.data.id]);
+  if (!result.ok) return result;
+
+  await logAdminAction("booking.delete", {
+    entityType: "booking",
+    entityId: parsed.data.id,
+    details: {
+      date: booking.booking_date,
+      time: booking.booking_time,
+      name: booking.customer_name,
+    },
+  });
+
+  refreshAdmin();
+  redirect("/admin/bookings?status=expired");
+}
+
+export async function deleteAllExpiredBookingsAction(
+  _prev: ActionState,
+  _formData: FormData
+): Promise<ActionState> {
+  await requireAdmin();
+
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("id")
+    .eq("status", "expired");
+
+  if (error) return fail(error.message);
+
+  const ids = (data ?? []).map((row) => row.id as string);
+  if (ids.length === 0) return fail("There are no expired bookings to delete");
+
+  const result = await deleteExpiredByIds(ids);
+  if (!result.ok) return result;
+
+  await logAdminAction("booking.delete_expired", {
+    entityType: "booking",
+    details: { count: ids.length },
+  });
+
+  refreshAdmin();
+  return {
+    ok: true,
+    message:
+      ids.length === 1
+        ? "1 expired booking deleted"
+        : `${ids.length} expired bookings deleted`,
+  };
+}
+
+async function deleteExpiredByIds(ids: string[]): Promise<ActionState> {
+  if (ids.length === 0) return { ok: true };
+
+  const supabase = getSupabaseAdminClient();
+
+  // Later bookings may still point at an expired row via reschedule history.
+  const { error: unlinkError } = await supabase
+    .from("bookings")
+    .update({ rescheduled_from_id: null })
+    .in("rescheduled_from_id", ids);
+
+  if (unlinkError) return fail(unlinkError.message);
+
+  const { error } = await supabase
+    .from("bookings")
+    .delete()
+    .in("id", ids)
+    .eq("status", "expired");
+
+  if (error) return fail(error.message);
+  return { ok: true };
+}
+
 const statusSchema = z.object({
   id: uuid,
   status: z.enum(["pending", "confirmed", "completed", "no_show"]),

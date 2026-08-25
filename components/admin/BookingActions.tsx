@@ -3,6 +3,8 @@
 import { useActionState, useState } from "react";
 import {
   cancelBookingAction,
+  deleteAllExpiredBookingsAction,
+  deleteExpiredBookingAction,
   markPaidOnSiteAction,
   refundAction,
   rescheduleBookingAction,
@@ -116,6 +118,10 @@ export function CancelCard({ booking }: { booking: BookingRecord }) {
   const [state, formAction] = useActionState(cancelBookingAction, initial);
   const canRefund = booking.payment_status === "paid";
 
+  if (booking.status === "cancelled" || booking.status === "expired") {
+    return null;
+  }
+
   return (
     <Card className="border-destructive/30">
       <CardHeader>
@@ -156,6 +162,72 @@ export function CancelCard({ booking }: { booking: BookingRecord }) {
         </form>
       </CardContent>
     </Card>
+  );
+}
+
+export function DeleteExpiredCard({ booking }: { booking: BookingRecord }) {
+  const [state, formAction] = useActionState(
+    deleteExpiredBookingAction,
+    initial
+  );
+
+  if (booking.status !== "expired") return null;
+
+  return (
+    <Card className="border-destructive/30">
+      <CardHeader>
+        <CardTitle className="text-sm text-destructive">Delete</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ActionToast state={state} />
+        <p className="mb-3 text-sm text-muted-foreground">
+          This expired hold will be removed completely, including any leftover
+          payment attempts. This cannot be undone.
+        </p>
+        <form action={formAction}>
+          <input type="hidden" name="id" value={booking.id} />
+          <SubmitButton
+            variant="destructive"
+            className="w-full"
+            pendingLabel="Deleting…"
+          >
+            Delete permanently
+          </SubmitButton>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function DeleteAllExpiredForm() {
+  const [state, formAction] = useActionState(
+    deleteAllExpiredBookingsAction,
+    initial
+  );
+
+  return (
+    <form
+      action={formAction}
+      className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center"
+      onSubmit={(event) => {
+        if (
+          !window.confirm(
+            "Delete every expired booking permanently? This cannot be undone."
+          )
+        ) {
+          event.preventDefault();
+        }
+      }}
+    >
+      <ActionToast state={state} />
+      <SubmitButton
+        variant="destructive"
+        size="sm"
+        pendingLabel="Deleting…"
+      >
+        Delete all expired
+      </SubmitButton>
+    </form>
   );
 }
 

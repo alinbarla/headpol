@@ -47,6 +47,32 @@ export function weekdayForDateKey(dateKey: string): number {
   return new Date(Date.UTC(year, month - 1, day, 12, 0, 0)).getUTCDay();
 }
 
+/** Monday of the ISO week that contains `dateKey`. */
+export function startOfIsoWeek(dateKey: string): string {
+  const weekday = weekdayForDateKey(dateKey);
+  const daysFromMonday = weekday === 0 ? 6 : weekday - 1;
+  return addDaysToDateKey(dateKey, -daysFromMonday);
+}
+
+/** Sunday of the ISO week that contains `dateKey`. */
+export function endOfIsoWeek(dateKey: string): string {
+  return addDaysToDateKey(startOfIsoWeek(dateKey), 6);
+}
+
+/** First calendar day of the month that contains `dateKey`. */
+export function startOfMonth(dateKey: string): string {
+  return `${dateKey.slice(0, 7)}-01`;
+}
+
+/** Last calendar day of the month that contains `dateKey`. */
+export function endOfMonth(dateKey: string): string {
+  const [year, month] = dateKey.split("-").map(Number);
+  const last = new Date(Date.UTC(year, month, 0, 12, 0, 0));
+  return `${last.getUTCFullYear()}-${String(last.getUTCMonth() + 1).padStart(2, "0")}-${String(
+    last.getUTCDate()
+  ).padStart(2, "0")}`;
+}
+
 export function compareDateKeys(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0;
 }

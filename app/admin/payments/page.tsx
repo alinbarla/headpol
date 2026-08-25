@@ -3,7 +3,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { listPayments, listRefunds } from "@/lib/admin/data";
 import { paymentMethodLabel } from "@/lib/admin/labels";
 import { formatOre, fromDbTime } from "@/lib/booking";
-import { addDaysToDateKey, stockholmDateKey } from "@/lib/time";
+import { startOfMonth, stockholmDateKey } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { Button } from "@/components/shadcn/button";
 import {
@@ -38,7 +38,7 @@ export default async function PaymentsPage({
   const params = await searchParams;
 
   const today = stockholmDateKey();
-  const from = readDate(params, "from", addDaysToDateKey(today, -30));
+  const from = readDate(params, "from", startOfMonth(today));
   const to = readDate(params, "to", today);
 
   const [payments, refunds] = await Promise.all([

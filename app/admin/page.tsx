@@ -35,7 +35,7 @@ export default async function AdminTodayPage() {
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Stat label="Jobs today" value={String(data.todayBookings.length)} />
         <Stat label="Tomorrow" value={String(data.tomorrowBookings.length)} />
-        <Stat label="Paid, 7 days" value={formatOre(data.weekRevenueOre)} />
+        <Stat label="Paid this week" value={formatOre(data.weekRevenueOre)} />
         <Stat label="Paid this month" value={formatOre(data.monthRevenueOre)} />
       </div>
 

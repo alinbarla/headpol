@@ -13,6 +13,7 @@ import { formatOre, fromDbTime } from "@/lib/booking";
 import type { BookingStatus } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BookingFilters } from "@/components/admin/BookingFilters";
+import { DeleteAllExpiredForm } from "@/components/admin/BookingActions";
 import { Button } from "@/components/shadcn/button";
 import { cn } from "@/lib/utils";
 
@@ -82,6 +83,16 @@ export default async function BookingsPage({
       </div>
 
       <BookingFilters query={query ?? ""} status={status} />
+
+      {status === "expired" && total > 0 && (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3">
+          <p className="text-sm text-muted-foreground">
+            Expired holds are abandoned checkouts. Deleting them removes the
+            rows completely.
+          </p>
+          <DeleteAllExpiredForm />
+        </div>
+      )}
 
       {rows.length === 0 ? (
         <p className="mt-6 rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">

@@ -1,7 +1,15 @@
 import "server-only";
 
 import type { AvailabilityOverride } from "@/lib/availability";
-import { addDaysToDateKey, stockholmDateKey } from "@/lib/time";
+import {
+  addDaysToDateKey,
+  endOfIsoWeek,
+  endOfMonth,
+  startOfIsoWeek,
+  startOfMonth,
+  stockholmDateKey,
+  stockholmDateTimeToInstant,
+} from "@/lib/time";
 import {
   getSupabaseAdminClient,
   type BookingRecord,
@@ -162,10 +170,13 @@ export type DashboardData = {
 export async function getDashboardData(): Promise<DashboardData> {
   const today = stockholmDateKey();
   const tomorrow = addDaysToDateKey(today, 1);
+  const weekStart = startOfIsoWeek(today);
+  const weekEnd = endOfIsoWeek(today);
+  const monthStart = startOfMonth(today);
+  const monthEnd = endOfMonth(today);
+  const paidFrom = weekStart < monthStart ? weekStart : monthStart;
 
   const supabase = getSupabaseAdminClient();
-  const monthStart = `${today.slice(0, 7)}-01`;
-  const weekStart = addDaysToDateKey(today, -6);
 
   const [twoDays, unconfirmed, revenue] = await Promise.all([
     listBookingsBetween(today, tomorrow),
@@ -180,7 +191,7 @@ export async function getDashboardData(): Promise<DashboardData> {
       .from("payments")
       .select("amount_ore, paid_at")
       .eq("status", "paid")
-      .gte("paid_at", `${monthStart < weekStart ? monthStart : weekStart}T00:00:00Z`),
+      .gte("paid_at", stockholmDateTimeToInstant(paidFrom, "00:00").toISOString()),
   ]);
 
   const paid = (revenue.data ?? []) as Array<{
@@ -188,9 +199,13 @@ export async function getDashboardData(): Promise<DashboardData> {
     paid_at: string | null;
   }>;
 
-  const sumSince = (since: string) =>
+  const sumBetween = (from: string, to: string) =>
     paid
-      .filter((row) => row.paid_at && row.paid_at.slice(0, 10) >= since)
+      .filter((row) => {
+        if (!row.paid_at) return false;
+        const day = stockholmDateKey(new Date(row.paid_at));
+        return day >= from && day <= to;
+      })
       .reduce((total, row) => total + row.amount_ore, 0);
 
   return {
@@ -203,8 +218,8 @@ export async function getDashboardData(): Promise<DashboardData> {
       (b) =>
         !b.hold_expires_at || new Date(b.hold_expires_at).getTime() < Date.now()
     ),
-    weekRevenueOre: sumSince(weekStart),
-    monthRevenueOre: sumSince(monthStart),
+    weekRevenueOre: sumBetween(weekStart, weekEnd),
+    monthRevenueOre: sumBetween(monthStart, monthEnd),
   };
 }
 

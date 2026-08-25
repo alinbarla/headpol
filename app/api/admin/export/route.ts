@@ -2,7 +2,7 @@ import { logAdminAction, isAuthenticated } from "@/lib/admin/auth";
 import { listPayments, listRefunds } from "@/lib/admin/data";
 import { fromDbTime } from "@/lib/booking";
 import { paymentMethodLabel } from "@/lib/admin/labels";
-import { addDaysToDateKey, stockholmDateKey } from "@/lib/time";
+import { startOfMonth, stockholmDateKey } from "@/lib/time";
 
 export const runtime = "nodejs";
 
@@ -20,7 +20,7 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const today = stockholmDateKey();
-  const from = readDate(searchParams.get("from"), addDaysToDateKey(today, -30));
+  const from = readDate(searchParams.get("from"), startOfMonth(today));
   const to = readDate(searchParams.get("to"), today);
 
   const [payments, refunds] = await Promise.all([

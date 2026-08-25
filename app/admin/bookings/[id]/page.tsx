@@ -24,6 +24,7 @@ import { formatDateKey, formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
 import {
   CancelCard,
+  DeleteExpiredCard,
   NotesCard,
   PaymentCard,
   RescheduleCard,
@@ -180,6 +181,7 @@ export default async function BookingDetailPage({
           stripeEnabled={isStripeConfigured()}
         />
         <CancelCard booking={booking} />
+        <DeleteExpiredCard booking={booking} />
       </div>
 
       {(payments.length > 0 || refunds.length > 0) && (
