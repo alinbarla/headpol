@@ -246,7 +246,7 @@
     "payNow": "Betala vid bokning · {price}",
     "payNowHint": "Kort eller Swish via Stripe. Tiden hålls i 20 minuter medan du betalar.",
     "continueToPayment": "Gå vidare till betalning",
-    "withdrawalConsent": "Jag godkänner att arbetet påbörjas före ångerfristens slut och är införstådd med att ångerrätten upphör när tjänsten är fullgjord."
+    "withdrawalConsent": "Jag förstår att jag kan få pengarna tillbaka endast om jag avbokar senast 24 timmar före den bokade tiden."
   },
   "bookingConfirmation": {
     "metaTitle": "Bokningsbekräftelse",
