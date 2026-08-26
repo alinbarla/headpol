@@ -9,8 +9,8 @@ const sections = [
   { id: "benefits", key: "benefits" as const },
   { id: "process", key: "process" as const },
   { id: "services", key: "services" as const },
-  { id: "faq", key: "faq" as const },
   { id: "booking", key: "booking" as const },
+  { id: "faq", key: "faq" as const },
   { id: "contact", key: "contact" as const },
 ];
 

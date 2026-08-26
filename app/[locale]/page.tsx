@@ -36,8 +36,8 @@ export default async function HomePage({ params }: PageProps) {
         <TrustSection />
         <ServiceAreaSection />
         <ReviewsSection />
-        <FaqSection />
         <BookingPicker />
+        <FaqSection />
       </main>
       <Footer />
     </>
