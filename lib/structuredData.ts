@@ -20,12 +20,24 @@ import {
  */
 export const REVIEWS_ARE_REAL = false;
 
+/** Primary nav targets used for SiteNavigationElement (SERP sitelinks menu). */
+const NAV_SECTIONS = [
+  { id: "benefits", key: "benefits" as const },
+  { id: "process", key: "process" as const },
+  { id: "services", key: "services" as const },
+  { id: "booking", key: "booking" as const },
+  { id: "faq", key: "faq" as const },
+  { id: "contact", key: "contact" as const },
+] as const;
+
 export async function buildStructuredData(
   locale: Locale
 ): Promise<Record<string, unknown>> {
   const tMeta = await getTranslations({ locale, namespace: "metadata" });
   const tFaq = await getTranslations({ locale, namespace: "faq" });
   const tServices = await getTranslations({ locale, namespace: "services" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
+  const tLegal = await getTranslations({ locale, namespace: "legal" });
 
   const url = localeUrl(locale);
   const orgId = `${SITE_URL}/#organization`;
@@ -33,6 +45,7 @@ export async function buildStructuredData(
   const websiteId = `${SITE_URL}/#website`;
   const serviceId = `${SITE_URL}/#service`;
   const webPageId = `${url}#webpage`;
+  const navigationId = `${url}#main-navigation`;
 
   const areaServed = SERVICE_AREAS.map((name) => ({
     "@type": "City",
@@ -117,6 +130,30 @@ export async function buildStructuredData(
     ...(SOCIAL_PROFILES.length ? { sameAs: SOCIAL_PROFILES } : {}),
   };
 
+  const navItems: Array<{ name: string; url: string }> = [
+    { name: tNav("brand"), url },
+    ...NAV_SECTIONS.map(({ id, key }) => ({
+      name: tNav(key),
+      url: `${url}#${id}`,
+    })),
+    { name: tLegal("terms"), url: `${url}/villkor` },
+    { name: tLegal("privacy"), url: `${url}/integritetspolicy` },
+  ];
+
+  /** Helps Google understand primary destinations for sitelinks / SERP menu. */
+  const siteNavigation = {
+    "@type": "ItemList",
+    "@id": navigationId,
+    name: locale === "sv" ? "Huvudmeny" : "Main menu",
+    numberOfItems: navItems.length,
+    itemListElement: navItems.map((item, index) => ({
+      "@type": "SiteNavigationElement",
+      position: index + 1,
+      name: item.name,
+      url: item.url,
+    })),
+  };
+
   const website = {
     "@type": "WebSite",
     "@id": websiteId,
@@ -124,6 +161,7 @@ export async function buildStructuredData(
     name: BRAND,
     inLanguage: locale === "sv" ? "sv-SE" : "en-US",
     publisher: { "@id": orgId },
+    hasPart: { "@id": navigationId },
   };
 
   const service = {
@@ -208,6 +246,15 @@ export async function buildStructuredData(
 
   return {
     "@context": "https://schema.org",
-    "@graph": [organization, localBusiness, website, service, webPage, breadcrumb, faqPage],
+    "@graph": [
+      organization,
+      localBusiness,
+      website,
+      siteNavigation,
+      service,
+      webPage,
+      breadcrumb,
+      faqPage,
+    ],
   };
 }
