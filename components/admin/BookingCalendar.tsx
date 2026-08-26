@@ -23,26 +23,10 @@ import { formatOre, fromDbTime } from "@/lib/booking";
 import { addDaysToDateKey, formatDateKey, slotIsPast, stockholmDateKey, stockholmTime, weekdayForDateKey } from "@/lib/time";
 import type { BookingRecord } from "@/lib/supabase/server";
 import { Button } from "@/components/shadcn/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/shadcn/alert-dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/shadcn/tabs";
 import { cn } from "@/lib/utils";
 
 type View = "month" | "week" | "day";
-
-type PendingMove = {
-  booking: BookingRecord;
-  date: string;
-  time: string;
-};
 
 const WEEKDAY_SHORT = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -69,7 +53,6 @@ export function BookingCalendar({
   const router = useRouter();
   const [view, setView] = useState<View>("week");
   const [cursor, setCursor] = useState(anchorDate);
-  const [pending, setPending] = useState<PendingMove | null>(null);
   const [dragging, setDragging] = useState<string | null>(null);
   const [isMoving, startMove] = useTransition();
   const [nowDate, setNowDate] = useState(anchorDate);
@@ -158,23 +141,16 @@ export function BookingCalendar({
     setCursor(addDaysToDateKey(cursor, step * direction));
   }
 
-  function requestMove(booking: BookingRecord, date: string, time: string) {
+  function moveBooking(booking: BookingRecord, date: string, time: string) {
     if (booking.booking_date === date && fromDbTime(booking.booking_time) === time) {
       return;
     }
-    setPending({ booking, date, time });
-  }
-
-  function confirmMove() {
-    if (!pending) return;
-    const move = pending;
-    setPending(null);
 
     startMove(async () => {
       const result = await rescheduleBooking({
-        id: move.booking.id,
-        date: move.date,
-        time: move.time,
+        id: booking.id,
+        date,
+        time,
         notify: true,
       });
 
@@ -259,41 +235,11 @@ export function BookingCalendar({
             nowTime={nowTime}
             onDragStart={setDragging}
             onDragEnd={() => setDragging(null)}
-            onDrop={requestMove}
+            onDrop={moveBooking}
             bookings={bookings}
           />
         )}
       </div>
-
-      <AlertDialog
-        open={pending !== null}
-        onOpenChange={(open) => {
-          if (!open) setPending(null);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Move this booking?</AlertDialogTitle>
-            <AlertDialogDescription>
-              {pending && (
-                <>
-                  {pending.booking.customer_name ?? "This booking"} moves from{" "}
-                  {formatDateKey(pending.booking.booking_date, ADMIN_LOCALE)} at{" "}
-                  {fromDbTime(pending.booking.booking_time)} to{" "}
-                  {formatDateKey(pending.date, ADMIN_LOCALE)} at {pending.time}.
-                  The customer gets an email about the change.
-                </>
-              )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmMove}>
-              Move booking
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
