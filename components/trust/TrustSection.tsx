@@ -1,8 +1,10 @@
-import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 
 export function TrustSection() {
   const t = useTranslations("trust");
+  const locale = useLocale();
   const items = t.raw("items") as Array<{ title: string; description: string }>;
 
   return (
@@ -13,6 +15,16 @@ export function TrustSection() {
             {t("title")}
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-text-secondary">{t("subtitle")}</p>
+          {locale === "sv" && (
+            <p className="mt-3">
+              <Link
+                href="/sv/om-oss"
+                className="text-sm font-semibold text-beam hover:underline"
+              >
+                {t("readMore")}
+              </Link>
+            </p>
+          )}
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">

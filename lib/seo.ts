@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { CONTACT_EMAIL, CONTACT_PHONE } from "@/lib/booking";
 import { routing, type Locale } from "@/lib/i18n";
 
@@ -23,6 +24,9 @@ export const LEGAL_NAME = "Strålkastarpolering";
 /** Stable first-publish date for the site (ISO 8601), used in WebPage schema. */
 export const PUBLISHED_DATE =
   process.env.NEXT_PUBLIC_PUBLISHED_DATE ?? "2026-01-01";
+
+/** Last meaningful public-content change. Do not use `new Date()` in schema. */
+export const DATE_MODIFIED = "2026-08-26";
 
 /** Optional Google Search Console verification token. */
 export const GOOGLE_SITE_VERIFICATION =
@@ -50,8 +54,10 @@ export const OG_IMAGE = {
   height: 630,
 };
 
-/** Logo used for Organization / LocalBusiness structured data. */
-export const LOGO_URL = `${SITE_URL}/icon.svg`;
+/** Logo used for Organization / LocalBusiness structured data (PNG ≥112px). */
+export const LOGO_URL = `${SITE_URL}/apple-icon`;
+export const LOGO_WIDTH = 180;
+export const LOGO_HEIGHT = 180;
 
 /**
  * Service-area business: no public street address. We expose city-level
@@ -104,10 +110,24 @@ export const SERVICE_AREAS = [
   "Täby",
   "Lidingö",
   "Huddinge",
+  "Tumba",
+  "Södertälje",
+  "Haninge",
   "Järfälla",
   "Sollentuna",
   "Danderyd",
 ];
+
+/** Swedish cluster pages for municipalities that have unique local copy. */
+export const AREA_PAGE_SLUGS: Record<string, string> = {
+  Stockholm: "stralkastarpolering-stockholm",
+  Solna: "stralkastarpolering-solna",
+  Nacka: "stralkastarpolering-nacka",
+  Huddinge: "stralkastarpolering-huddinge",
+  Tumba: "stralkastarpolering-tumba",
+  Södertälje: "stralkastarpolering-sodertalje",
+  Haninge: "stralkastarpolering-haninge",
+};
 
 export const SOCIAL_PROFILES: string[] = [
   // Add real profiles (Google Business, Facebook, Instagram) when available.
@@ -116,7 +136,7 @@ export const SOCIAL_PROFILES: string[] = [
 /** Per-locale keyword sets (used in <meta keywords> and content guidance). */
 export const KEYWORDS: Record<Locale, string[]> = {
   sv: [
-    "strålkastarepolering",
+    "strålkastarpolering",
     "strålkastarpolering Stockholm",
     "strålkastare restaurering",
     "polera strålkastare",
@@ -150,7 +170,79 @@ export function localeUrl(locale: string, path = ""): string {
   return `${SITE_URL}/${locale}${clean}`;
 }
 
-/** OG locale codes. */
+/** BCP 47 language tags for <html lang> and hreflang. */
+export function htmlLang(locale: string): string {
+  return locale === "sv" ? "sv-SE" : "en-SE";
+}
+
+/** OG locale codes (underscore form). */
 export function ogLocale(locale: string): string {
-  return locale === "sv" ? "sv_SE" : "en_US";
+  return locale === "sv" ? "sv_SE" : "en_SE";
+}
+
+/** hreflang map for pages that exist in both Swedish and English. */
+export function languageAlternates(path = ""): Record<string, string> {
+  return {
+    "sv-SE": localeUrl("sv", path),
+    "en-SE": localeUrl("en", path),
+    "x-default": localeUrl("sv", path),
+  };
+}
+
+/**
+ * Per-page title, description, canonical and (when the page exists in both
+ * languages) hreflang. Layout metadata must not set canonical/languages.
+ */
+export function buildPageMetadata({
+  locale,
+  path = "",
+  title,
+  description,
+  bilingual = false,
+  absoluteTitle = false,
+}: {
+  locale: string;
+  path?: string;
+  title: string;
+  description: string;
+  bilingual?: boolean;
+  absoluteTitle?: boolean;
+}): Metadata {
+  const canonical = localeUrl(locale, path);
+
+  return {
+    title: absoluteTitle ? { absolute: title } : title,
+    description,
+    alternates: {
+      canonical,
+      ...(bilingual ? { languages: languageAlternates(path) } : {}),
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      locale: ogLocale(locale),
+      ...(bilingual
+        ? {
+            alternateLocale: LOCALES.filter((item) => item !== locale).map(
+              ogLocale
+            ),
+          }
+        : {}),
+      images: [
+        {
+          url: OG_IMAGE.url,
+          width: OG_IMAGE.width,
+          height: OG_IMAGE.height,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [OG_IMAGE.url],
+    },
+  };
 }

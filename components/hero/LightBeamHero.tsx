@@ -40,7 +40,7 @@ export function LightBeamHero() {
             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-beam font-display">
               {t("eyebrow")}
             </p>
-            <h1 className="headline-display text-5xl font-bold text-text-primary sm:text-6xl lg:text-7xl">
+            <h1 className="headline-display text-3xl font-bold text-text-primary sm:text-4xl lg:text-5xl">
               {t("title")}
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
@@ -49,6 +49,9 @@ export function LightBeamHero() {
                   <span className="guarantee-chip">{chunks}</span>
                 ),
               })}
+            </p>
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-text-secondary">
+              {t("semantic")}
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Button href={`tel:${CONTACT_PHONE}`}>{t("ctaPrimary")}</Button>

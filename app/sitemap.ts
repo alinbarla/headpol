@@ -1,15 +1,15 @@
 import type { MetadataRoute } from "next";
-import { LOCALES, localeUrl } from "@/lib/seo";
+import { CLUSTER_SLUGS } from "@/lib/content/slugs";
+import { DATE_MODIFIED, LOCALES, localeUrl } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
-/** Legal pages that exist per locale alongside the single marketing page. */
 const LEGAL_PATHS = ["villkor", "integritetspolicy"];
 
-/** The marketing site is one page per locale. Hreflang lives in page <head>, not here —
- *  xhtml:link in a sitemap makes Chrome parse it as HTML (tags disappear). */
+/** Hreflang lives in page <head>, not here — xhtml:link in a sitemap makes
+ *  Chrome parse it as HTML (tags disappear). */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date().toISOString().slice(0, 10);
+  const lastModified = DATE_MODIFIED;
 
   const home: MetadataRoute.Sitemap = LOCALES.map((locale) => ({
     url: localeUrl(locale),
@@ -20,12 +20,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const legal: MetadataRoute.Sitemap = LOCALES.flatMap((locale) =>
     LEGAL_PATHS.map((path) => ({
-      url: `${localeUrl(locale)}/${path}`,
+      url: localeUrl(locale, path),
       lastModified,
       changeFrequency: "yearly" as const,
       priority: 0.2,
     }))
   );
 
-  return [...home, ...legal];
+  const cluster: MetadataRoute.Sitemap = CLUSTER_SLUGS.map((slug) => ({
+    url: localeUrl("sv", slug),
+    lastModified,
+    changeFrequency: "monthly" as const,
+    priority: slug.startsWith("stralkastarpolering") ? 0.8 : 0.7,
+  }));
+
+  return [...home, ...cluster, ...legal];
 }

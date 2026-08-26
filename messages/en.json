@@ -1,22 +1,28 @@
 {
   "metadata": {
-    "title": "Headlight Restoration Stockholm | Strålkastarpolering",
+    "title": "Headlight polishing and restoration in Stockholm | Strålkastarpolering",
     "description": "Crystal-clear headlights again. Premium restoration + UV ceramic protection, 799 SEK/pair and a 5-year warranty. We come to you in Stockholm."
   },
   "nav": {
     "brand": "Strålkastarpolering",
     "skipToContent": "Skip to content",
+    "home": "Home",
     "benefits": "Benefits",
     "process": "Process",
     "services": "Pricing",
+    "polishing": "Polishing",
+    "restoration": "Restoration",
+    "about": "About",
     "faq": "FAQ",
     "booking": "Book",
-    "contact": "Contact"
+    "contact": "Contact",
+    "menu": "Menu"
   },
   "hero": {
     "eyebrow": "Limited spots this week",
-    "title": "Crystal-clear headlights again!",
+    "title": "Headlight polishing in Stockholm – crystal-clear headlights again",
     "subtitle": "Premium restoration + UV ceramic protection = headlights like new, money saved and a <guarantee>5-year warranty</guarantee>.",
+    "semantic": "Professional headlight polishing and restoration in Stockholm. We remove oxidation, yellowing and scratches from plastic lenses and finish with UV ceramic protection. We come to you at home, at work or in the garage.",
     "ctaPrimary": "Call now — we come to you!",
     "ctaSecondary": "Book a time",
     "oldPrice": "1499kr",
@@ -41,8 +47,8 @@
     "subtitle": "Cloudy, yellow headlights cut your visibility, lower your car's value and can fail inspection. Restoration fixes all of it for a fraction of the cost of new units.",
     "items": [
       {
-        "title": "Up to 70% more light",
-        "description": "Clear plastic lets through far more light than oxidised lenses. You see better in the dark and fog — and meet oncoming traffic more safely."
+        "title": "Clearly more light in the dark",
+        "description": "Oxidised plastic scatters and dulls the beam. Once the lens is clear again, more of the lamp's light reaches the road — you see better in the dark and fog, and meet oncoming traffic more safely."
       },
       {
         "title": "Passes inspection",
@@ -61,6 +67,7 @@
   "process": {
     "title": "How headlight restoration works",
     "subtitle": "Six steps from dull, yellow plastic to a factory-clear finish. Every headlight is sanded, polished and sealed by hand with professional materials.",
+    "readMore": "Read more about headlight restoration",
     "stepLabel": "Step {step}",
     "sequenceLabel": "Process · Steps 01–06",
     "steps": [
@@ -98,6 +105,7 @@
   },
   "services": {
     "title": "Headlight restoration pricing",
+    "readMore": "Full prices and what's included",
     "subtitle": "Premium restoration + UV ceramic protection for both headlights. 799kr/pair.",
     "exampleNote": "Services & pricing",
     "guaranteeNote": "Premium restoration + UV ceramic protection = headlights like new, money saved and a 5-year warranty.",
@@ -124,6 +132,7 @@
   "trust": {
     "title": "Headlight restoration you can trust",
     "subtitle": "We've restored headlights on everything from daily drivers to dealership stock. You always know what you pay and what you get.",
+    "readMore": "More about us and the method",
     "items": [
       {
         "title": "Fixed price upfront",
@@ -142,32 +151,20 @@
   "serviceArea": {
     "title": "Headlight restoration across Stockholm",
     "subtitle": "We come to you across Greater Stockholm. If you live in one of these areas we're with you quickly.",
-    "note": "Just outside the list? Get in touch anyway — we cover large parts of Stockholm County."
+    "note": "Just outside the list? Get in touch anyway — we cover large parts of Stockholm County.",
+    "readMore": "Areas we travel to"
   },
   "reviews": {
-    "title": "What customers say",
-    "subtitle": "Real reviews from car owners in Stockholm.",
-    "items": [
-      {
-        "quote": "The headlights were completely yellow and cloudy. After an hour they looked brand new and the car passed inspection without a remark.",
-        "author": "Johan L.",
-        "location": "Solna"
-      },
-      {
-        "quote": "Easy that they came to my home. Huge difference in the light when I drive in the dark now.",
-        "author": "Maria K.",
-        "location": "Nacka"
-      },
-      {
-        "quote": "We use them for our whole fleet. Fast, affordable and always the same great result.",
-        "author": "Erik S.",
-        "location": "Täby"
-      }
-    ]
+    "title": "What the result looks like",
+    "subtitle": "Oxidised plastic versus a clear surface after sanding, polishing and UV ceramic protection. We show the work, not invented reviews.",
+    "cta": "See how the restoration works",
+    "beforeAfterAlt": "Before and after headlight restoration on the same car",
+    "afterAlt": "Car after headlight restoration with a clear lens"
   },
   "faq": {
     "title": "Headlight restoration FAQ",
     "subtitle": "Answers to what car owners in Stockholm ask most about headlight polishing and restoration.",
+    "readMore": "All questions and longer answers",
     "items": [
       {
         "question": "How long does headlight restoration last?",
@@ -208,6 +205,26 @@
       {
         "question": "How do I book?",
         "answer": "Pick a date and time in the booking calendar on this page, or call us directly. We're open Sunday 08:00–20:00, and Monday to Friday 16:00–20:00."
+      },
+      {
+        "question": "Can you polish cloudy headlights?",
+        "answer": "Yes. A cloudy surface is almost always oxidation in the polycarbonate, not dirt. We sand away the oxidised layer and polish the clarity back."
+      },
+      {
+        "question": "Why do headlights turn yellow?",
+        "answer": "UV from the sun breaks down the factory coating on the plastic. After that the polycarbonate oxidises and turns yellow and dull. That's why UV ceramic protection is included in every job."
+      },
+      {
+        "question": "How much does it cost to replace headlights?",
+        "answer": "New OEM headlights often cost 5,000–20,000 SEK each plus fitting. Restoring both sides is 799 SEK/pair."
+      },
+      {
+        "question": "Is it cheaper to restore headlights than to replace them?",
+        "answer": "Yes, in almost every case. Restoration gives you lenses like new for 799 SEK/pair. Replacement only pays when the lens is cracked or damaged on the inside."
+      },
+      {
+        "question": "Can cracked headlights be restored?",
+        "answer": "Surface scratches can be polished. A crack through the lens or moisture on the inside cannot — we'll tell you on the spot and won't charge you."
       }
     ]
   },
@@ -306,6 +323,16 @@
   "footer": {
     "tagline": "Crystal-clear headlights again. We come to you.",
     "copyright": "© {year} Strålkastarpolering. All rights reserved.",
-    "navLabel": "Site links"
+    "navLabel": "Site links",
+    "clusterLabel": "Pages"
+  },
+  "cluster": {
+    "homeCrumb": "Home",
+    "ctaTitle": "Book headlight restoration",
+    "ctaBody": "We come to you. Fixed price 799 SEK/pair, UV ceramic protection and a 5-year warranty.",
+    "ctaBook": "Book a time",
+    "ctaCall": "Call now",
+    "relatedTitle": "Read next",
+    "faqTitle": "FAQ"
   }
 }

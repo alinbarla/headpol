@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
 import { routing, type Locale } from "@/lib/i18n";
+import { isClusterSlug } from "@/lib/content/slugs";
 
 export function LocaleSwitcher() {
   const locale = useLocale() as Locale;
@@ -11,9 +12,15 @@ export function LocaleSwitcher() {
   const t = useTranslations("nav");
 
   const switchLocale = (nextLocale: Locale) => {
-    const segments = pathname.split("/");
-    segments[1] = nextLocale;
-    router.push(segments.join("/") || `/${nextLocale}`);
+    const segments = pathname.split("/").filter(Boolean);
+    const slug = segments[1];
+    // Cluster URLs exist only in Swedish. Switching language from one of them
+    // must land on the English homepage, not a 404.
+    if (nextLocale === "en" && slug && isClusterSlug(slug)) {
+      router.push("/en");
+      return;
+    }
+    router.push(`/${nextLocale}${slug ? `/${slug}` : ""}`);
   };
 
   return (

@@ -1,8 +1,10 @@
-import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 
 export function FaqSection() {
   const t = useTranslations("faq");
+  const locale = useLocale();
   const items = t.raw("items") as Array<{ question: string; answer: string }>;
 
   return (
@@ -13,6 +15,16 @@ export function FaqSection() {
             {t("title")}
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-text-secondary">{t("subtitle")}</p>
+          {locale === "sv" && (
+            <p className="mt-3">
+              <Link
+                href="/sv/faq"
+                className="text-sm font-semibold text-beam hover:underline"
+              >
+                {t("readMore")}
+              </Link>
+            </p>
+          )}
         </div>
 
         <div className="mx-auto max-w-3xl divide-y divide-white/10 border-y border-white/10">

@@ -11,10 +11,9 @@ import {
   BRAND,
   GOOGLE_SITE_VERIFICATION,
   KEYWORDS,
-  LOCALES,
   OG_IMAGE,
   SITE_URL,
-  localeUrl,
+  htmlLang,
   ogLocale,
 } from "@/lib/seo";
 import "../globals.css";
@@ -61,14 +60,6 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "metadata" });
 
-  const canonical = localeUrl(locale);
-  const languages: Record<string, string> = {
-    "x-default": localeUrl(routing.defaultLocale),
-  };
-  for (const loc of LOCALES) {
-    languages[loc === "sv" ? "sv-SE" : "en-US"] = localeUrl(loc);
-  }
-
   const title = t("title");
   const description = t("description");
 
@@ -85,18 +76,10 @@ export async function generateMetadata({
     creator: BRAND,
     publisher: BRAND,
     category: "Automotive",
-    alternates: {
-      canonical,
-      languages,
-    },
     openGraph: {
       type: "website",
       siteName: BRAND,
-      title,
-      description,
-      url: canonical,
       locale: ogLocale(locale),
-      alternateLocale: LOCALES.filter((l) => l !== locale).map(ogLocale),
       images: [
         {
           url: OG_IMAGE.url,
@@ -108,8 +91,6 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
       images: [OG_IMAGE.url],
     },
     robots: {
@@ -141,10 +122,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${libreFranklin.variable} ${publicSans.variable} h-full`}>
-      <GoogleTagManager />
-      <GoogleTag />
+    <html lang={htmlLang(locale)} className={`${libreFranklin.variable} ${publicSans.variable} h-full`}>
       <body className="min-h-full antialiased">
+        <GoogleTagManager />
+        <GoogleTag />
         <GoogleTagManagerNoscript />
         <div className="grain-overlay" aria-hidden="true" />
         <NextIntlClientProvider messages={messages}>

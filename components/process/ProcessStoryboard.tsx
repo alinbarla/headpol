@@ -2,8 +2,9 @@
 
 import { useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, useInView } from "framer-motion";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
@@ -77,6 +78,7 @@ function StepCard({
 
 export function ProcessStoryboard() {
   const t = useTranslations("process");
+  const locale = useLocale();
   const steps = t.raw("steps") as Array<{
     title: string;
     description: string;
@@ -96,6 +98,16 @@ export function ProcessStoryboard() {
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-text-secondary">
             {t("subtitle")}
           </p>
+          {locale === "sv" && (
+            <p className="mt-4">
+              <Link
+                href="/sv/stralkastarrenovering"
+                className="text-sm font-semibold text-beam hover:underline"
+              >
+                {t("readMore")}
+              </Link>
+            </p>
+          )}
         </div>
 
         <ol className="grid list-none grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">

@@ -1,7 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { PriceSticker } from "@/components/ui/PriceSticker";
 
@@ -27,6 +28,7 @@ const serviceIcons: ReactNode[] = [
 
 export function ServicesSection() {
   const t = useTranslations("services");
+  const locale = useLocale();
   const items = t.raw("items") as Array<{
     title: string;
     description: string;
@@ -45,6 +47,16 @@ export function ServicesSection() {
             {t("title")}
           </h2>
           <p className="mt-4 text-lg text-text-secondary">{t("subtitle")}</p>
+          {locale === "sv" && (
+            <p className="mt-4">
+              <Link
+                href="/sv/priser"
+                className="text-sm font-semibold text-beam hover:underline"
+              >
+                {t("readMore")}
+              </Link>
+            </p>
+          )}
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">

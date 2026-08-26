@@ -6,7 +6,7 @@ import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import { Container } from "@/components/ui/Container";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_DISPLAY } from "@/lib/booking";
 
-const footerLinks = [
+const homeSectionKeys = [
   { id: "benefits", key: "benefits" as const },
   { id: "process", key: "process" as const },
   { id: "services", key: "services" as const },
@@ -22,6 +22,19 @@ export function Footer() {
   const locale = useLocale();
   const year = new Date().getFullYear();
 
+  const svCluster = [
+    { href: "/sv", label: tNav("home") },
+    { href: "/sv/stralkastarpolering", label: tNav("polishing") },
+    { href: "/sv/stralkastarrenovering", label: tNav("restoration") },
+    { href: "/sv/priser", label: tNav("services") },
+    { href: "/sv/foretagskunder", label: "Företag" },
+    { href: "/sv/fore-bilder", label: "Före & efter" },
+    { href: "/sv/faq", label: tNav("faq") },
+    { href: "/sv/om-oss", label: tNav("about") },
+    { href: "/sv/stralkastarpolering-stockholm", label: "Stockholm" },
+    { href: "/sv#booking", label: tNav("booking") },
+  ];
+
   return (
     <footer id="contact" className="section-anchor border-t border-white/10 py-16">
       <Container>
@@ -34,18 +47,32 @@ export function Footer() {
           </div>
 
           <div className="grid gap-8 sm:grid-cols-3">
-            <nav aria-label={t("navLabel")}>
+            <nav aria-label={locale === "sv" ? t("clusterLabel") : t("navLabel")}>
               <h3 className="text-xs font-semibold uppercase tracking-wider text-beam">
-                {t("navLabel")}
+                {locale === "sv" ? t("clusterLabel") : t("navLabel")}
               </h3>
               <ul className="mt-4 space-y-2 text-sm text-text-secondary">
-                {footerLinks.map((link) => (
-                  <li key={link.id}>
-                    <a href={`#${link.id}`} className="cursor-pointer transition-colors hover:text-beam">
-                      {tNav(link.key)}
-                    </a>
-                  </li>
-                ))}
+                {locale === "sv"
+                  ? svCluster.map((link) => (
+                      <li key={link.href}>
+                        <Link
+                          href={link.href}
+                          className="cursor-pointer transition-colors hover:text-beam"
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))
+                  : homeSectionKeys.map((link) => (
+                      <li key={link.id}>
+                        <Link
+                          href={`/${locale}#${link.id}`}
+                          className="cursor-pointer transition-colors hover:text-beam"
+                        >
+                          {tNav(link.key)}
+                        </Link>
+                      </li>
+                    ))}
               </ul>
             </nav>
 

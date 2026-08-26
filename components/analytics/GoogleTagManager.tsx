@@ -1,3 +1,4 @@
+import Script from "next/script";
 import { GTM_ID } from "@/lib/seo";
 
 const gtmBootstrap = GTM_ID
@@ -9,17 +10,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   : "";
 
 /**
- * Google Tag Manager bootstrap. A native <script> (not next/script) so it is
- * present in the initial HTML. Placed as a child of <html> it is hoisted into
- * <head> by the browser, which matches Google's install instructions.
+ * Google Tag Manager bootstrap. `next/script` so React 19 does not treat a
+ * raw `<script>` as an invalid child during streaming SSR.
  */
 export function GoogleTagManager() {
   if (!GTM_ID) return null;
 
   return (
-    <script
-      dangerouslySetInnerHTML={{ __html: gtmBootstrap }}
-    />
+    <Script id="gtm-bootstrap" strategy="beforeInteractive">
+      {gtmBootstrap}
+    </Script>
   );
 }
 

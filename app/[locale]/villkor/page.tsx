@@ -9,7 +9,7 @@ import {
   CONTACT_PHONE_DISPLAY,
 } from "@/lib/booking";
 import { routing, type Locale } from "@/lib/i18n";
-import { BRAND, SITE_URL } from "@/lib/seo";
+import { BRAND, buildPageMetadata } from "@/lib/seo";
 
 const UPDATED = "2026-08-24";
 
@@ -25,13 +25,15 @@ export async function generateMetadata({
   const { locale } = await params;
   const sv = locale === "sv";
 
-  return {
+  return buildPageMetadata({
+    locale,
+    path: "villkor",
     title: sv ? "Villkor och avbokning" : "Terms and cancellation",
     description: sv
       ? `Bokningsvillkor, avbokningsregler och ångerrätt hos ${BRAND}.`
       : `Booking terms, cancellation rules and the right of withdrawal at ${BRAND}.`,
-    alternates: { canonical: `${SITE_URL}/${locale}/villkor` },
-  };
+    bilingual: true,
+  });
 }
 
 export default async function TermsPage({

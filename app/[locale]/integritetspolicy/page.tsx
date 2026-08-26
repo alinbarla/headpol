@@ -6,9 +6,9 @@ import { LegalPage } from "@/components/layout/LegalPage";
 import { Footer } from "@/components/layout/Footer";
 import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY } from "@/lib/booking";
 import { routing, type Locale } from "@/lib/i18n";
-import { BRAND, SITE_URL } from "@/lib/seo";
+import { BRAND, buildPageMetadata } from "@/lib/seo";
 
-const UPDATED = "2026-08-24";
+const UPDATED = "2026-08-26";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -22,13 +22,15 @@ export async function generateMetadata({
   const { locale } = await params;
   const sv = locale === "sv";
 
-  return {
+  return buildPageMetadata({
+    locale,
+    path: "integritetspolicy",
     title: sv ? "Integritetspolicy" : "Privacy policy",
     description: sv
       ? `Så behandlar ${BRAND} dina personuppgifter enligt GDPR.`
       : `How ${BRAND} handles your personal data under the GDPR.`,
-    alternates: { canonical: `${SITE_URL}/${locale}/integritetspolicy` },
-  };
+    bilingual: true,
+  });
 }
 
 export default async function PrivacyPage({
@@ -116,8 +118,9 @@ function PrivacySv() {
           <strong>Vercel</strong> driftar webbplatsen.
         </li>
         <li>
-          <strong>Google (Gmail)</strong> används för att skicka
-          bekräftelsemejl.
+          <strong>Google</strong> används för bekräftelsemejl (Gmail) samt
+          Google Tag Manager och Google Ads, som mäter när en bokning blir
+          betald.
         </li>
       </ul>
 
@@ -141,9 +144,11 @@ function PrivacySv() {
         Integritetsskyddsmyndigheten (IMY).
       </p>
 
-      <h2>Kakor</h2>
+      <h2>Kakor och mätning</h2>
       <p>
-        Webbplatsen använder inga analys- eller marknadsföringskakor. Ditt
+        Vi använder Google Tag Manager och Google Ads för att mäta när en
+        bokning blir betald. Det kan sätta kakor eller liknande identifierare
+        i din webbläsare. Vi kör inte Google Analytics för sidstatistik. Ditt
         språkval kan sparas lokalt i webbläsaren. Betalsidan hos Stripe sätter
         egna kakor som krävs för att betalningen ska fungera säkert.
       </p>
@@ -219,7 +224,9 @@ function PrivacyEn() {
           <strong>Vercel</strong> hosts the website.
         </li>
         <li>
-          <strong>Google (Gmail)</strong> is used to send confirmation emails.
+          <strong>Google</strong> is used for confirmation email (Gmail) and
+          for Google Tag Manager and Google Ads, which measure when a booking
+          is paid.
         </li>
       </ul>
 
@@ -243,12 +250,14 @@ function PrivacyEn() {
         Swedish Authority for Privacy Protection (IMY).
       </p>
 
-      <h2>Cookies</h2>
+      <h2>Cookies and measurement</h2>
       <p>
-        This site uses no analytics or marketing cookies. Your language
-        preference may be stored locally in your browser. Stripe&apos;s checkout
-        page sets its own cookies that are necessary for the payment to work
-        securely.
+        We use Google Tag Manager and Google Ads to measure when a booking is
+        paid. That may set cookies or similar identifiers in your browser. We
+        do not run Google Analytics for page statistics. Your language
+        preference may be stored locally in your browser. Stripe&apos;s
+        checkout page sets its own cookies that are necessary for the payment
+        to work securely.
       </p>
 
       <p>

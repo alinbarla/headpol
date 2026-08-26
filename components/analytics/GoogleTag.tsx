@@ -1,3 +1,4 @@
+import Script from "next/script";
 import { GOOGLE_ADS_ID, GOOGLE_ADS_PURCHASE_SEND_TO } from "@/lib/seo";
 
 const gtagBootstrap = GOOGLE_ADS_ID
@@ -8,21 +9,22 @@ gtag('config', '${GOOGLE_ADS_ID}');`
   : "";
 
 /**
- * Google tag (gtag.js) for AW-18407352152. A native `<script>` (not
- * next/script) so it is in the initial HTML next to GTM. As a child of
- * `<html>` the browser treats it as head content, which matches Google Ads'
- * "paste between the head tags on every page" install.
+ * Google tag (gtag.js) for AW-18407352152. Loaded with next/script so React 19
+ * streaming does not wrap a raw `<script>` in `<template>`.
  */
 export function GoogleTag() {
   if (!GOOGLE_ADS_ID) return null;
 
   return (
     <>
-      <script
-        async
+      <Script
+        id="gtag-js"
         src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
+        strategy="afterInteractive"
       />
-      <script dangerouslySetInnerHTML={{ __html: gtagBootstrap }} />
+      <Script id="gtag-config" strategy="afterInteractive">
+        {gtagBootstrap}
+      </Script>
     </>
   );
 }
@@ -49,15 +51,13 @@ export function PurchaseConversion({
   const value = Number.isFinite(valueSek) ? valueSek : 1;
 
   return (
-    <script
-      dangerouslySetInnerHTML={{
-        __html: `gtag('event', 'conversion', {
+    <Script id="google-ads-purchase" strategy="afterInteractive">
+      {`gtag('event', 'conversion', {
   send_to: ${JSON.stringify(GOOGLE_ADS_PURCHASE_SEND_TO)},
   value: ${value},
   currency: 'SEK',
   transaction_id: ${JSON.stringify(transactionId)}
-});`,
-      }}
-    />
+});`}
+    </Script>
   );
 }
