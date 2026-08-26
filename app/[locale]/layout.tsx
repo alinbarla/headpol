@@ -143,13 +143,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   return (
     <html lang={locale} className={`${libreFranklin.variable} ${publicSans.variable} h-full`}>
       <GoogleTagManager />
+      <GoogleTag />
       <body className="min-h-full antialiased">
         <GoogleTagManagerNoscript />
         <div className="grain-overlay" aria-hidden="true" />
         <NextIntlClientProvider messages={messages}>
           <MotionProvider>{children}</MotionProvider>
         </NextIntlClientProvider>
-        <GoogleTag />
       </body>
     </html>
   );

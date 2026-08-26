@@ -1,26 +1,28 @@
-import Script from "next/script";
 import { GOOGLE_ADS_ID, GOOGLE_ADS_PURCHASE_SEND_TO } from "@/lib/seo";
 
+const gtagBootstrap = GOOGLE_ADS_ID
+  ? `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GOOGLE_ADS_ID}');`
+  : "";
+
 /**
- * Google tag (gtag.js) for the Google Ads account, loaded once for every page
- * of the public site. `afterInteractive` keeps it off the critical path while
- * still firing the page view as soon as hydration starts.
+ * Google tag (gtag.js) for AW-18407352152. A native `<script>` (not
+ * next/script) so it is in the initial HTML next to GTM. As a child of
+ * `<html>` the browser treats it as head content, which matches Google Ads'
+ * "paste between the head tags on every page" install.
  */
 export function GoogleTag() {
   if (!GOOGLE_ADS_ID) return null;
 
   return (
     <>
-      <Script
+      <script
+        async
         src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
-        strategy="afterInteractive"
       />
-      <Script id="google-tag-init" strategy="afterInteractive">
-        {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${GOOGLE_ADS_ID}');`}
-      </Script>
+      <script dangerouslySetInnerHTML={{ __html: gtagBootstrap }} />
     </>
   );
 }
@@ -33,8 +35,9 @@ type PurchaseConversionProps = {
 };
 
 /**
- * Google Ads Purchase conversion. Only mount this on a confirmed paid
- * booking — firing it on the empty confirmation URL would invent conversions.
+ * Event snippet for the Purchase conversion. Only on a confirmed paid
+ * booking. `transaction_id` is the booking UUID; Google Ads uses it to ignore
+ * reloads of the confirmation page.
  */
 export function PurchaseConversion({
   transactionId,
@@ -46,15 +49,15 @@ export function PurchaseConversion({
   const value = Number.isFinite(valueSek) ? valueSek : 1;
 
   return (
-    <Script id="google-ads-purchase" strategy="afterInteractive">
-      {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('event', 'conversion', {
-  send_to: '${GOOGLE_ADS_PURCHASE_SEND_TO}',
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `gtag('event', 'conversion', {
+  send_to: ${JSON.stringify(GOOGLE_ADS_PURCHASE_SEND_TO)},
   value: ${value},
   currency: 'SEK',
-  transaction_id: '${transactionId}'
-});`}
-    </Script>
+  transaction_id: ${JSON.stringify(transactionId)}
+});`,
+      }}
+    />
   );
 }
