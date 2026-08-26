@@ -14,6 +14,7 @@ import {
 } from "@/lib/admin/labels";
 import {
   openSlotsForDate,
+  scheduleHourSpan,
   type AvailabilityOverride,
   type BookingRules,
 } from "@/lib/availability";
@@ -111,8 +112,9 @@ export function BookingCalendar({
    * booking squeezed in outside opening hours is still visible.
    */
   const hours = useMemo(() => {
-    let min = rules.startHour;
-    let max = rules.endHour;
+    const span = scheduleHourSpan(rules);
+    let min = span.min;
+    let max = span.max;
 
     for (const booking of bookings) {
       const hour = Number(booking.booking_time.slice(0, 2));
@@ -123,7 +125,7 @@ export function BookingCalendar({
     const from = Math.max(0, min - 1);
     const to = Math.min(24, max + 1);
     return Array.from({ length: to - from }, (_, index) => from + index);
-  }, [bookings, rules.startHour, rules.endHour]);
+  }, [bookings, rules]);
 
   // Overrides are pre-grouped by date so each cell lookup stays cheap without
   // a memoising cache that would have to be mutated during render.

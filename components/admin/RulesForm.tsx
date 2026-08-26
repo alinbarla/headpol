@@ -52,7 +52,7 @@ export function RulesForm({ rules }: { rules: BookingRules }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="startHour">Opens (hour)</Label>
+              <Label htmlFor="startHour">Weekdays open (hour)</Label>
               <Input
                 id="startHour"
                 name="startHour"
@@ -64,7 +64,7 @@ export function RulesForm({ rules }: { rules: BookingRules }) {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="endHour">Closes (hour)</Label>
+              <Label htmlFor="endHour">Weekdays close (hour)</Label>
               <Input
                 id="endHour"
                 name="endHour"
@@ -75,7 +75,37 @@ export function RulesForm({ rules }: { rules: BookingRules }) {
                 defaultValue={rules.endHour}
               />
               <p className="text-xs text-muted-foreground">
-                The last slot starts an hour before this.
+                Mon–Fri. The last slot starts an hour before this.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="sundayStartHour">Sunday open (hour)</Label>
+              <Input
+                id="sundayStartHour"
+                name="sundayStartHour"
+                type="number"
+                min={0}
+                max={23}
+                required
+                defaultValue={rules.sundayStartHour}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="sundayEndHour">Sunday close (hour)</Label>
+              <Input
+                id="sundayEndHour"
+                name="sundayEndHour"
+                type="number"
+                min={1}
+                max={24}
+                required
+                defaultValue={rules.sundayEndHour}
+              />
+              <p className="text-xs text-muted-foreground">
+                Sunday only. The last slot starts an hour before this.
               </p>
             </div>
           </div>

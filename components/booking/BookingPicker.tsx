@@ -174,12 +174,20 @@ export function BookingPicker() {
       for (const time of times) all.add(time);
     }
     if (all.size === 0) {
-      for (let hour = rules.startHour; hour < rules.endHour; hour++) {
+      const spanStart = Math.min(rules.startHour, rules.sundayStartHour);
+      const spanEnd = Math.max(rules.endHour, rules.sundayEndHour);
+      for (let hour = spanStart; hour < spanEnd; hour++) {
         all.add(`${String(hour).padStart(2, "0")}:00`);
       }
     }
     return [...all].sort();
-  }, [availability, rules.startHour, rules.endHour]);
+  }, [
+    availability,
+    rules.startHour,
+    rules.endHour,
+    rules.sundayStartHour,
+    rules.sundayEndHour,
+  ]);
 
   /** Days with no open slots at all, or where every open slot is taken. */
   const closedDates = useMemo(() => {

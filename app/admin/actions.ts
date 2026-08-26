@@ -907,11 +907,16 @@ const rulesSchema = z
     weekdays: z.array(z.coerce.number().int().min(0).max(6)).min(1, "Pick at least one day"),
     startHour: z.coerce.number().int().min(0).max(23),
     endHour: z.coerce.number().int().min(1).max(24),
+    sundayStartHour: z.coerce.number().int().min(0).max(23),
+    sundayEndHour: z.coerce.number().int().min(1).max(24),
     horizonDays: z.coerce.number().int().min(1).max(365),
     priceOre: z.coerce.number().int().min(0).max(10_000_000),
   })
   .refine((value) => value.endHour > value.startHour, {
-    message: "The closing time must be after the opening time",
+    message: "The weekday closing time must be after the opening time",
+  })
+  .refine((value) => value.sundayEndHour > value.sundayStartHour, {
+    message: "The Sunday closing time must be after the opening time",
   });
 
 export async function updateRulesAction(
@@ -924,6 +929,8 @@ export async function updateRulesAction(
     weekdays: formData.getAll("weekdays"),
     startHour: formData.get("startHour"),
     endHour: formData.get("endHour"),
+    sundayStartHour: formData.get("sundayStartHour"),
+    sundayEndHour: formData.get("sundayEndHour"),
     horizonDays: formData.get("horizonDays"),
     priceOre: formData.get("priceOre"),
   });

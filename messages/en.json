@@ -207,7 +207,7 @@
       },
       {
         "question": "How do I book?",
-        "answer": "Pick a date and time in the booking calendar on this page, or call us directly. We're open Sunday to Friday from 16:00 to 20:00."
+        "answer": "Pick a date and time in the booking calendar on this page, or call us directly. We're open Sunday 08:00–20:00, and Monday to Friday 16:00–20:00."
       }
     ]
   },
@@ -233,7 +233,7 @@
     "noDate": "Select a date first",
     "noTime": "Select a time",
     "missingDetails": "Fill in your name, email, phone, address and postal code",
-    "availabilityNote": "Open Sunday–Friday · 16:00–20:00. Closed Saturdays. Booked slots are greyed out.",
+    "availabilityNote": "Open Sunday 08:00–20:00 · Mon–Fri 16:00–20:00. Closed Saturdays. Booked slots are greyed out.",
     "slotBooked": "{time} is already booked",
     "slotTaken": "That slot was just taken. Please choose another time.",
     "loadingSlots": "Loading available slots…",
@@ -299,7 +299,7 @@
     "phone": "076-344 11 68",
     "email": "teo@stralkastarpolering.se",
     "area": "We come to you",
-    "hours": "Open Sun–Fri 16:00–20:00",
+    "hours": "Open Sun 08:00–20:00, Mon–Fri 16:00–20:00",
     "call": "Call now",
     "emailAction": "Send email"
   },

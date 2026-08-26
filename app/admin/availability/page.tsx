@@ -29,9 +29,11 @@ export default async function AvailabilityPage() {
     <AdminShell>
       <h1 className="text-2xl font-bold">Availability</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Regular opening hours: {openDays || "no days"} ·{" "}
+        Regular opening hours: {openDays || "no days"}. Weekdays{" "}
         {String(rules.startHour).padStart(2, "0")}:00–
-        {String(rules.endHour).padStart(2, "0")}:00. Change them under
+        {String(rules.endHour).padStart(2, "0")}:00. Sunday{" "}
+        {String(rules.sundayStartHour).padStart(2, "0")}:00–
+        {String(rules.sundayEndHour).padStart(2, "0")}:00. Change them under
         Settings.
       </p>
 

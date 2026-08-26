@@ -102,9 +102,15 @@ export async function buildStructuredData(
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
-        dayOfWeek: OPENING_HOURS.days,
-        opens: OPENING_HOURS.opens,
-        closes: OPENING_HOURS.closes,
+        dayOfWeek: OPENING_HOURS.sunday.days,
+        opens: OPENING_HOURS.sunday.opens,
+        closes: OPENING_HOURS.sunday.closes,
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: OPENING_HOURS.weekdays.days,
+        opens: OPENING_HOURS.weekdays.opens,
+        closes: OPENING_HOURS.weekdays.closes,
       },
     ],
     makesOffer: { "@id": serviceId },

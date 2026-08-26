@@ -75,18 +75,24 @@ export const NAP = {
   currency: "SEK",
 } as const;
 
-/** Sunday(0)–Friday(5), 16:00–20:00. Schema.org day URIs. */
+/** Schema.org opening hours. Sunday is a longer window than Mon–Fri. */
 export const OPENING_HOURS = {
-  days: [
-    "https://schema.org/Sunday",
-    "https://schema.org/Monday",
-    "https://schema.org/Tuesday",
-    "https://schema.org/Wednesday",
-    "https://schema.org/Thursday",
-    "https://schema.org/Friday",
-  ],
-  opens: "16:00",
-  closes: "20:00",
+  weekdays: {
+    days: [
+      "https://schema.org/Monday",
+      "https://schema.org/Tuesday",
+      "https://schema.org/Wednesday",
+      "https://schema.org/Thursday",
+      "https://schema.org/Friday",
+    ],
+    opens: "16:00",
+    closes: "20:00",
+  },
+  sunday: {
+    days: ["https://schema.org/Sunday"],
+    opens: "08:00",
+    closes: "20:00",
+  },
 } as const;
 
 /** Areas we serve, surfaced in copy and AreaServed schema for local relevance. */

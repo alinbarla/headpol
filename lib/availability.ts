@@ -3,7 +3,7 @@ import { addDaysToDateKey, weekdayForDateKey } from "@/lib/time";
 /**
  * Weekly rules, previously hard-coded constants in lib/booking.ts. They now
  * live in the `settings` table so hours, horizon and price change without a
- * deploy. These defaults mirror the original constants exactly.
+ * deploy. Defaults: Mon–Fri 16:00–20:00, Sunday 08:00–20:00, Saturday closed.
  */
 export type BookingRules = {
   /** 0 = Sunday. Saturday (6) was excluded originally. */
@@ -11,6 +11,9 @@ export type BookingRules = {
   startHour: number;
   /** Exclusive: endHour 20 means the last slot starts at 19:00. */
   endHour: number;
+  /** Sunday uses a longer window than Mon–Fri. */
+  sundayStartHour: number;
+  sundayEndHour: number;
   horizonDays: number;
   priceOre: number;
 };
@@ -19,6 +22,8 @@ export const DEFAULT_BOOKING_RULES: BookingRules = {
   weekdays: [0, 1, 2, 3, 4, 5],
   startHour: 16,
   endHour: 20,
+  sundayStartHour: 8,
+  sundayEndHour: 20,
   horizonDays: 60,
   priceOre: 79900,
 };
@@ -45,11 +50,22 @@ export function parseBookingRules(value: unknown): BookingRules {
 
   const startHour = clampHour(raw.startHour, DEFAULT_BOOKING_RULES.startHour);
   const endHour = clampHour(raw.endHour, DEFAULT_BOOKING_RULES.endHour);
+  const sundayStartHour = clampHour(
+    raw.sundayStartHour,
+    DEFAULT_BOOKING_RULES.sundayStartHour
+  );
+  const sundayEndHour = clampHour(
+    raw.sundayEndHour,
+    DEFAULT_BOOKING_RULES.sundayEndHour
+  );
 
   return {
     weekdays: weekdays.length > 0 ? weekdays : DEFAULT_BOOKING_RULES.weekdays,
     startHour,
     endHour: endHour > startHour ? endHour : startHour + 1,
+    sundayStartHour,
+    sundayEndHour:
+      sundayEndHour > sundayStartHour ? sundayEndHour : sundayStartHour + 1,
     horizonDays:
       typeof raw.horizonDays === "number" && raw.horizonDays > 0
         ? Math.min(Math.floor(raw.horizonDays), 365)
@@ -64,6 +80,38 @@ export function parseBookingRules(value: unknown): BookingRules {
 function clampHour(value: unknown, fallback: number): number {
   if (typeof value !== "number" || Number.isNaN(value)) return fallback;
   return Math.min(Math.max(Math.floor(value), 0), 24);
+}
+
+/** Opening window for a weekday. 0 = Sunday. */
+export function hoursForWeekday(
+  weekday: number,
+  rules: BookingRules
+): { startHour: number; endHour: number } {
+  if (weekday === 0) {
+    return {
+      startHour: rules.sundayStartHour,
+      endHour: rules.sundayEndHour,
+    };
+  }
+  return { startHour: rules.startHour, endHour: rules.endHour };
+}
+
+export function hoursForDate(
+  dateKey: string,
+  rules: BookingRules
+): { startHour: number; endHour: number } {
+  return hoursForWeekday(weekdayForDateKey(dateKey), rules);
+}
+
+/** Earliest open and latest close across the weekly rules, for calendar grids. */
+export function scheduleHourSpan(rules: BookingRules): {
+  min: number;
+  max: number;
+} {
+  return {
+    min: Math.min(rules.startHour, rules.sundayStartHour),
+    max: Math.max(rules.endHour, rules.sundayEndHour),
+  };
 }
 
 export function hourToTime(hour: number): string {
@@ -95,10 +143,17 @@ export function allPossibleTimeSlots(
   for (let hour = rules.startHour; hour < rules.endHour; hour++) {
     hours.add(hour);
   }
+  for (let hour = rules.sundayStartHour; hour < rules.sundayEndHour; hour++) {
+    hours.add(hour);
+  }
 
   for (const override of overrides) {
     if (override.kind !== "open") continue;
-    const { from, to } = overrideHourRange(override, rules);
+    const { from, to } = overrideHourRange(
+      override,
+      rules,
+      override.override_date
+    );
     for (let hour = from; hour < to; hour++) hours.add(hour);
   }
 
@@ -107,10 +162,12 @@ export function allPossibleTimeSlots(
 
 function overrideHourRange(
   override: AvailabilityOverride,
-  rules: BookingRules
+  rules: BookingRules,
+  dateKey: string
 ): { from: number; to: number } {
   if (!override.start_time || !override.end_time) {
-    return { from: rules.startHour, to: rules.endHour };
+    const { startHour, endHour } = hoursForDate(dateKey, rules);
+    return { from: startHour, to: endHour };
   }
   return {
     from: timeToHour(override.start_time),
@@ -134,14 +191,15 @@ export function openSlotsForDate(
   const hours = new Set<number>();
 
   if (isNormallyOpen) {
-    for (let hour = rules.startHour; hour < rules.endHour; hour++) {
+    const { startHour, endHour } = hoursForDate(dateKey, rules);
+    for (let hour = startHour; hour < endHour; hour++) {
       hours.add(hour);
     }
   }
 
   for (const override of dayOverrides) {
     if (override.kind !== "open") continue;
-    const { from, to } = overrideHourRange(override, rules);
+    const { from, to } = overrideHourRange(override, rules, dateKey);
     for (let hour = from; hour < to; hour++) hours.add(hour);
   }
 
