@@ -19,6 +19,8 @@ import {
   telLink,
 } from "@/lib/admin/labels";
 import { formatOre, fromDbTime } from "@/lib/booking";
+import { confirmationPath } from "@/lib/routes";
+import { SITE_URL } from "@/lib/seo";
 import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
 import { isStripeConfigured } from "@/lib/stripe";
 import { formatDateKey, formatTimestamp } from "@/lib/time";
@@ -84,6 +86,19 @@ export default async function BookingDetailPage({
 
   const phone = telLink(booking.customer_phone);
   const maps = mapsLink(booking.customer_address);
+  const locale = booking.locale === "en" ? "en" : "sv";
+  const confirmationPayment =
+    payments.find(
+      (payment) =>
+        payment.stripe_checkout_session_id && payment.status === "paid"
+    ) ??
+    payments.find((payment) => payment.stripe_checkout_session_id);
+  const confirmationHref = confirmationPayment?.stripe_checkout_session_id
+    ? `${SITE_URL}${confirmationPath(
+        locale,
+        confirmationPayment.stripe_checkout_session_id
+      )}`
+    : null;
 
   return (
     <AdminShell>
@@ -169,6 +184,16 @@ export default async function BookingDetailPage({
             />
             <Row label="Price" value={formatOre(booking.price_ore)} />
             <Row label="Booked" value={formatTimestamp(booking.created_at)} />
+            {confirmationHref && confirmationPayment?.stripe_checkout_session_id && (
+              <Row
+                label="Confirmation"
+                value={confirmationPath(
+                  locale,
+                  confirmationPayment.stripe_checkout_session_id
+                )}
+                href={confirmationHref}
+              />
+            )}
             {booking.cancelled_at && (
               <Row
                 label="Cancelled"
@@ -222,6 +247,19 @@ export default async function BookingDetailPage({
                         Open payment link
                       </a>
                     )}
+                  {payment.stripe_checkout_session_id && (
+                    <a
+                      href={`${SITE_URL}${confirmationPath(
+                        locale,
+                        payment.stripe_checkout_session_id
+                      )}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs text-primary hover:underline"
+                    >
+                      Confirmation page
+                    </a>
+                  )}
                   {payment.receipt_url && (
                     <a
                       href={payment.receipt_url}
@@ -258,11 +296,30 @@ export default async function BookingDetailPage({
   );
 }
 
-function Row({ label, value }: { label: string; value: string | null }) {
+function Row({
+  label,
+  value,
+  href,
+}: {
+  label: string;
+  value: string | null;
+  href?: string;
+}) {
   return (
     <div className="flex justify-between gap-4">
       <span className="text-muted-foreground">{label}</span>
-      <span className="text-right">{value?.trim() || "—"}</span>
+      {href ? (
+        <a
+          href={href}
+          target="_blank"
+          rel="noreferrer"
+          className="break-all text-right text-primary hover:underline"
+        >
+          {value?.trim() || href}
+        </a>
+      ) : (
+        <span className="text-right">{value?.trim() || "—"}</span>
+      )}
     </div>
   );
 }
