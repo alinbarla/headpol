@@ -50,9 +50,6 @@ export function LightBeamHero() {
                 ),
               })}
             </p>
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-text-secondary">
-              {t("semantic")}
-            </p>
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Button href={`tel:${CONTACT_PHONE}`}>{t("ctaPrimary")}</Button>
               <Button href="#booking" variant="outline">
@@ -100,6 +97,9 @@ export function LightBeamHero() {
             <p className="mt-10 text-center text-sm text-text-muted">{t("imageHint")}</p>
           </motion.div>
         </div>
+        <p className="relative z-10 mt-10 max-w-3xl text-base leading-relaxed text-text-secondary lg:mt-12">
+          {t("semantic")}
+        </p>
       </Container>
     </section>
   );
