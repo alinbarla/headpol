@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { GoogleTag } from "@/components/analytics/GoogleTag";
 import { GoogleTagManager, GoogleTagManagerNoscript } from "@/components/analytics/GoogleTagManager";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing, type Locale } from "@/lib/i18n";
@@ -16,6 +17,7 @@ import {
   htmlLang,
   ogLocale,
 } from "@/lib/seo";
+import { buildLocalBusinessJsonLd } from "@/lib/structuredData";
 import "../globals.css";
 
 const libreFranklin = Libre_Franklin({
@@ -120,9 +122,16 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
 
   setRequestLocale(locale);
   const messages = await getMessages();
+  const tMeta = await getTranslations({ locale, namespace: "metadata" });
 
   return (
     <html lang={htmlLang(locale)} className={`${libreFranklin.variable} ${publicSans.variable} h-full`}>
+      <head>
+        <JsonLd
+          id="local-business"
+          data={buildLocalBusinessJsonLd(tMeta("description"))}
+        />
+      </head>
       <body className="min-h-full antialiased">
         <GoogleTagManager />
         <GoogleTag />

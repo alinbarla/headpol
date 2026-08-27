@@ -87,16 +87,24 @@ function organizationNode() {
   };
 }
 
-function localBusinessNode(makesOffer: Array<{ "@id": string }>) {
+function localBusinessNode(
+  makesOffer: Array<{ "@id": string }>,
+  description?: string
+) {
   return {
-    "@type": ["AutoRepair", "LocalBusiness"],
+    // String type (not an array): audit tools often only read the first @type
+    // and miss LocalBusiness when it is listed after AutoRepair.
+    "@type": "LocalBusiness",
+    additionalType: "https://schema.org/AutoRepair",
     "@id": BUSINESS_ID,
     name: BRAND,
     legalName: LEGAL_NAME,
+    alternateName: "Strålkastarpolering Stockholm",
     url: SITE_URL,
     email: NAP.email,
     telephone: NAP.phone,
-    image: shareImage(),
+    ...(description ? { description } : {}),
+    image: OG_IMAGE.url,
     logo: logoImage(),
     priceRange: NAP.priceRange,
     currenciesAccepted: NAP.currency,
@@ -108,6 +116,11 @@ function localBusinessNode(makesOffer: Array<{ "@id": string }>) {
       addressRegion: NAP.addressRegion,
       addressCountry: NAP.addressCountry,
     },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: NAP.geo.latitude,
+      longitude: NAP.geo.longitude,
+    },
     areaServed: areaServed(),
     serviceArea: {
       "@type": "GeoCircle",
@@ -118,6 +131,10 @@ function localBusinessNode(makesOffer: Array<{ "@id": string }>) {
       },
       geoRadius: NAP.serviceRadius,
     },
+    openingHours: [
+      `Su ${OPENING_HOURS.sunday.opens}-${OPENING_HOURS.sunday.closes}`,
+      `Mo-Fr ${OPENING_HOURS.weekdays.opens}-${OPENING_HOURS.weekdays.closes}`,
+    ],
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
@@ -133,7 +150,22 @@ function localBusinessNode(makesOffer: Array<{ "@id": string }>) {
       },
     ],
     makesOffer,
+    knowsAbout: ["Strålkastarpolering", "Strålkastarrenovering"],
     ...(SOCIAL_PROFILES.length ? { sameAs: SOCIAL_PROFILES } : {}),
+  };
+}
+
+/**
+ * Standalone LocalBusiness JSON-LD (not nested in @graph). Naive SEO crawlers
+ * look for a top-level `"@type": "LocalBusiness"` and skip @graph arrays.
+ */
+export function buildLocalBusinessJsonLd(description?: string) {
+  return {
+    "@context": "https://schema.org",
+    ...localBusinessNode(
+      [{ "@id": POLERING_ID }, { "@id": RENOVERING_ID }],
+      description
+    ),
   };
 }
 
@@ -298,8 +330,11 @@ export async function buildHomeStructuredData(
   return {
     "@context": "https://schema.org",
     "@graph": [
+      localBusinessNode(
+        [{ "@id": POLERING_ID }, { "@id": RENOVERING_ID }],
+        tMeta("description")
+      ),
       organizationNode(),
-      localBusinessNode([{ "@id": POLERING_ID }, { "@id": RENOVERING_ID }]),
       websiteNode(locale),
       polering,
       renovering,
@@ -344,8 +379,11 @@ export function buildClusterStructuredData(
   });
 
   const graph: Record<string, unknown>[] = [
+    localBusinessNode(
+      [{ "@id": POLERING_ID }, { "@id": RENOVERING_ID }],
+      page.description
+    ),
     organizationNode(),
-    localBusinessNode([{ "@id": POLERING_ID }, { "@id": RENOVERING_ID }]),
     websiteNode("sv"),
     webPageNode({
       url,
