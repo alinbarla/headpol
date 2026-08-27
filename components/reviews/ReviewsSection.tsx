@@ -9,7 +9,7 @@ const SHOTS = [
     altKey: "beforeAfterAlt" as const,
   },
   {
-    src: "/images/gallery/car-2.jpg",
+    src: "/images/gallery/stralkastarpolering-efter-resultat.jpg",
     altKey: "afterAlt" as const,
   },
 ];

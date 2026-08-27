@@ -76,8 +76,9 @@ All process photos are served through `next/image`, so they are automatically re
 
 - Set `NEXT_PUBLIC_SITE_URL` (see `.env.example`) to your production origin. It powers canonical URLs, hreflang, `sitemap.xml`, `robots.txt` and Open Graph.
 - Business name, contact (NAP), geo, opening hours, service areas and keywords live in [`lib/seo.ts`](lib/seo.ts).
-- Structured data (`Organization`, `LocalBusiness/AutoRepair`, `WebSite`, `Service`, `WebPage`, `BreadcrumbList`, `FAQPage`) is built in [`lib/structuredData.ts`](lib/structuredData.ts).
+- Structured data (`Organization`, `LocalBusiness/AutoRepair`, `WebSite`, `SiteNavigationElement`, `Service`+`Offer`, `WebPage`, `BreadcrumbList`, `FAQPage`) is built in [`lib/structuredData.ts`](lib/structuredData.ts). Swedish cluster pages under `lib/content/` are listed in `app/sitemap.ts`.
 - Review schema is gated behind `REVIEWS_ARE_REAL` in `lib/structuredData.ts` — flip it to `true` only once the testimonials in `messages/*.json` are real.
+- Cluster pages are Swedish-only (`/sv/...`). English keeps the marketing homepage; `/en/{cluster-slug}` 404s so hreflang stays consistent.
 
 ### Brand name
 

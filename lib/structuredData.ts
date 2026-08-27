@@ -137,7 +137,7 @@ function localBusinessNode(makesOffer: Array<{ "@id": string }>) {
   };
 }
 
-function websiteNode(locale: Locale) {
+function websiteNode(locale: Locale, hasPart?: { "@id": string }) {
   return {
     "@type": "WebSite",
     "@id": WEBSITE_ID,
@@ -145,7 +145,45 @@ function websiteNode(locale: Locale) {
     name: BRAND,
     inLanguage: locale === "sv" ? "sv-SE" : "en-SE",
     publisher: { "@id": ORG_ID },
+    ...(hasPart ? { hasPart } : {}),
   };
+}
+
+/** Primary destinations for sitelinks / SERP menu signals. */
+function siteNavigationNode(
+  locale: Locale,
+  items: Array<{ name: string; url: string }>
+) {
+  const url = localeUrl(locale);
+  return {
+    "@type": "ItemList",
+    "@id": `${url}#main-navigation`,
+    name: locale === "sv" ? "Huvudmeny" : "Main menu",
+    numberOfItems: items.length,
+    itemListElement: items.map((item, index) => ({
+      "@type": "SiteNavigationElement",
+      position: index + 1,
+      name: item.name,
+      url: item.url,
+    })),
+  };
+}
+
+function standardOffers(offerUrl: string): Record<string, unknown>[] {
+  return [
+    offerFromPrice(
+      "Strålkastarpolering personbil",
+      "Båda strålkastarna inklusive våtslipning, polymerpolering, UV-keramiskt skydd och 5 års garanti.",
+      "799",
+      offerUrl
+    ),
+    offerFromPrice(
+      "Strålkastarpolering MC/moped",
+      "Kompakt enhet med samma material och UV-skydd. Från 499 kr.",
+      "499",
+      offerUrl
+    ),
+  ];
 }
 
 function offerFromPrice(
@@ -293,14 +331,46 @@ export async function buildHomeStructuredData(
     provider: { "@id": BUSINESS_ID },
     areaServed: areaServed(),
     url: locale === "sv" ? localeUrl("sv", "stralkastarrenovering") : url,
+    offers,
   };
+
+  const navItems =
+    locale === "sv"
+      ? [
+          { name: "Start", url },
+          {
+            name: "Strålkastarpolering",
+            url: localeUrl("sv", "stralkastarpolering"),
+          },
+          {
+            name: "Strålkastarrenovering",
+            url: localeUrl("sv", "stralkastarrenovering"),
+          },
+          { name: "Priser", url: localeUrl("sv", "priser") },
+          { name: "FAQ", url: localeUrl("sv", "faq") },
+          {
+            name: "Stockholm",
+            url: localeUrl("sv", "stralkastarpolering-stockholm"),
+          },
+          { name: "Om oss", url: localeUrl("sv", "om-oss") },
+          { name: "Boka", url: `${url}#booking` },
+        ]
+      : [
+          { name: "Home", url },
+          { name: "Pricing", url: `${url}#services` },
+          { name: "FAQ", url: `${url}#faq` },
+          { name: "Book", url: `${url}#booking` },
+        ];
+
+  const navigationId = `${url}#main-navigation`;
 
   return {
     "@context": "https://schema.org",
     "@graph": [
       organizationNode(),
       localBusinessNode([{ "@id": POLERING_ID }, { "@id": RENOVERING_ID }]),
-      websiteNode(locale),
+      websiteNode(locale, { "@id": navigationId }),
+      siteNavigationNode(locale, navItems),
       polering,
       renovering,
       webPageNode({
@@ -369,6 +439,7 @@ export function buildClusterStructuredData(
       provider: { "@id": BUSINESS_ID },
       areaServed: areaServed(),
       url,
+      offers: standardOffers(localeUrl("sv", "priser")),
     });
   }
 
@@ -385,6 +456,7 @@ export function buildClusterStructuredData(
         name: page.locationName,
       },
       url,
+      offers: standardOffers(localeUrl("sv", "priser")),
     });
   }
 

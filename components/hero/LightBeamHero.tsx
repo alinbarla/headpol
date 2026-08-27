@@ -31,11 +31,16 @@ export function LightBeamHero() {
       />
 
       <Container className="relative z-10">
-        <div className="grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14">
+        {/*
+          Mobile order: intro → CTAs → image → semantic → stats
+          Desktop: left column intro/semantic/CTAs/stats, right column image
+        */}
+        <div className="grid items-center gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:grid-rows-[auto_auto_auto_auto] lg:gap-x-14 lg:gap-y-0">
           <motion.div
             initial={false}
             animate={mounted ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 0.7, ease: "easeOut" }}
+            className="order-1 lg:col-start-1 lg:row-start-1"
           >
             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-beam font-display">
               {t("eyebrow")}
@@ -50,38 +55,25 @@ export function LightBeamHero() {
                 ),
               })}
             </p>
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-text-secondary">
-              {t("semantic")}
-            </p>
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Button href={`tel:${CONTACT_PHONE}`}>{t("ctaPrimary")}</Button>
-              <Button href="#booking" variant="outline">
-                {t("ctaSecondary")}
-              </Button>
-            </div>
+          </motion.div>
 
-            <dl className="mt-12 grid max-w-lg grid-cols-2 gap-6 border-t border-white/10 pt-8 sm:grid-cols-3">
-              {stats.map((stat) => (
-                <div key={stat.label}>
-                  <dt className="sr-only">{stat.label}</dt>
-                  <dd>
-                    <span className="headline-display block text-2xl font-bold text-beam sm:text-3xl">
-                      {stat.value}
-                    </span>
-                    <span className="mt-1 block text-xs leading-snug text-text-muted">
-                      {stat.label}
-                    </span>
-                  </dd>
-                </div>
-              ))}
-            </dl>
+          <motion.div
+            initial={false}
+            animate={mounted ? { opacity: 1, y: 0 } : undefined}
+            transition={{ duration: 0.7, delay: 0.05, ease: "easeOut" }}
+            className="order-2 mt-2 flex flex-wrap items-center gap-4 lg:order-none lg:col-start-1 lg:row-start-3 lg:mt-10"
+          >
+            <Button href={`tel:${CONTACT_PHONE}`}>{t("ctaPrimary")}</Button>
+            <Button href="#booking" variant="outline">
+              {t("ctaSecondary")}
+            </Button>
           </motion.div>
 
           <motion.div
             initial={false}
             animate={mounted ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
-            className="relative"
+            className="relative order-3 lg:col-start-2 lg:row-span-4 lg:row-start-1"
           >
             <div
               className="pointer-events-none absolute -inset-4 rounded-3xl bg-beam/10 blur-3xl"
@@ -97,8 +89,30 @@ export function LightBeamHero() {
                 />
               </div>
             </div>
-            <p className="mt-10 text-center text-sm text-text-muted">{t("imageHint")}</p>
+            <p className="mt-10 text-center text-sm text-text-muted">
+              {t("imageHint")}
+            </p>
           </motion.div>
+
+          <p className="order-4 max-w-xl text-base leading-relaxed text-text-secondary lg:col-start-1 lg:row-start-2 lg:mt-4">
+            {t("semantic")}
+          </p>
+
+          <dl className="order-5 mt-4 grid max-w-lg grid-cols-2 gap-6 border-t border-white/10 pt-8 sm:grid-cols-3 lg:col-start-1 lg:row-start-4 lg:mt-12">
+            {stats.map((stat) => (
+              <div key={stat.label}>
+                <dt className="sr-only">{stat.label}</dt>
+                <dd>
+                  <span className="headline-display block text-2xl font-bold text-beam sm:text-3xl">
+                    {stat.value}
+                  </span>
+                  <span className="mt-1 block text-xs leading-snug text-text-muted">
+                    {stat.label}
+                  </span>
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </Container>
     </section>
