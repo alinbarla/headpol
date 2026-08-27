@@ -6,7 +6,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     kind: "location",
     title: "Strålkastarpolering Stockholm – vi kommer till din adress",
     description:
-      "Mobil strålkastarpolering i Stockholms län. Fast pris 799 kr/par, ingen zonavgift. Vi tar innerstad, villaområden och arbetsplatser. UV-skydd och 5 års garanti.",
+      "Mobil strålkastarpolering i Stockholms län. Fast pris 799 kr/par, ingen zonavgift. UV-skydd och 5 års garanti — boka tid, vi kommer till dig.",
     h1: "Strålkastarpolering i Stockholms län",
     lead: "Vi är en mobil tjänst, inte en verkstad du lämnar bilen till. Stockholms län betyder innergårdar, villauppfarter, företagsparkeringar och olika restider — inte ett och samma upplägg överallt.",
     locationName: "Stockholm",
@@ -338,9 +338,9 @@ export const LOCATION_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-solna",
     kind: "location",
-    title: "Strålkastarpolering Solna – innerstad, Arenastaden och jobb-P",
+    title: "Strålkastarpolering Solna – Arenastaden och jobb-P",
     description:
-      "Mobil strålkastarpolering i Solna. Gatuparkering, bostadsrättsgård och arbetsplatser i Arenastaden. Fast pris 799 kr/par, vi kommer till dig.",
+      "Mobil strålkastarpolering i Solna. Gatuparkering, bostadsrättsgård och arbetsplatser i Arenastaden. Fast pris 799 kr/par — boka tid, vi kommer till dig.",
     h1: "Strålkastarpolering i Solna",
     lead: "Solna är tätt: gatuparkering, garageinfarter och många som vill att vi tar bilen på jobbet i Arenastaden eller Sundbyberg-gränsen. Här är platsen det svåra — inte avståndet från city.",
     locationName: "Solna",

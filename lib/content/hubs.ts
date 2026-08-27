@@ -258,17 +258,17 @@ export const HUB_PAGES: ClusterDoc[] = [
     images: [
       {
         src: "/images/gallery/stralkastarepolering-fore-efter.jpg",
-        alt: "Före och efter strålkastarpolering på samma bil",
+        alt: "Strålkastarpolering före och efter — gulnad plast mot klar yta på samma bil",
         caption: "Före och efter på samma strålkastare.",
       },
       {
-        src: "/images/gallery/car-2.jpg",
-        alt: "Bil efter strålkastarpolering",
+        src: "/images/gallery/stralkastarpolering-efter-resultat.jpg",
+        alt: "Strålkastarpolering efter-resultat — glasklar strålkastare med UV-keramiskt skydd",
         caption: "Klar yta efter UV-keramiskt skydd.",
       },
       {
-        src: "/images/gallery/car-3.jpg",
-        alt: "Närbild av polerad strålkastare",
+        src: "/images/gallery/stralkastarpolering-narbild-klar.jpg",
+        alt: "Närbild av strålkastare efter polering och polymerfinish",
         caption: "Närbild efter polymerpolering.",
       },
     ],
