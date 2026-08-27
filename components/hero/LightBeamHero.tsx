@@ -50,7 +50,7 @@ export function LightBeamHero() {
                 ),
               })}
             </p>
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-text-secondary">
+            <p className="mt-4 hidden max-w-xl text-base leading-relaxed text-text-secondary lg:block">
               {t("semantic")}
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -97,7 +97,12 @@ export function LightBeamHero() {
                 />
               </div>
             </div>
-            <p className="mt-10 text-center text-sm text-text-muted">{t("imageHint")}</p>
+            <p className="mt-10 max-w-xl text-base leading-relaxed text-text-secondary lg:hidden">
+              {t("semantic")}
+            </p>
+            <p className="mt-4 text-center text-sm text-text-muted lg:mt-10">
+              {t("imageHint")}
+            </p>
           </motion.div>
         </div>
       </Container>
