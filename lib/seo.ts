@@ -34,7 +34,7 @@ export const GOOGLE_SITE_VERIFICATION =
 
 /** Google Ads account for the gtag.js tag. Set to "" to disable tracking. */
 export const GOOGLE_ADS_ID =
-  process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "AW-18407352152";
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "AW-18409115873";
 
 /**
  * Google Tag Manager container. Loaded only on the admin host. The public
