@@ -159,24 +159,50 @@ export const HUB_PAGES: ClusterDoc[] = [
       "Fast pris för strålkastarpolering i Stockholm: 799 kr/par för personbil, från 499 kr för MC. Jämfört med att byta strålkastare. Ingen zonavgift.",
     h1: "Priser för strålkastarpolering",
     lead: "Ett par strålkastare på personbil kostar 799 kr inklusive moms. UV-keramiskt skydd och 5 års garanti ingår. Samma pris i hela Stockholmsområdet.",
-    sections: [
+    priceTiers: [
       {
-        heading: "Vad som ingår i 799 kr",
-        paragraphs: [
-          "Båda strålkastarna, maskering, våtslipning, polymerpolering, UV-keramiskt skydd och kontroll. Vi kommer till din adress. Inget startavgift och ingen milersättning inom vårt område.",
+        title: "Personbil",
+        description:
+          "Premiumrestaurering av båda strålkastarna. Vi kommer till din adress — ingen startavgift och ingen milersättning inom området.",
+        oldPrice: "1499kr",
+        price: "799kr",
+        unit: "par",
+        featured: true,
+        badge: "Mest bokad",
+        includes: [
+          "Båda strålkastarna",
+          "Maskering och våtslipning",
+          "Polymerpolering",
+          "UV-keramiskt skydd",
+          "Kontroll av ljusbild",
+          "5 års garanti",
         ],
+        href: "/sv#booking",
+        cta: "Boka tid",
       },
+      {
+        title: "MC & moped",
+        description:
+          "Kompakta enheter med samma material, finish och UV-skydd som för personbil.",
+        price: "Från 499 kr",
+        href: "/sv#booking",
+        cta: "Boka tid",
+      },
+      {
+        title: "Företag & flotta",
+        description:
+          "Åkerier, bilhandlare och vagnparker. Flera bilar på samma plats ger lägre styckpris.",
+        price: "Offert",
+        href: "/sv/foretagskunder",
+        cta: "Till företagssidan",
+      },
+    ],
+    sections: [
       {
         heading: "Renovera eller byta",
         paragraphs: [
           "Nya originalstrålkastare ligger ofta på 5 000–20 000 kr styck plus montering, särskilt på bilar med LED eller adaptivt ljus. En renovering kostar 799 kr för paret när plasten är oxiderad men hel.",
           "Byte är rätt val när glaset är sprucket, svetsat fel eller har fukt inuti. Då hjälper inte polering — och vi tar inte betalt för att konstatera det.",
-        ],
-      },
-      {
-        heading: "MC, moped och företag",
-        paragraphs: [
-          "Kompakta enheter på motorcykel och moped från 499 kr, samma material och skydd. Åkerier, bilhandlare och vagnparker får offert — se sidan för företagskunder.",
         ],
       },
       {
@@ -255,23 +281,7 @@ export const HUB_PAGES: ClusterDoc[] = [
         ],
       },
     ],
-    images: [
-      {
-        src: "/images/gallery/stralkastarepolering-fore-efter.jpg",
-        alt: "Före och efter strålkastarpolering på samma bil",
-        caption: "Före och efter på samma strålkastare.",
-      },
-      {
-        src: "/images/gallery/car-2.jpg",
-        alt: "Bil efter strålkastarpolering",
-        caption: "Klar yta efter UV-keramiskt skydd.",
-      },
-      {
-        src: "/images/gallery/car-3.jpg",
-        alt: "Närbild av polerad strålkastare",
-        caption: "Närbild efter polymerpolering.",
-      },
-    ],
+    compareSlider: true,
     related: [
       { slug: "stralkastarrenovering", label: "Processen" },
       { slug: "stralkastarpolering", label: "Strålkastarpolering" },

@@ -3,6 +3,8 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { Footer } from "@/components/layout/Footer";
+import { PriceCards } from "@/components/content/PriceCards";
+import { ResultCompare } from "@/components/reviews/ResultCompare";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
@@ -58,7 +60,13 @@ export async function ClusterPage({
             {page.lead}
           </p>
 
-          {page.images && page.images.length > 0 && (
+          {page.priceTiers && page.priceTiers.length > 0 ? (
+            <PriceCards tiers={page.priceTiers} />
+          ) : page.compareSlider ? (
+            <div className="mt-10 max-w-4xl">
+              <ResultCompare />
+            </div>
+          ) : page.images && page.images.length > 0 ? (
             <ul className="mt-10 grid gap-6 sm:grid-cols-2">
               {page.images.map((image) => (
                 <li key={image.src} className="overflow-hidden rounded-2xl border border-white/10">
@@ -76,25 +84,58 @@ export async function ClusterPage({
                 </li>
               ))}
             </ul>
-          )}
+          ) : null}
 
-          <div className="legal-prose mt-12 max-w-3xl">
-            {page.sections.map((section) => (
-              <section key={section.heading}>
-                <h2>{section.heading}</h2>
-                {section.paragraphs.map((paragraph) => (
-                  <p key={paragraph.slice(0, 48)}>{paragraph}</p>
-                ))}
-                {section.bullets && (
-                  <ul>
-                    {section.bullets.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                )}
-              </section>
-            ))}
-          </div>
+          {page.priceTiers && page.priceTiers.length > 0 ? (
+            <div className="mt-12 grid gap-6 md:grid-cols-2">
+              {page.sections.map((section) => (
+                <section
+                  key={section.heading}
+                  className="rounded-[28px] border border-white/10 bg-void-elevated p-7 sm:p-8"
+                >
+                  <h2 className="headline-display text-2xl font-bold text-text-primary">
+                    {section.heading}
+                  </h2>
+                  {section.paragraphs.map((paragraph) => (
+                    <p
+                      key={paragraph.slice(0, 48)}
+                      className="mt-4 text-sm leading-relaxed text-text-secondary"
+                    >
+                      {paragraph}
+                    </p>
+                  ))}
+                  {section.heading === "Betalning" ? (
+                    <p className="mt-4">
+                      <Link
+                        href="/sv/villkor"
+                        className="text-sm font-semibold text-beam hover:underline"
+                      >
+                        Villkor och avbokning
+                      </Link>
+                    </p>
+                  ) : null}
+                </section>
+              ))}
+            </div>
+          ) : (
+            <div className="legal-prose mt-12 max-w-3xl">
+              {page.sections.map((section) => (
+                <section key={section.heading}>
+                  <h2>{section.heading}</h2>
+                  {section.paragraphs.map((paragraph) => (
+                    <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+                  ))}
+                  {section.bullets && (
+                    <ul>
+                      {section.bullets.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              ))}
+            </div>
+          )}
 
           {page.faqs && page.faqs.length > 0 && (
             <section className="mt-16 max-w-3xl">

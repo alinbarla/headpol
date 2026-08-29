@@ -20,6 +20,19 @@ export type ClusterRelated = {
   label: string;
 };
 
+export type ClusterPriceTier = {
+  title: string;
+  description: string;
+  price: string;
+  oldPrice?: string;
+  unit?: string;
+  featured?: boolean;
+  badge?: string;
+  includes?: string[];
+  href: string;
+  cta: string;
+};
+
 export type ClusterKind =
   | "service-polering"
   | "service-renovering"
@@ -38,5 +51,8 @@ export type ClusterDoc = {
   sections: ClusterSection[];
   faqs?: ClusterFaq[];
   images?: ClusterImage[];
+  /** Same before/after CompareReveal as the homepage results section. */
+  compareSlider?: boolean;
+  priceTiers?: ClusterPriceTier[];
   related: ClusterRelated[];
 };
