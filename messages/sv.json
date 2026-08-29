@@ -204,7 +204,7 @@
       },
       {
         "question": "Hur bokar jag tid?",
-        "answer": "Välj datum och tid i bokningskalendern här på sidan, eller ring oss direkt. Vi har öppet söndag 08:00–20:00 och måndag till fredag 16:00–20:00."
+        "answer": "Välj datum och tid i bokningskalendern här på sidan, eller ring oss direkt. Vi har öppet lördag och söndag 08:00–20:00 och måndag till fredag 16:00–20:00."
       },
       {
         "question": "Kan man polera matta strålkastare?",
@@ -250,7 +250,7 @@
     "noDate": "Välj ett datum först",
     "noTime": "Välj en tid",
     "missingDetails": "Fyll i namn, e-post, telefon, adress och postnummer",
-    "availabilityNote": "Öppet söndag 08:00–20:00 · mån–fre 16:00–20:00. Lördag stängt. Upptagna tider är utgråade.",
+    "availabilityNote": "Öppet lör–sön 08:00–20:00 · mån–fre 16:00–20:00. Upptagna tider är utgråade.",
     "slotBooked": "{time} är redan bokad",
     "slotTaken": "Den här tiden hann bokas av någon annan. Välj en annan tid.",
     "loadingSlots": "Hämtar tillgängliga tider…",
@@ -316,7 +316,7 @@
     "phone": "076-344 11 68",
     "email": "teo@stralkastarpolering.se",
     "area": "Vi kommer till dig",
-    "hours": "Öppet sön 08:00–20:00, mån–fre 16:00–20:00",
+    "hours": "Öppet lör–sön 08:00–20:00, mån–fre 16:00–20:00",
     "call": "Ring nu",
     "emailAction": "Skicka e-post"
   },

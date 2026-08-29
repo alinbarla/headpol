@@ -22,7 +22,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
         heading: "Så tar vi oss fram",
         paragraphs: [
           "I innerstan styr gatuparkering, garageinfarter och att vi kommer åt båda sidorna av nosen. I villaområden är det uppfarten som avgör. På arbetsplatser bokar vi gärna efter 16 när bilarna ändå står still.",
-          "Öppettiderna är sön 08–20 och mån–fre 16–20. Lördag är stängt. Ett jobb tar 45–60 minuter när bilen är framme och torr nog att slipa.",
+          "Öppettiderna är lör–sön 08–20 och mån–fre 16–20. Ett jobb tar 45–60 minuter när bilen är framme och torr nog att slipa.",
         ],
       },
       {
@@ -141,7 +141,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Pris och tid",
         paragraphs: [
-          "Samma 799 kr/par som i Stockholm. Ingen zonavgift för Botkyrka. Räkna med 45–60 minuter på plats. Öppet sön 08–20, vardagar 16–20.",
+          "Samma 799 kr/par som i Stockholm. Ingen zonavgift för Botkyrka. Räkna med 45–60 minuter på plats. Öppet lör–sön 08–20, vardagar 16–20.",
         ],
       },
       {

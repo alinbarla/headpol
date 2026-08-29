@@ -64,7 +64,7 @@ export function OverrideForm({
             <p className="text-xs text-muted-foreground">
               {kind === "block"
                 ? "Holiday, illness, or a single hour you need for yourself."
-                : "Opens time that is normally closed, such as a Saturday."}
+                : "Opens time that is normally closed, such as a weekday morning."}
             </p>
           </div>
 

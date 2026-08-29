@@ -132,10 +132,17 @@ function localBusinessNode(
       geoRadius: NAP.serviceRadius,
     },
     openingHours: [
+      `Sa ${OPENING_HOURS.saturday.opens}-${OPENING_HOURS.saturday.closes}`,
       `Su ${OPENING_HOURS.sunday.opens}-${OPENING_HOURS.sunday.closes}`,
       `Mo-Fr ${OPENING_HOURS.weekdays.opens}-${OPENING_HOURS.weekdays.closes}`,
     ],
     openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: OPENING_HOURS.saturday.days,
+        opens: OPENING_HOURS.saturday.opens,
+        closes: OPENING_HOURS.saturday.closes,
+      },
       {
         "@type": "OpeningHoursSpecification",
         dayOfWeek: OPENING_HOURS.sunday.days,

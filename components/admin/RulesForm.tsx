@@ -82,6 +82,36 @@ export function RulesForm({ rules }: { rules: BookingRules }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
+              <Label htmlFor="saturdayStartHour">Saturday open (hour)</Label>
+              <Input
+                id="saturdayStartHour"
+                name="saturdayStartHour"
+                type="number"
+                min={0}
+                max={23}
+                required
+                defaultValue={rules.saturdayStartHour}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="saturdayEndHour">Saturday close (hour)</Label>
+              <Input
+                id="saturdayEndHour"
+                name="saturdayEndHour"
+                type="number"
+                min={1}
+                max={24}
+                required
+                defaultValue={rules.saturdayEndHour}
+              />
+              <p className="text-xs text-muted-foreground">
+                Saturday only. The last slot starts an hour before this.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
               <Label htmlFor="sundayStartHour">Sunday open (hour)</Label>
               <Input
                 id="sundayStartHour"

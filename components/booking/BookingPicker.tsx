@@ -6,6 +6,7 @@ import { sv, enGB } from "date-fns/locale";
 import { useLocale, useTranslations } from "next-intl";
 import {
   DEFAULT_BOOKING_RULES,
+  scheduleHourSpan,
   type AvailabilityMap,
   type BookingRules,
 } from "@/lib/availability";
@@ -174,8 +175,7 @@ export function BookingPicker() {
       for (const time of times) all.add(time);
     }
     if (all.size === 0) {
-      const spanStart = Math.min(rules.startHour, rules.sundayStartHour);
-      const spanEnd = Math.max(rules.endHour, rules.sundayEndHour);
+      const { min: spanStart, max: spanEnd } = scheduleHourSpan(rules);
       for (let hour = spanStart; hour < spanEnd; hour++) {
         all.add(`${String(hour).padStart(2, "0")}:00`);
       }
@@ -187,6 +187,8 @@ export function BookingPicker() {
     rules.endHour,
     rules.sundayStartHour,
     rules.sundayEndHour,
+    rules.saturdayStartHour,
+    rules.saturdayEndHour,
   ]);
 
   /** Days with no open slots at all, or where every open slot is taken. */

@@ -365,7 +365,7 @@ export const HUB_PAGES: ClusterDoc[] = [
         heading: "Hur vi arbetar",
         paragraphs: [
           "Varje jobb är samma kedja: maskering av lack, våtslipning från P400 till P3000, polymerpolering och UV-keramiskt skydd. Inget halvfabrikat och ingen ‘snabbglans’ som saknar skydd.",
-          "Bilen ska stå utomhus, torr nog att arbeta på och med plats runt båda strålkastarna. Innergård, villauppfart och företagsparkering går bra. Vi arbetar söndag 08–20 och måndag–fredag 16–20.",
+          "Bilen ska stå utomhus, torr nog att arbeta på och med plats runt båda strålkastarna. Innergård, villauppfart och företagsparkering går bra. Vi arbetar lördag–söndag 08–20 och måndag–fredag 16–20.",
         ],
       },
       {

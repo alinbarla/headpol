@@ -60,7 +60,7 @@ Update [`lib/booking.ts`](lib/booking.ts) and the `contact` section in both mess
 2. Migration lives in `supabase/migrations/202603160001_create_bookings.sql` (already applied if using the linked project).
 3. Bookings table: `bookings(booking_date, booking_time, status)` with unique slot constraint.
 
-Available slots: **Sunday–Friday**, **16:00–19:00** (service window until 20:00). Saturdays disabled.
+Available slots: **Sat–Sun 08:00–19:00**, **Mon–Fri 16:00–19:00** (service window until 20:00).
 
 ### Images
 

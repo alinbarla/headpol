@@ -26,7 +26,7 @@ export const PUBLISHED_DATE =
   process.env.NEXT_PUBLIC_PUBLISHED_DATE ?? "2026-01-01";
 
 /** Last meaningful public-content change. Do not use `new Date()` in schema. */
-export const DATE_MODIFIED = "2026-08-26";
+export const DATE_MODIFIED = "2026-08-29";
 
 /** Optional Google Search Console verification token. */
 export const GOOGLE_SITE_VERIFICATION =
@@ -81,7 +81,7 @@ export const NAP = {
   currency: "SEK",
 } as const;
 
-/** Schema.org opening hours. Sunday is a longer window than Mon–Fri. */
+/** Schema.org opening hours. Sat–Sun is a longer window than Mon–Fri. */
 export const OPENING_HOURS = {
   weekdays: {
     days: [
@@ -92,6 +92,11 @@ export const OPENING_HOURS = {
       "https://schema.org/Friday",
     ],
     opens: "16:00",
+    closes: "20:00",
+  },
+  saturday: {
+    days: ["https://schema.org/Saturday"],
+    opens: "08:00",
     closes: "20:00",
   },
   sunday: {

@@ -909,6 +909,8 @@ const rulesSchema = z
     endHour: z.coerce.number().int().min(1).max(24),
     sundayStartHour: z.coerce.number().int().min(0).max(23),
     sundayEndHour: z.coerce.number().int().min(1).max(24),
+    saturdayStartHour: z.coerce.number().int().min(0).max(23),
+    saturdayEndHour: z.coerce.number().int().min(1).max(24),
     horizonDays: z.coerce.number().int().min(1).max(365),
     priceOre: z.coerce.number().int().min(0).max(10_000_000),
   })
@@ -917,6 +919,9 @@ const rulesSchema = z
   })
   .refine((value) => value.sundayEndHour > value.sundayStartHour, {
     message: "The Sunday closing time must be after the opening time",
+  })
+  .refine((value) => value.saturdayEndHour > value.saturdayStartHour, {
+    message: "The Saturday closing time must be after the opening time",
   });
 
 export async function updateRulesAction(
@@ -931,6 +936,8 @@ export async function updateRulesAction(
     endHour: formData.get("endHour"),
     sundayStartHour: formData.get("sundayStartHour"),
     sundayEndHour: formData.get("sundayEndHour"),
+    saturdayStartHour: formData.get("saturdayStartHour"),
+    saturdayEndHour: formData.get("saturdayEndHour"),
     horizonDays: formData.get("horizonDays"),
     priceOre: formData.get("priceOre"),
   });

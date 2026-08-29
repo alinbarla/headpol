@@ -30,7 +30,7 @@ export function buildLlmsTxt(): string {
   const info = pagesOf("other", "faq");
   const locations = pagesOf("location");
 
-  const hours = `sön ${OPENING_HOURS.sunday.opens}–${OPENING_HOURS.sunday.closes}, mån–fre ${OPENING_HOURS.weekdays.opens}–${OPENING_HOURS.weekdays.closes} (lör stängt)`;
+  const hours = `lör–sön ${OPENING_HOURS.saturday.opens}–${OPENING_HOURS.saturday.closes}, mån–fre ${OPENING_HOURS.weekdays.opens}–${OPENING_HOURS.weekdays.closes}`;
 
   return [
     `# ${BRAND}`,

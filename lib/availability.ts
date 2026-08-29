@@ -3,10 +3,10 @@ import { addDaysToDateKey, weekdayForDateKey } from "@/lib/time";
 /**
  * Weekly rules, previously hard-coded constants in lib/booking.ts. They now
  * live in the `settings` table so hours, horizon and price change without a
- * deploy. Defaults: Mon–Fri 16:00–20:00, Sunday 08:00–20:00, Saturday closed.
+ * deploy. Defaults: Mon–Fri 16:00–20:00, Sat–Sun 08:00–20:00.
  */
 export type BookingRules = {
-  /** 0 = Sunday. Saturday (6) was excluded originally. */
+  /** 0 = Sunday. 6 = Saturday. */
   weekdays: number[];
   startHour: number;
   /** Exclusive: endHour 20 means the last slot starts at 19:00. */
@@ -14,16 +14,21 @@ export type BookingRules = {
   /** Sunday uses a longer window than Mon–Fri. */
   sundayStartHour: number;
   sundayEndHour: number;
+  /** Saturday uses the same longer weekend window as Sunday. */
+  saturdayStartHour: number;
+  saturdayEndHour: number;
   horizonDays: number;
   priceOre: number;
 };
 
 export const DEFAULT_BOOKING_RULES: BookingRules = {
-  weekdays: [0, 1, 2, 3, 4, 5],
+  weekdays: [0, 1, 2, 3, 4, 5, 6],
   startHour: 16,
   endHour: 20,
   sundayStartHour: 8,
   sundayEndHour: 20,
+  saturdayStartHour: 8,
+  saturdayEndHour: 20,
   horizonDays: 60,
   priceOre: 79900,
 };
@@ -42,11 +47,20 @@ export function parseBookingRules(value: unknown): BookingRules {
   if (!value || typeof value !== "object") return DEFAULT_BOOKING_RULES;
 
   const raw = value as Partial<Record<keyof BookingRules, unknown>>;
-  const weekdays = Array.isArray(raw.weekdays)
+  let weekdays = Array.isArray(raw.weekdays)
     ? raw.weekdays.filter(
         (day): day is number => typeof day === "number" && day >= 0 && day <= 6
       )
-    : DEFAULT_BOOKING_RULES.weekdays;
+    : [...DEFAULT_BOOKING_RULES.weekdays];
+
+  // Legacy rows predate Saturday hours and stored Sun–Fri only. Treat those as
+  // open Saturday until an admin unchecks it and saves.
+  const storedSaturdayHours =
+    typeof raw.saturdayStartHour === "number" ||
+    typeof raw.saturdayEndHour === "number";
+  if (!storedSaturdayHours && !weekdays.includes(6)) {
+    weekdays = [...weekdays, 6];
+  }
 
   const startHour = clampHour(raw.startHour, DEFAULT_BOOKING_RULES.startHour);
   const endHour = clampHour(raw.endHour, DEFAULT_BOOKING_RULES.endHour);
@@ -58,6 +72,14 @@ export function parseBookingRules(value: unknown): BookingRules {
     raw.sundayEndHour,
     DEFAULT_BOOKING_RULES.sundayEndHour
   );
+  const saturdayStartHour = clampHour(
+    raw.saturdayStartHour,
+    DEFAULT_BOOKING_RULES.saturdayStartHour
+  );
+  const saturdayEndHour = clampHour(
+    raw.saturdayEndHour,
+    DEFAULT_BOOKING_RULES.saturdayEndHour
+  );
 
   return {
     weekdays: weekdays.length > 0 ? weekdays : DEFAULT_BOOKING_RULES.weekdays,
@@ -66,6 +88,11 @@ export function parseBookingRules(value: unknown): BookingRules {
     sundayStartHour,
     sundayEndHour:
       sundayEndHour > sundayStartHour ? sundayEndHour : sundayStartHour + 1,
+    saturdayStartHour,
+    saturdayEndHour:
+      saturdayEndHour > saturdayStartHour
+        ? saturdayEndHour
+        : saturdayStartHour + 1,
     horizonDays:
       typeof raw.horizonDays === "number" && raw.horizonDays > 0
         ? Math.min(Math.floor(raw.horizonDays), 365)
@@ -93,6 +120,12 @@ export function hoursForWeekday(
       endHour: rules.sundayEndHour,
     };
   }
+  if (weekday === 6) {
+    return {
+      startHour: rules.saturdayStartHour,
+      endHour: rules.saturdayEndHour,
+    };
+  }
   return { startHour: rules.startHour, endHour: rules.endHour };
 }
 
@@ -109,8 +142,12 @@ export function scheduleHourSpan(rules: BookingRules): {
   max: number;
 } {
   return {
-    min: Math.min(rules.startHour, rules.sundayStartHour),
-    max: Math.max(rules.endHour, rules.sundayEndHour),
+    min: Math.min(
+      rules.startHour,
+      rules.sundayStartHour,
+      rules.saturdayStartHour
+    ),
+    max: Math.max(rules.endHour, rules.sundayEndHour, rules.saturdayEndHour),
   };
 }
 
@@ -144,6 +181,9 @@ export function allPossibleTimeSlots(
     hours.add(hour);
   }
   for (let hour = rules.sundayStartHour; hour < rules.sundayEndHour; hour++) {
+    hours.add(hour);
+  }
+  for (let hour = rules.saturdayStartHour; hour < rules.saturdayEndHour; hour++) {
     hours.add(hour);
   }
 

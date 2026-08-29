@@ -31,7 +31,9 @@ export default async function AvailabilityPage() {
       <p className="mt-1 text-sm text-muted-foreground">
         Regular opening hours: {openDays || "no days"}. Weekdays{" "}
         {String(rules.startHour).padStart(2, "0")}:00–
-        {String(rules.endHour).padStart(2, "0")}:00. Sunday{" "}
+        {String(rules.endHour).padStart(2, "0")}:00. Saturday{" "}
+        {String(rules.saturdayStartHour).padStart(2, "0")}:00–
+        {String(rules.saturdayEndHour).padStart(2, "0")}:00. Sunday{" "}
         {String(rules.sundayStartHour).padStart(2, "0")}:00–
         {String(rules.sundayEndHour).padStart(2, "0")}:00. Change them under
         Settings.
