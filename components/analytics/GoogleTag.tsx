@@ -9,22 +9,24 @@ gtag('config', '${GOOGLE_ADS_ID}');`
   : "";
 
 /**
- * Google tag (gtag.js) for AW-18407352152. Loaded with next/script so React 19
- * streaming does not wrap a raw `<script>` in `<template>`.
+ * Sitewide Google tag (gtag.js). Rendered as native `<script>` tags inside
+ * the locale layout `<head>` so the initial HTML matches what Google Ads
+ * Tag Diagnostics looks for. `next/script` cannot do that here: the root
+ * layout does not own `<html>`, so `beforeInteractive` is queued in `<body>`.
  */
 export function GoogleTag() {
   if (!GOOGLE_ADS_ID) return null;
 
   return (
     <>
-      <Script
-        id="gtag-js"
+      <script
+        async
         src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
-        strategy="afterInteractive"
       />
-      <Script id="gtag-config" strategy="afterInteractive">
-        {gtagBootstrap}
-      </Script>
+      <script
+        id="gtag-config"
+        dangerouslySetInnerHTML={{ __html: gtagBootstrap }}
+      />
     </>
   );
 }
@@ -39,7 +41,8 @@ type PurchaseConversionProps = {
 /**
  * Event snippet for the Purchase conversion. Only on a confirmed paid
  * booking. `transaction_id` is the booking UUID; Google Ads uses it to ignore
- * reloads of the confirmation page.
+ * reloads of the confirmation page. `next/script` is used in the page body
+ * so React 19 streaming does not wrap it in `<template>`.
  */
 export function PurchaseConversion({
   transactionId,
@@ -51,13 +54,17 @@ export function PurchaseConversion({
   const value = Number.isFinite(valueSek) ? valueSek : 1;
 
   return (
-    <Script id="google-ads-purchase" strategy="afterInteractive">
-      {`gtag('event', 'conversion', {
+    <Script
+      id="google-ads-purchase"
+      strategy="afterInteractive"
+      dangerouslySetInnerHTML={{
+        __html: `gtag('event', 'conversion', {
   send_to: ${JSON.stringify(GOOGLE_ADS_PURCHASE_SEND_TO)},
   value: ${value},
   currency: 'SEK',
   transaction_id: ${JSON.stringify(transactionId)}
-});`}
-    </Script>
+});`,
+      }}
+    />
   );
 }

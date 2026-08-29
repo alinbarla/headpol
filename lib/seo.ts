@@ -36,7 +36,11 @@ export const GOOGLE_SITE_VERIFICATION =
 export const GOOGLE_ADS_ID =
   process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "AW-18407352152";
 
-/** Google Tag Manager container. Set to "" to disable GTM. */
+/**
+ * Google Tag Manager container. Loaded only on the admin host. The public
+ * site uses the Google tag (gtag.js) alone — Google Ads flags pages that
+ * ship both a Google tag and a GTM container.
+ */
 export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "GTM-WKQJ9N3L";
 
 /** Purchase conversion send_to (account / conversion label). */

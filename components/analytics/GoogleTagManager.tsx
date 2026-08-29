@@ -10,8 +10,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   : "";
 
 /**
- * Google Tag Manager bootstrap. `afterInteractive` injects via the DOM instead
- * of rendering a `<script>` child, which React 19 rejects during client render.
+ * Admin-only GTM bootstrap. The public site must not load this alongside the
+ * Google tag — Google Ads treats that pair as duplicate sitewide tags.
+ *
+ * `afterInteractive` injects via the DOM instead of rendering a `<script>`
+ * child, which React 19 rejects during client render.
  */
 export function GoogleTagManager() {
   if (!GTM_ID) return null;

@@ -8,7 +8,7 @@ import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY } from "@/lib/booking";
 import { routing, type Locale } from "@/lib/i18n";
 import { BRAND, buildPageMetadata } from "@/lib/seo";
 
-const UPDATED = "2026-08-26";
+const UPDATED = "2026-08-29";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -119,8 +119,8 @@ function PrivacySv() {
         </li>
         <li>
           <strong>Google</strong> används för bekräftelsemejl (Gmail) samt
-          Google Tag Manager och Google Ads, som mäter när en bokning blir
-          betald.
+          Google-taggen (gtag.js) och Google Ads, som mäter när en bokning
+          blir betald.
         </li>
       </ul>
 
@@ -146,11 +146,11 @@ function PrivacySv() {
 
       <h2>Kakor och mätning</h2>
       <p>
-        Vi använder Google Tag Manager och Google Ads för att mäta när en
-        bokning blir betald. Det kan sätta kakor eller liknande identifierare
-        i din webbläsare. Vi kör inte Google Analytics för sidstatistik. Ditt
-        språkval kan sparas lokalt i webbläsaren. Betalsidan hos Stripe sätter
-        egna kakor som krävs för att betalningen ska fungera säkert.
+        Vi använder Google-taggen (gtag.js) och Google Ads för att mäta när en
+        bokning blir betald. Det kan sätta förstaparts-kakor (till exempel
+        GCLID) i din webbläsare. Vi kör inte Google Analytics för sidstatistik.
+        Ditt språkval kan sparas lokalt i webbläsaren. Betalsidan hos Stripe
+        sätter egna kakor som krävs för att betalningen ska fungera säkert.
       </p>
 
       <p>
@@ -225,8 +225,8 @@ function PrivacyEn() {
         </li>
         <li>
           <strong>Google</strong> is used for confirmation email (Gmail) and
-          for Google Tag Manager and Google Ads, which measure when a booking
-          is paid.
+          for the Google tag (gtag.js) and Google Ads, which measure when a
+          booking is paid.
         </li>
       </ul>
 
@@ -252,12 +252,12 @@ function PrivacyEn() {
 
       <h2>Cookies and measurement</h2>
       <p>
-        We use Google Tag Manager and Google Ads to measure when a booking is
-        paid. That may set cookies or similar identifiers in your browser. We
-        do not run Google Analytics for page statistics. Your language
-        preference may be stored locally in your browser. Stripe&apos;s
-        checkout page sets its own cookies that are necessary for the payment
-        to work securely.
+        We use the Google tag (gtag.js) and Google Ads to measure when a
+        booking is paid. That may set first-party cookies (for example GCLID)
+        in your browser. We do not run Google Analytics for page statistics.
+        Your language preference may be stored locally in your browser.
+        Stripe&apos;s checkout page sets its own cookies that are necessary
+        for the payment to work securely.
       </p>
 
       <p>

@@ -18,15 +18,20 @@ const supabaseOrigin = (() => {
 })();
 
 /**
- * Origins the Google tag (gtag.js) needs for Google Ads. Conversion pings are
- * sent to the visitor's local Google domain, hence google.com plus google.se.
+ * Origins required by the Google tag for Google Ads conversions and the
+ * conversion linker. From Google's CSP guide:
+ * https://developers.google.com/tag-platform/security/guides/csp
+ *
+ * `www.google.se` covers Swedish visitors; `www.google.com` / `google.com`
+ * cover the global endpoints. A missing `connect-src` host silently drops
+ * conversion hits and shows up as "tag inactive" in Google Ads.
  */
 const googleTag = {
   script:
-    "https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://tagmanager.google.com",
-  img: "https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google.com https://www.google.se https://*.google-analytics.com https://ssl.gstatic.com",
+    "https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tagmanager.google.com",
+  img: "https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google.com https://google.com https://www.google.se https://pagead2.googlesyndication.com https://*.google-analytics.com https://ssl.gstatic.com",
   connect:
-    "https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com https://www.google.com https://www.google.se https://googleads.g.doubleclick.net",
+    "https://www.googletagmanager.com https://www.googleadservices.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://www.google.com https://google.com https://www.google.se https://*.google-analytics.com https://*.analytics.google.com https://*.g.doubleclick.net",
   frame: "https://www.googletagmanager.com https://td.doubleclick.net",
 };
 
@@ -83,6 +88,16 @@ const adminHost = process.env.ADMIN_HOST ?? "admin.stralkastarpolering.se";
 const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.stralkastarpolering.se" }],
+        destination: "https://stralkastarpolering.se/:path*",
+        permanent: true,
+      },
+    ];
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [360, 480, 640, 750, 828, 1080, 1200, 1920],
