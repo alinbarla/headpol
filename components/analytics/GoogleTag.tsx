@@ -1,5 +1,5 @@
 import Script from "next/script";
-import { GOOGLE_ADS_ID, GOOGLE_ADS_PURCHASE_SEND_TO } from "@/lib/seo";
+import { GOOGLE_ADS_ID, GOOGLE_ADS_BOOKING_SEND_TO } from "@/lib/seo";
 
 const gtagBootstrap = GOOGLE_ADS_ID
   ? `window.dataLayer = window.dataLayer || [];
@@ -31,37 +31,27 @@ export function GoogleTag() {
   );
 }
 
-type PurchaseConversionProps = {
+type BookingConversionProps = {
   /** Unique per booking so Google Ads drops duplicate fires on refresh. */
   transactionId: string;
-  /** Gross amount in kronor (not öre). */
-  valueSek: number;
 };
 
 /**
- * Event snippet for the Purchase conversion. Only on a confirmed paid
- * booking. `transaction_id` is the booking UUID; Google Ads uses it to ignore
- * reloads of the confirmation page. `next/script` is used in the page body
- * so React 19 streaming does not wrap it in `<template>`.
+ * Event snippet for the Book appointment conversion. Only on a confirmed
+ * paid booking. `transaction_id` is the booking UUID so a refresh is not
+ * counted twice.
  */
-export function PurchaseConversion({
-  transactionId,
-  valueSek,
-}: PurchaseConversionProps) {
-  if (!GOOGLE_ADS_ID || !GOOGLE_ADS_PURCHASE_SEND_TO) return null;
+export function PurchaseConversion({ transactionId }: BookingConversionProps) {
+  if (!GOOGLE_ADS_ID || !GOOGLE_ADS_BOOKING_SEND_TO) return null;
   if (!/^[0-9a-f-]{8,}$/i.test(transactionId)) return null;
-
-  const value = Number.isFinite(valueSek) ? valueSek : 1;
 
   return (
     <Script
-      id="google-ads-purchase"
+      id="google-ads-book-appointment"
       strategy="afterInteractive"
       dangerouslySetInnerHTML={{
         __html: `gtag('event', 'conversion', {
-  send_to: ${JSON.stringify(GOOGLE_ADS_PURCHASE_SEND_TO)},
-  value: ${value},
-  currency: 'SEK',
+  send_to: ${JSON.stringify(GOOGLE_ADS_BOOKING_SEND_TO)},
   transaction_id: ${JSON.stringify(transactionId)}
 });`,
       }}

@@ -66,10 +66,7 @@ export async function BookingConfirmationView({
   return (
     <main className="relative overflow-hidden py-16 sm:py-24">
       {paid && confirmation ? (
-        <PurchaseConversion
-          transactionId={confirmation.id}
-          valueSek={confirmation.amountOre / 100}
-        />
+        <PurchaseConversion transactionId={confirmation.id} />
       ) : null}
       {pending ? <PendingPaymentPoller /> : null}
       <div

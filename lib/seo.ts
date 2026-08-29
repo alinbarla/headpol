@@ -43,10 +43,10 @@ export const GOOGLE_ADS_ID =
  */
 export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "GTM-WKQJ9N3L";
 
-/** Purchase conversion send_to (account / conversion label). */
-export const GOOGLE_ADS_PURCHASE_SEND_TO =
-  process.env.NEXT_PUBLIC_GOOGLE_ADS_PURCHASE_SEND_TO ??
-  "AW-18407352152/nfWqCO7v0eccENjOp8lE";
+/** Book appointment conversion send_to (account / conversion label). */
+export const GOOGLE_ADS_BOOKING_SEND_TO =
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_BOOKING_SEND_TO ??
+  "AW-18409115873/983KCJqvleocEOGhk8pE";
 
 export const LOCALES = routing.locales;
 export const DEFAULT_LOCALE = routing.defaultLocale;
