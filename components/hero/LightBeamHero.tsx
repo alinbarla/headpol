@@ -40,8 +40,13 @@ export function LightBeamHero() {
             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-beam font-display">
               {t("eyebrow")}
             </p>
-            <h1 className="headline-display text-3xl font-bold text-text-primary sm:text-4xl lg:text-5xl">
-              {t("title")}
+            <h1 className="headline-display relative text-3xl font-bold text-text-primary sm:text-4xl lg:text-5xl">
+              {t.rich("title", {
+                lead: (chunks) => <span className="sr-only">{chunks}</span>,
+                visible: (chunks) => (
+                  <span className="inline-block first-letter:uppercase">{chunks}</span>
+                ),
+              })}
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
               {t.rich("subtitle", {
@@ -50,7 +55,38 @@ export function LightBeamHero() {
                 ),
               })}
             </p>
-            <div className="mt-10 flex flex-wrap items-center gap-4">
+          </motion.div>
+
+          <motion.div
+            initial={false}
+            animate={mounted ? { opacity: 1, y: 0 } : undefined}
+            transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
+            className="relative lg:col-start-2 lg:row-span-2 lg:row-start-1"
+          >
+            <div
+              className="pointer-events-none absolute -inset-4 rounded-3xl bg-beam/10 blur-3xl"
+              aria-hidden="true"
+            />
+            <div className="relative">
+              <HeroShowcaseImage />
+              <div className="absolute -bottom-5 left-3 z-10 sm:left-6">
+                <PriceSticker
+                  oldPrice={t("oldPrice")}
+                  price={t("price")}
+                  unit={t("priceUnit")}
+                />
+              </div>
+            </div>
+            <p className="mt-10 text-center text-sm text-text-muted">{t("imageHint")}</p>
+          </motion.div>
+
+          <motion.div
+            initial={false}
+            animate={mounted ? { opacity: 1, y: 0 } : undefined}
+            transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
+            className="lg:col-start-1"
+          >
+            <div className="flex flex-wrap items-center gap-4">
               <Button href={`tel:${CONTACT_PHONE}`}>{t("ctaPrimary")}</Button>
               <Button href="#booking" variant="outline">
                 {t("ctaSecondary")}
@@ -72,29 +108,6 @@ export function LightBeamHero() {
                 </div>
               ))}
             </dl>
-          </motion.div>
-
-          <motion.div
-            initial={false}
-            animate={mounted ? { opacity: 1, y: 0 } : undefined}
-            transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
-            className="relative"
-          >
-            <div
-              className="pointer-events-none absolute -inset-4 rounded-3xl bg-beam/10 blur-3xl"
-              aria-hidden="true"
-            />
-            <div className="relative">
-              <HeroShowcaseImage />
-              <div className="absolute -bottom-5 left-3 z-10 sm:left-6">
-                <PriceSticker
-                  oldPrice={t("oldPrice")}
-                  price={t("price")}
-                  unit={t("priceUnit")}
-                />
-              </div>
-            </div>
-            <p className="mt-10 text-center text-sm text-text-muted">{t("imageHint")}</p>
           </motion.div>
         </div>
         <p className="relative z-10 mt-10 max-w-3xl text-base leading-relaxed text-text-secondary lg:mt-12">

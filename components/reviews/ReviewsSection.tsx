@@ -1,18 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
-
-const SHOTS = [
-  {
-    src: "/images/gallery/stralkastarepolering-fore-efter.jpg",
-    altKey: "beforeAfterAlt" as const,
-  },
-  {
-    src: "/images/gallery/car-2.jpg",
-    altKey: "afterAlt" as const,
-  },
-];
+import { ResultCompare } from "@/components/reviews/ResultCompare";
 
 export async function ReviewsSection() {
   const t = await getTranslations("reviews");
@@ -29,23 +18,7 @@ export async function ReviewsSection() {
           <p className="mt-4 text-lg leading-relaxed text-text-secondary">{t("subtitle")}</p>
         </div>
 
-        <ul className="grid gap-6 md:grid-cols-2">
-          {SHOTS.map((shot) => (
-            <li
-              key={shot.src}
-              className="overflow-hidden rounded-3xl border border-white/5 bg-void-elevated"
-            >
-              <Image
-                src={shot.src}
-                alt={t(shot.altKey)}
-                width={1200}
-                height={800}
-                className="h-auto w-full object-cover"
-                sizes="(max-width: 768px) 100vw, 560px"
-              />
-            </li>
-          ))}
-        </ul>
+        <ResultCompare />
 
         <p className="mt-6">
           <Link
