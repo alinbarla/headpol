@@ -10,16 +10,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   : "";
 
 /**
- * Google Tag Manager bootstrap. `next/script` so React 19 does not treat a
- * raw `<script>` as an invalid child during streaming SSR.
+ * Google Tag Manager bootstrap. `afterInteractive` injects via the DOM instead
+ * of rendering a `<script>` child, which React 19 rejects during client render.
  */
 export function GoogleTagManager() {
   if (!GTM_ID) return null;
 
   return (
-    <Script id="gtm-bootstrap" strategy="beforeInteractive">
-      {gtmBootstrap}
-    </Script>
+    <Script
+      id="gtm-bootstrap"
+      strategy="afterInteractive"
+      dangerouslySetInnerHTML={{ __html: gtmBootstrap }}
+    />
   );
 }
 
