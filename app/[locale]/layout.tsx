@@ -112,6 +112,13 @@ export async function generateMetadata({
       ? { verification: { google: GOOGLE_SITE_VERIFICATION } }
       : {}),
     formatDetection: { telephone: true, email: true, address: false },
+    icons: {
+      icon: [
+        { url: "/icon", sizes: "96x96", type: "image/png" },
+        { url: "/icon.svg", sizes: "96x96", type: "image/svg+xml" },
+      ],
+      apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
+    },
   };
 }
 
