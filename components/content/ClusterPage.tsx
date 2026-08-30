@@ -114,6 +114,16 @@ export async function ClusterPage({
                       </Link>
                     </p>
                   ) : null}
+                  {section.href && section.linkLabel ? (
+                    <p className="mt-4">
+                      <Link
+                        href={section.href}
+                        className="text-sm font-semibold text-beam hover:underline"
+                      >
+                        {section.linkLabel}
+                      </Link>
+                    </p>
+                  ) : null}
                 </section>
               ))}
             </div>
@@ -132,6 +142,16 @@ export async function ClusterPage({
                       ))}
                     </ul>
                   )}
+                  {section.href && section.linkLabel ? (
+                    <p>
+                      <Link
+                        href={section.href}
+                        className="font-semibold text-beam hover:underline"
+                      >
+                        {section.linkLabel}
+                      </Link>
+                    </p>
+                  ) : null}
                 </section>
               ))}
             </div>
@@ -156,9 +176,19 @@ export async function ClusterPage({
                         +
                       </span>
                     </summary>
-                    <p className="pb-5 pr-10 text-sm leading-relaxed text-text-secondary">
-                      {item.answer}
-                    </p>
+                    <div className="pb-5 pr-10 text-sm leading-relaxed text-text-secondary">
+                      <p>{item.answer}</p>
+                      {item.href && item.linkLabel ? (
+                        <p className="mt-2">
+                          <Link
+                            href={item.href}
+                            className="font-semibold text-beam hover:underline"
+                          >
+                            {item.linkLabel}
+                          </Link>
+                        </p>
+                      ) : null}
+                    </div>
                   </details>
                 ))}
               </div>

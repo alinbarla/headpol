@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
@@ -5,7 +7,12 @@ import { Container } from "@/components/ui/Container";
 export function FaqSection() {
   const t = useTranslations("faq");
   const locale = useLocale();
-  const items = t.raw("items") as Array<{ question: string; answer: string }>;
+  const items = t.raw("items") as Array<{
+    question: string;
+    answer: string;
+    href?: string;
+    linkLabel?: string;
+  }>;
 
   return (
     <section id="faq" className="section-anchor py-24 sm:py-32">
@@ -43,9 +50,19 @@ export function FaqSection() {
                   </svg>
                 </span>
               </summary>
-              <p className="pb-5 pr-10 text-sm leading-relaxed text-text-secondary">
-                {item.answer}
-              </p>
+              <div className="pb-5 pr-10 text-sm leading-relaxed text-text-secondary">
+                <p>{item.answer}</p>
+                {item.href && item.linkLabel ? (
+                  <p className="mt-2">
+                    <Link
+                      href={item.href}
+                      className="font-semibold text-beam hover:underline"
+                    >
+                      {item.linkLabel}
+                    </Link>
+                  </p>
+                ) : null}
+              </div>
             </details>
           ))}
         </div>

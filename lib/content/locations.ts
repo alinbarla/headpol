@@ -8,14 +8,14 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     description:
       "Mobil strålkastarpolering i Stockholms län. Fast pris 799 kr/par, ingen zonavgift. Vi tar innerstad, villaområden och arbetsplatser. UV-skydd och 5 års garanti.",
     h1: "Strålkastarpolering i Stockholms län",
-    lead: "Vi är en mobil tjänst, inte en verkstad du lämnar bilen till. Stockholms län betyder innergårdar, villauppfarter, företagsparkeringar och olika restider — inte ett och samma upplägg överallt.",
+    lead: "Vi är en mobil tjänst, inte en verkstad du lämnar bilen till. Stockholms län betyder innergårdar, villauppfarter, företagsparkeringar och olika restider, inte ett och samma upplägg överallt.",
     locationName: "Stockholm",
     sections: [
       {
         heading: "Täckning i länet",
         paragraphs: [
           "Vi tar adresser i Stockholms stad och kommunerna runt om, ungefär 40 km från centrum. Söderut kör vi bland annat till Huddinge, Tumba, Södertälje och Haninge. Österut till Nacka. Norrut till Solna och vidare mot Täby, Sollentuna och Järfälla.",
-          "Postnummer 10xxx–19xxx och 76xxx (Norrtälje) går att boka i kalendern. Ligger du precis utanför, ring — vi bedömer restiden från fall till fall.",
+          "Postnummer 10xxx–19xxx och 76xxx (Norrtälje) går att boka i kalendern. Ligger du precis utanför, ring så bedömer vi restiden från fall till fall.",
         ],
       },
       {
@@ -34,8 +34,17 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Utomhusjobb",
         paragraphs: [
-          "Vi polerar utomhus. Under tak på en öppen carport går bra. Ett stängt garage där vi inte får plats med slipning och vatten är sämre. Bilen behöver stå still tills skyddet har satt sig — du kan vänta bredvid.",
+          "Vi polerar utomhus. Under tak på en öppen carport går bra. Ett stängt garage där vi inte får plats med slipning och vatten är sämre. Bilen behöver stå still tills skyddet har satt sig. Du kan vänta bredvid.",
         ],
+      },
+      {
+        heading: "Strålkastarrenovering på din adress",
+        paragraphs: [
+          "I Stockholms län gör vi hela renoveringen där bilen står: maskering, våtslipning, polering och UV-skydd. Innergård, villauppfart eller arbetsplats funkar så länge nosen är fri och vi kan stå kvar ungefär en timme.",
+          "Samma 799 kr/par som i resten av området. Ingen zonavgift.",
+        ],
+        href: "/sv/stralkastarrenovering",
+        linkLabel: "Så går en strålkastarrenovering till",
       },
     ],
     faqs: [
@@ -57,7 +66,8 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       { slug: "stralkastarpolering-haninge", label: "Haninge" },
       { slug: "stralkastarpolering-nacka", label: "Nacka" },
       { slug: "stralkastarpolering-solna", label: "Solna" },
-      { slug: "stralkastarpolering", label: "Tjänsten" },
+      { slug: "stralkastarpolering", label: "Polera strålkastare" },
+      { slug: "stralkastarrenovering", label: "Strålkastarrenovering" },
     ],
   },
   {
@@ -167,7 +177,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       { slug: "stralkastarpolering-huddinge", label: "Huddinge" },
       { slug: "stralkastarpolering-sodertalje", label: "Södertälje" },
       { slug: "stralkastarpolering-stockholm", label: "Stockholm" },
-      { slug: "stralkastarpolering", label: "Tjänsten" },
+      { slug: "stralkastarpolering", label: "Polera strålkastare" },
     ],
   },
   {
@@ -332,7 +342,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       { slug: "stralkastarpolering-haninge", label: "Haninge" },
       { slug: "stralkastarpolering-solna", label: "Solna" },
       { slug: "stralkastarpolering-stockholm", label: "Stockholm" },
-      { slug: "stralkastarpolering", label: "Tjänsten" },
+      { slug: "stralkastarpolering", label: "Polera strålkastare" },
     ],
   },
   {

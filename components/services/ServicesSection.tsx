@@ -48,12 +48,18 @@ export function ServicesSection() {
           </h2>
           <p className="mt-4 text-lg text-text-secondary">{t("subtitle")}</p>
           {locale === "sv" && (
-            <p className="mt-4">
+            <p className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
               <Link
                 href="/sv/priser"
                 className="text-sm font-semibold text-beam hover:underline"
               >
                 {t("readMore")}
+              </Link>
+              <Link
+                href="/sv/stralkastarpolering"
+                className="text-sm font-semibold text-beam hover:underline"
+              >
+                {t("readMorePolish")}
               </Link>
             </p>
           )}

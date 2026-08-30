@@ -4,17 +4,17 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering",
     kind: "service-polering",
-    title: "Strålkastarpolering i Stockholm – så fungerar det",
+    title: "Polera strålkastare – så blir de blanka igen",
     description:
-      "Strålkastarpolering tar bort gulnad, matt yta och repor från plaststrålkastare. Vi kommer till dig i Stockholm. 799 kr/par och 5 års garanti.",
-    h1: "Strålkastarpolering i Stockholm",
-    lead: "Strålkastarpolering är jobbet som tar bort oxidationen från plastglaset så att ljuset når vägen igen. Vi gör det på plats hos dig — hemma, på jobbet eller i garaget — och avslutar alltid med UV-keramiskt skydd.",
+      "Så polerar du inte bara ytan: oxidation, kit hemma, när blanka strålkastare håller och när glaset inte går att rädda. 799 kr/par.",
+    h1: "Polera strålkastare",
+    lead: "När folk säger att de vill polera strålkastare menar de nästan alltid samma sak: glasen har blivit gula eller mjölkiga och de vill ha blanka strålkastare igen. Det är inte smuts. Det är plasten som oxiderat.",
     sections: [
       {
-        heading: "Vad strålkastarpolering faktiskt gör",
+        heading: "Vad som egentligen hänt med glaset",
         paragraphs: [
-          "När folk söker på strålkastarpolering menar de oftast att strålkastarna blivit gula, matta eller rökiga. Det är inte smuts på utsidan. Det är polykarbonatplasten som oxiderat efter att fabrikens UV-skydd slitits bort av solen.",
-          "En riktig polering tar bort det skadade ytskiktet, återställer klarheten och lägger ett nytt skydd. En snabb puts med polish på ytan räcker inte — den gula plasten sitter i materialet, inte ovanpå det.",
+          "Moderna strålkastare är polykarbonat. Fabriken lade ett tunt UV-skydd som solen sakta nöter bort. När skyddet är borta oxiderar plasten en bit in, inte bara på ytan. En trasa och polish räcker därför sällan mer än någon vecka.",
+          "En riktig strålkastarpolering tar bort det skadade skiktet, polerar tillbaka klarheten och lägger ett nytt skydd. Utan det sista steget gulnar plasten fort igen.",
         ],
       },
       {
@@ -30,10 +30,17 @@ export const HUB_PAGES: ClusterDoc[] = [
         ],
       },
       {
-        heading: "Polering är ett moment — inte hela jobbet",
+        heading: "Kit hemma eller göra jobbet ordentligt",
         paragraphs: [
-          "Själva poleringen är steget där polymercompound tar bort de sista reporna efter slipningen. Utan våtslipning innan och UV-skydd efter blir resultatet kortlivat. Därför ingår alltid hela kedjan: maskering, slipning P400–P3000, polymerpolering och UV-keramiskt skydd.",
-          "Behöver du den tekniska genomgången — varför plasten gulnar, när renovering inte fungerar och hur länge det håller — finns det på sidan om strålkastarrenovering.",
+          "Kit från affären kan se bra ut i några veckor. Många saknar ett UV-skydd som faktiskt ersätter fabrikslackeringen. Slipningen tar bort det som fanns kvar av originalskyddet, så utan nytt skydd kommer gulnaden tillbaka.",
+          "Vi slipar vått från P400 upp till P3000, polerar med polymer och lägger UV-keramiskt skydd. Det är därför vi kan lämna 5 års garanti. Ett kit på uppfarten ger sällan samma sak.",
+        ],
+      },
+      {
+        heading: "När glaset inte går att rädda",
+        paragraphs: [
+          "Spricka genom plasten, imma på insidan eller en enhet som sitter fel går inte att polera bort. Då säger vi det innan vi börjar och tar inte betalt.",
+          "Ytliga repor och hela oxidationen går däremot. Osäker? Skicka en bild eller vänta tills vi tittar på plats.",
         ],
       },
       {
@@ -46,6 +53,11 @@ export const HUB_PAGES: ClusterDoc[] = [
     ],
     faqs: [
       {
+        question: "Hur får man blanka strålkastare som håller?",
+        answer:
+          "Slipning tills oxidationen är borta, sedan polering och ett UV-skydd som faktiskt sitter. Puts på ytan ger glans en kort tid. Skyddet är det som gör att ytan inte gulnar igen efter några månader.",
+      },
+      {
         question: "Kan man polera matta strålkastare?",
         answer:
           "Ja. Matt yta är oxidation i plasten. Vi slipar bort skiktet och polerar tillbaka klarheten, sedan lägger vi UV-skydd så det inte återgår på några månader.",
@@ -53,7 +65,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         question: "Måste jag lämna in bilen?",
         answer:
-          "Nej. Vi kommer till den adress du anger — uppfart, garageuppfart, arbetsplats eller innergård så länge bilen står utomhus och vi kommer åt båda sidorna.",
+          "Nej. Vi kommer till den adress du anger: uppfart, arbetsplats eller innergård, så länge bilen står utomhus och vi kommer åt båda sidorna.",
       },
     ],
     related: [
@@ -70,13 +82,19 @@ export const HUB_PAGES: ClusterDoc[] = [
     description:
       "Så går en strålkastarrenovering till: varför strålkastare gulnar, polykarbonat, våtslipning, polering, UV-keramiskt skydd, livslängd och när det inte fungerar.",
     h1: "Strålkastarrenovering",
-    lead: "Strålkastarrenovering är hela återställningen — inte bara en yta som får glans. Här är processen, materialen och gränserna för vad som går att rädda.",
+    lead: "En strålkastarrenovering är hela återställningen, inte bara en yta som får glans. När du vill renovera strålkastare är det slipning, polering och nytt UV-skydd som räknas. Här är processen, materialen och gränserna för vad som går att rädda.",
     sections: [
+      {
+        heading: "Restaurering är samma sak",
+        paragraphs: [
+          "En del söker på strålkastare restaurering. Det är samma jobb: ta bort den oxiderade plasten och skydda den på nytt. Vi säger renovering i telefonen, men stegen är desamma.",
+        ],
+      },
       {
         heading: "Varför strålkastare blir gula",
         paragraphs: [
           "Moderna strålkastarglas är polykarbonat, inte glas. Materialet är slagtåligt men känsligt för UV. Fabriken lägger ett tunt hard-coat som tar emot solen. När det lagret spricker och nöts börjar plasten oxidera.",
-          "Oxidationen gör ytan mikroojämn. Ljuset sprids i plasten i stället för att gå rakt ut. Därför ser du gult, mjölkigt sken och en svagare ljusbild på vägen — även om lampan själv är hel.",
+          "Oxidationen gör ytan mikroojämn. Ljuset sprids i plasten i stället för att gå rakt ut. Därför ser du gult, mjölkigt sken och en svagare ljusbild på vägen, även om lampan själv är hel.",
         ],
       },
       {
@@ -90,7 +108,7 @@ export const HUB_PAGES: ClusterDoc[] = [
         heading: "Så går jobbet till",
         paragraphs: [
           "Maskering skyddar lack och lister. Våtslipning tar oxidationen. Polymerpolering återställer djup och glans. UV-keramiskt skydd ersätter fabrikens hard-coat. Till sist kontrollerar vi finish och ljusbild i dagsljus.",
-          "Utan det sista steget gulnar plasten igen inom några månader — slipningen har tagit bort det som fanns kvar av originalskyddet. Därför ingår skyddet alltid, och därför kan vi lämna 5 års garanti.",
+          "Utan det sista steget gulnar plasten igen inom några månader. Slipningen har tagit bort det som fanns kvar av originalskyddet. Därför ingår skyddet alltid, och därför kan vi lämna 5 års garanti.",
         ],
         bullets: [
           "Maskering och rengöring",
@@ -103,7 +121,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         heading: "Hur länge håller en strålkastarrenovering?",
         paragraphs: [
-          "Med UV-keramiskt skydd och normal biltvätt håller finishen i flera år. Garantin är 5 år. Parkering ute i söderläge, högtryck mot kanten och slipande tvättanläggningar sliter snabbare — men skyddet är till för just det.",
+          "Med UV-keramiskt skydd och normal biltvätt håller finishen i flera år. Garantin är 5 år. Parkering ute i söderläge, högtryck mot kanten och slipande tvättanläggningar sliter snabbare, men skyddet är till för just det.",
         ],
       },
       {
@@ -116,7 +134,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         heading: "Pris och bokning",
         paragraphs: [
-          "Personbil 799 kr/par. Samma fast pris oavsett kommun i vårt område. Boka i kalendern eller ring — vi kommer till dig.",
+          "Personbil 799 kr/par. Samma fast pris oavsett kommun i vårt område. Boka i kalendern eller ring, så kommer vi till dig.",
         ],
       },
     ],
@@ -131,12 +149,19 @@ export const HUB_PAGES: ClusterDoc[] = [
         answer:
           "Kit finns, men de flesta saknar ett UV-skydd som faktiskt ersätter fabrikslackeringen. Utan det gulnar plasten snabbt igen efter slipning.",
       },
+      {
+        question: "Kan man renovera strålkastare i Stockholm?",
+        answer:
+          "Ja. Vi gör hela kedjan på den adress du anger i länet: uppfart, innergård eller arbetsplats, så länge bilen står ute och nosen är fri.",
+        href: "/sv/stralkastarpolering-stockholm",
+        linkLabel: "Områden vi åker till i Stockholm",
+      },
     ],
     images: [
       {
         src: "/images/step-map/sanding.webp",
         alt: "Våtslipning av oxiderad strålkastare",
-        caption: "Våtslipning tar det oxiderade skiktet — inte bara ytan.",
+        caption: "Våtslipning tar det oxiderade skiktet, inte bara ytan.",
       },
       {
         src: "/images/step-map/ceramic.webp",
@@ -145,7 +170,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       },
     ],
     related: [
-      { slug: "stralkastarpolering", label: "Strålkastarpolering" },
+      { slug: "stralkastarpolering", label: "Polera strålkastare" },
       { slug: "fore-bilder", label: "Före och efter" },
       { slug: "priser", label: "Priser" },
       { slug: "faq", label: "FAQ" },
@@ -163,7 +188,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         title: "Personbil",
         description:
-          "Premiumrestaurering av båda strålkastarna. Vi kommer till din adress — ingen startavgift och ingen milersättning inom området.",
+          "Slipning, polering och UV-skydd av båda strålkastarna. Vi kommer till din adress. Ingen startavgift och ingen milersättning inom området.",
         oldPrice: "1499kr",
         price: "799kr",
         unit: "par",
@@ -202,7 +227,7 @@ export const HUB_PAGES: ClusterDoc[] = [
         heading: "Renovera eller byta",
         paragraphs: [
           "Nya originalstrålkastare ligger ofta på 5 000–20 000 kr styck plus montering, särskilt på bilar med LED eller adaptivt ljus. En renovering kostar 799 kr för paret när plasten är oxiderad men hel.",
-          "Byte är rätt val när glaset är sprucket, svetsat fel eller har fukt inuti. Då hjälper inte polering — och vi tar inte betalt för att konstatera det.",
+          "Byte är rätt val när glaset är sprucket, svetsat fel eller har fukt inuti. Då hjälper inte polering, och vi tar inte betalt för att konstatera det.",
         ],
       },
       {
@@ -225,7 +250,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       },
     ],
     related: [
-      { slug: "stralkastarpolering", label: "Strålkastarpolering" },
+      { slug: "stralkastarpolering", label: "Polera strålkastare" },
       { slug: "foretagskunder", label: "Företag och bilhandlare" },
       { slug: "faq", label: "FAQ" },
     ],
@@ -283,8 +308,8 @@ export const HUB_PAGES: ClusterDoc[] = [
     ],
     compareSlider: true,
     related: [
-      { slug: "stralkastarrenovering", label: "Processen" },
-      { slug: "stralkastarpolering", label: "Strålkastarpolering" },
+      { slug: "stralkastarrenovering", label: "Strålkastarrenovering" },
+      { slug: "stralkastarpolering", label: "Polera strålkastare" },
       { slug: "priser", label: "Priser" },
     ],
   },
@@ -300,15 +325,25 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         heading: "Sökintention och längre svar",
         paragraphs: [
-          "Frågorna nedan är skrivna som folk ställer dem — matta glas, gula glas, besiktning, byte kontra renovering. Svaren är desamma som vi ger i telefon innan vi rullar ut.",
+          "Frågorna nedan är skrivna som folk ställer dem: matta glas, gula glas, besiktning, byte kontra renovering. Svaren är desamma som vi ger i telefon innan vi rullar ut.",
         ],
       },
     ],
     faqs: [
       {
+        question: "Kan man polera strålkastare själv?",
+        answer:
+          "Kit kan se bra ut i några veckor. De flesta saknar ett UV-skydd som faktiskt ersätter fabrikslackeringen. Vi slipar till P3000 och lägger skyddet som gör att vi kan lämna 5 års garanti.",
+      },
+      {
+        question: "Vad är skillnaden mot strålkastare restaurering?",
+        answer:
+          "Ingen, i praktiken. Restaurering och renovering är samma jobb: slipning, polering och nytt UV-skydd. Polering är bara ett av stegen.",
+      },
+      {
         question: "Kan man polera matta strålkastare?",
         answer:
-          "Ja. Matt yta är oxidation i polykarbonatet. Vi slipar bort skiktet, polerar och lägger UV-skydd. Smuts på utsidan räcker det att tvätta — det här är när tvätt inte hjälper.",
+          "Ja. Matt yta är oxidation i polykarbonatet. Vi slipar bort skiktet, polerar och lägger UV-skydd. Smuts på utsidan räcker det att tvätta. Det här är när tvätt inte hjälper.",
       },
       {
         question: "Varför blir strålkastare gula?",
@@ -357,7 +392,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       },
     ],
     related: [
-      { slug: "stralkastarpolering", label: "Strålkastarpolering" },
+      { slug: "stralkastarpolering", label: "Polera strålkastare" },
       { slug: "stralkastarrenovering", label: "Strålkastarrenovering" },
       { slug: "priser", label: "Priser" },
     ],

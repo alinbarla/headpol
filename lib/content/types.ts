@@ -1,12 +1,16 @@
 export type ClusterFaq = {
   question: string;
   answer: string;
+  href?: string;
+  linkLabel?: string;
 };
 
 export type ClusterSection = {
   heading: string;
   paragraphs: string[];
   bullets?: string[];
+  href?: string;
+  linkLabel?: string;
 };
 
 export type ClusterImage = {

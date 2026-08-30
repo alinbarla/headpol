@@ -24,8 +24,8 @@ export function Footer() {
 
   const svCluster = [
     { href: "/sv", label: tNav("home") },
-    { href: "/sv/stralkastarpolering", label: tNav("polishing") },
-    { href: "/sv/stralkastarrenovering", label: tNav("restoration") },
+    { href: "/sv/stralkastarpolering", label: "Polera strålkastare" },
+    { href: "/sv/stralkastarrenovering", label: "Strålkastarrenovering" },
     { href: "/sv/priser", label: tNav("services") },
     { href: "/sv/foretagskunder", label: "Företag" },
     { href: "/sv/fore-bilder", label: "Före & efter" },

@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Strålkastarpolering & strålkastarrenovering i Stockholm",
-    "description": "Professionell strålkastarpolering och strålkastarrenovering i Stockholm. UV-keramiskt skydd, 799 kr/par och 5 års garanti. Vi kommer till dig."
+    "title": "Strålkastarpolering Stockholm – 799 kr/par, vi kommer till dig",
+    "description": "Mobil strålkastarpolering i Stockholm. 799 kr/par, UV-keramiskt skydd och 5 års garanti. Vi kommer till din adress."
   },
   "nav": {
     "brand": "Strålkastarpolering",
@@ -21,8 +21,8 @@
   "hero": {
     "eyebrow": "Begränsat antal platser denna vecka",
     "title": "<lead>Strålkastarpolering i Stockholm – </lead><visible>kristallklara strålkastare igen</visible>",
-    "subtitle": "Premiumrestaurering + UV-keramiskt skydd = nyskickade strålkastare, sparade pengar och <guarantee>5 års garanti</guarantee>.",
-    "semantic": "Professionell strålkastarpolering och strålkastarrenovering i Stockholm. Vi tar bort oxidation, gulnad och repor från plaststrålkastare och avslutar med UV-keramiskt skydd. Vi kommer till dig hemma, på jobbet eller i garaget.",
+    "subtitle": "Vi slipar, polerar och lägger UV-keramiskt skydd. 799 kr/par och <guarantee>5 års garanti</guarantee>. Vi kommer till dig.",
+    "semantic": "Strålkastarpolering i Stockholm på din adress. Vi tar bort oxidation, gulnad och repor från plaststrålkastare och avslutar med UV-keramiskt skydd.",
     "ctaPrimary": "Ring nu – vi kommer till dig!",
     "ctaSecondary": "Boka tid",
     "oldPrice": "1499kr",
@@ -32,12 +32,12 @@
     "before": "Före",
     "after": "Efter",
     "sliderHint": "Dra reglaget för att se skillnaden före och efter polering",
-    "sliderAltBefore": "Gulnad och matt bilstrålkastare före polering i Stockholm",
-    "sliderAltAfter": "Glasklar bilstrålkastare efter professionell strålkastarpolering",
-    "imageHint": "Före och efter — från matt och gult till glasklart",
-    "imageAlt": "Före och efter polering av strålkastare i Stockholm",
+    "sliderAltBefore": "Gulnad plaststrålkastare före polering",
+    "sliderAltAfter": "Klar strålkastare efter polering",
+    "imageHint": "Före och efter, från matt och gult till glasklart",
+    "imageAlt": "Gulnad plaststrålkastare före polering, samma lampa efter",
     "stats": [
-      { "value": "799kr/par", "label": "Premiumrestaurering" },
+      { "value": "799kr/par", "label": "Fast pris" },
       { "value": "5 år", "label": "Garanti" },
       { "value": "Hem till dig", "label": "Vi kommer till dig" }
     ]
@@ -48,7 +48,7 @@
     "items": [
       {
         "title": "Tydligt mer ljus i mörker",
-        "description": "Oxiderad plast sprider och dämpar ljuset. När ytan är klar igen når mer av lampans ljus vägen — du ser bättre i mörker och dimma, och möter mötande trafik tryggare."
+        "description": "Oxiderad plast sprider och dämpar ljuset. När ytan är klar igen når mer av lampans ljus vägen, så du ser bättre i mörker och dimma."
       },
       {
         "title": "Klarar besiktningen",
@@ -56,7 +56,7 @@
       },
       {
         "title": "Spara tusenlappar",
-        "description": "Nya strålkastare kostar ofta 5 000–20 000 kr styck med montering. Premiumrestaurering ger nyskickade strålkastare för 799kr/par."
+        "description": "Nya strålkastare kostar ofta 5 000–20 000 kr styck med montering. Ett par hos oss kostar 799 kr."
       },
       {
         "title": "Högre andrahandsvärde",
@@ -88,7 +88,7 @@
       },
       {
         "title": "UV-keramiskt skydd",
-        "description": "Ett UV-keramiskt skydd försluter ytan och skyddar mot solens UV-strålar så att glansen håller — med 5 års garanti.",
+        "description": "Ett UV-keramiskt skydd försluter ytan och skyddar mot solens UV-strålar så att glansen håller, med 5 års garanti.",
         "alt": "Påläggning av UV-skydd på nypolerad strålkastare"
       },
       {
@@ -98,7 +98,7 @@
       },
       {
         "title": "Klar att köra",
-        "description": "Du får tillbaka bilen med strålkastare som lyser som nya — direkt redo för väg och besiktning.",
+        "description": "Du får tillbaka bilen med strålkastare som lyser som nya, redo för väg och besiktning.",
         "alt": "Bil med glasklara strålkastare klar för leverans"
       }
     ]
@@ -106,14 +106,15 @@
   "services": {
     "title": "Priser för strålkastarpolering och renovering",
     "readMore": "Alla priser och vad som ingår",
-    "subtitle": "Premiumrestaurering + UV-keramiskt skydd för båda strålkastarna. 799kr/par.",
+    "readMorePolish": "Läs mer om att polera strålkastare",
+    "subtitle": "Slipning, polering och UV-keramiskt skydd för båda strålkastarna. 799 kr/par.",
     "exampleNote": "Tjänster & priser",
-    "guaranteeNote": "Premiumrestaurering + UV-keramiskt skydd = nyskickade strålkastare, sparade pengar och 5 års garanti.",
+    "guaranteeNote": "Slipning, polering och UV-keramiskt skydd ingår. 799 kr/par och 5 års garanti.",
     "priceUnit": "par",
     "items": [
       {
         "title": "Personbil",
-        "description": "Premiumrestaurering + UV-keramiskt skydd för båda strålkastarna. Vi kommer till dig.",
+        "description": "Slipning, polering och UV-keramiskt skydd för båda strålkastarna. Vi kommer till dig.",
         "oldPrice": "1499kr",
         "price": "799kr"
       },
@@ -140,7 +141,7 @@
       },
       {
         "title": "5 års garanti",
-        "description": "Premiumrestaurering + UV-keramiskt skydd med 5 års garanti. Nyskickade strålkastare som håller."
+        "description": "UV-keramiskt skydd och 5 års garanti. Nyskickade strålkastare som håller."
       },
       {
         "title": "Vi kommer till dig",
@@ -151,7 +152,7 @@
   "serviceArea": {
     "title": "Strålkastarpolering i hela Stockholm",
     "subtitle": "Vi kommer till dig i Stockholm med omnejd. Bor du i något av dessa områden är vi snabbt på plats.",
-    "note": "Bor du strax utanför listan? Hör av dig ändå — vi täcker stora delar av Stockholms län.",
+    "note": "Bor du strax utanför listan? Hör av dig ändå. Vi täcker stora delar av Stockholms län.",
     "readMore": "Områden vi åker till"
   },
   "reviews": {
@@ -167,20 +168,32 @@
     "readMore": "Alla frågor och längre svar",
     "items": [
       {
+        "question": "Kan man polera strålkastare själv?",
+        "answer": "Kit kan se bra ut i några veckor. De flesta saknar ett UV-skydd som faktiskt ersätter fabrikslackeringen, så gulnaden kommer tillbaka. Vi slipar till P3000 och lägger skyddet som gör att vi kan lämna 5 års garanti.",
+        "href": "/sv/stralkastarpolering",
+        "linkLabel": "Så polerar man strålkastare på riktigt"
+      },
+      {
+        "question": "Vad är skillnaden mot strålkastare restaurering?",
+        "answer": "Ingen, i praktiken. Restaurering och renovering är samma jobb: slipning, polering och nytt UV-skydd. Polering är bara ett av stegen.",
+        "href": "/sv/stralkastarrenovering",
+        "linkLabel": "Så går en strålkastarrenovering till"
+      },
+      {
         "question": "Hur länge håller en strålkastarpolering?",
         "answer": "Med UV-keramiskt skydd ingår 5 års garanti. Utan skydd börjar plasten gulna igen inom några månader, därför ingår skyddet alltid."
       },
       {
         "question": "Vad är skillnaden mellan strålkastarpolering och strålkastarrenovering?",
-        "answer": "I praktiken menar de flesta samma sak. Strålkastarrenovering beskriver hela jobbet med att återställa gulnade och matta strålkastare, medan polering är momentet som tar bort oxidationen. Hos oss ingår alltid hela kedjan — maskering, våtslipning, polymerpolering och UV-keramiskt skydd — så du får en komplett renovering och inte bara en ytlig polering."
+        "answer": "I praktiken menar de flesta samma sak. Strålkastarrenovering beskriver hela jobbet med att återställa gulnade och matta strålkastare, medan polering är momentet som tar bort oxidationen. Hos oss ingår alltid hela kedjan: maskering, våtslipning, polymerpolering och UV-keramiskt skydd."
       },
       {
         "question": "Klarar bilen besiktningen efter polering?",
-        "answer": "Ja. Kraftigt gulnade, matta eller spruckna strålkastare är en vanlig besiktningsanmärkning eftersom de försämrar ljusbilden. Vi återställer klarheten så att ljuset uppfyller kraven — i de allra flesta fall räcker polering för att gå igenom kontrollen."
+        "answer": "Ja. Kraftigt gulnade, matta eller spruckna strålkastare är en vanlig besiktningsanmärkning eftersom de försämrar ljusbilden. Vi återställer klarheten så att ljuset uppfyller kraven. I de flesta fall räcker polering för att gå igenom kontrollen."
       },
       {
         "question": "Vad kostar det att polera strålkastarna?",
-        "answer": "Premiumrestaurering av båda strålkastarna kostar 799kr/par, tidigare 1499kr/par. UV-keramiskt skydd och 5 års garanti ingår. MC och moped från 499 kr. För företag lämnar vi offert."
+        "answer": "Båda strålkastarna kostar 799 kr/par. UV-keramiskt skydd och 5 års garanti ingår. MC och moped från 499 kr. För företag lämnar vi offert."
       },
       {
         "question": "Hur lång tid tar det?",
@@ -188,19 +201,19 @@
       },
       {
         "question": "Kan alla strålkastare poleras?",
-        "answer": "De allra flesta moderna strålkastare är gjorda av polykarbonatplast och kan poleras med mycket gott resultat. Är glaset sprucket eller skadat på insidan kan polering inte hjälpa — då säger vi det direkt och tar inte betalt i onödan."
+        "answer": "De allra flesta moderna strålkastare är gjorda av polykarbonatplast och kan poleras. Är glaset sprucket eller skadat på insidan kan polering inte hjälpa. Då säger vi det direkt och tar inte betalt i onödan."
       },
       {
         "question": "Måste jag lämna in bilen eller kommer ni till mig?",
-        "answer": "Vi kommer till dig i hela Stockholm med omnejd — hemma, på jobbet eller i garaget. Ring nu – vi kommer till dig."
+        "answer": "Vi kommer till dig i hela Stockholm med omnejd: hemma, på jobbet eller i garaget. Ring så kommer vi till dig."
       },
       {
         "question": "Vad är skillnaden mot att byta strålkastare?",
-        "answer": "Nya strålkastare kostar ofta flera tusen kronor styck plus montering. Premiumrestaurering ger nyskickade strålkastare för 799kr/par, tidigare 1499kr/par."
+        "answer": "Nya strålkastare kostar ofta flera tusen kronor styck plus montering. Ett par hos oss kostar 799 kr."
       },
       {
         "question": "Kan man renovera strålkastare själv?",
-        "answer": "Det går att köpa gör-det-själv-kit, men de flesta saknar UV-skydd. Slipningen tar bort strålkastarens ursprungliga fabriksskydd, och utan ett nytt skydd gulnar plasten igen inom några månader. Vi slipar stegvis upp till P3000 och förseglar med UV-keramiskt skydd — därför kan vi lämna 5 års garanti på en renovering."
+        "answer": "Det går att köpa gör-det-själv-kit, men de flesta saknar UV-skydd. Slipningen tar bort strålkastarens ursprungliga fabriksskydd, och utan ett nytt skydd gulnar plasten igen inom några månader. Vi slipar stegvis upp till P3000 och förseglar med UV-keramiskt skydd, därför kan vi lämna 5 års garanti."
       },
       {
         "question": "Hur bokar jag tid?",
@@ -224,7 +237,7 @@
       },
       {
         "question": "Kan spruckna strålkastare renoveras?",
-        "answer": "Ytliga repor går att polera. En spricka genom glaset eller fukt på insidan går inte att renovera — då säger vi det på plats och tar inte betalt."
+        "answer": "Ytliga repor går att polera. En spricka genom glaset eller fukt på insidan går inte att renovera. Då säger vi det på plats och tar inte betalt."
       }
     ]
   },
@@ -280,7 +293,7 @@
     "leadMissing": "Länken kan ha gått ut. Har du betalat utan att få en bekräftelse på mejlen, ring oss så reder vi ut det direkt.",
     "detailsTitle": "Din bokning",
     "serviceLabel": "Tjänst",
-    "serviceValue": "Premiumrestaurering + UV-keramiskt skydd, båda strålkastarna",
+    "serviceValue": "Slipning, polering och UV-keramiskt skydd, båda strålkastarna",
     "whenLabel": "Datum och tid",
     "durationNote": "Tar ungefär 45–60 minuter",
     "whereLabel": "Vi kommer till dig",
