@@ -19,7 +19,11 @@ import {
   titleFromMessage,
   touchThread,
 } from "@/lib/assistant/store";
-import type { AssistantAttachment, AssistantSendInput } from "@/lib/assistant/types";
+import type {
+  AssistantAttachment,
+  AssistantSendInput,
+  AskAssistantResult,
+} from "@/lib/assistant/types";
 
 const SKIPPED_REPLY =
   "Assistant is not configured. Set MOONSHOT_API_KEY and try again.";
@@ -35,6 +39,7 @@ const sendSchema = z.object({
   threadId: z.union([z.uuid(), z.literal("")]).optional(),
   message: z.string().max(20_000),
   attachments: z.array(attachmentSchema).max(8),
+  thinking: z.boolean().optional(),
 });
 
 function fail(message: string): ActionState {
@@ -58,7 +63,7 @@ export async function createThreadAction(): Promise<ActionState> {
     entityType: "assistant_thread",
     entityId: thread.id,
   });
-  redirect(`/admin/assistant/${thread.id}`);
+  redirect("/admin/assistant");
 }
 
 export async function getDashboardSnapshotAction(): Promise<
@@ -76,13 +81,14 @@ export async function getDashboardSnapshotAction(): Promise<
 
 export async function askAssistantAction(
   input: AssistantSendInput
-): Promise<ActionState> {
+): Promise<AskAssistantResult> {
   await requireAdmin();
 
   const parsed = sendSchema.safeParse({
     threadId: input.threadId,
     message: input.message,
     attachments: input.attachments ?? [],
+    thinking: input.thinking,
   });
   if (!parsed.success) return fail("Write a message or attach a file.");
 
@@ -92,7 +98,6 @@ export async function askAssistantAction(
     return fail("Write a message or attach a file.");
   }
 
-  const startedFresh = !parsed.data.threadId;
   let thread = parsed.data.threadId
     ? await getThread(parsed.data.threadId)
     : null;
@@ -134,19 +139,26 @@ export async function askAssistantAction(
         details: { skipped: true },
       });
       refreshAssistant(thread.id);
-      if (startedFresh) redirect(`/admin/assistant/${thread.id}`);
-      return { ok: true, message: "Set MOONSHOT_API_KEY." };
+      return {
+        ok: true,
+        message: "Set MOONSHOT_API_KEY.",
+        threadId: thread.id,
+        reply: SKIPPED_REPLY,
+      };
     }
 
     const history = await listMessages(thread.id);
     const prior = history.filter((row) => row.id !== history.at(-1)?.id);
     const context = await buildAssistantContext();
 
-    const reply = await completeChat([
-      { role: "system", content: `${systemPrompt()}\n\n${context}` },
-      ...historyToMoonshot(prior),
-      { role: "user", content: userContent },
-    ]);
+    const reply = await completeChat(
+      [
+        { role: "system", content: `${systemPrompt()}\n\n${context}` },
+        ...historyToMoonshot(prior),
+        { role: "user", content: userContent },
+      ],
+      { thinking: parsed.data.thinking === true }
+    );
 
     await insertMessage({
       threadId: thread.id,
@@ -160,8 +172,11 @@ export async function askAssistantAction(
       entityId: thread.id,
     });
     refreshAssistant(thread.id);
-    if (startedFresh) redirect(`/admin/assistant/${thread.id}`);
-    return { ok: true, message: "Reply ready." };
+    return {
+      ok: true,
+      threadId: thread.id,
+      reply: reply.content,
+    };
   } catch (error) {
     console.error("[assistant] ask failed", error);
     refreshAssistant(thread.id);

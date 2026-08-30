@@ -3,18 +3,35 @@ import type { AssistantMessage } from "@/lib/assistant/types";
 import { formatTimestamp } from "@/lib/time";
 import { cn } from "@/lib/utils";
 
+export function ThinkingBubble() {
+  return (
+    <article className="flex justify-start">
+      <div className="max-w-[min(40rem,92%)] rounded-2xl border border-border bg-card px-4 py-3">
+        <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+          Assistant
+        </p>
+        <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+          <span className="flex gap-1" aria-hidden>
+            <span className="assistant-dot size-1.5 rounded-full bg-primary" />
+            <span className="assistant-dot size-1.5 rounded-full bg-primary" />
+            <span className="assistant-dot size-1.5 rounded-full bg-primary" />
+          </span>
+          Thinking and typing…
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export function AssistantTranscript({
   messages,
+  thinking,
 }: {
   messages: AssistantMessage[];
+  thinking?: boolean;
 }) {
-  if (messages.length === 0) {
-    return (
-      <p className="rounded-xl border border-dashed border-border p-6 text-sm text-muted-foreground">
-        Ask about bookings or SEO. This chat is saved so you can pick it up
-        later.
-      </p>
-    );
+  if (messages.length === 0 && !thinking) {
+    return null;
   }
 
   return (
@@ -44,7 +61,7 @@ export function AssistantTranscript({
                 {row.content}
               </p>
               {row.attachments.length > 0 ? (
-                <div className="mt-3 grid gap-2">
+                <div className="mt-3 flex flex-wrap gap-2">
                   {row.attachments.map((file, index) => (
                     <FilePreviewCard
                       key={`${row.id}-${file.name}-${index}`}
@@ -57,6 +74,7 @@ export function AssistantTranscript({
           </article>
         );
       })}
+      {thinking ? <ThinkingBubble /> : null}
     </div>
   );
 }

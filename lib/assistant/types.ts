@@ -28,4 +28,12 @@ export type AssistantSendInput = {
   threadId?: string;
   message: string;
   attachments: AssistantAttachment[];
+  thinking?: boolean;
+};
+
+export type AskAssistantResult = {
+  ok: boolean;
+  message?: string;
+  threadId?: string;
+  reply?: string;
 };

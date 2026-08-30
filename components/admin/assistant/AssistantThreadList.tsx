@@ -25,7 +25,7 @@ export function AssistantThreadList({
         return (
           <li key={thread.id}>
             <Link
-              href={`/admin/assistant/${thread.id}`}
+              href={`/admin/assistant?thread=${thread.id}`}
               className={cn(
                 "block rounded-xl border px-3 py-2 transition-colors",
                 active

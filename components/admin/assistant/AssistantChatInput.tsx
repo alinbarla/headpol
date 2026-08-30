@@ -1,13 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { ArchiveIcon, ArrowUpIcon, PlusIcon } from "lucide-react";
-import { toast } from "sonner";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  askAssistantAction,
-  getDashboardSnapshotAction,
-} from "@/app/admin/assistant/actions";
+  ArchiveIcon,
+  ArrowUpIcon,
+  BrainIcon,
+  ChevronDownIcon,
+  PlusIcon,
+} from "lucide-react";
+import { toast } from "sonner";
+import { getDashboardSnapshotAction } from "@/app/admin/assistant/actions";
 import {
   FilePreviewCard,
   type DraftAttachment,
@@ -51,15 +53,24 @@ function toPayload(files: DraftAttachment[]): AssistantAttachment[] {
   return files.map(({ name, size, type, text }) => ({ name, size, type, text }));
 }
 
-export function AssistantChatInput({ threadId }: { threadId?: string }) {
+export function AssistantChatInput({
+  pending,
+  onSend,
+}: {
+  pending: boolean;
+  onSend: (data: {
+    message: string;
+    attachments: AssistantAttachment[];
+    thinking: boolean;
+  }) => void;
+}) {
   const [message, setMessage] = useState("");
   const [files, setFiles] = useState<DraftAttachment[]>([]);
   const [dragging, setDragging] = useState(false);
-  const [pending, startTransition] = useTransition();
+  const [thinking, setThinking] = useState(true);
   const [loadingDash, setLoadingDash] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const router = useRouter();
 
   const hasContent = message.trim().length > 0 || files.length > 0;
   const canSend = !pending && hasContent;
@@ -93,23 +104,14 @@ export function AssistantChatInput({ threadId }: { threadId?: string }) {
 
   function send() {
     if (!canSend) return;
-    const payload = {
-      threadId: threadId ?? "",
+    onSend({
       message: message.trim(),
       attachments: toPayload(files),
-    };
+      thinking,
+    });
     setMessage("");
     setFiles([]);
     if (textareaRef.current) textareaRef.current.style.height = "auto";
-
-    startTransition(async () => {
-      const result = await askAssistantAction(payload);
-      router.refresh();
-      if (result.message) {
-        if (result.ok) toast.success(result.message);
-        else toast.error(result.message);
-      }
-    });
   }
 
   async function addDashboardData() {
@@ -144,8 +146,9 @@ export function AssistantChatInput({ threadId }: { threadId?: string }) {
     <div className="relative mx-auto w-full max-w-2xl">
       <div
         className={cn(
-          "relative z-10 rounded-2xl border border-border bg-card shadow-[0_0_15px_rgba(0,0,0,0.08)]",
-          "transition-shadow focus-within:shadow-[0_0_25px_rgba(0,0,0,0.18)]",
+          "relative z-10 rounded-2xl border border-border bg-card",
+          "shadow-[0_0_15px_rgba(0,0,0,0.08)] transition-shadow",
+          "focus-within:shadow-[0_0_25px_rgba(0,0,0,0.18)]",
           dragging && "border-primary"
         )}
         onDragOver={(event) => {
@@ -215,7 +218,7 @@ export function AssistantChatInput({ threadId }: { threadId?: string }) {
             }}
           />
 
-          <div className="flex items-center gap-1">
+          <div className="flex w-full items-center gap-1">
             <input
               ref={fileInputRef}
               type="file"
@@ -235,8 +238,27 @@ export function AssistantChatInput({ threadId }: { threadId?: string }) {
             >
               <PlusIcon className="size-5" />
             </button>
+            <button
+              type="button"
+              aria-pressed={thinking}
+              aria-label="Extended thinking"
+              onClick={() => setThinking((value) => !value)}
+              className={cn(
+                "grid size-8 place-items-center rounded-lg transition-colors",
+                thinking
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              <BrainIcon className="size-5" />
+            </button>
 
             <div className="flex-1" />
+
+            <span className="inline-flex items-center gap-1 rounded-xl px-2.5 py-1 text-xs font-medium text-muted-foreground">
+              Assistant
+              <ChevronDownIcon className="size-3.5 opacity-50" />
+            </span>
 
             <button
               type="button"

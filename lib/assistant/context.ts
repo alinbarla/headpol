@@ -7,6 +7,9 @@ import { toolHeadline } from "@/lib/seo/overview";
 import { latestAuditLogs } from "@/lib/seo/store";
 import { SEO_AUDIT_TYPES } from "@/lib/seo/types";
 import { addDaysToDateKey, stockholmDateKey } from "@/lib/time";
+import { composeUserContent } from "./compose";
+
+export { composeUserContent };
 
 const CONTEXT_CAP = 6000;
 
@@ -56,21 +59,4 @@ export async function buildAssistantContext(): Promise<string> {
 
 export function systemPrompt(): string {
   return SYSTEM_PROMPT;
-}
-
-export function composeUserContent(
-  message: string,
-  attachments: Array<{ name: string; type: string; text?: string }>
-): string {
-  const parts = [message.trim()];
-  for (const file of attachments) {
-    if (file.text?.trim()) {
-      parts.push(`\n[Attached ${file.name}]\n${file.text.trim()}`);
-    } else {
-      parts.push(
-        `\n[Attached ${file.name} (${file.type || "file"}) — binary not sent]`
-      );
-    }
-  }
-  return parts.join("\n").trim();
 }

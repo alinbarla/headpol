@@ -41,7 +41,8 @@ function asContent(value: unknown): string {
 }
 
 export async function completeChat(
-  messages: MoonshotMessage[]
+  messages: MoonshotMessage[],
+  options?: { thinking?: boolean }
 ): Promise<MoonshotReply> {
   const key = process.env.MOONSHOT_API_KEY?.trim();
   if (!key) {
@@ -56,7 +57,7 @@ export async function completeChat(
     },
     body: JSON.stringify({
       model: moonshotModel(),
-      reasoning_effort: "low",
+      reasoning_effort: options?.thinking ? "high" : "low",
       messages,
     }),
     signal: AbortSignal.timeout(TIMEOUT_MS),
