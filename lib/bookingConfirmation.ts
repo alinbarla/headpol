@@ -18,7 +18,7 @@ const SESSION_ID = /^cs_[A-Za-z0-9_-]{8,250}$/;
 
 export type BookingConfirmation = {
   paid: boolean;
-  /** Full booking UUID, used as the Google Ads transaction id. */
+  /** Full booking UUID. */
   id: string;
   /** Short, human-readable prefix of the booking id. */
   reference: string;

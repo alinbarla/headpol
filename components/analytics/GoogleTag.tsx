@@ -1,4 +1,4 @@
-import Script from "next/script";
+import { CONFIRMATION_PATH } from "@/lib/routes";
 import { GOOGLE_ADS_ID, GOOGLE_ADS_BOOKING_SEND_TO } from "@/lib/seo";
 
 const gtagBootstrap = GOOGLE_ADS_ID
@@ -31,30 +31,25 @@ export function GoogleTag() {
   );
 }
 
-type BookingConversionProps = {
-  /** Unique per booking so Google Ads drops duplicate fires on refresh. */
-  transactionId: string;
-};
+const conversionSnippet = GOOGLE_ADS_BOOKING_SEND_TO
+  ? `var __bookSid = new URLSearchParams(location.search).get('session_id');
+if (/\\/(?:sv|en)\\/${CONFIRMATION_PATH}\\/?$/.test(location.pathname) && __bookSid) {
+  gtag('event', 'conversion', {'send_to': '${GOOGLE_ADS_BOOKING_SEND_TO}', 'transaction_id': __bookSid});
+}`
+  : "";
 
 /**
- * Event snippet for the Book appointment conversion. Only on a confirmed
- * paid booking. `transaction_id` is the booking UUID so a refresh is not
- * counted twice.
+ * Event snippet for the Book appointment conversion. Lives in the document
+ * `<head>` next to the Google tag. Sends only on the confirmation page when
+ * Stripe's `session_id` is present, so a refresh is not counted twice.
  */
-export function PurchaseConversion({ transactionId }: BookingConversionProps) {
+export function GoogleAdsConversionEvent() {
   if (!GOOGLE_ADS_ID || !GOOGLE_ADS_BOOKING_SEND_TO) return null;
-  if (!/^[0-9a-f-]{8,}$/i.test(transactionId)) return null;
 
   return (
-    <Script
+    <script
       id="google-ads-book-appointment"
-      strategy="afterInteractive"
-      dangerouslySetInnerHTML={{
-        __html: `gtag('event', 'conversion', {
-  send_to: ${JSON.stringify(GOOGLE_ADS_BOOKING_SEND_TO)},
-  transaction_id: ${JSON.stringify(transactionId)}
-});`,
-      }}
+      dangerouslySetInnerHTML={{ __html: conversionSnippet }}
     />
   );
 }
