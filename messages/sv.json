@@ -165,9 +165,11 @@
     "afterAlt": "Bil efter strålkastarpolering med klar yta",
     "googleTitle": "Vad kunderna säger på Google",
     "googleAttribution": "Google",
-    "googleSummary": "{rating} av 5 ({count} recensioner på Google)",
+    "googleSummary": "{rating} av 5 ({count, plural, one {# recension} other {# recensioner}} på Google)",
     "googleStarsSr": "{rating} av 5 stjärnor",
-    "googleCta": "Lämna en recension på Google"
+    "googleCta": "Lämna en recension på Google",
+    "googleReadMore": "Läs mer",
+    "googleReadLess": "Visa mindre"
   },
   "faq": {
     "title": "Vanliga frågor om strålkastarpolering",

@@ -1,6 +1,7 @@
 import { StarIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { ReviewAvatar } from "@/components/reviews/ReviewAvatar";
+import { ReviewText } from "@/components/reviews/ReviewText";
 import {
   getGooglePlaceId,
   getPlaceReviews,
@@ -111,7 +112,7 @@ export async function GoogleReviews() {
           <span>
             {t("googleSummary", {
               rating: ratingLabel,
-              count: data.userRatingCount.toLocaleString("sv-SE"),
+              count: data.userRatingCount,
             })}
           </span>
         </p>
@@ -138,9 +139,11 @@ export async function GoogleReviews() {
                   </div>
                 </div>
                 {review.text?.text ? (
-                  <p className="mt-3 line-clamp-6 text-sm leading-relaxed break-words text-text-secondary">
-                    {review.text.text}
-                  </p>
+                  <ReviewText
+                    text={review.text.text}
+                    moreLabel={t("googleReadMore")}
+                    lessLabel={t("googleReadLess")}
+                  />
                 ) : null}
                 {review.relativePublishTimeDescription ? (
                   <cite className="mt-3 block text-xs not-italic text-text-muted">
