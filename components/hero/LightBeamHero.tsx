@@ -89,10 +89,10 @@ export function LightBeamHero() {
             className="lg:col-start-1"
           >
             <div className="flex flex-wrap items-center gap-4">
-              <Button href={`tel:${CONTACT_PHONE}`}>{t("ctaPrimary")}</Button>
-              <Button href="#booking" variant="outline">
-                {t("ctaSecondary")}
+              <Button href={`tel:${CONTACT_PHONE}`} variant="dark">
+                {t("ctaPrimary")}
               </Button>
+              <Button href="#booking">{t("ctaSecondary")}</Button>
             </div>
 
             <dl className="mt-12 grid max-w-lg grid-cols-2 gap-6 border-t border-white/10 pt-8 sm:grid-cols-3">

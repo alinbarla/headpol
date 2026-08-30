@@ -2,7 +2,7 @@ import type { ReactNode, ButtonHTMLAttributes, AnchorHTMLAttributes } from "reac
 
 type ButtonProps = {
   children: ReactNode;
-  variant?: "primary" | "ghost" | "outline";
+  variant?: "primary" | "ghost" | "outline" | "dark";
   className?: string;
 } & (
   | (ButtonHTMLAttributes<HTMLButtonElement> & { href?: undefined })
@@ -15,6 +15,7 @@ const variants = {
   ghost: "bg-transparent text-text-primary hover:bg-mist",
   outline:
     "border border-white/80 bg-transparent text-white hover:bg-beam hover:text-void hover:border-beam hover:scale-105",
+  dark: "border border-white/20 bg-black text-white hover:bg-white hover:text-void hover:border-white hover:scale-105",
 };
 
 export function Button({
