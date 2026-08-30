@@ -7,6 +7,7 @@ import { CONTACT_PHONE } from "@/lib/booking";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { PriceSticker } from "@/components/ui/PriceSticker";
+import { ReviewRating } from "@/components/reviews/ReviewRating";
 import { HeroShowcaseImage } from "./HeroShowcaseImage";
 
 export function LightBeamHero() {
@@ -48,7 +49,8 @@ export function LightBeamHero() {
                 ),
               })}
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
+            <ReviewRating label={t("ratingLabel")} srLabel={t("ratingSr")} />
+            <p className="mt-4 max-w-xl text-lg leading-relaxed text-text-secondary">
               {t.rich("subtitle", {
                 guarantee: (chunks) => (
                   <span className="guarantee-chip">{chunks}</span>
