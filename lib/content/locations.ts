@@ -43,7 +43,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
           "I Stockholms län gör vi hela renoveringen där bilen står: maskering, våtslipning, polering och UV-skydd. Innergård, villauppfart eller arbetsplats funkar så länge nosen är fri och vi kan stå kvar ungefär en timme.",
           "Samma 799 kr/par som i resten av området. Ingen zonavgift.",
         ],
-        href: "/sv/stralkastarrenovering",
+        href: "/stralkastarrenovering",
         linkLabel: "Så går en strålkastarrenovering till",
       },
     ],

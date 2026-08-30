@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { LocaleSwitcher } from "./LocaleSwitcher";
 
 const sections = [
   { id: "hero", key: "brand" as const },
@@ -71,8 +70,6 @@ export function SectionNav() {
             </a>
           ))}
         </nav>
-
-        <LocaleSwitcher />
       </div>
     </header>
   );

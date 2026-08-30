@@ -18,7 +18,7 @@ export function TrustSection() {
           {locale === "sv" && (
             <p className="mt-3">
               <Link
-                href="/sv/om-oss"
+                href="/om-oss"
                 className="text-sm font-semibold text-beam hover:underline"
               >
                 {t("readMore")}

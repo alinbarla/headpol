@@ -101,7 +101,7 @@ export function ProcessStoryboard() {
           {locale === "sv" && (
             <p className="mt-4">
               <Link
-                href="/sv/stralkastarrenovering"
+                href="/stralkastarrenovering"
                 className="text-sm font-semibold text-beam hover:underline"
               >
                 {t("readMore")}

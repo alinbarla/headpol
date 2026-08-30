@@ -1,38 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { useLocale, useTranslations } from "next-intl";
-import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_DISPLAY } from "@/lib/booking";
-
-const homeSectionKeys = [
-  { id: "benefits", key: "benefits" as const },
-  { id: "process", key: "process" as const },
-  { id: "services", key: "services" as const },
-  { id: "booking", key: "booking" as const },
-  { id: "faq", key: "faq" as const },
-];
 
 export function Footer() {
   const t = useTranslations("footer");
   const tContact = useTranslations("contact");
   const tNav = useTranslations("nav");
   const tLegal = useTranslations("legal");
-  const locale = useLocale();
   const year = new Date().getFullYear();
 
-  const svCluster = [
-    { href: "/sv", label: tNav("home") },
-    { href: "/sv/stralkastarpolering", label: "Polera strålkastare" },
-    { href: "/sv/stralkastarrenovering", label: "Strålkastarrenovering" },
-    { href: "/sv/priser", label: tNav("services") },
-    { href: "/sv/foretagskunder", label: "Företag" },
-    { href: "/sv/fore-bilder", label: "Före & efter" },
-    { href: "/sv/faq", label: tNav("faq") },
-    { href: "/sv/om-oss", label: tNav("about") },
-    { href: "/sv/stralkastarpolering-stockholm", label: "Stockholm" },
-    { href: "/sv#booking", label: tNav("booking") },
+  const links = [
+    { href: "/", label: tNav("home") },
+    { href: "/stralkastarpolering", label: "Polera strålkastare" },
+    { href: "/stralkastarrenovering", label: "Strålkastarrenovering" },
+    { href: "/priser", label: tNav("services") },
+    { href: "/foretagskunder", label: "Företag" },
+    { href: "/fore-bilder", label: "Före & efter" },
+    { href: "/faq", label: tNav("faq") },
+    { href: "/om-oss", label: tNav("about") },
+    { href: "/stralkastarpolering-stockholm", label: "Stockholm" },
+    { href: "/#booking", label: tNav("booking") },
   ];
 
   return (
@@ -47,32 +37,21 @@ export function Footer() {
           </div>
 
           <div className="grid gap-8 sm:grid-cols-3">
-            <nav aria-label={locale === "sv" ? t("clusterLabel") : t("navLabel")}>
+            <nav aria-label={t("clusterLabel")}>
               <h3 className="text-xs font-semibold uppercase tracking-wider text-beam">
-                {locale === "sv" ? t("clusterLabel") : t("navLabel")}
+                {t("clusterLabel")}
               </h3>
               <ul className="mt-4 space-y-2 text-sm text-text-secondary">
-                {locale === "sv"
-                  ? svCluster.map((link) => (
-                      <li key={link.href}>
-                        <Link
-                          href={link.href}
-                          className="cursor-pointer transition-colors hover:text-beam"
-                        >
-                          {link.label}
-                        </Link>
-                      </li>
-                    ))
-                  : homeSectionKeys.map((link) => (
-                      <li key={link.id}>
-                        <Link
-                          href={`/${locale}#${link.id}`}
-                          className="cursor-pointer transition-colors hover:text-beam"
-                        >
-                          {tNav(link.key)}
-                        </Link>
-                      </li>
-                    ))}
+                {links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="cursor-pointer transition-colors hover:text-beam"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </nav>
 
@@ -97,11 +76,10 @@ export function Footer() {
             </div>
 
             <div className="flex flex-col items-start gap-4">
-              <LocaleSwitcher />
               <ul className="space-y-2 text-sm text-text-secondary">
                 <li>
                   <Link
-                    href={`/${locale}/villkor`}
+                    href="/villkor"
                     className="cursor-pointer transition-colors hover:text-beam"
                   >
                     {tLegal("terms")}
@@ -109,7 +87,7 @@ export function Footer() {
                 </li>
                 <li>
                   <Link
-                    href={`/${locale}/integritetspolicy`}
+                    href="/integritetspolicy"
                     className="cursor-pointer transition-colors hover:text-beam"
                   >
                     {tLegal("privacy")}

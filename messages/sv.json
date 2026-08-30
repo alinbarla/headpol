@@ -172,13 +172,13 @@
       {
         "question": "Kan man polera strålkastare själv?",
         "answer": "Kit kan se bra ut i några veckor. De flesta saknar ett UV-skydd som faktiskt ersätter fabrikslackeringen, så gulnaden kommer tillbaka. Vi slipar till P3000 och lägger skyddet som gör att vi kan lämna 5 års garanti.",
-        "href": "/sv/stralkastarpolering",
+        "href": "/stralkastarpolering",
         "linkLabel": "Så polerar man strålkastare på riktigt"
       },
       {
         "question": "Vad är skillnaden mot strålkastare restaurering?",
         "answer": "Ingen, i praktiken. Restaurering och renovering är samma jobb: slipning, polering och nytt UV-skydd. Polering är bara ett av stegen.",
-        "href": "/sv/stralkastarrenovering",
+        "href": "/stralkastarrenovering",
         "linkLabel": "Så går en strålkastarrenovering till"
       },
       {

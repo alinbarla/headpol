@@ -9,7 +9,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: BRAND,
     description:
       "Professionell strålkastarpolering och strålkastarrenovering i Stockholm. Klarare ljus, säkrare körning och godkänd besiktning.",
-    start_url: "/sv",
+    start_url: "/",
     scope: "/",
     display: "standalone",
     background_color: "#111111",

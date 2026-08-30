@@ -12,7 +12,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         // The admin also gets a host-scoped X-Robots-Tag in next.config.ts,
         // because it is served from this same deployment.
-        disallow: ["/api/", "/admin", `/*/${CONFIRMATION_PATH}`],
+        disallow: ["/api/", "/admin", `/${CONFIRMATION_PATH}`],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

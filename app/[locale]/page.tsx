@@ -33,7 +33,6 @@ export async function generateMetadata({
     locale,
     title: t("title"),
     description: t("description"),
-    bilingual: true,
     absoluteTitle: true,
   });
 }

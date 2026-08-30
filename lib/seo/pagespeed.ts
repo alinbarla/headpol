@@ -19,7 +19,7 @@ type Vital = {
 
 function pagespeedUrls(): string[] {
   const origin = siteOrigin();
-  return [`${origin}/sv`, `${origin}/en`, `${origin}/sv/priser`];
+  return [`${origin}/`, `${origin}/priser`];
 }
 
 export async function runPageSpeedCheck(): Promise<SeoRunResult> {

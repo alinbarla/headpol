@@ -30,7 +30,7 @@ export async function ClusterPage({
           <nav aria-label="Brödsmulor" className="text-sm text-text-muted">
             <ol className="flex flex-wrap items-center gap-1.5">
               <li>
-                <Link href="/sv" className="transition-colors hover:text-beam">
+                <Link href="/" className="transition-colors hover:text-beam">
                   {t("homeCrumb")}
                 </Link>
               </li>
@@ -39,7 +39,7 @@ export async function ClusterPage({
                   <li aria-hidden="true">/</li>
                   <li>
                     <Link
-                      href="/sv/stralkastarpolering-stockholm"
+                      href="/stralkastarpolering-stockholm"
                       className="transition-colors hover:text-beam"
                     >
                       Stockholm
@@ -109,7 +109,7 @@ export async function ClusterPage({
                   {section.heading === "Betalning" ? (
                     <p className="mt-4">
                       <Link
-                        href="/sv/villkor"
+                        href="/villkor"
                         className="text-sm font-semibold text-beam hover:underline"
                       >
                         Villkor och avbokning
@@ -206,7 +206,7 @@ export async function ClusterPage({
                 {page.related.map((item) => (
                   <li key={item.slug}>
                     <Link
-                      href={`/sv/${item.slug}`}
+                      href={`/${item.slug}`}
                       className="inline-flex rounded-full border border-beam/25 bg-beam/5 px-4 py-2 text-sm font-medium text-text-primary transition-colors hover:border-beam hover:text-beam"
                     >
                       {item.label}
@@ -223,7 +223,7 @@ export async function ClusterPage({
             </h2>
             <p className="mt-3 text-text-secondary">{t("ctaBody")}</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button href="/sv#booking">{t("ctaBook")}</Button>
+              <Button href="/#booking">{t("ctaBook")}</Button>
               <Button href={`tel:${CONTACT_PHONE}`} variant="outline">
                 {t("ctaCall")} · {CONTACT_PHONE_DISPLAY}
               </Button>

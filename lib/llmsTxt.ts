@@ -42,14 +42,9 @@ export function buildLlmsTxt(): string {
     "## Startsida",
     "",
     link(
-      `${BRAND} på svenska`,
+      `${BRAND}`,
       localeUrl("sv"),
       "Boka tid, priser, process och vanliga frågor."
-    ),
-    link(
-      `${BRAND} in English`,
-      localeUrl("en"),
-      "Headlight polishing and restoration in Stockholm. We come to you."
     ),
     "",
     "## Tjänster",

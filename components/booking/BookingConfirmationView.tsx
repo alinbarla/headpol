@@ -72,7 +72,7 @@ export async function BookingConfirmationView({
 
       <Container className="relative max-w-3xl">
         <Link
-          href={`/${locale}`}
+          href="/"
           className="inline-flex items-center gap-1.5 text-sm text-text-secondary transition-colors hover:text-beam"
         >
           <ArrowLeftIcon className="size-4" />
@@ -202,7 +202,7 @@ export async function BookingConfirmationView({
           </p>
           <p className="mt-2 text-sm">
             <Link
-              href={`/${locale}/villkor`}
+              href="/villkor"
               className="text-beam underline-offset-2 hover:underline"
             >
               {t("termsLink")}
@@ -224,7 +224,7 @@ export async function BookingConfirmationView({
             </Button>
           </div>
           <Button
-            href={`/${locale}`}
+            href="/"
             variant="ghost"
             className="mt-3 w-full text-text-secondary"
           >

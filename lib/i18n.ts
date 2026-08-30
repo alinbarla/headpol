@@ -1,11 +1,10 @@
 import { defineRouting } from "next-intl/routing";
 
 export const routing = defineRouting({
-  locales: ["sv", "en"],
+  locales: ["sv"],
   defaultLocale: "sv",
   localeDetection: false,
-  // Hreflang is set per page in generateMetadata. The middleware Link header
-  // would advertise /en/{cluster-slug} URLs that 404.
+  localePrefix: "never",
   alternateLinks: false,
 });
 

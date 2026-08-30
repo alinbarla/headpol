@@ -32,7 +32,6 @@ export async function generateMetadata({
     description: sv
       ? `Bokningsvillkor, avbokningsregler och ångerrätt hos ${BRAND}.`
       : `Booking terms, cancellation rules and the right of withdrawal at ${BRAND}.`,
-    bilingual: true,
   });
 }
 

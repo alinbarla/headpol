@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { ResultCompare } from "@/components/reviews/ResultCompare";
 
 export async function ReviewsSection() {
   const t = await getTranslations("reviews");
-  const locale = await getLocale();
-  const ctaHref = locale === "sv" ? "/sv/fore-bilder" : "#process";
+  const ctaHref = "/fore-bilder";
 
   return (
     <section id="resultat" className="section-anchor py-20 sm:py-28">

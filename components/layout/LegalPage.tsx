@@ -25,7 +25,7 @@ export function LegalPage({
       <main id="content" className="pt-24 pb-16 sm:pt-28 sm:pb-24">
         <Container>
           <Link
-            href={`/${locale}`}
+            href="/"
             className="inline-flex items-center gap-1.5 text-sm text-text-secondary transition-colors hover:text-beam"
           >
             <ArrowLeftIcon className="size-4" />

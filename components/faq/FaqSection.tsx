@@ -25,7 +25,7 @@ export function FaqSection() {
           {locale === "sv" && (
             <p className="mt-3">
               <Link
-                href="/sv/faq"
+                href="/faq"
                 className="text-sm font-semibold text-beam hover:underline"
               >
                 {t("readMore")}

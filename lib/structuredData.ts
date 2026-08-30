@@ -80,7 +80,7 @@ function organizationNode() {
       email: NAP.email,
       contactType: "customer service",
       areaServed: "SE",
-      availableLanguage: ["sv-SE", "en-SE"],
+      availableLanguage: ["sv-SE"],
     },
     knowsAbout: ["Strålkastarpolering", "Strålkastarrenovering"],
     ...(SOCIAL_PROFILES.length ? { sameAs: SOCIAL_PROFILES } : {}),
@@ -291,8 +291,7 @@ export async function buildHomeStructuredData(
   const tFaq = await getTranslations({ locale, namespace: "faq" });
 
   const url = localeUrl(locale);
-  const offersUrl =
-    locale === "sv" ? localeUrl("sv", "priser") : `${url}#services`;
+  const offersUrl = localeUrl("sv", "priser");
   const serviceItems = tServices.raw("items") as Array<{
     title: string;
     description: string;
@@ -319,7 +318,7 @@ export async function buildHomeStructuredData(
     description: tServices("subtitle"),
     provider: { "@id": BUSINESS_ID },
     areaServed: areaServed(),
-    url: locale === "sv" ? localeUrl("sv", "stralkastarpolering") : url,
+    url: localeUrl("sv", "stralkastarpolering"),
     offers,
   };
 
@@ -331,7 +330,7 @@ export async function buildHomeStructuredData(
     description: tServices("subtitle"),
     provider: { "@id": BUSINESS_ID },
     areaServed: areaServed(),
-    url: locale === "sv" ? localeUrl("sv", "stralkastarrenovering") : url,
+    url: localeUrl("sv", "stralkastarrenovering"),
   };
 
   return {

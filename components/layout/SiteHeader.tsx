@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
-import { LocaleSwitcher } from "./LocaleSwitcher";
+import { useTranslations } from "next-intl";
 import { isClusterSlug } from "@/lib/content/slugs";
 
 type NavItem = {
@@ -13,23 +12,21 @@ type NavItem = {
 
 function NavLinks({
   items,
-  locale,
   pathname,
   className,
 }: {
   items: NavItem[];
-  locale: string;
   pathname: string;
   className?: string;
 }) {
   return (
     <ul className={className}>
       {items.map((item) => {
-        const slug = item.href.startsWith(`/${locale}/`)
-          ? item.href.slice(`/${locale}/`.length)
+        const slug = item.href.startsWith("/")
+          ? item.href.slice(1).split("#")[0]
           : "";
         const active =
-          Boolean(slug) && pathname === item.href && isClusterSlug(slug);
+          Boolean(slug) && pathname === `/${slug}` && isClusterSlug(slug);
         const itemClass = `cursor-pointer font-display text-sm font-semibold transition-colors ${
           active ? "text-beam" : "text-text-secondary hover:text-beam"
         }`;
@@ -58,27 +55,18 @@ function NavLinks({
 
 export function SiteHeader() {
   const t = useTranslations("nav");
-  const locale = useLocale();
   const pathname = usePathname();
-  const isHome =
-    pathname === `/${locale}` || pathname === `/${locale}/`;
+  const isHome = pathname === "/";
 
-  const bookingHref = isHome ? "#booking" : `/${locale}#booking`;
+  const bookingHref = isHome ? "#booking" : "/#booking";
 
-  const items: NavItem[] =
-    locale === "sv"
-      ? [
-          { href: "/sv/stralkastarpolering", label: t("polishing") },
-          { href: "/sv/stralkastarrenovering", label: t("restoration") },
-          { href: "/sv/priser", label: t("services") },
-          { href: "/sv/faq", label: t("faq") },
-          { href: bookingHref, label: t("booking") },
-        ]
-      : [
-          { href: isHome ? "#services" : "/en#services", label: t("services") },
-          { href: isHome ? "#faq" : "/en#faq", label: t("faq") },
-          { href: bookingHref, label: t("booking") },
-        ];
+  const items: NavItem[] = [
+    { href: "/stralkastarpolering", label: t("polishing") },
+    { href: "/stralkastarrenovering", label: t("restoration") },
+    { href: "/priser", label: t("services") },
+    { href: "/faq", label: t("faq") },
+    { href: bookingHref, label: t("booking") },
+  ];
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-void/70 backdrop-blur-xl">
@@ -90,7 +78,7 @@ export function SiteHeader() {
       </a>
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 sm:px-8">
         <Link
-          href={`/${locale}`}
+          href="/"
           className="headline-display cursor-pointer text-xl font-bold tracking-tight text-beam"
         >
           {t("brand")}
@@ -99,7 +87,6 @@ export function SiteHeader() {
         <nav className="hidden md:block" aria-label="Primary">
           <NavLinks
             items={items}
-            locale={locale}
             pathname={pathname}
             className="flex items-center gap-5"
           />
@@ -116,13 +103,11 @@ export function SiteHeader() {
             >
               <NavLinks
                 items={items}
-                locale={locale}
                 pathname={pathname}
                 className="flex flex-col gap-3"
               />
             </nav>
           </details>
-          <LocaleSwitcher />
         </div>
       </div>
     </header>

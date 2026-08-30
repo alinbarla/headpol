@@ -121,8 +121,8 @@ export async function createBookingCheckoutSession(
       customer_email: input.email,
       client_reference_id: input.bookingId,
       expires_at: Math.floor(expiresAt.getTime() / 1000),
-      success_url: `${site}/${locale}/${CONFIRMATION_PATH}?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${site}/${locale}?booking=cancelled#booking`,
+      success_url: `${site}/${CONFIRMATION_PATH}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${site}/?booking=cancelled#booking`,
       line_items: [
         {
           quantity: 1,

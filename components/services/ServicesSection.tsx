@@ -50,13 +50,13 @@ export function ServicesSection() {
           {locale === "sv" && (
             <p className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
               <Link
-                href="/sv/priser"
+                href="/priser"
                 className="text-sm font-semibold text-beam hover:underline"
               >
                 {t("readMore")}
               </Link>
               <Link
-                href="/sv/stralkastarpolering"
+                href="/stralkastarpolering"
                 className="text-sm font-semibold text-beam hover:underline"
               >
                 {t("readMorePolish")}

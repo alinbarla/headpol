@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { CONTACT_EMAIL, CONTACT_PHONE } from "@/lib/booking";
-import { routing, type Locale } from "@/lib/i18n";
+import { type Locale } from "@/lib/i18n";
 
 function resolveSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
@@ -34,9 +34,6 @@ export const GOOGLE_SITE_VERIFICATION =
 
 /** Sole Google Tag Manager container. Ads tags live inside this container. */
 export const GTM_ID = "GTM-5R4PWQ2N";
-
-export const LOCALES = routing.locales;
-export const DEFAULT_LOCALE = routing.defaultLocale;
 
 /** Default Open Graph / social share image (1200x630). */
 export const OG_IMAGE = {
@@ -129,7 +126,7 @@ export const SOCIAL_PROFILES: string[] = [
   // Add real profiles (Google Business, Facebook, Instagram) when available.
 ];
 
-/** Per-locale keyword sets (used in <meta keywords> and content guidance). */
+/** Keywords used in <meta keywords> and content guidance. */
 export const KEYWORDS: Record<Locale, string[]> = {
   sv: [
     "strålkastarpolering",
@@ -147,61 +144,47 @@ export const KEYWORDS: Record<Locale, string[]> = {
     "rengöra strålkastare",
     "bil strålkastare Stockholm",
   ],
-  en: [
-    "headlight restoration Stockholm",
-    "headlight polishing Stockholm",
-    "headlight restoration",
-    "cloudy headlights",
-    "yellow headlights",
-    "foggy headlights",
-    "scratched headlights",
-    "restore headlights",
-    "headlight UV coating",
-    "car headlight repair Stockholm",
-  ],
 };
 
-export function localeUrl(locale: string, path = ""): string {
-  const clean = path ? `/${path.replace(/^\//, "")}` : "";
-  return `${SITE_URL}/${locale}${clean}`;
+export function localeUrl(_locale: string, path = ""): string {
+  const clean = path.replace(/^\/+/, "");
+  return clean ? `${SITE_URL}/${clean}` : SITE_URL;
 }
 
 /** BCP 47 language tags for <html lang> and hreflang. */
-export function htmlLang(locale: string): string {
-  return locale === "sv" ? "sv-SE" : "en-SE";
+export function htmlLang(_locale?: string): string {
+  return "sv-SE";
 }
 
 /** OG locale codes (underscore form). */
-export function ogLocale(locale: string): string {
-  return locale === "sv" ? "sv_SE" : "en_SE";
+export function ogLocale(_locale?: string): string {
+  return "sv_SE";
 }
 
-/** hreflang map for pages that exist in both Swedish and English. */
+/** hreflang map. The site is Swedish-only; x-default points at the same URL. */
 export function languageAlternates(path = ""): Record<string, string> {
+  const url = localeUrl("sv", path);
   return {
-    "sv-SE": localeUrl("sv", path),
-    "en-SE": localeUrl("en", path),
-    "x-default": localeUrl("sv", path),
+    "sv-SE": url,
+    "x-default": url,
   };
 }
 
 /**
- * Per-page title, description, canonical and (when the page exists in both
- * languages) hreflang. Layout metadata must not set canonical/languages.
+ * Per-page title, description, canonical and hreflang. Layout metadata must
+ * not set canonical/languages.
  */
 export function buildPageMetadata({
   locale,
   path = "",
   title,
   description,
-  bilingual = false,
   absoluteTitle = false,
 }: {
   locale: string;
   path?: string;
   title: string;
   description: string;
-  bilingual?: boolean;
   absoluteTitle?: boolean;
 }): Metadata {
   const canonical = localeUrl(locale, path);
@@ -211,20 +194,13 @@ export function buildPageMetadata({
     description,
     alternates: {
       canonical,
-      ...(bilingual ? { languages: languageAlternates(path) } : {}),
+      languages: languageAlternates(path),
     },
     openGraph: {
       title,
       description,
       url: canonical,
       locale: ogLocale(locale),
-      ...(bilingual
-        ? {
-            alternateLocale: LOCALES.filter((item) => item !== locale).map(
-              ogLocale
-            ),
-          }
-        : {}),
       images: [
         {
           url: OG_IMAGE.url,

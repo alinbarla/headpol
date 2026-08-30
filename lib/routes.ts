@@ -7,7 +7,6 @@
 export const CONFIRMATION_PATH = "bokningsbekraftelse";
 
 /** Public confirmation page for a Checkout Session, relative to the site origin. */
-export function confirmationPath(locale: string, sessionId: string): string {
-  const lang = locale === "en" ? "en" : "sv";
-  return `/${lang}/${CONFIRMATION_PATH}?session_id=${encodeURIComponent(sessionId)}`;
+export function confirmationPath(_locale: string, sessionId: string): string {
+  return `/${CONFIRMATION_PATH}?session_id=${encodeURIComponent(sessionId)}`;
 }

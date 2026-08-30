@@ -29,7 +29,6 @@ export async function generateMetadata({
     description: sv
       ? `Så behandlar ${BRAND} dina personuppgifter enligt GDPR.`
       : `How ${BRAND} handles your personal data under the GDPR.`,
-    bilingual: true,
   });
 }
 
@@ -154,7 +153,7 @@ function PrivacySv() {
       </p>
 
       <p>
-        <Link href="/sv/villkor">Läs även våra villkor och avbokningsregler</Link>
+        <Link href="/villkor">Läs även våra villkor och avbokningsregler</Link>
         .
       </p>
     </LegalPage>
@@ -261,7 +260,7 @@ function PrivacyEn() {
       </p>
 
       <p>
-        <Link href="/en/villkor">
+        <Link href="/villkor">
           See also our terms and cancellation policy
         </Link>
         .

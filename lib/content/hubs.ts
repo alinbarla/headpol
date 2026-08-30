@@ -153,7 +153,7 @@ export const HUB_PAGES: ClusterDoc[] = [
         question: "Kan man renovera strålkastare i Stockholm?",
         answer:
           "Ja. Vi gör hela kedjan på den adress du anger i länet: uppfart, innergård eller arbetsplats, så länge bilen står ute och nosen är fri.",
-        href: "/sv/stralkastarpolering-stockholm",
+        href: "/stralkastarpolering-stockholm",
         linkLabel: "Områden vi åker till i Stockholm",
       },
     ],
@@ -202,7 +202,7 @@ export const HUB_PAGES: ClusterDoc[] = [
           "Kontroll av ljusbild",
           "5 års garanti",
         ],
-        href: "/sv#booking",
+        href: "/#booking",
         cta: "Boka tid",
       },
       {
@@ -210,7 +210,7 @@ export const HUB_PAGES: ClusterDoc[] = [
         description:
           "Kompakta enheter med samma material, finish och UV-skydd som för personbil.",
         price: "Från 499 kr",
-        href: "/sv#booking",
+        href: "/#booking",
         cta: "Boka tid",
       },
       {
@@ -218,7 +218,7 @@ export const HUB_PAGES: ClusterDoc[] = [
         description:
           "Åkerier, bilhandlare och vagnparker. Flera bilar på samma plats ger lägre styckpris.",
         price: "Offert",
-        href: "/sv/foretagskunder",
+        href: "/foretagskunder",
         cta: "Till företagssidan",
       },
     ],

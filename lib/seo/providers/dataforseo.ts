@@ -449,7 +449,7 @@ export type OnPageSnapshot = {
 };
 
 export async function fetchOnPageSnapshot(): Promise<OnPageSnapshot> {
-  const url = `${SITE_URL.replace(/\/$/, "")}/sv`;
+  const url = SITE_URL.replace(/\/$/, "");
   const results = await dfsPost<{
     items?: Array<{
       url?: string;

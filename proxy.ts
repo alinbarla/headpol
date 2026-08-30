@@ -5,10 +5,12 @@ import { routing } from "@/lib/i18n";
 
 const intlProxy = createMiddleware(routing);
 
+const METADATA_PATHS = /^\/(icon|apple-icon|opengraph-image|twitter-image)(\/|$)/;
+
 /**
  * The admin lives on its own host inside the same project. next-intl has to be
  * bypassed there, otherwise a request to admin.stralkastarpolering.se/ would be
- * redirected to /sv before it ever reaches the admin tree.
+ * rewritten into the locale tree.
  */
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -23,24 +25,23 @@ export default function proxy(request: NextRequest) {
     return new NextResponse(null, { status: 404 });
   }
 
-  // Google Ads fetches the bare origin. next-intl's 307 to /sv is text/plain
-  // with no Google tag, so their installer reports the tag as missing. Serve
-  // the Swedish homepage at / instead; canonicals still point at /sv.
-  if (pathname === "/") {
-    const swedish = request.nextUrl.clone();
-    swedish.pathname = "/sv";
-    const response = NextResponse.rewrite(swedish);
-    response.cookies.set("NEXT_LOCALE", "sv", { path: "/", sameSite: "lax" });
-    return response;
+  // Old prefixed URLs: /sv/priser → /priser, /en → /. Keep this in proxy, not
+  // next.config redirects — those would also match the internal /sv rewrite
+  // next-intl uses and loop.
+  const prefixed = pathname.match(/^\/(sv|en)(?=\/|$)/);
+  if (prefixed) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.slice(prefixed[0].length) || "/";
+    return NextResponse.redirect(url, 308);
   }
 
-  // Preserve the previous narrow matcher behaviour: paths outside the locale
-  // tree stay untouched and fall through to a 404 rather than being redirected.
-  if (/^\/(sv|en)(\/|$)/.test(pathname)) {
-    return intlProxy(request);
+  // File-based metadata routes have no locale segment. Sending them through
+  // next-intl would rewrite /icon to /sv/icon and 404.
+  if (METADATA_PATHS.test(pathname)) {
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
+  return intlProxy(request);
 }
 
 function handleAdminHost(request: NextRequest, pathname: string) {

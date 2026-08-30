@@ -17,13 +17,8 @@ export default function RootNotFound() {
             Den här adressen finns inte. Gå till startsidan.
           </p>
           <p style={{ marginTop: "1.5rem" }}>
-            <Link href="/sv" style={{ color: "#fff326" }}>
+            <Link href="/" style={{ color: "#fff326" }}>
               Till startsidan
-            </Link>
-          </p>
-          <p style={{ marginTop: "0.5rem" }}>
-            <Link href="/en" style={{ color: "#fff326" }}>
-              English homepage
             </Link>
           </p>
         </main>
