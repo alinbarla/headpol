@@ -21,7 +21,7 @@
   "hero": {
     "eyebrow": "Begränsat antal platser denna vecka",
     "title": "<lead>Strålkastarpolering i Stockholm – </lead><visible>kristallklara strålkastare igen</visible>",
-    "ratingLabel": "Reviews",
+    "ratingLabel": "Recensioner",
     "ratingSr": "4,9 av 5 stjärnor baserat på 134 recensioner",
     "subtitle": "Vi slipar, polerar och lägger UV-keramiskt skydd. 799 kr/par och <guarantee>5 års garanti</guarantee>. Vi kommer till dig.",
     "semantic": "Strålkastarpolering i Stockholm på din adress. Vi tar bort oxidation, gulnad och repor från plaststrålkastare och avslutar med UV-keramiskt skydd.",
@@ -343,7 +343,7 @@
   },
   "cluster": {
     "homeCrumb": "Start",
-    "ratingLabel": "Reviews",
+    "ratingLabel": "Recensioner",
     "ratingSr": "4,9 av 5 stjärnor baserat på 134 recensioner",
     "ctaTitle": "Boka strålkastarpolering",
     "ctaBody": "Vi kommer till dig. Fast pris 799 kr/par, UV-keramiskt skydd och 5 års garanti.",

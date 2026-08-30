@@ -2,7 +2,7 @@ import { StarIcon } from "lucide-react";
 
 const SCORE = "4.9";
 const COUNT = "134";
-const FIFTH_STAR_FILL = 90;
+const FIFTH_STAR_FILL = 75;
 
 function Star({ fillPercent }: { fillPercent: number }) {
   return (
