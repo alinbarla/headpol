@@ -1,13 +1,17 @@
 import "server-only";
 
 import { latestAuditLog } from "./store";
-import type { SeoAuditType } from "./types";
+import { MANUAL_SEO_TYPES, type SeoAuditType } from "./types";
 
 const HOUR_MS = 60 * 60 * 1000;
 
 export async function seoToolCooldown(
   type: SeoAuditType
 ): Promise<{ allowed: boolean; retryAfterMinutes: number }> {
+  if (MANUAL_SEO_TYPES.includes(type)) {
+    return { allowed: true, retryAfterMinutes: 0 };
+  }
+
   const latest = await latestAuditLog(type);
   if (!latest) return { allowed: true, retryAfterMinutes: 0 };
 

@@ -121,3 +121,20 @@ export async function latestAuditLogs(
   });
   return map;
 }
+
+/** Oldest-first slice for sparklines. Skipped runs are left in so gaps stay visible. */
+export async function listAuditHistory(
+  type: SeoAuditType,
+  limit = 14
+): Promise<SeoAuditLogRecord[]> {
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("seo_audit_logs")
+    .select("id, type, summary, created_at")
+    .eq("type", type)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(error.message);
+  return ((data ?? []) as SeoAuditLogRecord[]).slice().reverse();
+}

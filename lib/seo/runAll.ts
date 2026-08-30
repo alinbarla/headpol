@@ -42,11 +42,11 @@ export async function runSeoTool(type: SeoAuditType): Promise<SeoRunResult> {
 }
 
 /** Sequential so one 60s cron does not stampede the live site or DataForSEO. */
-export async function runAllSeoTools(): Promise<
-  Partial<Record<SeoAuditType, SeoRunResult>>
-> {
+export async function runAllSeoTools(
+  types: readonly SeoAuditType[] = DAILY_SEO_TYPES
+): Promise<Partial<Record<SeoAuditType, SeoRunResult>>> {
   const report: Partial<Record<SeoAuditType, SeoRunResult>> = {};
-  for (const type of DAILY_SEO_TYPES) {
+  for (const type of types) {
     try {
       report[type] = await RUNNERS[type]();
     } catch (error) {

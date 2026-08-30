@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache";
 import { logAdminAction, requireAdmin } from "@/lib/admin/auth";
 import { seoToolCooldown } from "@/lib/seo/rateLimit";
 import { runSeoTool } from "@/lib/seo/runAll";
-import { SEO_TOOL_PATH, type SeoAuditType } from "@/lib/seo/types";
+import {
+  SEO_AUDIT_TYPES,
+  SEO_TOOL_PATH,
+  type SeoAuditType,
+} from "@/lib/seo/types";
 import type { ActionState } from "@/app/admin/actions";
 
 function fail(message: string): ActionState {
@@ -142,4 +146,51 @@ export async function runBillingAction(
   formData: FormData
 ): Promise<ActionState> {
   return runToolAction("dfs-billing", prev, formData);
+}
+
+export async function runAllSeoToolsAction(
+  _prev: ActionState,
+  _formData: FormData
+): Promise<ActionState> {
+  await requireAdmin();
+
+  const ran: SeoAuditType[] = [];
+  const cooling: SeoAuditType[] = [];
+  const failed: string[] = [];
+  let waitMin = 0;
+
+  for (const type of SEO_AUDIT_TYPES) {
+    const cooldown = await seoToolCooldown(type);
+    if (!cooldown.allowed) {
+      cooling.push(type);
+      waitMin = Math.max(waitMin, cooldown.retryAfterMinutes);
+      continue;
+    }
+
+    try {
+      const result = await runSeoTool(type);
+      ran.push(type);
+      await logAdminAction(`seo.${type}`, { details: result.summary });
+    } catch (error) {
+      failed.push(error instanceof Error ? error.message : type);
+    }
+  }
+
+  revalidatePath("/admin/seo");
+  for (const path of Object.values(SEO_TOOL_PATH)) {
+    revalidatePath(`/admin/seo/${path}`);
+  }
+
+  if (ran.length === 0 && failed.length === 0) {
+    return fail(`Wait ${waitMin} min before updating again.`);
+  }
+
+  const parts = [`Updated ${ran.length} tool${ran.length === 1 ? "" : "s"}`];
+  if (cooling.length > 0) parts.push(`${cooling.length} still cooling`);
+  if (failed.length > 0) parts.push(`${failed.length} failed`);
+
+  return {
+    ok: failed.length === 0,
+    message: `${parts.join(" · ")}.`,
+  };
 }

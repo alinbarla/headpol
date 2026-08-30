@@ -449,3 +449,24 @@ a[aria-disabled="true"] {
   outline: none;
   outline-offset: 0;
 }
+
+.admin-root .seo-gauge {
+  animation: seo-gauge-in 700ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-root .seo-gauge {
+    animation: none;
+  }
+}
+
+@keyframes seo-gauge-in {
+  from {
+    filter: saturate(0.6);
+    transform: scale(0.96);
+  }
+  to {
+    filter: none;
+    transform: none;
+  }
+}

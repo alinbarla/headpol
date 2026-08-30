@@ -1,226 +1,226 @@
-import Link from "next/link";
+import {
+  ActivityIcon,
+  BotIcon,
+  FileSearchIcon,
+  FlaskConicalIcon,
+  GaugeIcon,
+  GlobeIcon,
+  Link2Icon,
+  ListTreeIcon,
+  MapPinIcon,
+  MessagesSquareIcon,
+  SearchIcon,
+  TagsIcon,
+  UnplugIcon,
+  WalletIcon,
+} from "lucide-react";
 import { requireAdmin } from "@/lib/admin/auth";
 import { isDataForSeoConfigured } from "@/lib/seo/providers/dataforseo";
 import { isPageSpeedConfigured } from "@/lib/seo/pagespeed";
-import { latestAuditLogs } from "@/lib/seo/store";
+import { listAuditHistory, latestAuditLogs } from "@/lib/seo/store";
 import { SEO_AUDIT_TYPES, type SeoAuditType } from "@/lib/seo/types";
-import { formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/shadcn/card";
+  SeoScoreboard,
+  historyToSparks,
+} from "@/components/admin/seo/SeoScoreboard";
+import { SeoRunForm } from "@/components/admin/seo/SeoRunForm";
+import { SeoToolCard } from "@/components/admin/seo/SeoToolCard";
+import { runAllSeoToolsAction } from "@/app/admin/seo/actions";
+import type { LucideIcon } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
-const SITE_TOOLS = [
+const SITE_TOOLS: Array<{
+  href: string;
+  type: SeoAuditType;
+  title: string;
+  description: string;
+  icon: LucideIcon;
+}> = [
   {
     href: "/admin/seo/sitemap",
-    type: "sitemap-check" as const,
+    type: "sitemap-check",
     title: "Sitemap & robots",
     description: "Confirms sitemap.xml and robots.txt exist and reference each other.",
+    icon: ListTreeIcon,
   },
   {
     href: "/admin/seo/meta-audit",
-    type: "meta-audit" as const,
+    type: "meta-audit",
     title: "Meta tags",
     description: "Title, description and Open Graph coverage across sitemap URLs.",
+    icon: TagsIcon,
   },
   {
     href: "/admin/seo/broken-links",
-    type: "broken-links" as const,
+    type: "broken-links",
     title: "Broken links",
     description: "Internal links that return 4xx or 5xx.",
+    icon: UnplugIcon,
   },
   {
     href: "/admin/seo/structured-data",
-    type: "structured-data" as const,
+    type: "structured-data",
     title: "Structured data",
     description: "JSON-LD blocks on each public page.",
+    icon: FileSearchIcon,
   },
   {
     href: "/admin/seo/pagespeed",
-    type: "pagespeed" as const,
+    type: "pagespeed",
     title: "PageSpeed",
     description: "LCP, CLS and INP for key pages.",
+    icon: GaugeIcon,
   },
-] as const;
+];
 
-const DFS_TOOLS = [
+const DFS_TOOLS: Array<{
+  href: string;
+  type: SeoAuditType;
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  cadence: "Daily" | "Manual";
+}> = [
   {
     href: "/admin/seo/backlinks",
-    type: "backlink-check" as const,
+    type: "backlink-check",
     title: "Backlinks",
     description: "Referring pages plus domain-level backlink totals.",
-    daily: true,
+    icon: Link2Icon,
+    cadence: "Daily",
   },
   {
     href: "/admin/seo/ranks",
-    type: "dfs-serp" as const,
+    type: "dfs-serp",
     title: "SERP ranks",
     description: "Live Google.se positions for the Swedish keyword set.",
-    daily: false,
+    icon: SearchIcon,
+    cadence: "Manual",
   },
   {
     href: "/admin/seo/keywords",
-    type: "dfs-keywords" as const,
+    type: "dfs-keywords",
     title: "Keyword data",
     description: "Google Ads search volume and CPC for Sweden.",
-    daily: true,
+    icon: ActivityIcon,
+    cadence: "Daily",
   },
   {
     href: "/admin/seo/domain",
-    type: "dfs-domain" as const,
+    type: "dfs-domain",
     title: "Domain analytics",
     description: "Technologies and contacts indexed for the domain.",
-    daily: true,
+    icon: GlobeIcon,
+    cadence: "Daily",
   },
   {
     href: "/admin/seo/labs",
-    type: "dfs-labs" as const,
+    type: "dfs-labs",
     title: "Labs",
     description: "Ranked keywords, competitors and keyword ideas.",
-    daily: true,
+    icon: FlaskConicalIcon,
+    cadence: "Daily",
   },
   {
     href: "/admin/seo/onpage",
-    type: "dfs-onpage" as const,
+    type: "dfs-onpage",
     title: "OnPage",
     description: "Instant-page audit of the Swedish homepage.",
-    daily: false,
+    icon: FileSearchIcon,
+    cadence: "Manual",
   },
   {
     href: "/admin/seo/mentions",
-    type: "dfs-content" as const,
+    type: "dfs-content",
     title: "Content analysis",
     description: "Web citations of the brand keyword.",
-    daily: false,
+    icon: MessagesSquareIcon,
+    cadence: "Manual",
   },
   {
     href: "/admin/seo/ai",
-    type: "dfs-ai" as const,
+    type: "dfs-ai",
     title: "AI optimization",
     description: "AI search volume and Google AI Overview mentions.",
-    daily: false,
+    icon: BotIcon,
+    cadence: "Manual",
   },
   {
     href: "/admin/seo/business",
-    type: "dfs-business" as const,
+    type: "dfs-business",
     title: "Business data",
     description: "Google Business listings in Stockholm.",
-    daily: false,
+    icon: MapPinIcon,
+    cadence: "Manual",
   },
   {
     href: "/admin/seo/billing",
-    type: "dfs-billing" as const,
+    type: "dfs-billing",
     title: "Billing",
     description: "Remaining DataForSEO account balance.",
-    daily: true,
+    icon: WalletIcon,
+    cadence: "Daily",
   },
-] as const;
+];
 
 export default async function SeoOverviewPage() {
   await requireAdmin();
-  const logs = await latestAuditLogs([...SEO_AUDIT_TYPES]);
-  const balance = logs["dfs-billing"]?.summary.balance;
+  const [logs, backlinkRows, labsRows] = await Promise.all([
+    latestAuditLogs([...SEO_AUDIT_TYPES]),
+    listAuditHistory("backlink-check", 14),
+    listAuditHistory("dfs-labs", 14),
+  ]);
 
   return (
     <AdminShell>
-      <h1 className="text-2xl font-bold">SEO</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Cached checks. Manual runs are limited to once an hour per tool. The
-        daily job is triggered from Supabase and skips expensive live SERP, OnPage,
-        mentions and AI calls.
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">SEO</h1>
+          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+            Live snapshot from the latest cached checks. Update data runs every
+            tool. Daily tools cool down for an hour; manual tools do not.
+          </p>
+        </div>
+        <SeoRunForm
+          action={runAllSeoToolsAction}
+          label="Update data"
+          pendingLabel="Updating…"
+        />
+      </div>
 
-      <h2 className="mt-8 text-sm font-semibold">Site checks</h2>
+      <SeoScoreboard
+        logs={logs}
+        backlinkHistory={historyToSparks(backlinkRows, "backlinks")}
+        labsHistory={historyToSparks(labsRows, "etv")}
+      />
+
+      <h2 className="mt-10 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+        Site checks
+      </h2>
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         {SITE_TOOLS.map((tool) => (
-          <ToolCard key={tool.href} tool={tool} log={logs[tool.type]} />
+          <SeoToolCard key={tool.href} {...tool} log={logs[tool.type]} />
         ))}
       </div>
 
-      <h2 className="mt-8 text-sm font-semibold">DataForSEO</h2>
-      <p className="mt-1 text-xs text-muted-foreground">
-        Same login as the API credentials page
-        {typeof balance === "number"
-          ? ` · last balance $${balance.toFixed(2)}`
-          : ""}
-        .
-      </p>
+      <h2 className="mt-10 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+        DataForSEO
+      </h2>
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         {DFS_TOOLS.map((tool) => (
-          <ToolCard
-            key={tool.href}
-            tool={tool}
-            log={logs[tool.type]}
-            badge={tool.daily ? "Daily" : "Manual"}
-          />
+          <SeoToolCard key={tool.href} {...tool} log={logs[tool.type]} />
         ))}
-
-        <Card className="opacity-80">
-          <CardHeader>
-            <CardTitle className="text-sm">Not used here</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Merchant, App Data and Databases do not apply to this site. AI Chat
-              is DataForSEO’s dashboard assistant, not an API we call.
-            </p>
-          </CardContent>
-        </Card>
       </div>
 
-      <p className="mt-6 text-xs text-muted-foreground">
+      <p className="mt-8 text-xs text-muted-foreground">
         DataForSEO {isDataForSeoConfigured() ? "is configured" : "is not configured"}
         . PageSpeed {isPageSpeedConfigured() ? "is configured" : "is not configured"}
-        .
+        . Merchant, App Data and Databases are not used. AI Chat lives in the
+        DataForSEO dashboard, not here.
       </p>
     </AdminShell>
-  );
-}
-
-function ToolCard({
-  tool,
-  log,
-  badge,
-}: {
-  tool: {
-    href: string;
-    type: SeoAuditType;
-    title: string;
-    description: string;
-  };
-  log?: { created_at: string; summary: Record<string, unknown> };
-  badge?: string;
-}) {
-  const skipped = log?.summary.skipped === true;
-  return (
-    <Link href={tool.href}>
-      <Card className="h-full transition-colors hover:border-primary/40">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between gap-2 text-sm">
-            {tool.title}
-            {badge ? (
-              <span className="text-[10px] font-normal uppercase tracking-wide text-muted-foreground">
-                {badge}
-              </span>
-            ) : null}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">{tool.description}</p>
-          <p className="mt-3 text-xs text-muted-foreground">
-            {log
-              ? skipped
-                ? `Last run ${formatTimestamp(log.created_at)} · skipped`
-                : `Last run ${formatTimestamp(log.created_at)}`
-              : "Never run"}
-          </p>
-        </CardContent>
-      </Card>
-    </Link>
   );
 }
