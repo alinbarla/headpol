@@ -11,7 +11,6 @@ import {
   systemPrompt,
 } from "@/lib/assistant/context";
 import { completeChat, historyToMoonshot, isMoonshotConfigured } from "@/lib/assistant/moonshot";
-import { assistantCooldown } from "@/lib/assistant/rateLimit";
 import {
   createThread,
   getThread,
@@ -91,11 +90,6 @@ export async function askAssistantAction(
   const attachments = parsed.data.attachments as AssistantAttachment[];
   if (!message && attachments.length === 0) {
     return fail("Write a message or attach a file.");
-  }
-
-  const cooldown = await assistantCooldown();
-  if (!cooldown.allowed) {
-    return fail(`Wait ${cooldown.retryAfterMinutes} min before sending again.`);
   }
 
   const startedFresh = !parsed.data.threadId;

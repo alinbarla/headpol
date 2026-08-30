@@ -179,32 +179,3 @@ export async function touchThread(id: string, title?: string): Promise<void> {
     throw new Error(STORE_ERROR);
   }
 }
-
-export async function countRecentUserMessages(
-  windowMs: number
-): Promise<{ count: number; oldestAt: string | null }> {
-  try {
-    const since = new Date(Date.now() - windowMs).toISOString();
-    const supabase = getSupabaseAdminClient();
-    const { data, error } = await supabase
-      .from("assistant_messages")
-      .select("created_at")
-      .eq("role", "user")
-      .gte("created_at", since)
-      .order("created_at", { ascending: true });
-
-    if (error) {
-      console.error("[assistant] countRecentUserMessages failed", error.message);
-      return { count: Number.MAX_SAFE_INTEGER, oldestAt: since };
-    }
-
-    const rows = data ?? [];
-    return {
-      count: rows.length,
-      oldestAt: rows[0]?.created_at ?? null,
-    };
-  } catch (error) {
-    console.error("[assistant] countRecentUserMessages failed", error);
-    return { count: Number.MAX_SAFE_INTEGER, oldestAt: null };
-  }
-}
