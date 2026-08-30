@@ -32,8 +32,9 @@ export const DAILY_SEO_TYPES: SeoAuditType[] = [
   "dfs-billing",
 ];
 
-/** Paid/slow tools — no hourly cooldown on manual or Update data runs. */
+/** Slow or quota-limited tools — no hourly cooldown on manual or Update data runs. */
 export const MANUAL_SEO_TYPES: SeoAuditType[] = [
+  "pagespeed",
   "dfs-serp",
   "dfs-onpage",
   "dfs-content",

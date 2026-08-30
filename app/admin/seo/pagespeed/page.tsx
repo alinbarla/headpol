@@ -35,7 +35,7 @@ export default async function PageSpeedPage() {
     <AdminShell>
       <SeoToolHeader
         title="PageSpeed"
-        description="Mobile Lighthouse scores for a short list of key pages."
+        description="Mobile Lighthouse scores for a short list of key pages. No hourly cooldown — each run hits Google for every listed URL."
         lastRun={log?.created_at}
         action={<SeoRunForm action={runPageSpeedAction} />}
       />
