@@ -23,9 +23,20 @@ export default function proxy(request: NextRequest) {
     return new NextResponse(null, { status: 404 });
   }
 
+  // Google Ads fetches the bare origin. next-intl's 307 to /sv is text/plain
+  // with no Google tag, so their installer reports the tag as missing. Serve
+  // the Swedish homepage at / instead; canonicals still point at /sv.
+  if (pathname === "/") {
+    const swedish = request.nextUrl.clone();
+    swedish.pathname = "/sv";
+    const response = NextResponse.rewrite(swedish);
+    response.cookies.set("NEXT_LOCALE", "sv", { path: "/", sameSite: "lax" });
+    return response;
+  }
+
   // Preserve the previous narrow matcher behaviour: paths outside the locale
   // tree stay untouched and fall through to a 404 rather than being redirected.
-  if (pathname === "/" || /^\/(sv|en)(\/|$)/.test(pathname)) {
+  if (/^\/(sv|en)(\/|$)/.test(pathname)) {
     return intlProxy(request);
   }
 

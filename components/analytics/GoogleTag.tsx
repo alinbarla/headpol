@@ -3,9 +3,10 @@ import { GOOGLE_ADS_ID, GOOGLE_ADS_BOOKING_SEND_TO } from "@/lib/seo";
 
 const gtagBootstrap = GOOGLE_ADS_ID
   ? `window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${GOOGLE_ADS_ID}');`
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '${GOOGLE_ADS_ID}');`
   : "";
 
 /**
