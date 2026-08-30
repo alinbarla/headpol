@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { GoogleReviews } from "@/components/reviews/GoogleReviews";
 import { Container } from "@/components/ui/Container";
 import { ResultCompare } from "@/components/reviews/ResultCompare";
 
@@ -18,6 +19,8 @@ export async function ReviewsSection() {
         </div>
 
         <ResultCompare />
+
+        <GoogleReviews />
 
         <p className="mt-6">
           <Link

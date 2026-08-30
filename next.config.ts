@@ -29,7 +29,7 @@ const supabaseOrigin = (() => {
 const googleTag = {
   script:
     "https://www.googletagmanager.com https://www.googleadservices.com https://www.google.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tagmanager.google.com",
-  img: "https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google.com https://google.com https://www.google.se https://pagead2.googlesyndication.com https://*.google-analytics.com https://ssl.gstatic.com",
+  img: "https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google.com https://google.com https://www.google.se https://pagead2.googlesyndication.com https://*.google-analytics.com https://ssl.gstatic.com https://lh3.googleusercontent.com",
   connect:
     "https://www.googletagmanager.com https://www.googleadservices.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://ad.doubleclick.net https://www.google.com https://google.com https://www.google.se https://*.google-analytics.com https://*.analytics.google.com https://*.g.doubleclick.net",
   frame: "https://www.googletagmanager.com https://td.doubleclick.net",
@@ -103,6 +103,12 @@ const nextConfig: NextConfig = {
     deviceSizes: [360, 480, 640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 31536000,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+    ],
   },
   async headers() {
     return [

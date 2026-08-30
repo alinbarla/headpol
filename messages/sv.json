@@ -162,7 +162,12 @@
     "subtitle": "Oxiderad plast mot klar yta efter slipning, polering och UV-keramiskt skydd. Vi visar jobbet, inte påhittade omdömen.",
     "cta": "Fler före- och efterbilder",
     "beforeAfterAlt": "Före och efter strålkastarpolering på samma bil",
-    "afterAlt": "Bil efter strålkastarpolering med klar yta"
+    "afterAlt": "Bil efter strålkastarpolering med klar yta",
+    "googleTitle": "Vad kunderna säger på Google",
+    "googleAttribution": "Google",
+    "googleSummary": "{rating} av 5 ({count} recensioner på Google)",
+    "googleStarsSr": "{rating} av 5 stjärnor",
+    "googleCta": "Lämna en recension på Google"
   },
   "faq": {
     "title": "Vanliga frågor om strålkastarpolering",
