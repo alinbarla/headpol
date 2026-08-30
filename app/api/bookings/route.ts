@@ -12,7 +12,6 @@ import { createBookingCheckoutSession, isStripeConfigured } from "@/lib/stripe";
 import { addDaysToDateKey, stockholmDateKey } from "@/lib/time";
 import {
   getSupabaseAdminClient,
-  getSupabaseServerClient,
   withSupabaseTimeout,
 } from "@/lib/supabase/server";
 
@@ -50,7 +49,7 @@ export async function GET(request: Request) {
     const overrides = await getAvailabilityOverrides(from, to);
     const availability = buildAvailabilityMap(from, to, rules, overrides);
 
-    const supabase = getSupabaseServerClient();
+    const supabase = getSupabaseAdminClient();
     const { data, error } = await withSupabaseTimeout(
       supabase
         .from("bookings")
@@ -248,7 +247,7 @@ async function insertBooking(input: {
   };
   priceOre: number;
 }): Promise<InsertResult> {
-  const supabase = getSupabaseServerClient();
+  const supabase = getSupabaseAdminClient();
 
   const row = {
     booking_date: input.date,
@@ -304,7 +303,7 @@ async function expireLapsedHold(
   dbTime: string
 ): Promise<boolean> {
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = getSupabaseAdminClient();
     const { data, error } = await withSupabaseTimeout(
       supabase
         .from("bookings")
@@ -326,7 +325,7 @@ async function expireLapsedHold(
 
 async function releaseBooking(bookingId: string): Promise<void> {
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = getSupabaseAdminClient();
     await withSupabaseTimeout(
       supabase.from("bookings").update({ status: "expired" }).eq("id", bookingId)
     );
