@@ -1,8 +1,8 @@
--- Run this in the Supabase SQL editor AFTER 202608300002_seo_pg_cron.sql.
--- Replace the placeholders. Do not commit filled-in secrets.
-
--- Optional: store the bearer in Vault instead of inlining it.
--- select vault.create_secret('Bearer REPLACE_CRON_SECRET', 'seo_cron_authorization');
+-- pg_cron and pg_net are already enabled on this project.
+-- Do NOT run CREATE EXTENSION here — it fails with "dependent privileges exist".
+--
+-- Replace REPLACE_CRON_SECRET, then run only the schedule below.
+-- Do not commit the filled-in secret.
 
 select cron.schedule(
   'seo-daily-audit',
@@ -12,10 +12,11 @@ select cron.schedule(
     url := 'https://stralkastarpolering.se/api/cron/seo',
     headers := jsonb_build_object(
       'Authorization', 'Bearer REPLACE_CRON_SECRET'
-    )
+    ),
+    timeout_milliseconds := 60000
   );
   $$
 );
 
--- Inspect: select * from cron.job;
+-- Inspect: select jobid, jobname, schedule from cron.job;
 -- Unschedule: select cron.unschedule('seo-daily-audit');

@@ -1,6 +1,10 @@
 import "server-only";
 
-import { fetchBacklinksFromProvider, isDataForSeoConfigured } from "./providers/dataforseo";
+import {
+  fetchBacklinkOverview,
+  fetchBacklinksFromProvider,
+  isDataForSeoConfigured,
+} from "./providers/dataforseo";
 import {
   insertAuditLog,
   insertNewBacklinks,
@@ -17,7 +21,10 @@ export async function runBacklinkCheck(): Promise<SeoRunResult> {
     return { ok: true, skipped: true, reason: summary.reason, summary };
   }
 
-  const fetched = await fetchBacklinksFromProvider();
+  const [fetched, overview] = await Promise.all([
+    fetchBacklinksFromProvider(),
+    fetchBacklinkOverview().catch(() => null),
+  ]);
   const existing = await listBacklinks("all");
   const existingByKey = new Map(
     existing.map((row) => [`${row.source_url}|${row.target_url}`, row])
@@ -47,6 +54,7 @@ export async function runBacklinkCheck(): Promise<SeoRunResult> {
     lostCount,
     refreshed: seenAgain.length,
     total: fetched.length,
+    ...(overview ?? {}),
   };
   await insertAuditLog("backlink-check", summary);
   return { ok: true, summary };

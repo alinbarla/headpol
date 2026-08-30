@@ -2,6 +2,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { listBacklinks, latestAuditLog } from "@/lib/seo/store";
 import { formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { SeoFacts } from "@/components/admin/seo/SeoFacts";
 import { SeoRunForm } from "@/components/admin/seo/SeoRunForm";
 import { SeoToolHeader } from "@/components/admin/seo/SeoToolHeader";
 import { runBacklinkCheckAction } from "@/app/admin/seo/actions";
@@ -55,6 +56,24 @@ export default async function BacklinksPage({
         lastRun={log?.created_at}
         action={<SeoRunForm action={runBacklinkCheckAction} />}
       />
+
+      {log?.summary &&
+      (log.summary.backlinks != null || log.summary.referringDomains != null) ? (
+        <SeoFacts
+          items={[
+            { label: "Backlinks", value: String(log.summary.backlinks ?? "—") },
+            {
+              label: "Referring domains",
+              value: String(log.summary.referringDomains ?? "—"),
+            },
+            {
+              label: "Referring pages",
+              value: String(log.summary.referringPages ?? "—"),
+            },
+            { label: "Rank", value: String(log.summary.rank ?? "—") },
+          ]}
+        />
+      ) : null}
 
       <div className="mt-4 flex gap-2">
         {tabs.map((tab) => (

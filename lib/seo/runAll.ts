@@ -2,11 +2,22 @@ import "server-only";
 
 import { runBacklinkCheck } from "./backlinks";
 import { runBrokenLinkCheck } from "./broken-links";
+import {
+  runAiOptimization,
+  runBilling,
+  runBusinessData,
+  runContentMentions,
+  runDomainAnalytics,
+  runKeywordVolume,
+  runLabs,
+  runOnPage,
+  runSerpRanks,
+} from "./dfs-runners";
 import { runMetaAudit } from "./meta-audit";
 import { runPageSpeedCheck } from "./pagespeed";
 import { runSitemapCheck } from "./sitemap";
 import { runStructuredDataCheck } from "./structured-data";
-import type { SeoAuditType, SeoRunResult } from "./types";
+import { DAILY_SEO_TYPES, type SeoAuditType, type SeoRunResult } from "./types";
 
 const RUNNERS: Record<SeoAuditType, () => Promise<SeoRunResult>> = {
   "backlink-check": runBacklinkCheck,
@@ -15,18 +26,27 @@ const RUNNERS: Record<SeoAuditType, () => Promise<SeoRunResult>> = {
   "broken-links": runBrokenLinkCheck,
   "structured-data": runStructuredDataCheck,
   pagespeed: runPageSpeedCheck,
+  "dfs-serp": runSerpRanks,
+  "dfs-keywords": runKeywordVolume,
+  "dfs-domain": runDomainAnalytics,
+  "dfs-labs": runLabs,
+  "dfs-onpage": runOnPage,
+  "dfs-content": runContentMentions,
+  "dfs-ai": runAiOptimization,
+  "dfs-business": runBusinessData,
+  "dfs-billing": runBilling,
 };
 
 export async function runSeoTool(type: SeoAuditType): Promise<SeoRunResult> {
   return RUNNERS[type]();
 }
 
-/** Sequential so one 60s cron does not stampede the live site. */
+/** Sequential so one 60s cron does not stampede the live site or DataForSEO. */
 export async function runAllSeoTools(): Promise<
-  Record<SeoAuditType, SeoRunResult>
+  Partial<Record<SeoAuditType, SeoRunResult>>
 > {
-  const report = {} as Record<SeoAuditType, SeoRunResult>;
-  for (const type of Object.keys(RUNNERS) as SeoAuditType[]) {
+  const report: Partial<Record<SeoAuditType, SeoRunResult>> = {};
+  for (const type of DAILY_SEO_TYPES) {
     try {
       report[type] = await RUNNERS[type]();
     } catch (error) {
