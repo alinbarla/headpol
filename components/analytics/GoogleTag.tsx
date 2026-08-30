@@ -32,16 +32,15 @@ export function GoogleTag() {
 }
 
 const conversionSnippet = GOOGLE_ADS_BOOKING_SEND_TO
-  ? `var __bookSid = new URLSearchParams(location.search).get('session_id');
-if (/\\/(?:sv|en)\\/${CONFIRMATION_PATH}\\/?$/.test(location.pathname) && __bookSid) {
-  gtag('event', 'conversion', {'send_to': '${GOOGLE_ADS_BOOKING_SEND_TO}', 'transaction_id': __bookSid});
+  ? `if (/\\/(?:sv|en)\\/${CONFIRMATION_PATH}\\/?$/.test(location.pathname)) {
+  gtag('event', 'conversion', {'send_to': '${GOOGLE_ADS_BOOKING_SEND_TO}'});
 }`
   : "";
 
 /**
- * Event snippet for the Book appointment conversion. Lives in the document
- * `<head>` next to the Google tag. Sends only on the confirmation page when
- * Stripe's `session_id` is present, so a refresh is not counted twice.
+ * Event snippet for Book appointment. Lives in `<head>` next to the Google
+ * tag (what Google Ads Tag Diagnostics reads). The `gtag('event', …)` line
+ * is the one Ads ships; the pathname check keeps other pages from converting.
  */
 export function GoogleAdsConversionEvent() {
   if (!GOOGLE_ADS_ID || !GOOGLE_ADS_BOOKING_SEND_TO) return null;
