@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/admin/auth";
 import { listRecentAudit } from "@/lib/admin/data";
 import { getBookingRules } from "@/lib/bookingRules";
+import { isDataForSeoConfigured } from "@/lib/seo/providers/dataforseo";
 import { isStripeConfigured } from "@/lib/stripe";
 import { formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -56,6 +57,18 @@ export default async function SettingsPage() {
                 ok={Boolean(process.env.CRON_SECRET)}
                 okLabel="Enabled"
                 offLabel="CRON_SECRET missing"
+              />
+              <StatusRow
+                label="DataForSEO"
+                ok={isDataForSeoConfigured()}
+                okLabel="Enabled"
+                offLabel="DATAFORSEO_LOGIN / PASSWORD missing"
+              />
+              <StatusRow
+                label="SEO schedule"
+                ok={Boolean(process.env.CRON_SECRET)}
+                okLabel="Route ready — schedule via Supabase pg_cron"
+                offLabel="CRON_SECRET missing; /api/cron/seo will refuse"
               />
             </CardContent>
           </Card>

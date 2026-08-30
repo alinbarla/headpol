@@ -259,3 +259,37 @@ export function readPaymentMethod(
 
   return types?.[0] ?? null;
 }
+
+export type StripeBalanceBucket = {
+  amount: number;
+  currency: string;
+};
+
+export type StripeBalanceSnapshot = {
+  available: StripeBalanceBucket[];
+  pending: StripeBalanceBucket[];
+};
+
+let balanceCache: { at: number; value: StripeBalanceSnapshot } | null = null;
+const BALANCE_CACHE_MS = 60_000;
+
+export async function getStripeBalance(): Promise<StripeBalanceSnapshot | null> {
+  if (!isStripeConfigured()) return null;
+  if (balanceCache && Date.now() - balanceCache.at < BALANCE_CACHE_MS) {
+    return balanceCache.value;
+  }
+
+  const balance = await getStripe().balance.retrieve();
+  const value: StripeBalanceSnapshot = {
+    available: balance.available.map((item) => ({
+      amount: item.amount,
+      currency: item.currency,
+    })),
+    pending: balance.pending.map((item) => ({
+      amount: item.amount,
+      currency: item.currency,
+    })),
+  };
+  balanceCache = { at: Date.now(), value };
+  return value;
+}

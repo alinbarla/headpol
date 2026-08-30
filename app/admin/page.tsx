@@ -9,6 +9,7 @@ import { isStripeConfigured } from "@/lib/stripe";
 import { formatDateKey } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BookingCard } from "@/components/admin/BookingCard";
+import { StripeBalanceCard } from "@/components/admin/StripeBalanceCard";
 import { Button } from "@/components/shadcn/button";
 
 export const dynamic = "force-dynamic";
@@ -53,11 +54,12 @@ export default async function AdminTodayPage() {
         </Button>
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <Stat label="Jobs today" value={String(data.todayBookings.length)} />
         <Stat label="Tomorrow" value={String(data.tomorrowBookings.length)} />
         <Stat label="Paid this week" value={formatOre(data.weekRevenueOre)} />
         <Stat label="Paid this month" value={formatOre(data.monthRevenueOre)} />
+        <StripeBalanceCard />
       </div>
 
       {data.needsAttention.length > 0 && (

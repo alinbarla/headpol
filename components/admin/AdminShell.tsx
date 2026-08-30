@@ -9,6 +9,7 @@ import {
   HomeIcon,
   ListIcon,
   LogOutIcon,
+  SearchIcon,
   SettingsIcon,
   SlidersHorizontalIcon,
 } from "lucide-react";
@@ -21,6 +22,7 @@ const NAV = [
   { href: "/admin/calendar", label: "Calendar", icon: CalendarDaysIcon },
   { href: "/admin/bookings", label: "Bookings", icon: ListIcon },
   { href: "/admin/payments", label: "Payments", icon: CreditCardIcon },
+  { href: "/admin/seo", label: "SEO", icon: SearchIcon },
   {
     href: "/admin/availability",
     label: "Availability",
@@ -76,7 +78,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         {children}
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-6 border-t border-border bg-background/95 backdrop-blur md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-7 border-t border-border bg-background/95 backdrop-blur md:hidden">
         {NAV.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href, item.exact);
