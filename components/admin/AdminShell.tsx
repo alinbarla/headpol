@@ -9,6 +9,7 @@ import {
   HomeIcon,
   ListIcon,
   LogOutIcon,
+  MessageSquareIcon,
   SearchIcon,
   SettingsIcon,
   SlidersHorizontalIcon,
@@ -23,6 +24,7 @@ const NAV = [
   { href: "/admin/bookings", label: "Bookings", icon: ListIcon },
   { href: "/admin/payments", label: "Payments", icon: CreditCardIcon },
   { href: "/admin/seo", label: "SEO", icon: SearchIcon },
+  { href: "/admin/assistant", label: "Assistant", icon: MessageSquareIcon },
   {
     href: "/admin/availability",
     label: "Availability",
@@ -78,7 +80,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         {children}
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-7 border-t border-border bg-background/95 backdrop-blur md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex overflow-x-auto border-t border-border bg-background/95 backdrop-blur md:hidden">
         {NAV.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href, item.exact);
@@ -87,7 +89,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex min-h-14 flex-col items-center justify-center gap-0.5 text-[10px]",
+                "flex min-h-14 min-w-16 flex-1 flex-col items-center justify-center gap-0.5 px-2 text-[10px]",
                 active ? "text-primary" : "text-muted-foreground"
               )}
             >

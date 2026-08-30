@@ -39,6 +39,7 @@ Add these environment variables for Production and Preview:
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key |
 | `GMAIL_USER` | `teo@stralkastarpolering.se` |
 | `GMAIL_APP_PASSWORD` | Gmail app password (server-only) |
+| `MOONSHOT_API_KEY` | Server-only. Admin Assistant at `/assistant`. Chats skip with a saved notice if unset. Optional `MOONSHOT_MODEL` defaults to `kimi-k3`. |
 
 `NEXT_PUBLIC_*` values are baked in at **build** time, so set them before the first production deploy.
 
