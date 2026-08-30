@@ -26,27 +26,14 @@ export const PUBLISHED_DATE =
   process.env.NEXT_PUBLIC_PUBLISHED_DATE ?? "2026-01-01";
 
 /** Last meaningful public-content change. Do not use `new Date()` in schema. */
-export const DATE_MODIFIED = "2026-08-29";
+export const DATE_MODIFIED = "2026-08-30";
 
 /** Optional Google Search Console verification token. */
 export const GOOGLE_SITE_VERIFICATION =
   process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? "";
 
-/** Google Ads account for the gtag.js tag. Set to "" to disable tracking. */
-export const GOOGLE_ADS_ID =
-  process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "AW-18409115873";
-
-/**
- * Google Tag Manager container. Loaded only on the admin host. The public
- * site uses the Google tag (gtag.js) alone — Google Ads flags pages that
- * ship both a Google tag and a GTM container.
- */
-export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "GTM-WKQJ9N3L";
-
-/** Book appointment conversion send_to (account / conversion label). */
-export const GOOGLE_ADS_BOOKING_SEND_TO =
-  process.env.NEXT_PUBLIC_GOOGLE_ADS_BOOKING_SEND_TO ??
-  "AW-18409115873/983KCJqvleocEOGhk8pE";
+/** Sole Google Tag Manager container. Ads tags live inside this container. */
+export const GTM_ID = "GTM-5R4PWQ2N";
 
 export const LOCALES = routing.locales;
 export const DEFAULT_LOCALE = routing.defaultLocale;

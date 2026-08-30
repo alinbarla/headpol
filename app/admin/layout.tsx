@@ -32,7 +32,9 @@ export const viewport: Viewport = {
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${publicSans.variable} h-full`}>
-      <GoogleTagManager />
+      <head>
+        <GoogleTagManager />
+      </head>
       <body className="admin-root min-h-full font-[family-name:var(--font-public)] antialiased">
         <GoogleTagManagerNoscript />
         {children}

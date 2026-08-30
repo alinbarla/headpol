@@ -1,4 +1,3 @@
-import Script from "next/script";
 import { GTM_ID } from "@/lib/seo";
 
 const gtmBootstrap = GTM_ID
@@ -10,19 +9,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   : "";
 
 /**
- * Admin-only GTM bootstrap. The public site must not load this alongside the
- * Google tag — Google Ads treats that pair as duplicate sitewide tags.
- *
- * `afterInteractive` injects via the DOM instead of rendering a `<script>`
- * child, which React 19 rejects during client render.
+ * Official GTM snippet. Native `<script>` inside `<head>` so it sits as high
+ * as Google asks. `next/script` cannot do that here: the root layout does not
+ * own `<html>`, so `beforeInteractive` is queued in `<body>`.
  */
 export function GoogleTagManager() {
   if (!GTM_ID) return null;
 
   return (
-    <Script
+    <script
       id="gtm-bootstrap"
-      strategy="afterInteractive"
       dangerouslySetInnerHTML={{ __html: gtmBootstrap }}
     />
   );

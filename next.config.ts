@@ -18,7 +18,7 @@ const supabaseOrigin = (() => {
 })();
 
 /**
- * Origins required by the Google tag for Google Ads conversions and the
+ * Origins required by Google Tag Manager for Google Ads conversions and the
  * conversion linker. From Google's CSP guide:
  * https://developers.google.com/tag-platform/security/guides/csp
  *
