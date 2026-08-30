@@ -25,7 +25,7 @@ export type AssistantMessage = {
 };
 
 export type AssistantSendInput = {
-  threadId: string;
+  threadId?: string;
   message: string;
   attachments: AssistantAttachment[];
 };

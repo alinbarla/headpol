@@ -1,44 +1,73 @@
 import { FileTextIcon, XIcon } from "lucide-react";
-import { Button } from "@/components/shadcn/button";
 import type { AssistantAttachment } from "@/lib/assistant/types";
 
-function formatSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+function formatFileSize(bytes: number) {
+  if (bytes <= 0) return "0 B";
+  const units = ["B", "KB", "MB"];
+  const index = Math.min(
+    units.length - 1,
+    Math.floor(Math.log(bytes) / Math.log(1024))
+  );
+  return `${(bytes / 1024 ** index).toFixed(index === 0 ? 0 : 1)} ${units[index]}`;
 }
+
+export type DraftAttachment = AssistantAttachment & {
+  id: string;
+  preview?: string;
+  kind?: "file" | "paste" | "dashboard";
+};
 
 export function FilePreviewCard({
   file,
   onRemove,
 }: {
-  file: AssistantAttachment;
+  file: DraftAttachment | AssistantAttachment;
   onRemove?: () => void;
 }) {
+  const draft = file as DraftAttachment;
+  const isImage = Boolean(draft.preview) || file.type.startsWith("image/");
+  const isPaste = draft.kind === "paste" || draft.kind === "dashboard";
+
   return (
-    <div className="flex min-w-0 items-start gap-2 rounded-xl border border-border bg-muted px-3 py-2">
-      <FileTextIcon className="mt-0.5 size-4 shrink-0 text-primary" />
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium">{file.name}</p>
-        <p className="text-xs text-muted-foreground">
-          {file.type || "file"} · {formatSize(file.size)}
-        </p>
-        {file.text ? (
-          <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+    <div className="group relative h-24 w-28 shrink-0 overflow-hidden rounded-xl border border-border bg-muted">
+      {isImage && draft.preview ? (
+        <img
+          src={draft.preview}
+          alt={file.name}
+          className="size-full object-cover"
+        />
+      ) : isPaste ? (
+        <div className="flex h-full flex-col justify-between p-2.5">
+          <p className="line-clamp-3 font-mono text-[10px] leading-snug text-muted-foreground">
             {file.text}
           </p>
-        ) : null}
-      </div>
+          <span className="w-fit rounded border border-border px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
+            {draft.kind === "dashboard" ? "Dashboard" : "Pasted"}
+          </span>
+        </div>
+      ) : (
+        <div className="flex h-full flex-col justify-between p-2.5">
+          <FileTextIcon className="size-4 text-primary" />
+          <div className="min-w-0">
+            <p className="truncate text-xs font-medium" title={file.name}>
+              {file.name}
+            </p>
+            <p className="text-[10px] text-muted-foreground">
+              {formatFileSize(file.size)}
+            </p>
+          </div>
+        </div>
+      )}
+
       {onRemove ? (
-        <Button
+        <button
           type="button"
-          variant="ghost"
-          size="icon-xs"
           onClick={onRemove}
           aria-label={`Remove ${file.name}`}
+          className="absolute top-1 right-1 grid size-5 place-items-center rounded-full bg-background/80 text-foreground opacity-0 transition-opacity group-hover:opacity-100"
         >
-          <XIcon className="size-3.5" />
-        </Button>
+          <XIcon className="size-3" />
+        </button>
       ) : null}
     </div>
   );

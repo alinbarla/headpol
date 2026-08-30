@@ -33,7 +33,7 @@ const attachmentSchema = z.object({
 });
 
 const sendSchema = z.object({
-  threadId: z.uuid(),
+  threadId: z.union([z.uuid(), z.literal("")]).optional(),
   message: z.string().max(20_000),
   attachments: z.array(attachmentSchema).max(8),
 });
@@ -47,14 +47,32 @@ function refreshAssistant(threadId: string) {
   revalidatePath(`/admin/assistant/${threadId}`);
 }
 
-export async function createThreadAction(): Promise<void> {
+export async function createThreadAction(): Promise<ActionState> {
   await requireAdmin();
-  const thread = await createThread("New chat");
+  let thread;
+  try {
+    thread = await createThread("New chat");
+  } catch {
+    return fail("Could not start a chat. Reload and try again.");
+  }
   await logAdminAction("assistant.thread.create", {
     entityType: "assistant_thread",
     entityId: thread.id,
   });
   redirect(`/admin/assistant/${thread.id}`);
+}
+
+export async function getDashboardSnapshotAction(): Promise<
+  ActionState & { text?: string }
+> {
+  await requireAdmin();
+  try {
+    const text = await buildAssistantContext();
+    return { ok: true, text };
+  } catch (error) {
+    console.error("[assistant] dashboard snapshot failed", error);
+    return fail("Could not load dashboard data.");
+  }
 }
 
 export async function askAssistantAction(
@@ -80,8 +98,20 @@ export async function askAssistantAction(
     return fail(`Wait ${cooldown.retryAfterMinutes} min before sending again.`);
   }
 
-  const thread = await getThread(parsed.data.threadId);
-  if (!thread) return fail("Chat not found.");
+  const startedFresh = !parsed.data.threadId;
+  let thread = parsed.data.threadId
+    ? await getThread(parsed.data.threadId)
+    : null;
+  if (!thread && parsed.data.threadId) return fail("Chat not found.");
+  if (!thread) {
+    try {
+      thread = await createThread(
+        titleFromMessage(message || attachments[0]?.name || "New chat")
+      );
+    } catch {
+      return fail("Could not start a chat. Reload and try again.");
+    }
+  }
 
   const userContent = composeUserContent(message || "(attachment)", attachments);
 
@@ -110,6 +140,7 @@ export async function askAssistantAction(
         details: { skipped: true },
       });
       refreshAssistant(thread.id);
+      if (startedFresh) redirect(`/admin/assistant/${thread.id}`);
       return { ok: true, message: "Set MOONSHOT_API_KEY." };
     }
 
@@ -135,6 +166,7 @@ export async function askAssistantAction(
       entityId: thread.id,
     });
     refreshAssistant(thread.id);
+    if (startedFresh) redirect(`/admin/assistant/${thread.id}`);
     return { ok: true, message: "Reply ready." };
   } catch (error) {
     console.error("[assistant] ask failed", error);
