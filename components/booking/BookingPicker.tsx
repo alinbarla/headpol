@@ -6,7 +6,6 @@ import { sv, enGB } from "date-fns/locale";
 import { useLocale, useTranslations } from "next-intl";
 import {
   DEFAULT_BOOKING_RULES,
-  scheduleHourSpan,
   type AvailabilityMap,
   type BookingRules,
 } from "@/lib/availability";
@@ -24,7 +23,7 @@ import {
   slotKey,
   toDateKey,
 } from "@/lib/booking";
-import { addDaysToDateKey } from "@/lib/time";
+import { addDaysToDateKey, slotIsPast, stockholmDateKey, stockholmTime } from "@/lib/time";
 import { useMounted } from "@/lib/useMounted";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
@@ -165,31 +164,18 @@ export function BookingPicker() {
     [availability, selectedKey]
   );
 
-  /**
-   * The time grid shows every slot the schedule can offer, so the layout does
-   * not jump when a day has extra or reduced hours.
-   */
-  const displayTimes = useMemo(() => {
-    const all = new Set<string>();
-    for (const times of Object.values(availability)) {
-      for (const time of times) all.add(time);
-    }
-    if (all.size === 0) {
-      const { min: spanStart, max: spanEnd } = scheduleHourSpan(rules);
-      for (let hour = spanStart; hour < spanEnd; hour++) {
-        all.add(`${String(hour).padStart(2, "0")}:00`);
-      }
-    }
-    return [...all].sort();
-  }, [
-    availability,
-    rules.startHour,
-    rules.endHour,
-    rules.sundayStartHour,
-    rules.sundayEndHour,
-    rules.saturdayStartHour,
-    rules.saturdayEndHour,
-  ]);
+  /** Fixed 08:00–20:00 grid so every hour is visible regardless of the day's schedule. */
+  const displayTimes = useMemo(
+    () =>
+      Array.from({ length: 12 }, (_, index) => {
+        const hour = 8 + index;
+        return `${String(hour).padStart(2, "0")}:00`;
+      }),
+    []
+  );
+
+  const nowDate = mounted ? stockholmDateKey() : null;
+  const nowTime = mounted ? stockholmTime() : null;
 
   /** Days with no open slots at all, or where every open slot is taken. */
   const closedDates = useMemo(() => {
@@ -242,6 +228,7 @@ export function BookingPicker() {
       withdrawalConsent &&
       openTimes.includes(selectedTime) &&
       !bookedSlots.has(slotKey(selectedKey, selectedTime)) &&
+      !(nowDate && nowTime && slotIsPast(selectedKey, selectedTime, nowDate, nowTime)) &&
       status !== "submitting" &&
       !slotsLoading
   );
@@ -361,9 +348,17 @@ export function BookingPicker() {
                 const isBooked = Boolean(
                   selectedKey && bookedSlots.has(slotKey(selectedKey, slot))
                 );
+                const isPast = Boolean(
+                  selectedKey &&
+                    nowDate &&
+                    nowTime &&
+                    slotIsPast(selectedKey, slot, nowDate, nowTime)
+                );
+                const isUnavailable =
+                  Boolean(selectedKey) && (isPast || !isOpen || isBooked);
                 const disabled =
-                  !selectedKey || !isOpen || isBooked || slotsLoading;
-                const active = selectedTime === slot;
+                  !selectedKey || isUnavailable || slotsLoading;
+                const active = selectedTime === slot && !isUnavailable;
 
                 return (
                   <button
@@ -376,7 +371,7 @@ export function BookingPicker() {
                     }}
                     aria-label={isBooked ? t("slotBooked", { time: slot }) : slot}
                     className={`min-h-11 rounded-xl border px-2 py-2 text-sm font-medium transition-colors ${
-                      isBooked
+                      isUnavailable
                         ? "cursor-not-allowed border-white/5 bg-void-surface/40 text-text-muted line-through opacity-45"
                         : active
                           ? "cursor-pointer border-beam bg-beam font-semibold text-void"
