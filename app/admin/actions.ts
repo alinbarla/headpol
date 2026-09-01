@@ -18,8 +18,10 @@ import {
 import {
   createBookingCheckoutSession,
   createRefund,
+  fetchStripeReceipt,
   isStripeConfigured,
   mapRefundStatus,
+  sendStripeReceiptEmail,
 } from "@/lib/stripe";
 import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
@@ -627,6 +629,63 @@ export async function syncStripePaymentAction(
     return fail("Stripe has not captured this payment yet.");
   }
   return fail("No paid Stripe checkout was found for this booking.");
+}
+
+export async function sendStripeReceiptAction(
+  _prev: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  await requireAdmin();
+
+  const parsed = z.object({ id: uuid }).safeParse({ id: formData.get("id") });
+  if (!parsed.success) return fail(firstIssue(parsed.error));
+  if (!isStripeConfigured()) return fail("Stripe is not configured");
+
+  const booking = await getBookingById(parsed.data.id);
+  if (!booking) return fail("That booking does not exist");
+  if (!booking.customer_email) {
+    return fail("This booking has no email address");
+  }
+
+  const payments = await getPaymentsForBooking(parsed.data.id);
+  const stripePayment = payments.find(
+    (payment) =>
+      payment.stripe_payment_intent_id &&
+      (payment.status === "paid" || payment.status === "partially_refunded")
+  );
+
+  if (!stripePayment?.stripe_payment_intent_id) {
+    return fail("No paid Stripe payment found for this booking");
+  }
+
+  const receipt = await fetchStripeReceipt(stripePayment.stripe_payment_intent_id);
+  if (!receipt) return fail("Stripe receipt is not available yet");
+
+  const supabase = getSupabaseAdminClient();
+  if (stripePayment.receipt_url !== receipt.receiptUrl) {
+    await supabase
+      .from("payments")
+      .update({ receipt_url: receipt.receiptUrl })
+      .eq("id", stripePayment.id);
+  }
+
+  const sent = await sendStripeReceiptEmail(
+    receipt.chargeId,
+    booking.customer_email
+  );
+  if (!sent) return fail("Could not send the Stripe receipt");
+
+  await logAdminAction("payment.receipt_send", {
+    entityType: "booking",
+    entityId: parsed.data.id,
+    details: { email: booking.customer_email },
+  });
+
+  refreshAdmin(parsed.data.id);
+  return {
+    ok: true,
+    message: `Stripe receipt sent to ${booking.customer_email}`,
+  };
 }
 
 async function issuePaymentLink(bookingId: string): Promise<ActionState> {

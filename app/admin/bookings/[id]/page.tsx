@@ -22,7 +22,8 @@ import { formatOre, fromDbTime } from "@/lib/booking";
 import { confirmationPath } from "@/lib/routes";
 import { SITE_URL } from "@/lib/seo";
 import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
-import { isStripeConfigured } from "@/lib/stripe";
+import { fetchStripeReceipt, isStripeConfigured } from "@/lib/stripe";
+import { getSupabaseAdminClient } from "@/lib/supabase/server";
 import { formatDateKey, formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
 import {
@@ -83,6 +84,36 @@ export default async function BookingDetailPage({
   const refundableOre = stripePayment
     ? Math.max(stripePayment.amount_ore - refundedOre, 0)
     : 0;
+
+  let stripeReceipt: { receiptUrl: string; customerEmail: string } | null =
+    null;
+
+  if (
+    stripePayment?.stripe_payment_intent_id &&
+    booking.customer_email &&
+    isStripeConfigured()
+  ) {
+    let receiptUrl = stripePayment.receipt_url;
+    if (!receiptUrl) {
+      const receipt = await fetchStripeReceipt(
+        stripePayment.stripe_payment_intent_id
+      );
+      receiptUrl = receipt?.receiptUrl ?? null;
+      if (receiptUrl) {
+        await getSupabaseAdminClient()
+          .from("payments")
+          .update({ receipt_url: receiptUrl })
+          .eq("id", stripePayment.id);
+      }
+    }
+
+    if (receiptUrl) {
+      stripeReceipt = {
+        receiptUrl,
+        customerEmail: booking.customer_email,
+      };
+    }
+  }
 
   const phone = telLink(booking.customer_phone);
   const maps = mapsLink(booking.customer_address);
@@ -214,6 +245,7 @@ export default async function BookingDetailPage({
           booking={booking}
           refundableOre={refundableOre}
           stripeEnabled={isStripeConfigured()}
+          stripeReceipt={stripeReceipt}
         />
         <CancelCard booking={booking} />
         <DeleteBookingCard booking={booking} />

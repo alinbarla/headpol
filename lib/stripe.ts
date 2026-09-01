@@ -293,3 +293,54 @@ export async function getStripeBalance(): Promise<StripeBalanceSnapshot | null> 
   balanceCache = { at: Date.now(), value };
   return value;
 }
+
+export type StripeReceiptInfo = {
+  chargeId: string;
+  receiptUrl: string;
+};
+
+/** Hosted Stripe receipt for a settled PaymentIntent. */
+export async function fetchStripeReceipt(
+  paymentIntentId: string
+): Promise<StripeReceiptInfo | null> {
+  if (!isStripeConfigured()) return null;
+
+  try {
+    const intent = await getStripe().paymentIntents.retrieve(paymentIntentId, {
+      expand: ["latest_charge"],
+    });
+    const charge = intent.latest_charge;
+    if (!charge || typeof charge === "string" || !charge.receipt_url) {
+      return null;
+    }
+
+    return { chargeId: charge.id, receiptUrl: charge.receipt_url };
+  } catch (error) {
+    console.error("[stripe] could not fetch receipt", error);
+    return null;
+  }
+}
+
+/**
+ * Triggers Stripe's official receipt email. Updating `receipt_email` sends a
+ * new receipt; clearing first handles resends to the same address.
+ */
+export async function sendStripeReceiptEmail(
+  chargeId: string,
+  email: string
+): Promise<boolean> {
+  if (!isStripeConfigured()) return false;
+
+  try {
+    const stripe = getStripe();
+    const charge = await stripe.charges.retrieve(chargeId);
+    if (charge.receipt_email === email) {
+      await stripe.charges.update(chargeId, { receipt_email: "" });
+    }
+    await stripe.charges.update(chargeId, { receipt_email: email });
+    return true;
+  } catch (error) {
+    console.error("[stripe] could not send receipt email", error);
+    return false;
+  }
+}

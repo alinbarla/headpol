@@ -9,6 +9,7 @@ import {
   refundAction,
   rescheduleBookingAction,
   sendPaymentLinkAction,
+  sendStripeReceiptAction,
   setBookingStatusAction,
   syncStripePaymentAction,
   updateNotesAction,
@@ -27,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/shadcn/select";
-import { Trash2Icon } from "lucide-react";
+import { Trash2Icon, ExternalLinkIcon, MailIcon, ReceiptIcon } from "lucide-react";
 import { formatOre, fromDbTime } from "@/lib/booking";
 import type { BookingRecord } from "@/lib/supabase/server";
 
@@ -326,10 +327,12 @@ export function PaymentCard({
   booking,
   refundableOre,
   stripeEnabled,
+  stripeReceipt,
 }: {
   booking: BookingRecord;
   refundableOre: number;
   stripeEnabled: boolean;
+  stripeReceipt?: { receiptUrl: string; customerEmail: string } | null;
 }) {
   const [manualState, manualAction] = useActionState(
     markPaidOnSiteAction,
@@ -338,6 +341,10 @@ export function PaymentCard({
   const [linkState, linkAction] = useActionState(sendPaymentLinkAction, initial);
   const [syncState, syncAction] = useActionState(
     syncStripePaymentAction,
+    initial
+  );
+  const [receiptState, receiptAction] = useActionState(
+    sendStripeReceiptAction,
     initial
   );
   const [refundState, refundAct] = useActionState(refundAction, initial);
@@ -356,7 +363,51 @@ export function PaymentCard({
         <ActionToast state={manualState} />
         <ActionToast state={linkState} />
         <ActionToast state={syncState} />
+        <ActionToast state={receiptState} />
         <ActionToast state={refundState} />
+
+        {stripeReceipt && (
+          <div className="overflow-hidden rounded-xl border border-border/70 bg-gradient-to-br from-muted/40 via-background to-muted/20">
+            <div className="flex items-start gap-3 border-b border-border/60 px-4 py-3">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <ReceiptIcon className="size-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium">Stripe receipt</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+                  Official payment receipt hosted by Stripe for this booking.
+                </p>
+              </div>
+            </div>
+            <div className="grid gap-2 p-3 sm:grid-cols-2">
+              <Button
+                asChild
+                variant="outline"
+                className="h-10 w-full justify-center bg-background/80"
+              >
+                <a
+                  href={stripeReceipt.receiptUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <ExternalLinkIcon />
+                  View receipt
+                </a>
+              </Button>
+              <form action={receiptAction}>
+                <input type="hidden" name="id" value={booking.id} />
+                <SubmitButton
+                  variant="secondary"
+                  className="h-10 w-full justify-center"
+                  pendingLabel="Sending…"
+                >
+                  <MailIcon />
+                  Send to {stripeReceipt.customerEmail}
+                </SubmitButton>
+              </form>
+            </div>
+          </div>
+        )}
 
         {unpaid && stripeEnabled && (
           <form action={syncAction}>

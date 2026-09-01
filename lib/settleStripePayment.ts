@@ -6,7 +6,12 @@ import {
   notifyOwnerBooking,
   notifyPaymentReceipt,
 } from "@/lib/bookingNotify";
-import { getStripe, isStripeConfigured, readPaymentMethod } from "@/lib/stripe";
+import {
+  fetchStripeReceipt,
+  getStripe,
+  isStripeConfigured,
+  readPaymentMethod,
+} from "@/lib/stripe";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
 
 export type SettleResult = "settled" | "already" | "unpaid" | "missing";
@@ -55,6 +60,11 @@ export async function settlePaidCheckout(
 
   if (!existing) return "missing";
 
+  const receipt =
+    paymentIntentId != null
+      ? await fetchStripeReceipt(paymentIntentId)
+      : null;
+
   if (existing.payment_status === "paid") {
     await supabase
       .from("payments")
@@ -62,6 +72,7 @@ export async function settlePaidCheckout(
         status: "paid",
         method: readPaymentMethod(session),
         stripe_payment_intent_id: paymentIntentId,
+        receipt_url: receipt?.receiptUrl ?? null,
         paid_at: new Date().toISOString(),
       })
       .eq("stripe_checkout_session_id", session.id)
@@ -75,6 +86,7 @@ export async function settlePaidCheckout(
       status: "paid",
       method: readPaymentMethod(session),
       stripe_payment_intent_id: paymentIntentId,
+      receipt_url: receipt?.receiptUrl ?? null,
       paid_at: new Date().toISOString(),
     })
     .eq("stripe_checkout_session_id", session.id);
