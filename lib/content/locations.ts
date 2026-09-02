@@ -15,7 +15,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
         heading: "Täckning i länet",
         paragraphs: [
           "Vi tar adresser i Stockholms stad och kommunerna runt om, ungefär 40 km från centrum. Söderut kör vi bland annat till Huddinge, Tumba, Södertälje och Haninge. Österut till Nacka. Norrut till Solna och vidare mot Täby, Sollentuna och Järfälla.",
-          "Postnummer 10xxx–19xxx och 76xxx (Norrtälje) går att boka i kalendern. Ligger du precis utanför, ring så bedömer vi restiden från fall till fall.",
+          "Postnummer 10xxx–19xxx går att boka i kalendern. Norrtälje (76xxx) tar vi inte ännu. Ligger du precis utanför, ring så bedömer vi restiden från fall till fall.",
         ],
       },
       {
@@ -51,7 +51,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         question: "Tar ni hela Stockholms län?",
         answer:
-          "Större delen, ja. Kalendern släpper igenom postnummer i länet. Osäker? Skriv adressen i bokningen eller ring 076-344 11 68.",
+          "Större delen, ja — inte Norrtälje ännu. Kalendern släpper igenom postnummer 10xxx–19xxx. Osäker? Skriv adressen i bokningen eller ring 076-344 11 68.",
       },
       {
         question: "Fungerar det med gatuparkering i stan?",

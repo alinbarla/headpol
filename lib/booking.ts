@@ -13,12 +13,12 @@ export const BOOKING_OLD_PRICE = "1499kr/par";
  */
 
 /**
- * Stockholms län postal codes (PostNord / Swedish postcode system):
- * 10xxx–19xxx covers the county except Norrtälje; 76xxx is Norrtälje.
+ * Bookable postal codes (PostNord / Swedish postcode system):
+ * 10xxx–19xxx covers Stockholms län except Norrtälje.
+ * 76xxx (Norrtälje) is not yet served — the booking form shows the out-of-area message.
  */
 export const STOCKHOLM_COUNTY_POSTAL_RANGES = [
   { min: 10000, max: 19999 },
-  { min: 76000, max: 76999 },
 ] as const;
 
 export function digitsFromPostalCode(value: string): string {
