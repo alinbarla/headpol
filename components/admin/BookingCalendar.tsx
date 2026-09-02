@@ -1,11 +1,28 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useMemo, useState, useTransition } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { BanIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { toast } from "sonner";
-import { rescheduleBooking } from "@/app/admin/actions";
+import { blockCalendarSlots, rescheduleBooking } from "@/app/admin/actions";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/shadcn/alert-dialog";
 import {
   calendarJobLabel,
   calendarJobTone,
@@ -55,6 +72,10 @@ export function BookingCalendar({
   const [cursor, setCursor] = useState(anchorDate);
   const [dragging, setDragging] = useState<string | null>(null);
   const [isMoving, startMove] = useTransition();
+  const [isBlocking, startBlock] = useTransition();
+  const [selected, setSelected] = useState<Set<string>>(() => new Set());
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const paintMode = useRef<"add" | "remove" | null>(null);
   const [nowDate, setNowDate] = useState(anchorDate);
   const [nowTime, setNowTime] = useState(anchorTime);
 
@@ -141,6 +162,58 @@ export function BookingCalendar({
     setCursor(addDaysToDateKey(cursor, step * direction));
   }
 
+  function paintSlot(slotKey: string, mode: "add" | "remove") {
+    setSelected((current) => {
+      if (mode === "add" && current.has(slotKey)) return current;
+      if (mode === "remove" && !current.has(slotKey)) return current;
+      const next = new Set(current);
+      if (mode === "add") next.add(slotKey);
+      else next.delete(slotKey);
+      return next;
+    });
+  }
+
+  function handlePaintStart(slotKey: string) {
+    setSelected((current) => {
+      const mode = current.has(slotKey) ? "remove" : "add";
+      paintMode.current = mode;
+      const next = new Set(current);
+      if (mode === "add") next.add(slotKey);
+      else next.delete(slotKey);
+      return next;
+    });
+  }
+
+  function handlePaintOver(slotKey: string) {
+    if (!paintMode.current) return;
+    paintSlot(slotKey, paintMode.current);
+  }
+
+  function handlePaintEnd() {
+    paintMode.current = null;
+  }
+
+  function confirmBlock() {
+    const slots = [...selected]
+      .map((key) => {
+        const [date, time] = key.split("T");
+        return date && time ? { date, time } : null;
+      })
+      .filter((slot): slot is { date: string; time: string } => slot !== null);
+
+    startBlock(async () => {
+      const result = await blockCalendarSlots({ slots });
+      if (result.ok) {
+        toast.success(result.message ?? "Slots blocked");
+        setSelected(new Set());
+        setConfirmOpen(false);
+        router.refresh();
+      } else {
+        toast.error(result.message ?? "Could not block those slots");
+      }
+    });
+  }
+
   function moveBooking(booking: BookingRecord, date: string, time: string) {
     if (booking.booking_date === date && fromDbTime(booking.booking_time) === time) {
       return;
@@ -165,8 +238,15 @@ export function BookingCalendar({
     });
   }
 
+  const busy = isMoving || isBlocking;
+  const selectedList = useMemo(
+    () => groupedSlotKeys([...selected]),
+    [selected]
+  );
+
   return (
-    <div className={cn(isMoving && "pointer-events-none opacity-60")}>
+    <>
+    <div className={cn(busy && "pointer-events-none opacity-60")}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-1">
           <Button
@@ -206,6 +286,32 @@ export function BookingCalendar({
         </Tabs>
       </div>
 
+      {selected.size > 0 && (
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2">
+          <p className="text-sm font-medium">
+            {selected.size} slot{selected.size === 1 ? "" : "s"} selected
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setSelected(new Set())}
+            >
+              Clear
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setConfirmOpen(true)}
+            >
+              <BanIcon />
+              Block selected
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="mt-4">
         {view === "month" && (
           <MonthView
@@ -230,17 +336,66 @@ export function BookingCalendar({
             hours={hours}
             bySlot={bySlot}
             openSlots={openSlotCache}
+            selected={selected}
             dragging={dragging}
             nowDate={nowDate}
             nowTime={nowTime}
             onDragStart={setDragging}
             onDragEnd={() => setDragging(null)}
             onDrop={moveBooking}
+            onPaintStart={handlePaintStart}
+            onPaintOver={handlePaintOver}
+            onPaintEnd={handlePaintEnd}
             bookings={bookings}
           />
         )}
       </div>
     </div>
+
+      <AlertDialog
+        open={confirmOpen}
+        onOpenChange={(open) => {
+          if (isBlocking) return;
+          setConfirmOpen(open);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Block {selected.size} slot{selected.size === 1 ? "" : "s"}?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              These hours will close on the public booking calendar. Existing
+              bookings are not moved or cancelled.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <ul className="max-h-48 overflow-y-auto text-sm">
+            {selectedList.map((group) => (
+              <li key={group.date} className="py-1">
+                <span className="font-medium">
+                  {formatDateKey(group.date, ADMIN_LOCALE)}
+                </span>
+                <span className="text-muted-foreground">
+                  {" "}
+                  · {group.times.join(", ")}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isBlocking}>Cancel</AlertDialogCancel>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={confirmBlock}
+              disabled={isBlocking}
+            >
+              Confirm blocking
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
 
@@ -249,24 +404,32 @@ function TimeGrid({
   hours,
   bySlot,
   openSlots,
+  selected,
   dragging,
   nowDate,
   nowTime,
   onDragStart,
   onDragEnd,
   onDrop,
+  onPaintStart,
+  onPaintOver,
+  onPaintEnd,
   bookings,
 }: {
   days: string[];
   hours: number[];
   bySlot: Map<string, BookingRecord>;
   openSlots: (dateKey: string) => string[];
+  selected: Set<string>;
   dragging: string | null;
   nowDate: string;
   nowTime: string;
   onDragStart: (id: string) => void;
   onDragEnd: () => void;
   onDrop: (booking: BookingRecord, date: string, time: string) => void;
+  onPaintStart: (slotKey: string) => void;
+  onPaintOver: (slotKey: string) => void;
+  onPaintEnd: () => void;
   bookings: BookingRecord[];
 }) {
   const byId = useMemo(() => {
@@ -275,13 +438,34 @@ function TimeGrid({
     return map;
   }, [bookings]);
 
+  function slotFromPoint(clientX: number, clientY: number): string | null {
+    const el = document.elementFromPoint(clientX, clientY);
+    const cell = el?.closest("[data-slot-key]");
+    return cell?.getAttribute("data-slot-key") ?? null;
+  }
+
   return (
     <div className="overflow-x-auto rounded-xl border border-border">
       <div
-        className="grid min-w-[640px]"
+        className="grid min-w-[640px] select-none"
         style={{
           gridTemplateColumns: `4rem repeat(${days.length}, minmax(0, 1fr))`,
         }}
+        onPointerDown={(event) => {
+          if (event.button !== 0 || dragging) return;
+          const key = slotFromPoint(event.clientX, event.clientY);
+          if (!key) return;
+          event.preventDefault();
+          event.currentTarget.setPointerCapture(event.pointerId);
+          onPaintStart(key);
+        }}
+        onPointerMove={(event) => {
+          if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
+          const key = slotFromPoint(event.clientX, event.clientY);
+          if (key) onPaintOver(key);
+        }}
+        onPointerUp={onPaintEnd}
+        onPointerCancel={onPaintEnd}
       >
         <div className="border-b border-border bg-card" />
         {days.map((dateKey) => {
@@ -316,13 +500,33 @@ function TimeGrid({
               </div>
 
               {days.map((dateKey) => {
-                const booking = bySlot.get(`${dateKey}T${time}`);
+                const slotKey = `${dateKey}T${time}`;
+                const booking = bySlot.get(slotKey);
                 const isOpen = openSlots(dateKey).includes(time);
                 const passed = slotIsPast(dateKey, time, nowDate, nowTime);
+                const selectable = isOpen && !passed && !booking;
+                const isSelected = selected.has(slotKey);
 
                 return (
                   <div
-                    key={`${dateKey}T${time}`}
+                    key={slotKey}
+                    data-slot-key={selectable ? slotKey : undefined}
+                    role={selectable ? "button" : undefined}
+                    tabIndex={selectable ? 0 : undefined}
+                    aria-pressed={selectable ? isSelected : undefined}
+                    aria-label={
+                      selectable
+                        ? `${isSelected ? "Deselect" : "Select"} ${dateKey} ${time}`
+                        : undefined
+                    }
+                    onKeyDown={(event) => {
+                      if (!selectable) return;
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        onPaintStart(slotKey);
+                        onPaintEnd();
+                      }
+                    }}
                     onDragOver={(event) => {
                       if (dragging) event.preventDefault();
                     }}
@@ -337,6 +541,9 @@ function TimeGrid({
                       "min-h-16 border-b border-l border-border p-1 transition-colors",
                       !isOpen && !passed && "bg-secondary/30",
                       passed && "bg-zinc-900/80",
+                      selectable && "cursor-pointer hover:bg-primary/10",
+                      isSelected &&
+                        "bg-primary/25 ring-2 ring-inset ring-primary/70",
                       dragging && !booking && "hover:bg-primary/10"
                     )}
                   >
@@ -476,6 +683,18 @@ function MonthView({
       </div>
     </div>
   );
+}
+
+function groupedSlotKeys(keys: string[]): Array<{ date: string; times: string[] }> {
+  const groups: Array<{ date: string; times: string[] }> = [];
+  for (const key of [...keys].sort()) {
+    const [date, time] = key.split("T");
+    if (!date || !time) continue;
+    const last = groups[groups.length - 1];
+    if (last && last.date === date) last.times.push(time);
+    else groups.push({ date, times: [time] });
+  }
+  return groups;
 }
 
 /**

@@ -6,7 +6,11 @@ import { z } from "zod";
 import { logAdminAction, login, logout, requireAdmin } from "@/lib/admin/auth";
 import { getBookingById, getPaymentsForBooking } from "@/lib/admin/data";
 import { BOOKING_STATUS_LABELS } from "@/lib/admin/labels";
-import { isSlotOpen, parseBookingRules } from "@/lib/availability";
+import {
+  isSlotOpen,
+  mergeHourSlotsToRanges,
+  parseBookingRules,
+} from "@/lib/availability";
 import { fromDbTime, toDbTime } from "@/lib/booking";
 import { getAvailabilityOverrides, getBookingRules } from "@/lib/bookingRules";
 import {
@@ -25,7 +29,12 @@ import {
 } from "@/lib/stripe";
 import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
-import { addDaysToDateKey } from "@/lib/time";
+import {
+  addDaysToDateKey,
+  slotIsPast,
+  stockholmDateKey,
+  stockholmTime,
+} from "@/lib/time";
 
 export type ActionState = { ok: boolean; message?: string };
 
@@ -930,6 +939,88 @@ export async function createOverrideAction(
       rows.length > 1
         ? `${rows.length} days updated`
         : "Exception saved",
+  };
+}
+
+const calendarSlotSchema = z.object({
+  date: dateKey,
+  time: timeKey.refine((value) => value.endsWith(":00"), {
+    message: "Slots are hourly",
+  }),
+});
+
+const blockCalendarSlotsSchema = z.object({
+  slots: z.array(calendarSlotSchema).min(1, "Select at least one slot").max(80),
+});
+
+/**
+ * Used by the calendar: the owner paints empty hours, then confirms. Each
+ * hour becomes a `block` override so the public picker closes those slots.
+ */
+export async function blockCalendarSlots(input: {
+  slots: Array<{ date: string; time: string }>;
+}): Promise<ActionState> {
+  await requireAdmin();
+
+  const parsed = blockCalendarSlotsSchema.safeParse(input);
+  if (!parsed.success) return fail(firstIssue(parsed.error));
+
+  const nowDate = stockholmDateKey();
+  const nowTime = stockholmTime();
+  const future = parsed.data.slots.filter(
+    (slot) => !slotIsPast(slot.date, slot.time, nowDate, nowTime)
+  );
+  if (future.length === 0) {
+    return fail("Those slots have already passed");
+  }
+
+  const dates = [...new Set(future.map((slot) => slot.date))];
+  const supabase = getSupabaseAdminClient();
+  const { data: bookedRows, error: bookedError } = await supabase
+    .from("bookings")
+    .select("booking_date, booking_time")
+    .in("booking_date", dates)
+    .in("status", ["pending", "confirmed", "completed", "no_show"]);
+
+  if (bookedError) return fail(bookedError.message);
+
+  const occupied = new Set(
+    (bookedRows ?? []).map(
+      (row) => `${row.booking_date}T${fromDbTime(row.booking_time)}`
+    )
+  );
+  const free = future.filter(
+    (slot) => !occupied.has(`${slot.date}T${slot.time}`)
+  );
+  if (free.length === 0) {
+    return fail("Those slots already have bookings");
+  }
+
+  const ranges = mergeHourSlotsToRanges(free);
+  const { error } = await supabase.from("availability_overrides").insert(
+    ranges.map((range) => ({
+      override_date: range.date,
+      kind: "block" as const,
+      start_time: toDbTime(range.startTime),
+      end_time: toDbTime(range.endTime),
+      note: "Blocked from calendar",
+    }))
+  );
+
+  if (error) return fail(error.message);
+
+  await logAdminAction("availability.block_slots", {
+    entityType: "availability",
+    details: { slots: free.length, ranges: ranges.length },
+  });
+
+  refreshAdmin();
+
+  const skipped = parsed.data.slots.length - free.length;
+  const blocked = `${free.length} slot${free.length === 1 ? "" : "s"} blocked`;
+  return {
+    ok: true,
+    message: skipped > 0 ? `${blocked} (${skipped} skipped)` : blocked,
   };
 }
 

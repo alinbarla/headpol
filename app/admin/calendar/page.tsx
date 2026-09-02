@@ -32,7 +32,8 @@ export default async function CalendarPage() {
           <h1 className="text-2xl font-bold">Calendar</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Blue is To do, green is Completed. Grey slots have already passed
-            or are closed. Mark Completed on the booking — it is never set
+            or are closed. Click empty open hours to select them, then confirm
+            blocking. Mark Completed on the booking — it is never set
             automatically.
           </p>
           <p className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
@@ -47,6 +48,10 @@ export default async function CalendarPage() {
             <span className="inline-flex items-center gap-1.5">
               <span className="size-2.5 rounded-sm border border-border bg-zinc-900/80" />
               Passed
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="size-2.5 rounded-sm border border-primary/40 bg-primary/25" />
+              Selected to block
             </span>
           </p>
         </div>

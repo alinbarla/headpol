@@ -159,6 +159,51 @@ export function timeToHour(time: string): number {
   return Number(time.slice(0, 2));
 }
 
+/**
+ * Collapses hourly slots into contiguous ranges per date so one calendar
+ * paint becomes a small number of `availability_overrides` rows.
+ */
+export function mergeHourSlotsToRanges(
+  slots: Array<{ date: string; time: string }>
+): Array<{ date: string; startTime: string; endTime: string }> {
+  const hoursByDate = new Map<string, number[]>();
+  for (const slot of slots) {
+    const hours = hoursByDate.get(slot.date) ?? [];
+    hours.push(timeToHour(slot.time));
+    hoursByDate.set(slot.date, hours);
+  }
+
+  const ranges: Array<{ date: string; startTime: string; endTime: string }> = [];
+  for (const [date, hours] of hoursByDate) {
+    const unique = [...new Set(hours)].sort((a, b) => a - b);
+    if (unique.length === 0) continue;
+    let rangeStart = unique[0];
+    let previous = unique[0];
+
+    const flush = (endHour: number) => {
+      ranges.push({
+        date,
+        startTime: hourToTime(rangeStart),
+        endTime: hourToTime(endHour),
+      });
+    };
+
+    for (let index = 1; index < unique.length; index++) {
+      const hour = unique[index];
+      if (hour === previous + 1) {
+        previous = hour;
+        continue;
+      }
+      flush(previous + 1);
+      rangeStart = hour;
+      previous = hour;
+    }
+    flush(previous + 1);
+  }
+
+  return ranges;
+}
+
 /** The slots a normal open day offers, ignoring overrides and bookings. */
 export function baseTimeSlots(rules: BookingRules): string[] {
   const slots: string[] = [];
