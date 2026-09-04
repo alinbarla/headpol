@@ -283,7 +283,7 @@
     "loadError": "Kunde inte hämta bokningar just nu.",
     "paymentTitle": "Betalning",
     "payNow": "Betala vid bokning · {price}",
-    "payNowHint": "Kort eller Swish via Stripe. Tiden hålls i 20 minuter medan du betalar.",
+    "payNowHint": "Kort, Apple Pay eller Google Pay via Stripe. Tiden hålls i 20 minuter medan du betalar.",
     "continueToPayment": "Gå vidare till betalning",
     "withdrawalConsent": "Jag förstår att jag kan få pengarna tillbaka endast om jag avbokar senast 24 timmar före den bokade tiden."
   },
