@@ -153,6 +153,39 @@ export function RulesForm({ rules }: { rules: BookingRules }) {
             />
           </div>
 
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="weekdayMaxBookings">Max bookings Mon–Fri</Label>
+              <Input
+                id="weekdayMaxBookings"
+                name="weekdayMaxBookings"
+                type="number"
+                min={1}
+                max={48}
+                required
+                defaultValue={rules.weekdayMaxBookings}
+              />
+              <p className="text-xs text-muted-foreground">
+                After this many jobs, remaining weekday slots are struck out.
+              </p>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="weekendMaxBookings">Max bookings Sat–Sun</Label>
+              <Input
+                id="weekendMaxBookings"
+                name="weekendMaxBookings"
+                type="number"
+                min={1}
+                max={48}
+                required
+                defaultValue={rules.weekendMaxBookings}
+              />
+              <p className="text-xs text-muted-foreground">
+                After this many jobs, remaining weekend slots are struck out.
+              </p>
+            </div>
+          </div>
+
           <div className="space-y-1.5">
             <Label htmlFor="priceOre">Price in öre</Label>
             <Input

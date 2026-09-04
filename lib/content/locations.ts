@@ -6,7 +6,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     kind: "location",
     title: "Strålkastarpolering Stockholm – vi kommer till din adress",
     description:
-      "Mobil strålkastarpolering i Stockholms län. Fast pris 799 kr/par, ingen zonavgift. Vi tar innerstad, villaområden och arbetsplatser. UV-skydd och 5 års garanti.",
+      "Mobil strålkastarpolering i Stockholms län. Fast pris 899 kr/par, ingen zonavgift. Vi tar innerstad, villaområden och arbetsplatser. UV-skydd och 12 månaders garanti.",
     h1: "Strålkastarpolering i Stockholms län",
     lead: "Vi är en mobil tjänst, inte en verkstad du lämnar bilen till. Stockholms län betyder innergårdar, villauppfarter, företagsparkeringar och olika restider, inte ett och samma upplägg överallt.",
     locationName: "Stockholm",
@@ -28,7 +28,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Samma pris i hela området",
         paragraphs: [
-          "799 kr/par för personbil, oavsett om adressen är Södermalm eller Södertälje. Ingen zonavgift och ingen milersättning inom det vi tar. UV-keramiskt skydd och 5 års garanti ingår.",
+          "899 kr/par för personbil, oavsett om adressen är Södermalm eller Södertälje. Ingen zonavgift och ingen milersättning inom det vi tar. UV-keramiskt skydd och 12 månaders garanti ingår.",
         ],
       },
       {
@@ -41,7 +41,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
         heading: "Strålkastarrenovering på din adress",
         paragraphs: [
           "I Stockholms län gör vi hela renoveringen där bilen står: maskering, våtslipning, polering och UV-skydd. Innergård, villauppfart eller arbetsplats funkar så länge nosen är fri och vi kan stå kvar ungefär en timme.",
-          "Samma 799 kr/par som i resten av området. Ingen zonavgift.",
+          "Samma 899 kr/par som i resten av området. Ingen zonavgift.",
         ],
         href: "/stralkastarrenovering",
         linkLabel: "Så går en strålkastarrenovering till",
@@ -75,7 +75,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     kind: "location",
     title: "Strålkastarpolering Huddinge – uppfart och Flemingsberg",
     description:
-      "Mobil strålkastarpolering i Huddinge. Vi kommer till villauppfart, radhus och arbetsplatser längs Huddingevägen. Fast pris 799 kr/par, ingen zonavgift.",
+      "Mobil strålkastarpolering i Huddinge. Vi kommer till villauppfart, radhus och arbetsplatser längs Huddingevägen. Fast pris 899 kr/par, ingen zonavgift.",
     h1: "Strålkastarpolering i Huddinge",
     lead: "Huddinge är mest villa, radhus och arbetsplatser längs Huddingevägen — inte innerstadens gatuparkering. Vi tar jobbet på din uppfart så länge båda sidorna av nosen är fria.",
     locationName: "Huddinge",
@@ -96,7 +96,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Pris",
         paragraphs: [
-          "799 kr/par, samma som i stan. Ingen extra avgift för Huddinge. MC från 499 kr. Skydd och 5 års garanti ingår.",
+          "899 kr/par, samma som i stan. Ingen extra avgift för Huddinge. MC från 499 kr. Skydd och 12 månaders garanti ingår.",
         ],
       },
       {
@@ -130,7 +130,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     kind: "location",
     title: "Strålkastarpolering Tumba – Botkyrka och villaområden",
     description:
-      "Mobil strålkastarpolering i Tumba och Botkyrka. Villa och radhus längs Hågelbyvägen och Tumba centrum. Fast pris 799 kr/par, vi kommer till dig.",
+      "Mobil strålkastarpolering i Tumba och Botkyrka. Villa och radhus längs Hågelbyvägen och Tumba centrum. Fast pris 899 kr/par, vi kommer till dig.",
     h1: "Strålkastarpolering i Tumba",
     lead: "Tumba är Botkyrka: villaområden, radhus och en del arbetsplatser runt centrum — inte Södermalms gator. Vi tar jobbet hemma hos dig om bilen står ute och nosen är fri.",
     locationName: "Tumba",
@@ -151,7 +151,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Pris och tid",
         paragraphs: [
-          "Samma 799 kr/par som i Stockholm. Ingen zonavgift för Botkyrka. Räkna med 45–60 minuter på plats. Öppet lör–sön 08–20, vardagar 16–20.",
+          "Samma 899 kr/par som i Stockholm. Ingen zonavgift för Botkyrka. Räkna med 45–60 minuter på plats. Öppet lör–sön 08–20, vardagar 16–20.",
         ],
       },
       {
@@ -185,7 +185,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     kind: "location",
     title: "Strålkastarpolering Södertälje – E4/E20 och industri",
     description:
-      "Mobil strålkastarpolering i Södertälje. Villa, radhus och fordonsflottor vid E4/E20. Fast pris 799 kr/par, ingen extra avgift för avståndet.",
+      "Mobil strålkastarpolering i Södertälje. Villa, radhus och fordonsflottor vid E4/E20. Fast pris 899 kr/par, ingen extra avgift för avståndet.",
     h1: "Strålkastarpolering i Södertälje",
     lead: "Södertälje ligger längre söderut och har mer industri och vagnpark än innerstan. Restiden är längre — priset är detsamma. Vi tar villor, radhus och bilar på företagsgårdar.",
     locationName: "Södertälje",
@@ -206,7 +206,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Fast pris trots längre väg",
         paragraphs: [
-          "799 kr/par även här. Vi tar inte extra för Södertälje. Tar jobbet längre tid på grund av väder eller att bilen inte är framme, säger vi till — vi påbörjar inte slipning på en blöt nos i ösregn.",
+          "899 kr/par även här. Vi tar inte extra för Södertälje. Tar jobbet längre tid på grund av väder eller att bilen inte är framme, säger vi till — vi påbörjar inte slipning på en blöt nos i ösregn.",
         ],
       },
       {
@@ -240,7 +240,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     kind: "location",
     title: "Strålkastarpolering Haninge – Handen, Vega och Vendelsö",
     description:
-      "Mobil strålkastarpolering i Haninge. Handen, Vega, Vendelsö, Västerhaninge. Fast pris 799 kr/par. Vi kommer till uppfart eller p-plats utomhus.",
+      "Mobil strålkastarpolering i Haninge. Handen, Vega, Vendelsö, Västerhaninge. Fast pris 899 kr/par. Vi kommer till uppfart eller p-plats utomhus.",
     h1: "Strålkastarpolering i Haninge",
     lead: "Haninge är sydost: villor i Vendelsö, nyare områden i Vega, centrum kring Handen och längre mot Västerhaninge. Vi kör dit på samma villkor som resten av länet — utomhus, fast pris, ingen zonavgift.",
     locationName: "Haninge",
@@ -261,7 +261,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Pris",
         paragraphs: [
-          "799 kr/par, samma som Solna. Avståndet till Haninge läggs inte på fakturan. Garanti och UV-skydd ingår.",
+          "899 kr/par, samma som Solna. Avståndet till Haninge läggs inte på fakturan. Garanti och UV-skydd ingår.",
         ],
       },
       {
@@ -295,7 +295,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     kind: "location",
     title: "Strålkastarpolering Nacka – Sickla, Älta och Saltsjöbaden",
     description:
-      "Mobil strålkastarpolering i Nacka. Sickla, Forum, Älta, Fisksätra, Saltsjöbaden. Broar och bommar påverkar ankomst. Fast pris 799 kr/par.",
+      "Mobil strålkastarpolering i Nacka. Sickla, Forum, Älta, Fisksätra, Saltsjöbaden. Broar och bommar påverkar ankomst. Fast pris 899 kr/par.",
     h1: "Strålkastarpolering i Nacka",
     lead: "Nacka är broar, sjölägen och en blandning av nybygge och villa. Hit tar vi oss — men ankomsten styrs av Värmdöleden, Sickla och om föreningen har bom, inte av ett extra påslag på priset.",
     locationName: "Nacka",
@@ -316,7 +316,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Pris",
         paragraphs: [
-          "799 kr/par. Ingen Nacka-avgift. Samma skydd och garanti som i resten av länet.",
+          "899 kr/par. Ingen Nacka-avgift. Samma skydd och garanti som i resten av länet.",
         ],
       },
       {
@@ -350,7 +350,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     kind: "location",
     title: "Strålkastarpolering Solna – innerstad, Arenastaden och jobb-P",
     description:
-      "Mobil strålkastarpolering i Solna. Gatuparkering, bostadsrättsgård och arbetsplatser i Arenastaden. Fast pris 799 kr/par, vi kommer till dig.",
+      "Mobil strålkastarpolering i Solna. Gatuparkering, bostadsrättsgård och arbetsplatser i Arenastaden. Fast pris 899 kr/par, vi kommer till dig.",
     h1: "Strålkastarpolering i Solna",
     lead: "Solna är tätt: gatuparkering, garageinfarter och många som vill att vi tar bilen på jobbet i Arenastaden eller Sundbyberg-gränsen. Här är platsen det svåra — inte avståndet från city.",
     locationName: "Solna",
@@ -376,7 +376,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Pris",
         paragraphs: [
-          "799 kr/par, ingen innerstadsrabatt och inget påslag. Samma som Tumba. UV-skydd och 5 års garanti ingår.",
+          "899 kr/par, ingen innerstadsrabatt och inget påslag. Samma som Tumba. UV-skydd och 12 månaders garanti ingår.",
         ],
       },
     ],

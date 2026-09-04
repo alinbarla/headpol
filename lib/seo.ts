@@ -65,7 +65,7 @@ export const NAP = {
   geo: { latitude: 59.3293, longitude: 18.0686 },
   /** Travel radius in metres (~40 km around Stockholm). */
   serviceRadius: 40000,
-  priceRange: "799 kr",
+  priceRange: "899 kr",
   currency: "SEK",
 } as const;
 

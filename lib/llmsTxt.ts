@@ -35,7 +35,7 @@ export function buildLlmsTxt(): string {
   return [
     `# ${BRAND}`,
     "",
-    `> Mobil strålkastarpolering och strålkastarrenovering i ${NAP.addressLocality}. UV-keramiskt skydd, ${NAP.priceRange}/par och 5 års garanti. Vi kommer till kunden — ingen inlämningsverkstad.`,
+    `> Mobil strålkastarpolering och strålkastarrenovering i ${NAP.addressLocality}. UV-keramiskt skydd, ${NAP.priceRange}/par och 12 månaders garanti. Vi kommer till kunden — ingen inlämningsverkstad.`,
     "",
     `${BRAND} är en mobil tjänst i ${NAP.addressRegion}. Vi våtslipar, polerar och lägger UV-keramiskt skydd på oxiderade plaststrålkastare. Fast pris, ingen zonavgift inom ungefär 40 km från ${NAP.addressLocality}. Öppet ${hours}. Telefon ${CONTACT_PHONE_DISPLAY}, e-post ${CONTACT_EMAIL}. Områden: ${SERVICE_AREAS.join(", ")}.`,
     "",

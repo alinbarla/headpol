@@ -7,11 +7,14 @@ import {
   type BookingRules,
 } from "@/lib/availability";
 import {
+  getSupabaseAdminClient,
   getSupabaseServerClient,
   withSupabaseTimeout,
 } from "@/lib/supabase/server";
 
 const BOOKING_RULES_KEY = "booking_rules";
+/** Previous public default; rows still on this amount are lifted to 899 kr. */
+const LEGACY_PRICE_ORE = 79900;
 
 /**
  * Reads the rules from the settings table. A missing row or an unreachable
@@ -30,9 +33,46 @@ export async function getBookingRules(): Promise<BookingRules> {
     );
 
     if (error || !data) return DEFAULT_BOOKING_RULES;
-    return parseBookingRules(data.value);
+
+    const rules = parseBookingRules(data.value);
+    const raw =
+      data.value && typeof data.value === "object"
+        ? (data.value as Record<string, unknown>)
+        : {};
+
+    const needsPersist =
+      typeof raw.weekdayMaxBookings !== "number" ||
+      typeof raw.weekendMaxBookings !== "number" ||
+      raw.priceOre === LEGACY_PRICE_ORE;
+
+    if (needsPersist) {
+      const next: BookingRules = {
+        ...rules,
+        priceOre:
+          raw.priceOre === LEGACY_PRICE_ORE
+            ? DEFAULT_BOOKING_RULES.priceOre
+            : rules.priceOre,
+      };
+      void persistBookingRules(next);
+      return next;
+    }
+
+    return rules;
   } catch {
     return DEFAULT_BOOKING_RULES;
+  }
+}
+
+async function persistBookingRules(rules: BookingRules): Promise<void> {
+  try {
+    const supabase = getSupabaseAdminClient();
+    await withSupabaseTimeout(
+      supabase
+        .from("settings")
+        .upsert({ key: BOOKING_RULES_KEY, value: rules }, { onConflict: "key" })
+    );
+  } catch {
+    // Read path must stay available even if the write-back fails.
   }
 }
 

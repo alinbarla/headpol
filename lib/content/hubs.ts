@@ -6,7 +6,7 @@ export const HUB_PAGES: ClusterDoc[] = [
     kind: "service-polering",
     title: "Polera strålkastare – så blir de blanka igen",
     description:
-      "Så polerar du inte bara ytan: oxidation, kit hemma, när blanka strålkastare håller och när glaset inte går att rädda. 799 kr/par.",
+      "Så polerar du inte bara ytan: oxidation, kit hemma, när blanka strålkastare håller och när glaset inte går att rädda. 899 kr/par.",
     h1: "Polera strålkastare",
     lead: "När folk säger att de vill polera strålkastare menar de nästan alltid samma sak: glasen har blivit gula eller mjölkiga och de vill ha blanka strålkastare igen. Det är inte smuts. Det är plasten som oxiderat.",
     sections: [
@@ -33,7 +33,7 @@ export const HUB_PAGES: ClusterDoc[] = [
         heading: "Kit hemma eller göra jobbet ordentligt",
         paragraphs: [
           "Kit från affären kan se bra ut i några veckor. Många saknar ett UV-skydd som faktiskt ersätter fabrikslackeringen. Slipningen tar bort det som fanns kvar av originalskyddet, så utan nytt skydd kommer gulnaden tillbaka.",
-          "Vi slipar vått från P400 upp till P3000, polerar med polymer och lägger UV-keramiskt skydd. Det är därför vi kan lämna 5 års garanti. Ett kit på uppfarten ger sällan samma sak.",
+          "Vi slipar vått från P400 upp till P3000, polerar med polymer och lägger UV-keramiskt skydd. Det är därför vi kan lämna 12 månaders garanti. Ett kit på uppfarten ger sällan samma sak.",
         ],
       },
       {
@@ -46,7 +46,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         heading: "Pris och tid",
         paragraphs: [
-          "Ett par strålkastare på personbil kostar 799 kr inklusive moms, skydd och 5 års garanti. Motorcykel och moped från 499 kr. Ett vanligt jobb tar 45–60 minuter. Du kan vänta eller lämna bilen.",
+          "Ett par strålkastare på personbil kostar 899 kr inklusive moms, skydd och 12 månaders garanti. Motorcykel och moped från 499 kr. Ett vanligt jobb tar 45–60 minuter. Du kan vänta eller lämna bilen.",
           "Samma pris i hela vårt område. Ingen zonavgift för Huddinge, Tumba, Södertälje, Haninge, Nacka eller Solna.",
         ],
       },
@@ -108,7 +108,7 @@ export const HUB_PAGES: ClusterDoc[] = [
         heading: "Så går jobbet till",
         paragraphs: [
           "Maskering skyddar lack och lister. Våtslipning tar oxidationen. Polymerpolering återställer djup och glans. UV-keramiskt skydd ersätter fabrikens hard-coat. Till sist kontrollerar vi finish och ljusbild i dagsljus.",
-          "Utan det sista steget gulnar plasten igen inom några månader. Slipningen har tagit bort det som fanns kvar av originalskyddet. Därför ingår skyddet alltid, och därför kan vi lämna 5 års garanti.",
+          "Utan det sista steget gulnar plasten igen inom några månader. Slipningen har tagit bort det som fanns kvar av originalskyddet. Därför ingår skyddet alltid, och därför kan vi lämna 12 månaders garanti.",
         ],
         bullets: [
           "Maskering och rengöring",
@@ -121,7 +121,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         heading: "Hur länge håller en strålkastarrenovering?",
         paragraphs: [
-          "Med UV-keramiskt skydd och normal biltvätt håller finishen i flera år. Garantin är 5 år. Parkering ute i söderläge, högtryck mot kanten och slipande tvättanläggningar sliter snabbare, men skyddet är till för just det.",
+          "Med UV-keramiskt skydd och normal biltvätt håller finishen i flera år. Garantin är 12 månader. Parkering ute i söderläge, högtryck mot kanten och slipande tvättanläggningar sliter snabbare, men skyddet är till för just det.",
         ],
       },
       {
@@ -134,7 +134,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         heading: "Pris och bokning",
         paragraphs: [
-          "Personbil 799 kr/par. Samma fast pris oavsett kommun i vårt område. Boka i kalendern eller ring, så kommer vi till dig.",
+          "Personbil 899 kr/par. Samma fast pris oavsett kommun i vårt område. Boka i kalendern eller ring, så kommer vi till dig.",
         ],
       },
     ],
@@ -179,18 +179,18 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "priser",
     kind: "other",
-    title: "Pris för strålkastarpolering – 799 kr/par",
+    title: "Pris för strålkastarpolering – 899 kr/par",
     description:
-      "Fast pris för strålkastarpolering i Stockholm: 799 kr/par för personbil, från 499 kr för MC. Jämfört med att byta strålkastare. Ingen zonavgift.",
+      "Fast pris för strålkastarpolering i Stockholm: 899 kr/par för personbil, från 499 kr för MC. Jämfört med att byta strålkastare. Ingen zonavgift.",
     h1: "Priser för strålkastarpolering",
-    lead: "Ett par strålkastare på personbil kostar 799 kr inklusive moms. UV-keramiskt skydd och 5 års garanti ingår. Samma pris i hela Stockholmsområdet.",
+    lead: "Ett par strålkastare på personbil kostar 899 kr inklusive moms. UV-keramiskt skydd och 12 månaders garanti ingår. Samma pris i hela Stockholmsområdet.",
     priceTiers: [
       {
         title: "Personbil",
         description:
           "Slipning, polering och UV-skydd av båda strålkastarna. Vi kommer till din adress. Ingen startavgift och ingen milersättning inom området.",
         oldPrice: "1499kr",
-        price: "799kr",
+        price: "899kr",
         unit: "par",
         featured: true,
         badge: "Mest bokad",
@@ -200,7 +200,7 @@ export const HUB_PAGES: ClusterDoc[] = [
           "Polymerpolering",
           "UV-keramiskt skydd",
           "Kontroll av ljusbild",
-          "5 års garanti",
+          "12 månaders garanti",
         ],
         href: "/#booking",
         cta: "Boka tid",
@@ -226,7 +226,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         heading: "Renovera eller byta",
         paragraphs: [
-          "Nya originalstrålkastare ligger ofta på 5 000–20 000 kr styck plus montering, särskilt på bilar med LED eller adaptivt ljus. En renovering kostar 799 kr för paret när plasten är oxiderad men hel.",
+          "Nya originalstrålkastare ligger ofta på 5 000–20 000 kr styck plus montering, särskilt på bilar med LED eller adaptivt ljus. En renovering kostar 899 kr för paret när plasten är oxiderad men hel.",
           "Byte är rätt val när glaset är sprucket, svetsat fel eller har fukt inuti. Då hjälper inte polering, och vi tar inte betalt för att konstatera det.",
         ],
       },
@@ -241,7 +241,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         question: "Är det billigare att renovera än att byta?",
         answer:
-          "Ja, så länge glaset är helt. 799 kr/par mot ofta femsiffriga belopp per sida för nya enheter.",
+          "Ja, så länge glaset är helt. 899 kr/par mot ofta femsiffriga belopp per sida för nya enheter.",
       },
       {
         question: "Kostar det extra utanför innerstan?",
@@ -279,7 +279,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         heading: "Så funkar offerten",
         paragraphs: [
-          "Personbilspriset 799 kr/par är utgångspunkten. Flera bilar på samma plats ger lägre styckpris eftersom restid och uppställning bara sker en gång. Mejla antal, adress och ungefärligt skick, eller ring.",
+          "Personbilspriset 899 kr/par är utgångspunkten. Flera bilar på samma plats ger lägre styckpris eftersom restid och uppställning bara sker en gång. Mejla antal, adress och ungefärligt skick, eller ring.",
         ],
       },
     ],
@@ -333,7 +333,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         question: "Kan man polera strålkastare själv?",
         answer:
-          "Kit kan se bra ut i några veckor. De flesta saknar ett UV-skydd som faktiskt ersätter fabrikslackeringen. Vi slipar till P3000 och lägger skyddet som gör att vi kan lämna 5 års garanti.",
+          "Kit kan se bra ut i några veckor. De flesta saknar ett UV-skydd som faktiskt ersätter fabrikslackeringen. Vi slipar till P3000 och lägger skyddet som gör att vi kan lämna 12 månaders garanti.",
       },
       {
         question: "Vad är skillnaden mot strålkastare restaurering?",
@@ -353,12 +353,12 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         question: "Hur länge håller en strålkastarrenovering?",
         answer:
-          "Med UV-keramiskt skydd lämnar vi 5 års garanti. Utan skydd efter slipning börjar gulnaden ofta synas inom några månader.",
+          "Med UV-keramiskt skydd lämnar vi 12 månaders garanti. Utan skydd efter slipning börjar gulnaden ofta synas inom några månader.",
       },
       {
         question: "Vad kostar det att byta strålkastare?",
         answer:
-          "Ofta 5 000–20 000 kr styck plus montering, mer på LED- och matrix-enheter. Renovering av paret är 799 kr när glaset är oxiderat men helt.",
+          "Ofta 5 000–20 000 kr styck plus montering, mer på LED- och matrix-enheter. Renovering av paret är 899 kr när glaset är oxiderat men helt.",
       },
       {
         question: "Är det billigare att renovera strålkastaren än att byta den?",
@@ -402,7 +402,7 @@ export const HUB_PAGES: ClusterDoc[] = [
     kind: "other",
     title: "Om oss – strålkastarpolering på plats i Stockholm",
     description:
-      "Vi utför strålkastarpolering mobilt i Stockholm: våtslipning, polymerpolering och UV-keramiskt skydd med 5 års garanti. Fast pris, inget verkstadsbesök.",
+      "Vi utför strålkastarpolering mobilt i Stockholm: våtslipning, polymerpolering och UV-keramiskt skydd med 12 månaders garanti. Fast pris, inget verkstadsbesök.",
     h1: "Om oss",
     lead: "Strålkastarpolering är en mobil tjänst i Stockholms län. Vi tar med materialet till din bil i stället för att du ska lämna in den.",
     sections: [
@@ -416,13 +416,13 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         heading: "Material och metod",
         paragraphs: [
-          "Polykarbonat kräver både mekanisk avverkning av oxidationen och ett nytt UV-skikt. Skyddet är det som gör att vi kan lämna 5 års garanti. Utan det vore slipningen bara ett tillfälligt lyft.",
+          "Polykarbonat kräver både mekanisk avverkning av oxidationen och ett nytt UV-skikt. Skyddet är det som gör att vi kan lämna 12 månaders garanti. Utan det vore slipningen bara ett tillfälligt lyft.",
         ],
       },
       {
         heading: "Garanti och tydligt pris",
         paragraphs: [
-          "799 kr/par för personbil, samma i hela området vi tar. Går inte glaset att rädda tar vi inte betalt. Avbokning senast 24 timmar före tiden.",
+          "899 kr/par för personbil, samma i hela området vi tar. Går inte glaset att rädda tar vi inte betalt. Avbokning senast 24 timmar före tiden.",
         ],
       },
       {

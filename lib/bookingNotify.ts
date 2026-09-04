@@ -210,7 +210,7 @@ export async function notifyPaymentReceipt(
 ): Promise<void> {
   const locale = localeOf(notice);
   const amount = escapeHtml(formatOre(notice.amountOre));
-  // 799 kr is VAT-inclusive; Swedish moms on this service is 25%.
+  // 899 kr is VAT-inclusive; Swedish moms on this service is 25%.
   const vat = escapeHtml(formatOre(Math.round(notice.amountOre * 0.2)));
   const address = escapeHtml(notice.address);
 

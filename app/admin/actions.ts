@@ -1063,6 +1063,8 @@ const rulesSchema = z
     saturdayEndHour: z.coerce.number().int().min(1).max(24),
     horizonDays: z.coerce.number().int().min(1).max(365),
     priceOre: z.coerce.number().int().min(0).max(10_000_000),
+    weekdayMaxBookings: z.coerce.number().int().min(1).max(48),
+    weekendMaxBookings: z.coerce.number().int().min(1).max(48),
   })
   .refine((value) => value.endHour > value.startHour, {
     message: "The weekday closing time must be after the opening time",
@@ -1090,6 +1092,8 @@ export async function updateRulesAction(
     saturdayEndHour: formData.get("saturdayEndHour"),
     horizonDays: formData.get("horizonDays"),
     priceOre: formData.get("priceOre"),
+    weekdayMaxBookings: formData.get("weekdayMaxBookings"),
+    weekendMaxBookings: formData.get("weekendMaxBookings"),
   });
 
   if (!parsed.success) return fail(firstIssue(parsed.error));

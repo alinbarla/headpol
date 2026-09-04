@@ -55,7 +55,7 @@ export default function OpengraphImage() {
             Kristallklara strålkastare igen
           </div>
           <div style={{ color: "#aaaaaa", fontSize: 34, fontWeight: 500, maxWidth: 900 }}>
-            Premiumrestaurering + UV-keramiskt skydd. 5 års garanti. Vi kommer till dig.
+            Premiumrestaurering + UV-keramiskt skydd. 12 månaders garanti. Vi kommer till dig.
           </div>
         </div>
 
@@ -70,7 +70,7 @@ export default function OpengraphImage() {
               borderRadius: 999,
             }}
           >
-            799kr/par
+            899kr/par
           </div>
           <div style={{ color: "#888888", fontSize: 26 }}>stralkastarpolering.se</div>
         </div>

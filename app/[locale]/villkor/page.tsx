@@ -158,7 +158,7 @@ function TermsEn() {
       <h2>The service</h2>
       <p>
         {BRAND} restores headlights at your address within Stockholm County.
-        The price is 799 kr including VAT for a pair of headlights unless
+        The price is 899 kr including VAT for a pair of headlights unless
         otherwise agreed. A visit normally takes about an hour.
       </p>
 

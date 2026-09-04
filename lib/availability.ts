@@ -19,6 +19,13 @@ export type BookingRules = {
   saturdayEndHour: number;
   horizonDays: number;
   priceOre: number;
+  /**
+   * Max confirmed/held bookings Mon–Fri. Remaining open hours stay visible
+   * but are struck out once this cap is reached.
+   */
+  weekdayMaxBookings: number;
+  /** Max confirmed/held bookings Sat–Sun (same strike-out behaviour). */
+  weekendMaxBookings: number;
 };
 
 export const DEFAULT_BOOKING_RULES: BookingRules = {
@@ -30,7 +37,9 @@ export const DEFAULT_BOOKING_RULES: BookingRules = {
   saturdayStartHour: 8,
   saturdayEndHour: 20,
   horizonDays: 60,
-  priceOre: 79900,
+  priceOre: 89900,
+  weekdayMaxBookings: 2,
+  weekendMaxBookings: 4,
 };
 
 export type AvailabilityOverride = {
@@ -101,7 +110,22 @@ export function parseBookingRules(value: unknown): BookingRules {
       typeof raw.priceOre === "number" && raw.priceOre >= 0
         ? Math.floor(raw.priceOre)
         : DEFAULT_BOOKING_RULES.priceOre,
+    weekdayMaxBookings: clampMaxBookings(
+      raw.weekdayMaxBookings,
+      DEFAULT_BOOKING_RULES.weekdayMaxBookings
+    ),
+    weekendMaxBookings: clampMaxBookings(
+      raw.weekendMaxBookings,
+      DEFAULT_BOOKING_RULES.weekendMaxBookings
+    ),
   };
+}
+
+function clampMaxBookings(value: unknown, fallback: number): number {
+  if (typeof value !== "number" || Number.isNaN(value) || value < 1) {
+    return fallback;
+  }
+  return Math.min(Math.floor(value), 48);
 }
 
 function clampHour(value: unknown, fallback: number): number {
@@ -338,6 +362,64 @@ export function fullyBookedDateKeys(
       slots.every((time) => bookedSlots.has(`${dateKey}T${time}`))
     )
     .map(([dateKey]) => dateKey);
+}
+
+/** Daily booking cap for a calendar day. Weekends allow more jobs than weekdays. */
+export function maxBookingsForDate(
+  dateKey: string,
+  rules: BookingRules
+): number {
+  const weekday = weekdayForDateKey(dateKey);
+  if (weekday === 0 || weekday === 6) return rules.weekendMaxBookings;
+  return rules.weekdayMaxBookings;
+}
+
+/**
+ * Counts how many held/confirmed bookings fall on each date. Slot keys are
+ * `YYYY-MM-DDTHH:MM`.
+ */
+export function bookingCountsByDate(
+  bookedSlots: Iterable<string>
+): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const key of bookedSlots) {
+    const dateKey = key.slice(0, 10);
+    counts.set(dateKey, (counts.get(dateKey) ?? 0) + 1);
+  }
+  return counts;
+}
+
+/**
+ * Once a day hits its booking cap, every remaining open hour is treated as
+ * unavailable so the picker can strike them out. Returns the union of real
+ * bookings and capacity-blocked slots.
+ */
+export function applyDailyBookingCaps(
+  availability: AvailabilityMap,
+  bookedSlots: Iterable<string>,
+  rules: BookingRules
+): string[] {
+  const booked = [...bookedSlots];
+  const counts = bookingCountsByDate(booked);
+  const unavailable = new Set(booked);
+
+  for (const [dateKey, times] of Object.entries(availability)) {
+    const count = counts.get(dateKey) ?? 0;
+    if (count < maxBookingsForDate(dateKey, rules)) continue;
+    for (const time of times) {
+      unavailable.add(`${dateKey}T${time}`);
+    }
+  }
+
+  return [...unavailable];
+}
+
+export function isDateAtBookingCap(
+  dateKey: string,
+  bookingCount: number,
+  rules: BookingRules
+): boolean {
+  return bookingCount >= maxBookingsForDate(dateKey, rules);
 }
 
 export function isSlotOpen(

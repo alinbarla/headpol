@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Strålkastarpolering Stockholm – 799 kr/par, vi kommer till dig",
-    "description": "Mobil strålkastarpolering i Stockholm. 799 kr/par, UV-keramiskt skydd och 5 års garanti. Vi kommer till din adress."
+    "title": "Strålkastarpolering Stockholm – 899 kr/par, vi kommer till dig",
+    "description": "Mobil strålkastarpolering i Stockholm. 899 kr/par, UV-keramiskt skydd och 12 månaders garanti. Vi kommer till din adress."
   },
   "nav": {
     "brand": "Strålkastarpolering",
@@ -23,12 +23,12 @@
     "title": "<lead>Strålkastarpolering i Stockholm – </lead><visible>kristallklara strålkastare igen</visible>",
     "ratingLabel": "Recensioner",
     "ratingSr": "4,9 av 5 stjärnor baserat på 134 recensioner",
-    "subtitle": "Vi slipar, polerar och lägger UV-keramiskt skydd. 799 kr/par och <guarantee>5 års garanti</guarantee>. Vi kommer till dig.",
+    "subtitle": "Vi slipar, polerar och lägger UV-keramiskt skydd. 899 kr/par och <guarantee>12 månaders garanti</guarantee>. Vi kommer till dig.",
     "semantic": "Strålkastarpolering i Stockholm på din adress. Vi tar bort oxidation, gulnad och repor från plaststrålkastare och avslutar med UV-keramiskt skydd.",
     "ctaPrimary": "Ring nu – vi kommer till dig!",
     "ctaSecondary": "Boka tid",
     "oldPrice": "1499kr",
-    "price": "799kr",
+    "price": "899kr",
     "priceUnit": "par",
     "scroll": "Scrolla",
     "before": "Före",
@@ -39,8 +39,8 @@
     "imageHint": "Före och efter, från matt och gult till glasklart",
     "imageAlt": "Gulnad plaststrålkastare före polering, samma lampa efter",
     "stats": [
-      { "value": "799kr/par", "label": "Fast pris" },
-      { "value": "5 år", "label": "Garanti" },
+      { "value": "899kr/par", "label": "Fast pris" },
+      { "value": "12 mån", "label": "Garanti" },
       { "value": "Hem till dig", "label": "Vi kommer till dig" }
     ]
   },
@@ -58,7 +58,7 @@
       },
       {
         "title": "Spara tusenlappar",
-        "description": "Nya strålkastare kostar ofta 5 000–20 000 kr styck med montering. Ett par hos oss kostar 799 kr."
+        "description": "Nya strålkastare kostar ofta 5 000–20 000 kr styck med montering. Ett par hos oss kostar 899 kr."
       },
       {
         "title": "Högre andrahandsvärde",
@@ -90,7 +90,7 @@
       },
       {
         "title": "UV-keramiskt skydd",
-        "description": "Ett UV-keramiskt skydd försluter ytan och skyddar mot solens UV-strålar så att glansen håller, med 5 års garanti.",
+        "description": "Ett UV-keramiskt skydd försluter ytan och skyddar mot solens UV-strålar så att glansen håller, med 12 månaders garanti.",
         "alt": "Påläggning av UV-skydd på nypolerad strålkastare"
       },
       {
@@ -109,16 +109,16 @@
     "title": "Priser för strålkastarpolering och renovering",
     "readMore": "Alla priser och vad som ingår",
     "readMorePolish": "Läs mer om att polera strålkastare",
-    "subtitle": "Slipning, polering och UV-keramiskt skydd för båda strålkastarna. 799 kr/par.",
+    "subtitle": "Slipning, polering och UV-keramiskt skydd för båda strålkastarna. 899 kr/par.",
     "exampleNote": "Tjänster & priser",
-    "guaranteeNote": "Slipning, polering och UV-keramiskt skydd ingår. 799 kr/par och 5 års garanti.",
+    "guaranteeNote": "Slipning, polering och UV-keramiskt skydd ingår. 899 kr/par och 12 månaders garanti.",
     "priceUnit": "par",
     "items": [
       {
         "title": "Personbil",
         "description": "Slipning, polering och UV-keramiskt skydd för båda strålkastarna. Vi kommer till dig.",
         "oldPrice": "1499kr",
-        "price": "799kr"
+        "price": "899kr"
       },
       {
         "title": "MC & moped",
@@ -142,8 +142,8 @@
         "description": "Du får ett tydligt pris innan arbetet börjar. Inga överraskningar och inga dolda avgifter."
       },
       {
-        "title": "5 års garanti",
-        "description": "UV-keramiskt skydd och 5 års garanti. Nyskickade strålkastare som håller."
+        "title": "12 månaders garanti",
+        "description": "UV-keramiskt skydd och 12 månaders garanti. Nyskickade strålkastare som håller."
       },
       {
         "title": "Vi kommer till dig",
@@ -178,7 +178,7 @@
     "items": [
       {
         "question": "Kan man polera strålkastare själv?",
-        "answer": "Kit kan se bra ut i några veckor. De flesta saknar ett UV-skydd som faktiskt ersätter fabrikslackeringen, så gulnaden kommer tillbaka. Vi slipar till P3000 och lägger skyddet som gör att vi kan lämna 5 års garanti.",
+        "answer": "Kit kan se bra ut i några veckor. De flesta saknar ett UV-skydd som faktiskt ersätter fabrikslackeringen, så gulnaden kommer tillbaka. Vi slipar till P3000 och lägger skyddet som gör att vi kan lämna 12 månaders garanti.",
         "href": "/stralkastarpolering",
         "linkLabel": "Så polerar man strålkastare på riktigt"
       },
@@ -190,7 +190,7 @@
       },
       {
         "question": "Hur länge håller en strålkastarpolering?",
-        "answer": "Med UV-keramiskt skydd ingår 5 års garanti. Utan skydd börjar plasten gulna igen inom några månader, därför ingår skyddet alltid."
+        "answer": "Med UV-keramiskt skydd ingår 12 månaders garanti. Utan skydd börjar plasten gulna igen inom några månader, därför ingår skyddet alltid."
       },
       {
         "question": "Vad är skillnaden mellan strålkastarpolering och strålkastarrenovering?",
@@ -202,7 +202,7 @@
       },
       {
         "question": "Vad kostar det att polera strålkastarna?",
-        "answer": "Båda strålkastarna kostar 799 kr/par. UV-keramiskt skydd och 5 års garanti ingår. MC och moped från 499 kr. För företag lämnar vi offert."
+        "answer": "Båda strålkastarna kostar 899 kr/par. UV-keramiskt skydd och 12 månaders garanti ingår. MC och moped från 499 kr. För företag lämnar vi offert."
       },
       {
         "question": "Hur lång tid tar det?",
@@ -218,11 +218,11 @@
       },
       {
         "question": "Vad är skillnaden mot att byta strålkastare?",
-        "answer": "Nya strålkastare kostar ofta flera tusen kronor styck plus montering. Ett par hos oss kostar 799 kr."
+        "answer": "Nya strålkastare kostar ofta flera tusen kronor styck plus montering. Ett par hos oss kostar 899 kr."
       },
       {
         "question": "Kan man renovera strålkastare själv?",
-        "answer": "Det går att köpa gör-det-själv-kit, men de flesta saknar UV-skydd. Slipningen tar bort strålkastarens ursprungliga fabriksskydd, och utan ett nytt skydd gulnar plasten igen inom några månader. Vi slipar stegvis upp till P3000 och förseglar med UV-keramiskt skydd, därför kan vi lämna 5 års garanti."
+        "answer": "Det går att köpa gör-det-själv-kit, men de flesta saknar UV-skydd. Slipningen tar bort strålkastarens ursprungliga fabriksskydd, och utan ett nytt skydd gulnar plasten igen inom några månader. Vi slipar stegvis upp till P3000 och förseglar med UV-keramiskt skydd, därför kan vi lämna 12 månaders garanti."
       },
       {
         "question": "Hur bokar jag tid?",
@@ -238,11 +238,11 @@
       },
       {
         "question": "Vad kostar det att byta strålkastare?",
-        "answer": "Nya originalstrålkastare kostar ofta 5 000–20 000 kr styck plus montering. En renovering av båda sidorna kostar 799 kr/par."
+        "answer": "Nya originalstrålkastare kostar ofta 5 000–20 000 kr styck plus montering. En renovering av båda sidorna kostar 899 kr/par."
       },
       {
         "question": "Är det billigare att renovera strålkastaren än att byta den?",
-        "answer": "Ja, i de allra flesta fall. Renovering ger nyskickade glas för 799 kr/par. Byte lönar sig när glaset är sprucket eller skadat inuti."
+        "answer": "Ja, i de allra flesta fall. Renovering ger nyskickade glas för 899 kr/par. Byte lönar sig när glaset är sprucket eller skadat inuti."
       },
       {
         "question": "Kan spruckna strålkastare renoveras?",
@@ -272,7 +272,7 @@
     "noDate": "Välj ett datum först",
     "noTime": "Välj en tid",
     "missingDetails": "Fyll i namn, e-post, telefon, adress och postnummer",
-    "availabilityNote": "Öppet lör–sön 08:00–20:00 · mån–fre 16:00–20:00. Upptagna tider är utgråade.",
+    "availabilityNote": "Öppet lör–sön 08:00–20:00 · mån–fre 16:00–20:00. Max 2 bokningar mån–fre och 4 lör–sön; övriga tider stryks när taket är nått.",
     "slotBooked": "{time} är redan bokad",
     "slotTaken": "Den här tiden hann bokas av någon annan. Välj en annan tid.",
     "loadingSlots": "Hämtar tillgängliga tider…",
@@ -353,7 +353,7 @@
     "ratingLabel": "Recensioner",
     "ratingSr": "4,9 av 5 stjärnor baserat på 134 recensioner",
     "ctaTitle": "Boka strålkastarpolering",
-    "ctaBody": "Vi kommer till dig. Fast pris 799 kr/par, UV-keramiskt skydd och 5 års garanti.",
+    "ctaBody": "Vi kommer till dig. Fast pris 899 kr/par, UV-keramiskt skydd och 12 månaders garanti.",
     "ctaBook": "Boka tid",
     "ctaCall": "Ring nu",
     "relatedTitle": "Läs också",

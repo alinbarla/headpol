@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "Headlight polishing and restoration in Stockholm | Strålkastarpolering",
-    "description": "Crystal-clear headlights again. Premium restoration + UV ceramic protection, 799 SEK/pair and a 5-year warranty. We come to you in Stockholm."
+    "description": "Crystal-clear headlights again. Premium restoration + UV ceramic protection, 899 SEK/pair and a 12-month warranty. We come to you in Stockholm."
   },
   "nav": {
     "brand": "Strålkastarpolering",
@@ -23,12 +23,12 @@
     "title": "<lead>Headlight polishing in Stockholm – </lead><visible>crystal-clear headlights again</visible>",
     "ratingLabel": "Reviews",
     "ratingSr": "4.9 out of 5 stars based on 134 reviews",
-    "subtitle": "Premium restoration + UV ceramic protection = headlights like new, money saved and a <guarantee>5-year warranty</guarantee>.",
+    "subtitle": "Premium restoration + UV ceramic protection = headlights like new, money saved and a <guarantee>12-month warranty</guarantee>.",
     "semantic": "Professional headlight polishing and restoration in Stockholm. We remove oxidation, yellowing and scratches from plastic lenses and finish with UV ceramic protection. We come to you at home, at work or in the garage.",
     "ctaPrimary": "Call now — we come to you!",
     "ctaSecondary": "Book a time",
     "oldPrice": "1499kr",
-    "price": "799kr",
+    "price": "899kr",
     "priceUnit": "pair",
     "scroll": "Scroll",
     "before": "Before",
@@ -39,8 +39,8 @@
     "imageHint": "Before and after — from cloudy and yellow to crystal clear",
     "imageAlt": "Before and after of a restored headlight in Stockholm",
     "stats": [
-      { "value": "799kr/pair", "label": "Premium restoration" },
-      { "value": "5 years", "label": "Warranty" },
+      { "value": "899kr/pair", "label": "Premium restoration" },
+      { "value": "12 months", "label": "Warranty" },
       { "value": "We come to you", "label": "Mobile service" }
     ]
   },
@@ -58,7 +58,7 @@
       },
       {
         "title": "Save thousands",
-        "description": "New headlights often cost 5,000–20,000 SEK each fitted. Premium restoration gives you headlights like new for 799kr/pair."
+        "description": "New headlights often cost 5,000–20,000 SEK each fitted. Premium restoration gives you headlights like new for 899kr/pair."
       },
       {
         "title": "Higher resale value",
@@ -90,7 +90,7 @@
       },
       {
         "title": "UV ceramic protection",
-        "description": "A UV ceramic coating seals the surface and shields it from the sun so the gloss lasts — with a 5-year warranty.",
+        "description": "A UV ceramic coating seals the surface and shields it from the sun so the gloss lasts — with a 12-month warranty.",
         "alt": "Applying UV protection to a freshly polished headlight"
       },
       {
@@ -108,16 +108,16 @@
   "services": {
     "title": "Headlight restoration pricing",
     "readMore": "Full prices and what's included",
-    "subtitle": "Premium restoration + UV ceramic protection for both headlights. 799kr/pair.",
+    "subtitle": "Premium restoration + UV ceramic protection for both headlights. 899kr/pair.",
     "exampleNote": "Services & pricing",
-    "guaranteeNote": "Premium restoration + UV ceramic protection = headlights like new, money saved and a 5-year warranty.",
+    "guaranteeNote": "Premium restoration + UV ceramic protection = headlights like new, money saved and a 12-month warranty.",
     "priceUnit": "pair",
     "items": [
       {
         "title": "Cars",
         "description": "Premium restoration + UV ceramic protection for both headlights. We come to you.",
         "oldPrice": "1499kr",
-        "price": "799kr"
+        "price": "899kr"
       },
       {
         "title": "Motorcycles & mopeds",
@@ -141,8 +141,8 @@
         "description": "You get a clear price before work begins. No surprises and no hidden fees."
       },
       {
-        "title": "5-year warranty",
-        "description": "Premium restoration + UV ceramic protection with a 5-year warranty. Headlights like new that last."
+        "title": "12-month warranty",
+        "description": "Premium restoration + UV ceramic protection with a 12-month warranty. Headlights like new that last."
       },
       {
         "title": "We come to you",
@@ -170,7 +170,7 @@
     "items": [
       {
         "question": "How long does headlight restoration last?",
-        "answer": "With UV ceramic protection a 5-year warranty is included. Without protection the plastic starts to yellow again within months, which is why the coating is always included."
+        "answer": "With UV ceramic protection a 12-month warranty is included. Without protection the plastic starts to yellow again within months, which is why the coating is always included."
       },
       {
         "question": "What's the difference between headlight polishing and headlight restoration?",
@@ -182,7 +182,7 @@
       },
       {
         "question": "How much does it cost to restore headlights?",
-        "answer": "Premium restoration of both headlights is 799kr/pair, down from 1499kr/pair. UV ceramic protection and a 5-year warranty are included. Motorcycles and mopeds from 499 SEK. For businesses we provide a quote."
+        "answer": "Premium restoration of both headlights is 899kr/pair, down from 1499kr/pair. UV ceramic protection and a 12-month warranty are included. Motorcycles and mopeds from 499 SEK. For businesses we provide a quote."
       },
       {
         "question": "How long does it take?",
@@ -198,11 +198,11 @@
       },
       {
         "question": "What's the difference versus replacing the headlights?",
-        "answer": "New headlights often cost several thousand SEK each plus fitting. Premium restoration gives you headlights like new for 799kr/pair, down from 1499kr/pair."
+        "answer": "New headlights often cost several thousand SEK each plus fitting. Premium restoration gives you headlights like new for 899kr/pair, down from 1499kr/pair."
       },
       {
         "question": "Can I restore headlights myself?",
-        "answer": "DIY kits exist, but most leave out UV protection. Sanding removes the headlight's original factory coating, and without a new one the plastic yellows again within months. We sand progressively up to P3000 and seal with UV ceramic protection — which is why we can offer a 5-year warranty on a restoration."
+        "answer": "DIY kits exist, but most leave out UV protection. Sanding removes the headlight's original factory coating, and without a new one the plastic yellows again within months. We sand progressively up to P3000 and seal with UV ceramic protection — which is why we can offer a 12-month warranty on a restoration."
       },
       {
         "question": "How do I book?",
@@ -218,11 +218,11 @@
       },
       {
         "question": "How much does it cost to replace headlights?",
-        "answer": "New OEM headlights often cost 5,000–20,000 SEK each plus fitting. Restoring both sides is 799 SEK/pair."
+        "answer": "New OEM headlights often cost 5,000–20,000 SEK each plus fitting. Restoring both sides is 899 SEK/pair."
       },
       {
         "question": "Is it cheaper to restore headlights than to replace them?",
-        "answer": "Yes, in almost every case. Restoration gives you lenses like new for 799 SEK/pair. Replacement only pays when the lens is cracked or damaged on the inside."
+        "answer": "Yes, in almost every case. Restoration gives you lenses like new for 899 SEK/pair. Replacement only pays when the lens is cracked or damaged on the inside."
       },
       {
         "question": "Can cracked headlights be restored?",
@@ -252,7 +252,7 @@
     "noDate": "Select a date first",
     "noTime": "Select a time",
     "missingDetails": "Fill in your name, email, phone, address and postal code",
-    "availabilityNote": "Open Sat–Sun 08:00–20:00 · Mon–Fri 16:00–20:00. Booked slots are greyed out.",
+    "availabilityNote": "Open Sat–Sun 08:00–20:00 · Mon–Fri 16:00–20:00. Max 2 bookings Mon–Fri and 4 Sat–Sun; remaining slots are struck out when the day is full.",
     "slotBooked": "{time} is already booked",
     "slotTaken": "That slot was just taken. Please choose another time.",
     "loadingSlots": "Loading available slots…",
@@ -333,7 +333,7 @@
     "ratingLabel": "Reviews",
     "ratingSr": "4.9 out of 5 stars based on 134 reviews",
     "ctaTitle": "Book headlight restoration",
-    "ctaBody": "We come to you. Fixed price 799 SEK/pair, UV ceramic protection and a 5-year warranty.",
+    "ctaBody": "We come to you. Fixed price 899 SEK/pair, UV ceramic protection and a 12-month warranty.",
     "ctaBook": "Book a time",
     "ctaCall": "Call now",
     "relatedTitle": "Read next",

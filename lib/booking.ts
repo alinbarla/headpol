@@ -3,7 +3,7 @@ export const CONTACT_PHONE = "+46763441168";
 export const CONTACT_PHONE_DISPLAY = "076-344 11 68";
 
 /** Pair price shown on the flyer and in booking emails. */
-export const BOOKING_PRICE = "799kr/par";
+export const BOOKING_PRICE = "899kr/par";
 export const BOOKING_OLD_PRICE = "1499kr/par";
 
 /**
@@ -91,7 +91,7 @@ export function formatBookingDate(date: Date, locale: string): string {
   }).format(date);
 }
 
-/** Formats an öre amount as Swedish currency, e.g. 79900 -> "799 kr". */
+/** Formats an öre amount as Swedish currency, e.g. 89900 -> "899 kr". */
 export function formatOre(ore: number): string {
   return new Intl.NumberFormat("sv-SE", {
     style: "currency",

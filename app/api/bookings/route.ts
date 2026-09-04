@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import {
+  applyDailyBookingCaps,
   buildAvailabilityMap,
+  isDateAtBookingCap,
   isSlotOpen,
   type AvailabilityMap,
   type BookingRules,
@@ -81,9 +83,14 @@ export async function GET(request: Request) {
 
     // An abandoned Stripe Checkout leaves a pending row behind. Treat the slot
     // as free as soon as the hold lapses rather than waiting for cron.
-    const slots = rows
+    const booked = rows
       .filter((row) => !isLapsed(row))
       .map((row) => slotKey(row.booking_date, fromDbTime(row.booking_time)));
+
+    // Weekday/weekend daily caps: once the max jobs for that day are held,
+    // remaining open hours are returned as unavailable so the picker strikes
+    // them out without removing them from the schedule.
+    const slots = applyDailyBookingCaps(availability, booked, rules);
 
     // Vercel Hobby cannot run the 5-minute release cron, so tidy up here
     // instead. Only fires when a lapsed hold was actually observed, and never
@@ -171,6 +178,14 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "WITHDRAWAL_CONSENT_REQUIRED" },
         { status: 400 }
+      );
+    }
+
+    const dayCap = await dayBookingCount(date);
+    if (isDateAtBookingCap(date, dayCap, rules)) {
+      return NextResponse.json(
+        { error: "This time slot is already booked" },
+        { status: 409 }
       );
     }
 
@@ -296,6 +311,25 @@ async function insertBooking(input: {
   }
 
   return { data: data as InsertedBooking };
+}
+
+async function dayBookingCount(dateKey: string): Promise<number> {
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await withSupabaseTimeout(
+    supabase
+      .from("bookings")
+      .select("hold_expires_at")
+      .eq("booking_date", dateKey)
+      .in("status", ["pending", "confirmed"])
+  );
+
+  if (error || !data) return 0;
+
+  const now = Date.now();
+  return data.filter((row) => {
+    const hold = (row as { hold_expires_at: string | null }).hold_expires_at;
+    return !(hold && new Date(hold).getTime() <= now);
+  }).length;
 }
 
 async function expireLapsedHold(
