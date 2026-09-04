@@ -263,7 +263,7 @@
     "loadError": "Could not load bookings right now.",
     "paymentTitle": "Payment",
     "payNow": "Pay when booking · {price}",
-    "payNowHint": "Card, Apple Pay or Google Pay via Stripe. Your slot is held for 20 minutes while you pay.",
+    "payNowHint": "Card, Apple Pay or Google Pay. Your slot is held for 20 minutes while you pay.",
     "continueToPayment": "Continue to payment",
     "withdrawalConsent": "I understand that I can get a refund only if I cancel at least 24 hours before the booked time."
   },
