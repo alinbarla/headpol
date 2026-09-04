@@ -272,7 +272,7 @@
     "noDate": "Välj ett datum först",
     "noTime": "Välj en tid",
     "missingDetails": "Fyll i namn, e-post, telefon, adress och postnummer",
-    "availabilityNote": "Öppet lör–sön 08:00–20:00 · mån–fre 16:00–20:00. Max 2 bokningar mån–fre och 4 lör–sön; övriga tider stryks när taket är nått.",
+    "availabilityNote": "Öppet lör–sön 08:00–20:00 · mån–fre 16:00–20:00. Upptagna tider är utgråade.",
     "slotBooked": "{time} är redan bokad",
     "slotTaken": "Den här tiden hann bokas av någon annan. Välj en annan tid.",
     "loadingSlots": "Hämtar tillgängliga tider…",

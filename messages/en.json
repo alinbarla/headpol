@@ -252,7 +252,7 @@
     "noDate": "Select a date first",
     "noTime": "Select a time",
     "missingDetails": "Fill in your name, email, phone, address and postal code",
-    "availabilityNote": "Open Sat–Sun 08:00–20:00 · Mon–Fri 16:00–20:00. Max 2 bookings Mon–Fri and 4 Sat–Sun; remaining slots are struck out when the day is full.",
+    "availabilityNote": "Open Sat–Sun 08:00–20:00 · Mon–Fri 16:00–20:00. Booked slots are greyed out.",
     "slotBooked": "{time} is already booked",
     "slotTaken": "That slot was just taken. Please choose another time.",
     "loadingSlots": "Loading available slots…",
