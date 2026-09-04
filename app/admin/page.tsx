@@ -5,7 +5,7 @@ import { getDashboardData } from "@/lib/admin/data";
 import { ADMIN_LOCALE } from "@/lib/admin/labels";
 import { formatOre } from "@/lib/booking";
 import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
-import { isStripeConfigured } from "@/lib/stripe";
+import { getStripeWebhookStatus, isStripeConfigured } from "@/lib/stripe";
 import { formatDateKey } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BookingCard } from "@/components/admin/BookingCard";
@@ -17,6 +17,9 @@ export const dynamic = "force-dynamic";
 export default async function AdminTodayPage() {
   await requireAdmin();
   let data = await getDashboardData();
+  const webhookStatus = isStripeConfigured()
+    ? await getStripeWebhookStatus()
+    : null;
 
   if (isStripeConfigured()) {
     const unpaidIds = [
@@ -53,6 +56,19 @@ export default async function AdminTodayPage() {
           </Link>
         </Button>
       </div>
+
+      {webhookStatus && !webhookStatus.healthy && (
+        <div className="mt-4 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+          <p className="font-medium">Stripe webhook needs repair</p>
+          <p className="mt-1 text-amber-100/80">{webhookStatus.message}</p>
+          <Link
+            href="/admin/settings"
+            className="mt-2 inline-block text-amber-50 underline underline-offset-2"
+          >
+            Open Settings to repair
+          </Link>
+        </div>
+      )}
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <Stat label="Jobs today" value={String(data.todayBookings.length)} />

@@ -15,6 +15,19 @@ const METADATA_PATHS = /^\/(icon|apple-icon|opengraph-image|twitter-image)(\/|$)
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Stripe was historically pointed at the site root. Any signed webhook POST
+  // is rewritten to the real handler so delivery works even when the Dashboard
+  // URL is wrong (as long as the endpoint is still enabled).
+  if (
+    request.method === "POST" &&
+    request.headers.has("stripe-signature") &&
+    pathname !== "/api/stripe/webhook"
+  ) {
+    const target = request.nextUrl.clone();
+    target.pathname = "/api/stripe/webhook";
+    return NextResponse.rewrite(target);
+  }
+
   if (isAdminHost(request.headers.get("host"))) {
     return handleAdminHost(request, pathname);
   }

@@ -344,3 +344,209 @@ export async function sendStripeReceiptEmail(
     return false;
   }
 }
+
+/** Events the booking webhook must receive. */
+export const STRIPE_WEBHOOK_EVENTS: Stripe.WebhookEndpointCreateParams.EnabledEvent[] =
+  [
+    "checkout.session.completed",
+    "checkout.session.async_payment_succeeded",
+    "checkout.session.async_payment_failed",
+    "checkout.session.expired",
+    "charge.refunded",
+    "refund.updated",
+    "refund.failed",
+  ];
+
+export function getStripeWebhookUrl(): string {
+  return `${getSiteUrl()}/api/stripe/webhook`;
+}
+
+export type StripeWebhookStatus = {
+  configured: boolean;
+  expectedUrl: string;
+  endpoints: Array<{
+    id: string;
+    url: string;
+    status: string;
+    enabledEvents: string[];
+  }>;
+  healthy: boolean;
+  message: string;
+};
+
+/**
+ * Lists live-mode webhook endpoints and reports whether the correct URL is
+ * enabled for the events we handle.
+ */
+export async function getStripeWebhookStatus(): Promise<StripeWebhookStatus> {
+  const expectedUrl = getStripeWebhookUrl();
+
+  if (!isStripeConfigured()) {
+    return {
+      configured: false,
+      expectedUrl,
+      endpoints: [],
+      healthy: false,
+      message: "STRIPE_SECRET_KEY is not set",
+    };
+  }
+
+  try {
+    const listed = await getStripe().webhookEndpoints.list({ limit: 100 });
+    const endpoints = listed.data.map((endpoint) => ({
+      id: endpoint.id,
+      url: endpoint.url,
+      status: endpoint.status,
+      enabledEvents: endpoint.enabled_events ?? [],
+    }));
+
+    const match = endpoints.find(
+      (endpoint) =>
+        normalizeWebhookUrl(endpoint.url) === normalizeWebhookUrl(expectedUrl)
+    );
+
+    if (!match) {
+      const rootMismatch = endpoints.find((endpoint) =>
+        isSiteRootWebhook(endpoint.url, expectedUrl)
+      );
+      return {
+        configured: true,
+        expectedUrl,
+        endpoints,
+        healthy: false,
+        message: rootMismatch
+          ? `Endpoint points at the site root (${rootMismatch.url}) instead of ${expectedUrl}`
+          : `No webhook endpoint for ${expectedUrl}`,
+      };
+    }
+
+    if (match.status !== "enabled") {
+      return {
+        configured: true,
+        expectedUrl,
+        endpoints,
+        healthy: false,
+        message: `Endpoint ${match.id} is ${match.status}`,
+      };
+    }
+
+    return {
+      configured: true,
+      expectedUrl,
+      endpoints,
+      healthy: true,
+      message: `Receiving events at ${expectedUrl}`,
+    };
+  } catch (error) {
+    return {
+      configured: true,
+      expectedUrl,
+      endpoints: [],
+      healthy: false,
+      message:
+        error instanceof Error ? error.message : "Could not list endpoints",
+    };
+  }
+}
+
+export type RepairWebhookResult = {
+  ok: boolean;
+  message: string;
+  /** Present only when a brand-new endpoint was created — paste into Vercel. */
+  signingSecret?: string;
+  endpointId?: string;
+  endpointUrl?: string;
+};
+
+/**
+ * Points Stripe at `/api/stripe/webhook`, re-enables a disabled endpoint, and
+ * creates one when nothing usable exists. Prefer updating the misconfigured
+ * root URL so the existing `STRIPE_WEBHOOK_SECRET` keeps working.
+ */
+export async function repairStripeWebhookEndpoint(): Promise<RepairWebhookResult> {
+  if (!isStripeConfigured()) {
+    return { ok: false, message: "STRIPE_SECRET_KEY is not set" };
+  }
+
+  const expectedUrl = getStripeWebhookUrl();
+  const stripe = getStripe();
+
+  try {
+    const listed = await stripe.webhookEndpoints.list({ limit: 100 });
+    const endpoints = listed.data;
+
+    const exact = endpoints.find(
+      (endpoint) =>
+        normalizeWebhookUrl(endpoint.url) === normalizeWebhookUrl(expectedUrl)
+    );
+    if (exact) {
+      const updated = await stripe.webhookEndpoints.update(exact.id, {
+        disabled: false,
+        enabled_events: STRIPE_WEBHOOK_EVENTS,
+        url: expectedUrl,
+      });
+      return {
+        ok: true,
+        message: `Re-enabled webhook ${updated.id}`,
+        endpointId: updated.id,
+        endpointUrl: updated.url,
+      };
+    }
+
+    const root = endpoints.find((endpoint) =>
+      isSiteRootWebhook(endpoint.url, expectedUrl)
+    );
+    if (root) {
+      const updated = await stripe.webhookEndpoints.update(root.id, {
+        disabled: false,
+        enabled_events: STRIPE_WEBHOOK_EVENTS,
+        url: expectedUrl,
+      });
+      return {
+        ok: true,
+        message: `Moved webhook from site root to ${expectedUrl}`,
+        endpointId: updated.id,
+        endpointUrl: updated.url,
+      };
+    }
+
+    const created = await stripe.webhookEndpoints.create({
+      url: expectedUrl,
+      enabled_events: STRIPE_WEBHOOK_EVENTS,
+      description: "Strålkastarpolering booking payments",
+      api_version: "2026-07-29.dahlia",
+    });
+
+    return {
+      ok: true,
+      message:
+        "Created a new webhook endpoint. Copy the signing secret into STRIPE_WEBHOOK_SECRET on Vercel, then redeploy.",
+      signingSecret: created.secret ?? undefined,
+      endpointId: created.id,
+      endpointUrl: created.url,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message:
+        error instanceof Error ? error.message : "Could not repair webhook",
+    };
+  }
+}
+
+function normalizeWebhookUrl(url: string): string {
+  return url.replace(/\/$/, "").toLowerCase();
+}
+
+function isSiteRootWebhook(url: string, expectedWebhookUrl: string): boolean {
+  try {
+    const actual = new URL(url);
+    const expected = new URL(expectedWebhookUrl);
+    return (
+      actual.origin === expected.origin &&
+      (actual.pathname === "/" || actual.pathname === "")
+    );
+  } catch {
+    return false;
+  }
+}

@@ -2,10 +2,11 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { listRecentAudit } from "@/lib/admin/data";
 import { getBookingRules } from "@/lib/bookingRules";
 import { isDataForSeoConfigured } from "@/lib/seo/providers/dataforseo";
-import { isStripeConfigured } from "@/lib/stripe";
+import { getStripeWebhookStatus, isStripeConfigured } from "@/lib/stripe";
 import { formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { RulesForm } from "@/components/admin/RulesForm";
+import { StripeWebhookCard } from "@/components/admin/StripeWebhookCard";
 import {
   Card,
   CardContent,
@@ -18,9 +19,10 @@ export const dynamic = "force-dynamic";
 export default async function SettingsPage() {
   await requireAdmin();
 
-  const [rules, audit] = await Promise.all([
+  const [rules, audit, webhookStatus] = await Promise.all([
     getBookingRules(),
     listRecentAudit(40),
+    getStripeWebhookStatus(),
   ]);
 
   return (
@@ -35,6 +37,8 @@ export default async function SettingsPage() {
         <div className="space-y-6">
           <RulesForm rules={rules} />
 
+          <StripeWebhookCard status={webhookStatus} />
+
           <Card>
             <CardHeader>
               <CardTitle className="text-sm">Integrations</CardTitle>
@@ -45,6 +49,12 @@ export default async function SettingsPage() {
                 ok={isStripeConfigured()}
                 okLabel="Enabled"
                 offLabel="STRIPE_SECRET_KEY missing or not an sk_/rk_ token"
+              />
+              <StatusRow
+                label="Stripe webhook"
+                ok={webhookStatus.healthy}
+                okLabel="Healthy"
+                offLabel={webhookStatus.message}
               />
               <StatusRow
                 label="Email"

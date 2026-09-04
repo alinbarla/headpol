@@ -15,6 +15,7 @@ import {
   SlidersHorizontalIcon,
 } from "lucide-react";
 import { logoutAction } from "@/app/admin/actions";
+import { NotificationBell } from "@/components/admin/NotificationBell";
 import { Button } from "@/components/shadcn/button";
 import { cn } from "@/lib/utils";
 
@@ -66,12 +67,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
             ))}
           </nav>
 
-          <form action={logoutAction}>
-            <Button type="submit" variant="ghost" size="sm">
-              <LogOutIcon className="size-4" />
-              <span className="hidden sm:inline">Log out</span>
-            </Button>
-          </form>
+          <div className="flex items-center gap-1">
+            <NotificationBell />
+            <form action={logoutAction}>
+              <Button type="submit" variant="ghost" size="sm">
+                <LogOutIcon className="size-4" />
+                <span className="hidden sm:inline">Log out</span>
+              </Button>
+            </form>
+          </div>
         </div>
       </header>
 

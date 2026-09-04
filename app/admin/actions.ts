@@ -25,8 +25,15 @@ import {
   fetchStripeReceipt,
   isStripeConfigured,
   mapRefundStatus,
+  repairStripeWebhookEndpoint,
   sendStripeReceiptEmail,
 } from "@/lib/stripe";
+import {
+  countUnreadAdminNotifications,
+  listAdminNotifications,
+  markAllAdminNotificationsRead,
+  markAdminNotificationRead,
+} from "@/lib/admin/notifications";
 import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
 import {
@@ -36,7 +43,12 @@ import {
   stockholmTime,
 } from "@/lib/time";
 
-export type ActionState = { ok: boolean; message?: string };
+export type ActionState = {
+  ok: boolean;
+  message?: string;
+  /** One-time Stripe webhook signing secret after creating a new endpoint. */
+  signingSecret?: string;
+};
 
 function fail(message: string): ActionState {
   return { ok: false, message };
@@ -52,6 +64,7 @@ function refreshAdmin(bookingId?: string) {
   revalidatePath("/admin/bookings");
   revalidatePath("/admin/payments");
   revalidatePath("/admin/availability");
+  revalidatePath("/admin/settings");
   if (bookingId) revalidatePath(`/admin/bookings/${bookingId}`);
 }
 
@@ -1118,6 +1131,56 @@ export async function updateRulesAction(
   revalidatePath("/admin/settings");
   refreshAdmin();
   return { ok: true, message: "Settings saved" };
+}
+
+export async function repairStripeWebhookAction(
+  _prev: ActionState,
+  _formData: FormData
+): Promise<ActionState> {
+  await requireAdmin();
+
+  const result = await repairStripeWebhookEndpoint();
+
+  await logAdminAction("settings.stripe_webhook", {
+    entityType: "settings",
+    entityId: "stripe_webhook",
+    details: {
+      ok: result.ok,
+      message: result.message,
+      endpointId: result.endpointId ?? null,
+      endpointUrl: result.endpointUrl ?? null,
+      createdSecret: Boolean(result.signingSecret),
+    },
+  });
+
+  revalidatePath("/admin/settings");
+  return {
+    ok: result.ok,
+    message: result.message,
+    signingSecret: result.signingSecret,
+  };
+}
+
+export async function listNotificationsAction() {
+  await requireAdmin();
+  return listAdminNotifications(30);
+}
+
+export async function unreadNotificationCountAction() {
+  await requireAdmin();
+  return countUnreadAdminNotifications();
+}
+
+export async function markNotificationReadAction(id: string) {
+  await requireAdmin();
+  await markAdminNotificationRead(id);
+  return { ok: true as const };
+}
+
+export async function markAllNotificationsReadAction() {
+  await requireAdmin();
+  await markAllAdminNotificationsRead();
+  return { ok: true as const };
 }
 
 // -- Shared helpers ---------------------------------------------------------

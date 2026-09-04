@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
-import { fromDbTime } from "@/lib/booking";
+import { createAdminNotification } from "@/lib/admin/notifications";
+import { fromDbTime, formatOre } from "@/lib/booking";
 import { notifyRefund } from "@/lib/bookingNotify";
 import { getStripe, mapRefundStatus } from "@/lib/stripe";
 import { settlePaidCheckout } from "@/lib/settleStripePayment";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
+import { formatDateKey } from "@/lib/time";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -68,24 +70,37 @@ export async function POST(request: Request) {
     switch (event.type) {
       case "checkout.session.completed":
       case "checkout.session.async_payment_succeeded":
-        await handleCheckoutCompleted(event.data.object);
+        await handleCheckoutCompleted(event.data.object, event.id);
         break;
       case "checkout.session.async_payment_failed":
-        await handleAsyncPaymentFailed(event.data.object);
+        await handleAsyncPaymentFailed(event.data.object, event.id);
         break;
       case "checkout.session.expired":
-        await handleCheckoutExpired(event.data.object);
+        await handleCheckoutExpired(event.data.object, event.id);
         break;
       case "charge.refunded":
         await handleChargeRefunded(event.data.object);
         break;
       case "refund.updated":
       case "refund.failed":
-        await handleRefundUpdated(event.data.object as Stripe.Refund);
+        await handleRefundUpdated(
+          event.data.object as Stripe.Refund,
+          event.id,
+          event.type
+        );
         break;
     }
   } catch (error) {
     console.error(`[stripe] handler failed for ${event.type}`, error);
+    await createAdminNotification({
+      kind: "webhook_error",
+      title: `Stripe webhook failed: ${event.type}`,
+      body:
+        error instanceof Error
+          ? error.message
+          : "Handler threw while processing the event",
+      stripeEventId: event.id,
+    });
     // Release the idempotency claim so the retry can do the work.
     await supabase.from("stripe_events").delete().eq("id", event.id);
     return NextResponse.json({ error: "Handler failed" }, { status: 500 });
@@ -94,15 +109,39 @@ export async function POST(request: Request) {
   return NextResponse.json({ received: true });
 }
 
-async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  await settlePaidCheckout(session);
+async function handleCheckoutCompleted(
+  session: Stripe.Checkout.Session,
+  eventId: string
+) {
+  const result = await settlePaidCheckout(session);
+  if (result !== "settled") return;
+
+  const bookingId = session.metadata?.booking_id ?? session.client_reference_id;
+  const amount =
+    typeof session.amount_total === "number"
+      ? formatOre(session.amount_total)
+      : null;
+  const when = session.metadata?.booking_date
+    ? `${formatDateKey(session.metadata.booking_date, "sv")} ${session.metadata.booking_time ?? ""}`.trim()
+    : null;
+
+  await createAdminNotification({
+    kind: "payment_received",
+    title: amount ? `Payment received · ${amount}` : "Payment received",
+    body: when ? `Booking ${when}` : null,
+    bookingId: bookingId ?? null,
+    stripeEventId: eventId,
+  });
 }
 
 /**
  * A delayed payment method reported failure after Checkout closed. The session
  * is spent, so nothing more can arrive against it and the slot has to go back.
  */
-async function handleAsyncPaymentFailed(session: Stripe.Checkout.Session) {
+async function handleAsyncPaymentFailed(
+  session: Stripe.Checkout.Session,
+  eventId: string
+) {
   const bookingId = session.metadata?.booking_id ?? session.client_reference_id;
   if (!bookingId) return;
 
@@ -119,9 +158,20 @@ async function handleAsyncPaymentFailed(session: Stripe.Checkout.Session) {
     .eq("id", bookingId)
     .eq("status", "pending")
     .eq("payment_status", "awaiting_payment");
+
+  await createAdminNotification({
+    kind: "payment_failed",
+    title: "Payment failed",
+    body: "A delayed payment (e.g. Swish) failed after checkout.",
+    bookingId,
+    stripeEventId: eventId,
+  });
 }
 
-async function handleCheckoutExpired(session: Stripe.Checkout.Session) {
+async function handleCheckoutExpired(
+  session: Stripe.Checkout.Session,
+  eventId: string
+) {
   const bookingId = session.metadata?.booking_id ?? session.client_reference_id;
   if (!bookingId) return;
 
@@ -134,12 +184,23 @@ async function handleCheckoutExpired(session: Stripe.Checkout.Session) {
 
   // Only release a booking that is still waiting on this payment; the owner
   // may have confirmed it manually in the meantime.
-  await supabase
+  const { data } = await supabase
     .from("bookings")
     .update({ status: "expired", hold_expires_at: null })
     .eq("id", bookingId)
     .eq("status", "pending")
-    .eq("payment_status", "awaiting_payment");
+    .eq("payment_status", "awaiting_payment")
+    .select("id");
+
+  if ((data ?? []).length > 0) {
+    await createAdminNotification({
+      kind: "checkout_expired",
+      title: "Checkout expired",
+      body: "The customer did not finish paying; the slot was released.",
+      bookingId,
+      stripeEventId: eventId,
+    });
+  }
 }
 
 async function handleChargeRefunded(charge: Stripe.Charge) {
@@ -170,7 +231,11 @@ async function handleChargeRefunded(charge: Stripe.Charge) {
     .eq("id", payment.booking_id);
 }
 
-async function handleRefundUpdated(refund: Stripe.Refund) {
+async function handleRefundUpdated(
+  refund: Stripe.Refund,
+  eventId: string,
+  eventType: string
+) {
   const supabase = getSupabaseAdminClient();
   const status = mapRefundStatus(refund.status);
 
@@ -181,10 +246,31 @@ async function handleRefundUpdated(refund: Stripe.Refund) {
     .select("booking_id, amount_ore")
     .maybeSingle();
 
-  if (!row || status !== "succeeded") return;
+  if (!row) return;
+
+  if (status === "failed" || eventType === "refund.failed") {
+    await createAdminNotification({
+      kind: "refund_failed",
+      title: `Refund failed · ${formatOre(row.amount_ore)}`,
+      body: "Check Stripe for the decline reason, then retry from the booking.",
+      bookingId: row.booking_id,
+      stripeEventId: eventId,
+    });
+    return;
+  }
+
+  if (status !== "succeeded") return;
 
   const booking = await loadBooking(row.booking_id);
   if (!booking) return;
+
+  await createAdminNotification({
+    kind: "refund_succeeded",
+    title: `Refund completed · ${formatOre(row.amount_ore)}`,
+    body: `${booking.customer_name ?? "Customer"} · ${formatDateKey(booking.booking_date, "sv")} ${fromDbTime(booking.booking_time)}`,
+    bookingId: row.booking_id,
+    stripeEventId: eventId,
+  });
 
   await notifyRefund({
     date: booking.booking_date,
