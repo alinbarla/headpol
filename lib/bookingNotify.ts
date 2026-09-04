@@ -137,12 +137,17 @@ export async function notifyBookingRescheduled(
 }
 
 export async function notifyBookingCancelled(
-  notice: CustomerNotice & { reason?: string }
+  notice: CustomerNotice & { reason?: string; refundAmountOre?: number }
 ): Promise<void> {
   const locale = localeOf(notice);
   const reason = notice.reason?.trim()
     ? `<p>${escapeHtml(notice.reason.trim())}</p>`
     : "";
+
+  const refunded =
+    typeof notice.refundAmountOre === "number" && notice.refundAmountOre > 0
+      ? escapeHtml(formatOre(notice.refundAmountOre))
+      : null;
 
   const copy =
     locale === "en"
@@ -152,6 +157,11 @@ export async function notifyBookingCancelled(
         <p>Hi ${escapeHtml(notice.name)},</p>
         <p>Your booking on <strong>${whenLine(notice)}</strong> has been cancelled.</p>
         ${reason}
+        ${
+          refunded
+            ? `<p>We have refunded <strong>${refunded}</strong>. The money will arrive in your bank account within a few business days (Swish refunds are usually faster).</p>`
+            : ""
+        }
         <p>To book a new time, visit our site or call ${escapeHtml(CONTACT_PHONE_DISPLAY)}.</p>
         ${signature()}
       `,
@@ -162,6 +172,11 @@ export async function notifyBookingCancelled(
         <p>Hej ${escapeHtml(notice.name)},</p>
         <p>Din bokning <strong>${whenLine(notice)}</strong> är avbokad.</p>
         ${reason}
+        ${
+          refunded
+            ? `<p>Vi har återbetalat <strong>${refunded}</strong>. Pengarna kommer in på ditt konto inom några bankdagar (Swish-återbetalningar går oftast snabbare).</p>`
+            : ""
+        }
         <p>Vill du boka en ny tid, gå in på vår webbplats eller ring ${escapeHtml(CONTACT_PHONE_DISPLAY)}.</p>
         ${signature()}
       `,

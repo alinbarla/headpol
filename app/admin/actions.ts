@@ -337,12 +337,14 @@ export async function cancelBookingAction(
   });
 
   let refundNote = "";
+  let refundSucceeded = false;
   if (parsed.data.refund && booking.payment_status === "paid") {
     const result = await refundBooking({
       bookingId: parsed.data.id,
       amountOre: booking.price_ore,
       reason: parsed.data.reason ?? "Cancelled",
     });
+    refundSucceeded = result.ok;
     refundNote = result.ok
       ? " and a refund has been started"
       : ` (refund failed: ${result.message})`;
@@ -356,6 +358,7 @@ export async function cancelBookingAction(
       email: booking.customer_email,
       locale: booking.locale ?? "sv",
       reason: parsed.data.reason,
+      refundAmountOre: refundSucceeded ? booking.price_ore : undefined,
     });
   }
 
