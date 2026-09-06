@@ -35,8 +35,8 @@ export function HeatmapSettingsCard({ settings }: { settings: AnalyticsSettings 
         <ActionToast state={state} />
         <ActionToast state={purgeState} />
         <p className="text-sm text-muted-foreground">
-          First-party clicks, cursor movement and scroll on the public site.
-          Form values are never stored.
+          First-party clicks, cursor movement, scroll and form text on the
+          public site. Password and payment fields are not stored.
         </p>
         <form action={formAction} className="space-y-4">
           <input type="hidden" name="enabled" value={enabled ? "true" : "false"} />

@@ -20,6 +20,7 @@ export type SessionEnvelope = {
   viewportH: number;
   documentH: number;
   device: HeatmapDevice;
+  ip: string | null;
 };
 
 type EventInsert = {
@@ -34,6 +35,8 @@ type EventInsert = {
   page: string;
   ts: string;
   dwell_ms: number | null;
+  field: string | null;
+  value: string | null;
 };
 
 function toInsert(
@@ -56,6 +59,26 @@ function toInsert(
       page: envelope.page,
       ts,
       dwell_ms: null,
+      field: null,
+      value: null,
+    };
+  }
+
+  if (event.type === "input") {
+    return {
+      session_id: envelope.sessionId,
+      type: "input",
+      x: null,
+      y: null,
+      scroll_y: 0,
+      viewport_w: envelope.viewportW,
+      viewport_h: envelope.viewportH,
+      document_h: envelope.documentH,
+      page: envelope.page,
+      ts,
+      dwell_ms: null,
+      field: event.field,
+      value: event.value,
     };
   }
 
@@ -71,6 +94,8 @@ function toInsert(
     page: envelope.page,
     ts,
     dwell_ms: event.type === "attention" ? Math.round(event.dwellMs) : null,
+    field: null,
+    value: null,
   };
 }
 
@@ -121,6 +146,7 @@ export async function startOrTouchSession(
         viewport_h: envelope.viewportH,
         document_h: envelope.documentH,
         device: envelope.device,
+        ip: envelope.ip,
         started_at: now,
         ended_at: now,
         event_count: 0,
@@ -282,7 +308,7 @@ export async function listRecentSessions(options: {
   let query = supabase
     .from("analytics_sessions")
     .select(
-      "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, started_at, ended_at, event_count, max_scroll_pct"
+      "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, ip, started_at, ended_at, event_count, max_scroll_pct"
     )
     .eq("page", options.page)
     .gte("started_at", options.fromIso)
@@ -306,7 +332,7 @@ export async function getSessionById(
     supabase
       .from("analytics_sessions")
       .select(
-        "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, started_at, ended_at, event_count, max_scroll_pct"
+        "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, ip, started_at, ended_at, event_count, max_scroll_pct"
       )
       .eq("id", id)
       .maybeSingle()
@@ -324,7 +350,7 @@ export async function listSessionEvents(
     supabase
       .from("analytics_events")
       .select(
-        "id, session_id, type, x, y, scroll_y, viewport_w, viewport_h, document_h, page, ts, dwell_ms"
+        "id, session_id, type, x, y, scroll_y, viewport_w, viewport_h, document_h, page, ts, dwell_ms, field, value"
       )
       .eq("session_id", sessionId)
       .order("ts", { ascending: true })

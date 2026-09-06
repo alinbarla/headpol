@@ -2,6 +2,8 @@ import { z } from "zod";
 import {
   MAX_BATCH_BYTES,
   MAX_EVENTS_PER_BATCH,
+  MAX_INPUT_FIELD_LENGTH,
+  MAX_INPUT_VALUE_LENGTH,
 } from "@/lib/analytics/constants";
 import { sanitizePagePath, sanitizeReferrerPath } from "@/lib/analytics/page";
 import type { HeatmapDevice, UserEvent } from "@/lib/analytics/types";
@@ -32,11 +34,19 @@ const attentionEvent = z.object({
   timestamp: finiteInt,
 });
 
+const inputEvent = z.object({
+  type: z.literal("input"),
+  field: z.string().min(1).max(MAX_INPUT_FIELD_LENGTH),
+  value: z.string().max(MAX_INPUT_VALUE_LENGTH),
+  timestamp: finiteInt,
+});
+
 const eventSchema = z.discriminatedUnion("type", [
   pointEvent("click"),
   pointEvent("move"),
   scrollEvent,
   attentionEvent,
+  inputEvent,
 ]);
 
 const envelopeSchema = z.object({
@@ -84,6 +94,16 @@ export function parseIngestBody(raw: unknown, byteLength: number): ParsedIngest 
       events.push({
         type: "scroll",
         scrollY: event.scrollY,
+        timestamp: event.timestamp,
+      });
+      continue;
+    }
+    if (event.type === "input") {
+      if (!/^[\w.:#-]+$/.test(event.field)) continue;
+      events.push({
+        type: "input",
+        field: event.field,
+        value: event.value,
         timestamp: event.timestamp,
       });
       continue;

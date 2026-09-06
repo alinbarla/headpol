@@ -1,6 +1,7 @@
 import {
   INGEST_RATE_LIMIT,
   INGEST_RATE_WINDOW_MS,
+  MAX_IP_LENGTH,
 } from "@/lib/analytics/constants";
 
 type Bucket = {
@@ -39,11 +40,19 @@ export function ingestAllowed(ip: string | null): boolean {
   return true;
 }
 
+function sanitizeIp(value: string | null): string | null {
+  if (!value) return null;
+  const ip = value.trim();
+  if (!ip || ip.length > MAX_IP_LENGTH) return null;
+  if (!/^[0-9a-fA-F.:]+$/.test(ip)) return null;
+  return ip;
+}
+
 export function clientIpFromRequest(request: Request): string | null {
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
-    const first = forwarded.split(",")[0]?.trim();
+    const first = sanitizeIp(forwarded.split(",")[0] ?? null);
     if (first) return first;
   }
-  return request.headers.get("x-real-ip");
+  return sanitizeIp(request.headers.get("x-real-ip"));
 }

@@ -1,8 +1,8 @@
-export type HeatmapEventType = "click" | "move" | "scroll" | "attention";
+export type HeatmapEventType = "click" | "move" | "scroll" | "attention" | "input";
 
 export type HeatmapDevice = "mobile" | "tablet" | "desktop";
 
-export type HeatmapMode = HeatmapEventType;
+export type HeatmapMode = Exclude<HeatmapEventType, "input">;
 
 export type HeatmapRange = "24h" | "7d" | "30d";
 
@@ -33,6 +33,12 @@ export type UserEvent =
       scrollY: number;
       dwellMs: number;
       timestamp: number;
+    }
+  | {
+      type: "input";
+      field: string;
+      value: string;
+      timestamp: number;
     };
 
 export type AnalyticsSettings = {
@@ -55,6 +61,7 @@ export type AnalyticsSession = {
   viewport_h: number;
   document_h: number;
   device: HeatmapDevice;
+  ip: string | null;
   started_at: string;
   ended_at: string;
   event_count: number;
@@ -74,6 +81,8 @@ export type AnalyticsEventRow = {
   page: string;
   ts: string;
   dwell_ms: number | null;
+  field: string | null;
+  value: string | null;
 };
 
 export type GridCell = {

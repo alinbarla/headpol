@@ -35,11 +35,26 @@ export function ReplayPlayer({
   const duration = Math.max(1, end - start);
   const current = events[index];
   const src = `${siteUrl}${session.page === "/" ? "/" : session.page}?${HEATMAP_PREVIEW_PARAM}=1`;
+  const typedValues = useMemo(() => {
+    const values: Record<string, string> = {};
+    for (const event of events.slice(0, index + 1)) {
+      if (event.type === "input" && event.field) {
+        values[event.field] = event.value ?? "";
+      }
+    }
+    return values;
+  }, [events, index]);
 
   function postScroll(scrollY: number) {
     const frame = frameRef.current?.contentWindow;
     if (!frame) return;
     frame.postMessage({ type: "heatmap-scroll", scrollY }, siteUrl);
+  }
+
+  function postInputs(values: Record<string, string>) {
+    const frame = frameRef.current?.contentWindow;
+    if (!frame) return;
+    frame.postMessage({ type: "heatmap-inputs", values }, siteUrl);
   }
 
   useEffect(() => {
@@ -59,7 +74,19 @@ export function ReplayPlayer({
       });
     }
     postScroll(current.scroll_y);
-  }, [current, session.viewport_w, siteUrl]);
+    postInputs(typedValues);
+  }, [current, session.viewport_w, siteUrl, typedValues]);
+
+  useEffect(() => {
+    function onMessage(event: MessageEvent) {
+      const data = event.data as { type?: string } | null;
+      if (!data || data.type !== "heatmap-ready") return;
+      if (current) postScroll(current.scroll_y);
+      postInputs(typedValues);
+    }
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [current, typedValues, siteUrl]);
 
   useEffect(() => {
     if (!playing || events.length === 0) return;
@@ -101,6 +128,8 @@ export function ReplayPlayer({
       cancelAnimationFrame(frame);
     };
   }, [playing, speed, events.length, duration, start, times]);
+
+  const typedEntries = Object.entries(typedValues);
 
   return (
     <div className="space-y-3">
@@ -175,6 +204,24 @@ export function ReplayPlayer({
         <span className="text-xs text-muted-foreground">
           {events.length === 0 ? "0/0" : `${index + 1}/${events.length}`}
         </span>
+      </div>
+
+      <div className="rounded-lg border border-border p-3">
+        <p className="text-sm font-medium">Typed in form</p>
+        {typedEntries.length === 0 ? (
+          <p className="mt-1 text-sm text-muted-foreground">
+            Nothing typed yet at this point in the session.
+          </p>
+        ) : (
+          <dl className="mt-2 space-y-1.5 text-sm">
+            {typedEntries.map(([field, value]) => (
+              <div key={field} className="grid gap-0.5 sm:grid-cols-[10rem_1fr]">
+                <dt className="font-mono text-xs text-muted-foreground">{field}</dt>
+                <dd className="break-words">{value || "—"}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
       </div>
     </div>
   );

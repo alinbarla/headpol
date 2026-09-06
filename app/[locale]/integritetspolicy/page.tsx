@@ -156,9 +156,10 @@ function PrivacySv() {
         bokning blir betald. Det kan sätta förstaparts-kakor (till exempel
         GCLID) i din webbläsare. Vi kör inte Google Analytics för sidstatistik.
         När heatmap-insamling är på i admin samlar vi förstaparts-händelser om
-        klick, musrörelse och rullning (sidans sökväg och koordinater, inte
-        formulärvärden). Det sparas i sessionStorage, inte som en kaka. Bara
-        admin kan se underlaget. Ditt språkval kan sparas lokalt i
+        klick, musrörelse, rullning och text som skrivs i formulär (plus
+        ungefärlig IP-adress). Lösenord och betalningsfält sparas inte. Det
+        sparas i sessionStorage, inte som en kaka. Bara admin kan se
+        underlaget. Ditt språkval kan sparas lokalt i
         webbläsaren. Betalsidan hos Stripe sätter egna kakor som krävs för att
         betalningen ska fungera säkert.
       </p>
@@ -272,9 +273,9 @@ function PrivacyEn() {
         paid. That may set first-party cookies (for example GCLID) in your
         browser. We do not run Google Analytics for page statistics. When
         heatmap collection is enabled in admin we record first-party click,
-        cursor and scroll events (page path and coordinates, never form
-        values). That lives in sessionStorage, not a cookie, and only admin
-        can see it. Your language preference may be stored locally in your
+        cursor, scroll and form-text events (plus an approximate IP address).
+        Password and payment fields are not stored. That lives in
+        sessionStorage, not a cookie, and only admin can see it. Your language preference may be stored locally in your
         browser. Stripe&apos;s checkout page sets its own cookies that are
         necessary for the payment to work securely.
       </p>

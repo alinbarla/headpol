@@ -16,6 +16,7 @@ export function SessionTable({ sessions }: { sessions: AnalyticsSession[] }) {
           <tr className="border-b border-border">
             <th className="py-2 pr-3 font-medium">Started</th>
             <th className="py-2 pr-3 font-medium">Page</th>
+            <th className="py-2 pr-3 font-medium">IP</th>
             <th className="py-2 pr-3 font-medium">Device</th>
             <th className="py-2 pr-3 font-medium">Events</th>
             <th className="py-2 pr-3 font-medium">Max scroll</th>
@@ -29,6 +30,7 @@ export function SessionTable({ sessions }: { sessions: AnalyticsSession[] }) {
                 {formatTimestamp(session.started_at)}
               </td>
               <td className="py-2 pr-3 font-mono text-xs">{session.page}</td>
+              <td className="py-2 pr-3 font-mono text-xs">{session.ip ?? "—"}</td>
               <td className="py-2 pr-3 capitalize">{session.device}</td>
               <td className="py-2 pr-3">{session.event_count}</td>
               <td className="py-2 pr-3">{Math.round(Number(session.max_scroll_pct))}%</td>

@@ -6,6 +6,9 @@ import {
   BATCH_SIZE,
   FLUSH_INTERVAL_MS,
   HEATMAP_PREVIEW_PARAM,
+  INPUT_SAMPLE_MS,
+  MAX_INPUT_FIELD_LENGTH,
+  MAX_INPUT_VALUE_LENGTH,
   MOVE_SAMPLE_MS,
   SAMPLE_STORAGE_KEY,
   SESSION_STORAGE_KEY,
@@ -44,6 +47,51 @@ function shouldSkipTarget(target: EventTarget | null): boolean {
   return Boolean(
     target.closest("input, textarea, select, [contenteditable='true'], [data-no-track]")
   );
+}
+
+const SKIPPED_INPUT_TYPES = new Set([
+  "password",
+  "hidden",
+  "file",
+  "button",
+  "submit",
+  "reset",
+  "image",
+]);
+
+function fieldKey(el: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement): string | null {
+  const raw = (el.name || el.id || "").trim();
+  if (!raw || raw.length > MAX_INPUT_FIELD_LENGTH) return null;
+  if (!/^[\w.:#-]+$/.test(raw)) return null;
+  return raw;
+}
+
+function shouldRecordField(
+  el: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+): boolean {
+  if (el.closest("[data-no-track]")) return false;
+  if (el instanceof HTMLInputElement) {
+    if (SKIPPED_INPUT_TYPES.has(el.type)) return false;
+    const autocomplete = (el.autocomplete || "").toLowerCase();
+    if (
+      autocomplete.includes("cc-") ||
+      autocomplete.includes("password") ||
+      autocomplete === "new-password" ||
+      autocomplete === "current-password"
+    ) {
+      return false;
+    }
+  }
+  return fieldKey(el) !== null;
+}
+
+function fieldValue(
+  el: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+): string {
+  if (el instanceof HTMLInputElement && (el.type === "checkbox" || el.type === "radio")) {
+    return el.checked ? el.value || "true" : "";
+  }
+  return el.value.slice(0, MAX_INPUT_VALUE_LENGTH);
 }
 
 function metrics() {
@@ -133,6 +181,7 @@ export function HeatmapTracker() {
     let queue: UserEvent[] = [];
     let lastMove = 0;
     let lastScroll = 0;
+    let lastInput = 0;
     let attentionCell: { gx: number; gy: number; x: number; y: number; since: number } | null =
       null;
     let flushTimer: number | undefined;
@@ -210,6 +259,29 @@ export function HeatmapTracker() {
       });
     }
 
+    function onInput(event: Event) {
+      const target = event.target;
+      if (
+        !(target instanceof HTMLInputElement) &&
+        !(target instanceof HTMLTextAreaElement) &&
+        !(target instanceof HTMLSelectElement)
+      ) {
+        return;
+      }
+      if (!shouldRecordField(target)) return;
+      const field = fieldKey(target);
+      if (!field) return;
+      const now = Date.now();
+      if (event.type === "input" && now - lastInput < INPUT_SAMPLE_MS) return;
+      lastInput = now;
+      push({
+        type: "input",
+        field,
+        value: fieldValue(target),
+        timestamp: now,
+      });
+    }
+
     function onHidden() {
       flushAttention(Date.now());
       flush(true);
@@ -231,6 +303,8 @@ export function HeatmapTracker() {
         window.addEventListener("pointermove", onPointerMove, { passive: true });
         window.addEventListener("click", onClick, { capture: true });
         window.addEventListener("scroll", onScroll, { passive: true });
+        document.addEventListener("input", onInput, true);
+        document.addEventListener("change", onInput, true);
         document.addEventListener("visibilitychange", onVisibility);
         window.addEventListener("pagehide", onHidden);
 
@@ -246,6 +320,8 @@ export function HeatmapTracker() {
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("click", onClick, true);
       window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("input", onInput, true);
+      document.removeEventListener("change", onInput, true);
       window.removeEventListener("pagehide", onHidden);
       if (sessionId) {
         flushAttention(Date.now());

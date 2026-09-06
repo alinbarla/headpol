@@ -35,6 +35,7 @@ export async function POST(request: Request) {
         viewportH: parsed.viewportH,
         documentH: parsed.documentH,
         device: parsed.device,
+        ip,
       },
       parsed.events
     );

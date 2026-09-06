@@ -28,7 +28,8 @@ export default async function HeatmapSessionPage({
         <div>
           <h1 className="text-2xl font-bold">Session replay</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {session.page} · {session.device} · {formatTimestamp(session.started_at)}
+            {session.page} · {session.ip ?? "no IP"} · {session.device} ·{" "}
+            {formatTimestamp(session.started_at)}
           </p>
         </div>
         <Button asChild variant="outline" size="sm">
@@ -41,7 +42,8 @@ export default async function HeatmapSessionPage({
       </div>
 
       <p className="mt-4 text-xs text-muted-foreground">
-        Event-stream replay only. No form values or page HTML are stored.
+        Event-stream replay. Form text typed on the public site is shown below
+        and filled into the preview. Password and payment fields are not stored.
         {events.length === 0 ? " This session has no events yet." : ""}
       </p>
     </AdminShell>
