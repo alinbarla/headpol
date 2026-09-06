@@ -254,6 +254,18 @@ export async function insertEventBatch(
   return rows.length;
 }
 
+export async function deleteSessions(ids: string[]): Promise<number> {
+  const unique = [...new Set(ids)].filter(Boolean);
+  if (unique.length === 0) return 0;
+
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await withSupabaseTimeout(
+    supabase.from("analytics_sessions").delete().in("id", unique).select("id")
+  );
+  if (error) throw new Error(error.message);
+  return (data ?? []).length;
+}
+
 export async function purgeAnalytics(): Promise<void> {
   const supabase = getSupabaseAdminClient();
   const { error } = await withSupabaseTimeout(

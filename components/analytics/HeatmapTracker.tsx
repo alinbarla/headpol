@@ -6,7 +6,6 @@ import {
   BATCH_SIZE,
   FLUSH_INTERVAL_MS,
   HEATMAP_PREVIEW_PARAM,
-  INPUT_SAMPLE_MS,
   MAX_INPUT_FIELD_LENGTH,
   MAX_INPUT_VALUE_LENGTH,
   MOVE_SAMPLE_MS,
@@ -40,13 +39,6 @@ function deviceFromViewport(): HeatmapDevice {
   if (width < 768) return "mobile";
   if (width < 1024) return "tablet";
   return "desktop";
-}
-
-function shouldSkipTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof Element)) return false;
-  return Boolean(
-    target.closest("input, textarea, select, [contenteditable='true'], [data-no-track]")
-  );
 }
 
 const SKIPPED_INPUT_TYPES = new Set([
@@ -92,6 +84,26 @@ function fieldValue(
     return el.checked ? el.value || "true" : "";
   }
   return el.value.slice(0, MAX_INPUT_VALUE_LENGTH);
+}
+
+function formControls(): Array<
+  HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+> {
+  return [
+    ...document.querySelectorAll("input, textarea, select"),
+  ].filter(
+    (node): node is HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement =>
+      node instanceof HTMLInputElement ||
+      node instanceof HTMLTextAreaElement ||
+      node instanceof HTMLSelectElement
+  );
+}
+
+function pointFromEvent(event: MouseEvent | PointerEvent) {
+  const size = metrics();
+  const pageX = Number.isFinite(event.pageX) ? event.pageX : event.clientX + size.scrollX;
+  const pageY = Number.isFinite(event.pageY) ? event.pageY : event.clientY + size.scrollY;
+  return { x: pageX, y: pageY, scrollY: size.scrollY };
 }
 
 function metrics() {
@@ -181,10 +193,12 @@ export function HeatmapTracker() {
     let queue: UserEvent[] = [];
     let lastMove = 0;
     let lastScroll = 0;
-    let lastInput = 0;
+    const lastValues = new Map<string, string>();
     let attentionCell: { gx: number; gy: number; x: number; y: number; since: number } | null =
       null;
     let flushTimer: number | undefined;
+    let pollTimer: number | undefined;
+    let autofillStyle: HTMLStyleElement | null = null;
     let sessionId = "";
     let visitorId = "";
 
@@ -217,35 +231,63 @@ export function HeatmapTracker() {
       attentionCell = null;
     }
 
+    function emitField(
+      el: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    ) {
+      if (!shouldRecordField(el)) return;
+      const field = fieldKey(el);
+      if (!field) return;
+      const value = fieldValue(el);
+      if (lastValues.get(field) === value) return;
+      lastValues.set(field, value);
+      push({
+        type: "input",
+        field,
+        value,
+        timestamp: Date.now(),
+      });
+    }
+
+    function snapshotFields() {
+      for (const el of formControls()) emitField(el);
+    }
+
     function onPointerMove(event: PointerEvent) {
       const now = Date.now();
-      const size = metrics();
-      const x = event.clientX + size.scrollX;
-      const y = event.clientY + size.scrollY;
-      const gx = Math.floor(x / 50);
-      const gy = Math.floor(y / 50);
+      const point = pointFromEvent(event);
+      const gx = Math.floor(point.x / 50);
+      const gy = Math.floor(point.y / 50);
 
       if (!attentionCell || attentionCell.gx !== gx || attentionCell.gy !== gy) {
         flushAttention(now);
-        attentionCell = { gx, gy, x, y, since: now };
+        attentionCell = { gx, gy, x: point.x, y: point.y, since: now };
       }
 
       if (now - lastMove < MOVE_SAMPLE_MS) return;
       lastMove = now;
-      push({ type: "move", x, y, scrollY: size.scrollY, timestamp: now });
+      push({
+        type: "move",
+        x: point.x,
+        y: point.y,
+        scrollY: point.scrollY,
+        timestamp: now,
+      });
     }
 
     function onClick(event: MouseEvent) {
       if (event.button !== 0) return;
-      if (shouldSkipTarget(event.target)) return;
-      const size = metrics();
+      const point = pointFromEvent(event);
       push({
         type: "click",
-        x: event.clientX + size.scrollX,
-        y: event.clientY + size.scrollY,
-        scrollY: size.scrollY,
+        x: point.x,
+        y: point.y,
+        scrollY: point.scrollY,
         timestamp: Date.now(),
       });
+      // Autofill often lands on the same click that focuses a field.
+      window.setTimeout(snapshotFields, 0);
+      window.setTimeout(snapshotFields, 50);
+      window.setTimeout(snapshotFields, 200);
     }
 
     function onScroll() {
@@ -259,27 +301,14 @@ export function HeatmapTracker() {
       });
     }
 
-    function onInput(event: Event) {
-      const target = event.target;
-      if (
-        !(target instanceof HTMLInputElement) &&
-        !(target instanceof HTMLTextAreaElement) &&
-        !(target instanceof HTMLSelectElement)
-      ) {
-        return;
-      }
-      if (!shouldRecordField(target)) return;
-      const field = fieldKey(target);
-      if (!field) return;
-      const now = Date.now();
-      if (event.type === "input" && now - lastInput < INPUT_SAMPLE_MS) return;
-      lastInput = now;
-      push({
-        type: "input",
-        field,
-        value: fieldValue(target),
-        timestamp: now,
-      });
+    function onInput() {
+      snapshotFields();
+    }
+
+    function onAutofillStart(event: AnimationEvent) {
+      if (event.animationName !== "hp-autofill") return;
+      snapshotFields();
+      window.setTimeout(snapshotFields, 30);
     }
 
     function onHidden() {
@@ -300,15 +329,26 @@ export function HeatmapTracker() {
           if (document.visibilityState === "hidden") onHidden();
         }
 
+        autofillStyle = document.createElement("style");
+        autofillStyle.dataset.heatmapAutofill = "1";
+        autofillStyle.textContent =
+          "@keyframes hp-autofill{from{opacity:.99}to{opacity:1}}input:-webkit-autofill,textarea:-webkit-autofill,select:-webkit-autofill{animation-name:hp-autofill;animation-duration:.001s}";
+        document.head.append(autofillStyle);
+
         window.addEventListener("pointermove", onPointerMove, { passive: true });
         window.addEventListener("click", onClick, { capture: true });
         window.addEventListener("scroll", onScroll, { passive: true });
         document.addEventListener("input", onInput, true);
         document.addEventListener("change", onInput, true);
+        document.addEventListener("focusin", snapshotFields, true);
+        document.addEventListener("focusout", snapshotFields, true);
+        document.addEventListener("animationstart", onAutofillStart, true);
         document.addEventListener("visibilitychange", onVisibility);
         window.addEventListener("pagehide", onHidden);
 
+        snapshotFields();
         flushTimer = window.setInterval(() => flush(false), FLUSH_INTERVAL_MS);
+        pollTimer = window.setInterval(snapshotFields, 400);
       })
       .catch(() => {
         // Stay silent if the config endpoint is down.
@@ -317,11 +357,16 @@ export function HeatmapTracker() {
     return () => {
       cancelled = true;
       window.clearInterval(flushTimer);
+      window.clearInterval(pollTimer);
+      autofillStyle?.remove();
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("click", onClick, true);
       window.removeEventListener("scroll", onScroll);
       document.removeEventListener("input", onInput, true);
       document.removeEventListener("change", onInput, true);
+      document.removeEventListener("focusin", snapshotFields, true);
+      document.removeEventListener("focusout", snapshotFields, true);
+      document.removeEventListener("animationstart", onAutofillStart, true);
       window.removeEventListener("pagehide", onHidden);
       if (sessionId) {
         flushAttention(Date.now());

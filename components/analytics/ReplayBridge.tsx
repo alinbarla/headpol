@@ -89,21 +89,28 @@ export function ReplayBridge({ adminOrigins }: { adminOrigins: string[] }) {
     const allowed = new Set(adminOrigins);
     const doc = document.documentElement;
 
-    const ready: ReadyMessage = {
-      type: "heatmap-ready",
-      documentH: Math.max(doc.scrollHeight, doc.offsetHeight, 1),
-      viewportW: window.innerWidth,
-      viewportH: window.innerHeight,
-    };
-
-    for (const origin of adminOrigins) {
-      window.parent.postMessage(ready, origin);
+    function report(type: "heatmap-ready" | "heatmap-viewport") {
+      const payload = {
+        type,
+        scrollX: window.scrollX,
+        scrollY: window.scrollY,
+        documentH: Math.max(doc.scrollHeight, doc.offsetHeight, 1),
+        documentW: Math.max(doc.scrollWidth, doc.offsetWidth, 1),
+        viewportW: window.innerWidth,
+        viewportH: window.innerHeight,
+      };
+      for (const origin of adminOrigins) {
+        window.parent.postMessage(payload, origin);
+      }
     }
+
+    report("heatmap-ready");
 
     function onMessage(event: MessageEvent) {
       if (!allowed.has(event.origin)) return;
       if (isScrollMessage(event.data)) {
         window.scrollTo({ top: Math.max(0, event.data.scrollY), behavior: "auto" });
+        report("heatmap-viewport");
         return;
       }
       if (isInputsMessage(event.data)) {
@@ -111,8 +118,18 @@ export function ReplayBridge({ adminOrigins }: { adminOrigins: string[] }) {
       }
     }
 
+    function onScroll() {
+      report("heatmap-viewport");
+    }
+
     window.addEventListener("message", onMessage);
-    return () => window.removeEventListener("message", onMessage);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("message", onMessage);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, [adminOrigins]);
 
   return null;

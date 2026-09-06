@@ -27,6 +27,8 @@ export function HeatmapViewer({
     width: 360,
     height: PREVIEW_HEIGHT,
     documentH: sourceHeight,
+    documentW: sourceWidth,
+    scrollY: 0,
   });
 
   const src = `${siteUrl}${page === "/" ? "/" : page}?${HEATMAP_PREVIEW_PARAM}=1`;
@@ -49,12 +51,22 @@ export function HeatmapViewer({
 
   useEffect(() => {
     function onMessage(event: MessageEvent) {
-      const data = event.data as { type?: string; documentH?: number } | null;
-      if (!data || data.type !== "heatmap-ready") return;
-      if (typeof data.documentH !== "number") return;
+      const data = event.data as {
+        type?: string;
+        documentH?: number;
+        documentW?: number;
+        scrollY?: number;
+      } | null;
+      if (!data || (data.type !== "heatmap-ready" && data.type !== "heatmap-viewport")) {
+        return;
+      }
       setFrameSize((current) => ({
         ...current,
-        documentH: data.documentH ?? current.documentH,
+        documentH:
+          typeof data.documentH === "number" ? data.documentH : current.documentH,
+        documentW:
+          typeof data.documentW === "number" ? data.documentW : current.documentW,
+        scrollY: typeof data.scrollY === "number" ? data.scrollY : current.scrollY,
       }));
     }
 
@@ -62,12 +74,14 @@ export function HeatmapViewer({
     return () => window.removeEventListener("message", onMessage);
   }, []);
 
+  const recordedWidth = Math.max(sourceWidth, 1);
+  const recordedHeight = Math.max(sourceHeight || frameSize.documentH, 1);
   const overlayHeight = Math.max(
     frameSize.height,
-    sourceHeight > 0 && sourceWidth > 0
-      ? (sourceHeight / sourceWidth) * frameSize.width
-      : frameSize.height
+    (recordedHeight / recordedWidth) * frameSize.width
   );
+  const previewDocH = Math.max(frameSize.documentH, 1);
+  const offsetY = -frameSize.scrollY * (overlayHeight / previewDocH);
 
   return (
     <div className="relative overflow-hidden rounded-lg border border-border bg-black/40">
@@ -81,13 +95,17 @@ export function HeatmapViewer({
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
           className="relative"
-          style={{ width: frameSize.width, height: overlayHeight }}
+          style={{
+            width: frameSize.width,
+            height: overlayHeight,
+            transform: `translateY(${offsetY}px)`,
+          }}
         >
           <HeatmapCanvas
             cells={cells}
             maxCount={maxCount}
-            sourceWidth={Math.max(sourceWidth, 1)}
-            sourceHeight={Math.max(sourceHeight || frameSize.documentH, 1)}
+            sourceWidth={recordedWidth}
+            sourceHeight={recordedHeight}
             width={frameSize.width}
             height={overlayHeight}
           />

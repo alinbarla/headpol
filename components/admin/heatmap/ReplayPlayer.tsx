@@ -19,6 +19,7 @@ export function ReplayPlayer({
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [index, setIndex] = useState(0);
+  const [frameBox, setFrameBox] = useState({ width: 0, height: 0 });
   const [cursor, setCursor] = useState({
     x: 24,
     y: 24,
@@ -62,20 +63,36 @@ export function ReplayPlayer({
   }, [index]);
 
   useEffect(() => {
+    function measure() {
+      const frame = frameRef.current;
+      if (!frame) return;
+      setFrameBox({
+        width: frame.clientWidth || session.viewport_w,
+        height: frame.clientHeight || session.viewport_h,
+      });
+    }
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [session.viewport_h, session.viewport_w]);
+
+  useEffect(() => {
     if (!current) return;
-    const width = frameRef.current?.clientWidth || session.viewport_w;
-    const scale = width / Math.max(session.viewport_w, 1);
+    const width = frameBox.width || frameRef.current?.clientWidth || session.viewport_w;
+    const height = frameBox.height || frameRef.current?.clientHeight || session.viewport_h;
+    const scaleX = width / Math.max(session.viewport_w, 1);
+    const scaleY = height / Math.max(session.viewport_h, 1);
     if (current.x != null && current.y != null) {
       setCursor({
-        x: current.x * scale,
-        y: (current.y - current.scroll_y) * scale,
+        x: current.x * scaleX,
+        y: (current.y - current.scroll_y) * scaleY,
         visible: true,
         click: current.type === "click",
       });
     }
     postScroll(current.scroll_y);
     postInputs(typedValues);
-  }, [current, session.viewport_w, siteUrl, typedValues]);
+  }, [current, frameBox, session.viewport_h, session.viewport_w, siteUrl, typedValues]);
 
   useEffect(() => {
     function onMessage(event: MessageEvent) {
