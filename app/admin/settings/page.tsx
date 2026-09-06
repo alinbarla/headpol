@@ -1,10 +1,12 @@
 import { requireAdmin } from "@/lib/admin/auth";
 import { listRecentAudit } from "@/lib/admin/data";
+import { getAnalyticsSettings } from "@/lib/analytics/settings";
 import { getBookingRules } from "@/lib/bookingRules";
 import { isDataForSeoConfigured } from "@/lib/seo/providers/dataforseo";
 import { getStripeWebhookStatus, isStripeConfigured } from "@/lib/stripe";
 import { formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { HeatmapSettingsCard } from "@/components/admin/heatmap/HeatmapSettingsCard";
 import { RulesForm } from "@/components/admin/RulesForm";
 import { StripeWebhookCard } from "@/components/admin/StripeWebhookCard";
 import {
@@ -19,10 +21,11 @@ export const dynamic = "force-dynamic";
 export default async function SettingsPage() {
   await requireAdmin();
 
-  const [rules, audit, webhookStatus] = await Promise.all([
+  const [rules, audit, webhookStatus, analyticsSettings] = await Promise.all([
     getBookingRules(),
     listRecentAudit(40),
     getStripeWebhookStatus(),
+    getAnalyticsSettings(),
   ]);
 
   return (
@@ -38,6 +41,8 @@ export default async function SettingsPage() {
           <RulesForm rules={rules} />
 
           <StripeWebhookCard status={webhookStatus} />
+
+          <HeatmapSettingsCard settings={analyticsSettings} />
 
           <Card>
             <CardHeader>
@@ -79,6 +84,12 @@ export default async function SettingsPage() {
                 ok={Boolean(process.env.CRON_SECRET)}
                 okLabel="Route ready — schedule via Supabase pg_cron"
                 offLabel="CRON_SECRET missing; /api/cron/seo will refuse"
+              />
+              <StatusRow
+                label="Heatmap"
+                ok={analyticsSettings.enabled}
+                okLabel="Collecting public-site events"
+                offLabel="Off — enable in the card above"
               />
             </CardContent>
           </Card>

@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { adminFrameAncestors } from "./lib/analytics/origins";
 import { CONFIRMATION_PATH } from "./lib/routes";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
@@ -14,6 +15,16 @@ const supabaseOrigin = (() => {
     return new URL(url).origin;
   } catch {
     return "";
+  }
+})();
+
+const publicSiteOrigin = (() => {
+  const url = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!url) return "https://stralkastarpolering.se";
+  try {
+    return new URL(url).origin;
+  } catch {
+    return "https://stralkastarpolering.se";
   }
 })();
 
@@ -49,11 +60,11 @@ const csp = [
   "media-src 'self'",
   "font-src 'self'",
   `connect-src 'self' ${googleTag.connect}${supabaseOrigin ? ` ${supabaseOrigin}` : ""}`,
-  `frame-src 'self' ${googleTag.frame}`,
+  `frame-src 'self' ${googleTag.frame} ${publicSiteOrigin} http://localhost:3000 http://127.0.0.1:3000`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
-  "frame-ancestors 'self'",
+  `frame-ancestors ${adminFrameAncestors()}`,
   ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
 

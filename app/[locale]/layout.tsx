@@ -6,6 +6,9 @@ import {
   GoogleTagManager,
   GoogleTagManagerNoscript,
 } from "@/components/analytics/GoogleTagManager";
+import { HeatmapTracker } from "@/components/analytics/HeatmapTracker";
+import { ReplayBridge } from "@/components/analytics/ReplayBridge";
+import { getAdminOrigins } from "@/lib/analytics/origins";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -132,6 +135,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   setRequestLocale(locale);
   const messages = await getMessages();
   const tMeta = await getTranslations({ locale, namespace: "metadata" });
+  const adminOrigins = getAdminOrigins();
 
   return (
     <html lang={htmlLang(locale)} className={`${libreFranklin.variable} ${publicSans.variable} h-full`}>
@@ -144,6 +148,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
       </head>
       <body className="min-h-full antialiased">
         <GoogleTagManagerNoscript />
+        <HeatmapTracker />
+        <ReplayBridge adminOrigins={adminOrigins} />
         <div className="grain-overlay" aria-hidden="true" />
         <NextIntlClientProvider messages={messages}>
           <MotionProvider>{children}</MotionProvider>

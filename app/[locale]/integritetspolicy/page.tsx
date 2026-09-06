@@ -8,7 +8,7 @@ import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY } from "@/lib/booking";
 import { routing, type Locale } from "@/lib/i18n";
 import { BRAND, buildPageMetadata } from "@/lib/seo";
 
-const UPDATED = "2026-08-30";
+const UPDATED = "2026-09-06";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -85,6 +85,11 @@ function PrivacySv() {
           För att uppfylla bokföringsskyldigheten. Rättslig grund: rättslig
           förpliktelse enligt bokföringslagen.
         </li>
+        <li>
+          För att förstå hur besökare använder webbplatsen (klick, musrörelse
+          och rullning) och förbättra den. Rättslig grund: berättigat
+          intresse.
+        </li>
       </ul>
       <p>
         Vi använder inte dina uppgifter för marknadsföring och säljer dem aldrig
@@ -128,7 +133,9 @@ function PrivacySv() {
         Bokningsuppgifter sparas i tre år, vilket motsvarar reklamationstiden
         enligt konsumenttjänstlagen. Underlag som räknas som
         räkenskapsinformation, till exempel betalningar och återbetalningar,
-        sparas i sju år enligt bokföringslagen.
+        sparas i sju år enligt bokföringslagen. Anonyma interaktionshändelser
+        för heatmap raderas automatiskt efter den retentionstid som ställs in
+        i admin (standard 30 dagar).
       </p>
 
       <h2>Dina rättigheter</h2>
@@ -148,8 +155,12 @@ function PrivacySv() {
         Vi använder Google Tag Manager och Google Ads för att mäta när en
         bokning blir betald. Det kan sätta förstaparts-kakor (till exempel
         GCLID) i din webbläsare. Vi kör inte Google Analytics för sidstatistik.
-        Ditt språkval kan sparas lokalt i webbläsaren. Betalsidan hos Stripe
-        sätter egna kakor som krävs för att betalningen ska fungera säkert.
+        När heatmap-insamling är på i admin samlar vi förstaparts-händelser om
+        klick, musrörelse och rullning (sidans sökväg och koordinater, inte
+        formulärvärden). Det sparas i sessionStorage, inte som en kaka. Bara
+        admin kan se underlaget. Ditt språkval kan sparas lokalt i
+        webbläsaren. Betalsidan hos Stripe sätter egna kakor som krävs för att
+        betalningen ska fungera säkert.
       </p>
 
       <p>
@@ -196,6 +207,10 @@ function PrivacyEn() {
           To meet Swedish bookkeeping requirements. Legal basis: legal
           obligation.
         </li>
+        <li>
+          To understand how visitors use the site (clicks, cursor movement and
+          scroll) and improve it. Legal basis: legitimate interest.
+        </li>
       </ul>
       <p>
         We do not use your data for marketing and never sell it on.
@@ -234,7 +249,9 @@ function PrivacyEn() {
         Booking data is kept for three years, matching the complaint period
         under the Swedish Consumer Services Act. Records that count as
         accounting information, such as payments and refunds, are kept for seven
-        years as required by the Swedish Bookkeeping Act.
+        years as required by the Swedish Bookkeeping Act. Anonymous heatmap
+        interaction events are deleted automatically after the retention period
+        set in admin (30 days by default).
       </p>
 
       <h2>Your rights</h2>
@@ -253,10 +270,13 @@ function PrivacyEn() {
       <p>
         We use Google Tag Manager and Google Ads to measure when a booking is
         paid. That may set first-party cookies (for example GCLID) in your
-        browser. We do not run Google Analytics for page statistics.
-        Your language preference may be stored locally in your browser.
-        Stripe&apos;s checkout page sets its own cookies that are necessary
-        for the payment to work securely.
+        browser. We do not run Google Analytics for page statistics. When
+        heatmap collection is enabled in admin we record first-party click,
+        cursor and scroll events (page path and coordinates, never form
+        values). That lives in sessionStorage, not a cookie, and only admin
+        can see it. Your language preference may be stored locally in your
+        browser. Stripe&apos;s checkout page sets its own cookies that are
+        necessary for the payment to work securely.
       </p>
 
       <p>
