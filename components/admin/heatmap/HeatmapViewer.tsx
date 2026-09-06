@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { DeviceFrame } from "@/components/admin/heatmap/DeviceFrame";
 import { HeatmapCanvas } from "@/components/admin/heatmap/HeatmapCanvas";
 import { HEATMAP_PREVIEW_PARAM } from "@/lib/analytics/constants";
-import type { GridCell } from "@/lib/analytics/types";
+import type { GridCell, HeatmapDevice } from "@/lib/analytics/types";
 
 const PREVIEW_HEIGHT = 640;
 
@@ -14,6 +15,9 @@ export function HeatmapViewer({
   maxCount,
   sourceWidth,
   sourceHeight,
+  previewW,
+  previewH,
+  device = "desktop",
 }: {
   siteUrl: string;
   page: string;
@@ -21,6 +25,9 @@ export function HeatmapViewer({
   maxCount: number;
   sourceWidth: number;
   sourceHeight: number;
+  previewW?: number;
+  previewH?: number;
+  device?: HeatmapDevice;
 }) {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [frameSize, setFrameSize] = useState({
@@ -74,29 +81,31 @@ export function HeatmapViewer({
     return () => window.removeEventListener("message", onMessage);
   }, []);
 
-  const recordedWidth = Math.max(sourceWidth, 1);
+  const frameW = Math.max(previewW || sourceWidth || 390, 1);
+  const frameH = Math.max(previewH || PREVIEW_HEIGHT, 1);
+  const recordedWidth = Math.max(sourceWidth || frameW, 1);
   const recordedHeight = Math.max(sourceHeight || frameSize.documentH, 1);
-  const overlayHeight = Math.max(
-    frameSize.height,
-    (recordedHeight / recordedWidth) * frameSize.width
-  );
-  const previewDocH = Math.max(frameSize.documentH, 1);
+  const overlayHeight = Math.max(frameH, (recordedHeight / recordedWidth) * frameW);
+  const previewDocH = Math.max(frameSize.documentH, recordedHeight, 1);
   const offsetY = -frameSize.scrollY * (overlayHeight / previewDocH);
 
   return (
-    <div className="relative overflow-hidden rounded-lg border border-border bg-black/40">
+    <DeviceFrame viewportW={frameW} viewportH={frameH} device={device}>
       <iframe
         ref={frameRef}
         src={src}
         title={`Preview of ${page}`}
-        className="block h-[640px] w-full bg-background"
+        width={frameW}
+        height={frameH}
+        className="block bg-background"
+        style={{ width: frameW, height: frameH, border: 0 }}
         sandbox="allow-scripts allow-same-origin"
       />
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
           className="relative"
           style={{
-            width: frameSize.width,
+            width: frameW,
             height: overlayHeight,
             transform: `translateY(${offsetY}px)`,
           }}
@@ -106,11 +115,11 @@ export function HeatmapViewer({
             maxCount={maxCount}
             sourceWidth={recordedWidth}
             sourceHeight={recordedHeight}
-            width={frameSize.width}
+            width={frameW}
             height={overlayHeight}
           />
         </div>
       </div>
-    </div>
+    </DeviceFrame>
   );
 }

@@ -99,6 +99,10 @@ function formControls(): Array<
   );
 }
 
+function layoutScrollY(): number {
+  return window.scrollY || document.documentElement.scrollTop || 0;
+}
+
 function pointFromEvent(event: MouseEvent | PointerEvent) {
   const size = metrics();
   const pageX = Number.isFinite(event.pageX) ? event.pageX : event.clientX + size.scrollX;
@@ -106,14 +110,20 @@ function pointFromEvent(event: MouseEvent | PointerEvent) {
   return { x: pageX, y: pageY, scrollY: size.scrollY };
 }
 
+function pointFromTouch(touch: Touch) {
+  const size = metrics();
+  return { x: touch.pageX, y: touch.pageY, scrollY: size.scrollY };
+}
+
 function metrics() {
   const doc = document.documentElement;
+  const visual = window.visualViewport;
   return {
-    viewportW: window.innerWidth,
-    viewportH: window.innerHeight,
+    viewportW: Math.round(visual?.width ?? window.innerWidth),
+    viewportH: Math.round(visual?.height ?? window.innerHeight),
     documentH: Math.max(doc.scrollHeight, doc.offsetHeight, 1),
-    scrollX: window.scrollX,
-    scrollY: window.scrollY,
+    scrollX: window.scrollX || doc.scrollLeft || 0,
+    scrollY: layoutScrollY(),
   };
 }
 
@@ -274,20 +284,49 @@ export function HeatmapTracker() {
       });
     }
 
-    function onClick(event: MouseEvent) {
-      if (event.button !== 0) return;
-      const point = pointFromEvent(event);
+    let lastTap = 0;
+
+    function recordTap(x: number, y: number, scrollY: number) {
+      lastTap = Date.now();
       push({
         type: "click",
-        x: point.x,
-        y: point.y,
-        scrollY: point.scrollY,
-        timestamp: Date.now(),
+        x,
+        y,
+        scrollY,
+        timestamp: lastTap,
       });
-      // Autofill often lands on the same click that focuses a field.
       window.setTimeout(snapshotFields, 0);
       window.setTimeout(snapshotFields, 50);
       window.setTimeout(snapshotFields, 200);
+    }
+
+    function onPointerUp(event: PointerEvent) {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      const point = pointFromEvent(event);
+      recordTap(point.x, point.y, point.scrollY);
+    }
+
+    function onClick(event: MouseEvent) {
+      if (event.button !== 0) return;
+      if (Date.now() - lastTap < 450) return;
+      const point = pointFromEvent(event);
+      recordTap(point.x, point.y, point.scrollY);
+    }
+
+    function onTouchMove(event: TouchEvent) {
+      const touch = event.touches[0];
+      if (!touch) return;
+      const now = Date.now();
+      if (now - lastMove < MOVE_SAMPLE_MS) return;
+      lastMove = now;
+      const point = pointFromTouch(touch);
+      push({
+        type: "move",
+        x: point.x,
+        y: point.y,
+        scrollY: point.scrollY,
+        timestamp: now,
+      });
     }
 
     function onScroll() {
@@ -296,7 +335,7 @@ export function HeatmapTracker() {
       lastScroll = now;
       push({
         type: "scroll",
-        scrollY: window.scrollY,
+        scrollY: layoutScrollY(),
         timestamp: now,
       });
     }
@@ -336,8 +375,12 @@ export function HeatmapTracker() {
         document.head.append(autofillStyle);
 
         window.addEventListener("pointermove", onPointerMove, { passive: true });
+        window.addEventListener("pointerup", onPointerUp, { capture: true });
         window.addEventListener("click", onClick, { capture: true });
+        window.addEventListener("touchmove", onTouchMove, { passive: true });
         window.addEventListener("scroll", onScroll, { passive: true });
+        window.visualViewport?.addEventListener("scroll", onScroll);
+        window.visualViewport?.addEventListener("resize", onScroll);
         document.addEventListener("input", onInput, true);
         document.addEventListener("change", onInput, true);
         document.addEventListener("focusin", snapshotFields, true);
@@ -360,8 +403,12 @@ export function HeatmapTracker() {
       window.clearInterval(pollTimer);
       autofillStyle?.remove();
       window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp, true);
       window.removeEventListener("click", onClick, true);
+      window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("scroll", onScroll);
+      window.visualViewport?.removeEventListener("scroll", onScroll);
+      window.visualViewport?.removeEventListener("resize", onScroll);
       document.removeEventListener("input", onInput, true);
       document.removeEventListener("change", onInput, true);
       document.removeEventListener("focusin", snapshotFields, true);

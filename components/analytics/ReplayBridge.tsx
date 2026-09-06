@@ -109,8 +109,12 @@ export function ReplayBridge({ adminOrigins }: { adminOrigins: string[] }) {
     function onMessage(event: MessageEvent) {
       if (!allowed.has(event.origin)) return;
       if (isScrollMessage(event.data)) {
-        window.scrollTo({ top: Math.max(0, event.data.scrollY), behavior: "auto" });
-        report("heatmap-viewport");
+        window.scrollTo({
+          top: Math.max(0, event.data.scrollY),
+          left: 0,
+          behavior: "auto",
+        });
+        requestAnimationFrame(() => report("heatmap-viewport"));
         return;
       }
       if (isInputsMessage(event.data)) {

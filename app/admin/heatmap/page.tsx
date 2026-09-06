@@ -174,8 +174,15 @@ export default async function HeatmapPage({
                     page={page}
                     cells={grid.cells}
                     maxCount={grid.maxCount}
-                    sourceWidth={grid.viewportW || 1200}
+                    sourceWidth={grid.viewportW || sessions[0]?.viewport_w || 1200}
                     sourceHeight={grid.documentH || 2000}
+                    previewW={sessions[0]?.viewport_w || grid.viewportW || 1200}
+                    previewH={sessions[0]?.viewport_h || 800}
+                    device={
+                      device === "all"
+                        ? (sessions[0]?.device ?? "desktop")
+                        : device
+                    }
                   />
                   <HeatmapLegend />
                 </>

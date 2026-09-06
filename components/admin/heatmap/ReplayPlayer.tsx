@@ -1,9 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { DeviceFrame } from "@/components/admin/heatmap/DeviceFrame";
 import { HEATMAP_PREVIEW_PARAM } from "@/lib/analytics/constants";
 import type { AnalyticsEventRow, AnalyticsSession } from "@/lib/analytics/types";
 import { Button } from "@/components/shadcn/button";
+
+function sessionViewport(session: AnalyticsSession) {
+  return {
+    w: Math.max(session.viewport_w, 1),
+    h: Math.max(session.viewport_h, 1),
+  };
+}
 
 export function ReplayPlayer({
   siteUrl,
@@ -19,7 +27,6 @@ export function ReplayPlayer({
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [index, setIndex] = useState(0);
-  const [frameBox, setFrameBox] = useState({ width: 0, height: 0 });
   const [cursor, setCursor] = useState({
     x: 24,
     y: 24,
@@ -35,6 +42,7 @@ export function ReplayPlayer({
   const end = times[times.length - 1] ?? start;
   const duration = Math.max(1, end - start);
   const current = events[index];
+  const view = sessionViewport(session);
   const src = `${siteUrl}${session.page === "/" ? "/" : session.page}?${HEATMAP_PREVIEW_PARAM}=1`;
   const typedValues = useMemo(() => {
     const values: Record<string, string> = {};
@@ -63,36 +71,18 @@ export function ReplayPlayer({
   }, [index]);
 
   useEffect(() => {
-    function measure() {
-      const frame = frameRef.current;
-      if (!frame) return;
-      setFrameBox({
-        width: frame.clientWidth || session.viewport_w,
-        height: frame.clientHeight || session.viewport_h,
-      });
-    }
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [session.viewport_h, session.viewport_w]);
-
-  useEffect(() => {
     if (!current) return;
-    const width = frameBox.width || frameRef.current?.clientWidth || session.viewport_w;
-    const height = frameBox.height || frameRef.current?.clientHeight || session.viewport_h;
-    const scaleX = width / Math.max(session.viewport_w, 1);
-    const scaleY = height / Math.max(session.viewport_h, 1);
     if (current.x != null && current.y != null) {
       setCursor({
-        x: current.x * scaleX,
-        y: (current.y - current.scroll_y) * scaleY,
+        x: current.x,
+        y: current.y - current.scroll_y,
         visible: true,
         click: current.type === "click",
       });
     }
     postScroll(current.scroll_y);
     postInputs(typedValues);
-  }, [current, frameBox, session.viewport_h, session.viewport_w, siteUrl, typedValues]);
+  }, [current, siteUrl, typedValues]);
 
   useEffect(() => {
     function onMessage(event: MessageEvent) {
@@ -150,12 +140,15 @@ export function ReplayPlayer({
 
   return (
     <div className="space-y-3">
-      <div className="relative overflow-hidden rounded-lg border border-border">
+      <DeviceFrame viewportW={view.w} viewportH={view.h} device={session.device}>
         <iframe
           ref={frameRef}
           src={src}
           title={`Replay of ${session.page}`}
-          className="block h-[640px] w-full bg-background"
+          width={view.w}
+          height={view.h}
+          className="block bg-background"
+          style={{ width: view.w, height: view.h, border: 0 }}
           sandbox="allow-scripts allow-same-origin"
         />
         {cursor.visible ? (
@@ -164,16 +157,16 @@ export function ReplayPlayer({
             style={{ transform: `translate(${cursor.x}px, ${cursor.y}px)` }}
           >
             <div
-              className={`size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary shadow ${
-                cursor.click ? "scale-125" : ""
-              }`}
+              className={`-translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary shadow ${
+                session.device === "mobile" ? "size-5" : "size-4"
+              } ${cursor.click ? "scale-125" : ""}`}
             />
             {cursor.click ? (
-              <div className="absolute left-1/2 top-1/2 size-8 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/70" />
+              <div className="absolute left-1/2 top-1/2 size-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/70" />
             ) : null}
           </div>
         ) : null}
-      </div>
+      </DeviceFrame>
 
       <div className="flex flex-wrap items-center gap-2">
         <Button type="button" size="sm" onClick={() => setPlaying((value) => !value)}>
