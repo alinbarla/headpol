@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { logAdminAction, login, logout, requireAdmin } from "@/lib/admin/auth";
+import { removeConvertedDroppedVisitor } from "@/lib/analytics/droppedVisitors";
 import { getBookingById, getPaymentsForBooking } from "@/lib/admin/data";
 import { BOOKING_STATUS_LABELS } from "@/lib/admin/labels";
 import {
@@ -179,6 +180,10 @@ export async function createBookingAction(
   }
 
   const bookingId = data.id as string;
+
+  await removeConvertedDroppedVisitor(input.email, input.phone).catch((error) => {
+    console.error("[admin] dropped visitor cleanup failed", error);
+  });
 
   await logAdminAction("booking.create", {
     entityType: "booking",

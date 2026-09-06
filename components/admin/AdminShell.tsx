@@ -10,6 +10,7 @@ import {
   ListIcon,
   LogOutIcon,
   FlameIcon,
+  MailIcon,
   MessageSquareIcon,
   SearchIcon,
   SettingsIcon,
@@ -27,6 +28,7 @@ const NAV = [
   { href: "/admin/payments", label: "Payments", icon: CreditCardIcon },
   { href: "/admin/seo", label: "SEO", icon: SearchIcon },
   { href: "/admin/heatmap", label: "Heatmap", icon: FlameIcon },
+  { href: "/admin/mail-list", label: "Mail list", icon: MailIcon },
   { href: "/admin/assistant", label: "Assistant", icon: MessageSquareIcon },
   {
     href: "/admin/availability",

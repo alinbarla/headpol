@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
+import { removeConvertedDroppedVisitor } from "@/lib/analytics/droppedVisitors";
 import {
   applyDailyBookingCaps,
   buildAvailabilityMap,
@@ -202,6 +203,14 @@ export async function POST(request: Request) {
         { status: booking.status }
       );
     }
+
+    after(() => {
+      void removeConvertedDroppedVisitor(contact.email, contact.phone).catch(
+        (error) => {
+          console.error("[bookings] dropped visitor cleanup failed", error);
+        }
+      );
+    });
 
     const checkout = await createBookingCheckoutSession({
       bookingId: booking.data.id,

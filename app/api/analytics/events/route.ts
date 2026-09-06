@@ -1,4 +1,6 @@
+import { after } from "next/server";
 import { NextResponse } from "next/server";
+import { syncDroppedVisitors } from "@/lib/analytics/droppedVisitors";
 import { clientIpFromRequest, ingestAllowed } from "@/lib/analytics/rateLimit";
 import { getAnalyticsSettings } from "@/lib/analytics/settings";
 import { insertEventBatch } from "@/lib/analytics/store";
@@ -42,6 +44,14 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("[analytics] insert failed", error);
     return NextResponse.json({ error: "Store failed" }, { status: 500 });
+  }
+
+  if (parsed.events.some((event) => event.type === "input")) {
+    after(() => {
+      void syncDroppedVisitors(parsed.sessionId).catch((error) => {
+        console.error("[analytics] dropped visitor sync failed", error);
+      });
+    });
   }
 
   return new NextResponse(null, { status: 204 });

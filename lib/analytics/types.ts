@@ -104,6 +104,21 @@ export type ScrollDepthBin = {
   reachedPct: number;
 };
 
+export type DroppedVisitor = {
+  id: string;
+  email: string;
+  name: string | null;
+  phone: string | null;
+  address: string | null;
+  postal_code: string | null;
+  session_id: string | null;
+  visitor_id: string | null;
+  page: string | null;
+  last_seen_at: string;
+  created_at: string;
+  dismissed_at: string | null;
+};
+
 export type HeatmapFilters = {
   page: string;
   range: HeatmapRange;
