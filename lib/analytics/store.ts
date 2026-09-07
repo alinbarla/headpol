@@ -112,6 +112,16 @@ export function deviceFromUserAgent(ua: string | null): HeatmapDevice {
   return "desktop";
 }
 
+/** Prefer UA for phones/tablets so landscape / desktop-site mode still filters correctly. */
+export function resolveHeatmapDevice(
+  clientDevice: HeatmapDevice,
+  ua: string | null
+): HeatmapDevice {
+  const fromUa = deviceFromUserAgent(ua);
+  if (fromUa === "mobile" || fromUa === "tablet") return fromUa;
+  return clientDevice;
+}
+
 export async function startOrTouchSession(
   envelope: SessionEnvelope,
   events: UserEvent[]
