@@ -3,35 +3,32 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DeviceFrame } from "@/components/admin/heatmap/DeviceFrame";
 import { HEATMAP_PREVIEW_PARAM, REPLAY_FRAME } from "@/lib/analytics/constants";
-import type { AnalyticsEventRow, AnalyticsSession } from "@/lib/analytics/types";
+import type {
+  AnalyticsEventRow,
+  AnalyticsSession,
+  HeatmapDevice,
+} from "@/lib/analytics/types";
 import { Button } from "@/components/shadcn/button";
 
-/** Pick a stable device frame so the iframe hits the right CSS breakpoints. */
-function replayViewport(session: AnalyticsSession) {
-  if (session.device === "mobile") {
-    // Prefer the recorded phone size when it is already phone-class; otherwise
-    // fall back to a canonical iPhone frame so the page does not reflow as desktop.
-    const recordedPhone =
-      session.viewport_w > 0 &&
-      session.viewport_w < 768 &&
-      session.viewport_h > 0;
-    return {
-      w: recordedPhone ? Math.round(session.viewport_w) : REPLAY_FRAME.mobile.w,
-      h: recordedPhone ? Math.round(session.viewport_h) : REPLAY_FRAME.mobile.h,
-    };
-  }
+/** Resolve the device class for chrome + iframe breakpoints. */
+function replayDevice(session: AnalyticsSession): HeatmapDevice {
+  if (session.device === "mobile" || session.viewport_w < 768) return "mobile";
+  if (session.device === "tablet" || session.viewport_w < 1024) return "tablet";
+  return "desktop";
+}
 
-  if (session.device === "tablet") {
-    const recordedTablet =
-      session.viewport_w >= 768 &&
-      session.viewport_w < 1024 &&
-      session.viewport_h > 0;
-    return {
-      w: recordedTablet ? Math.round(session.viewport_w) : REPLAY_FRAME.tablet.w,
-      h: recordedTablet ? Math.round(session.viewport_h) : REPLAY_FRAME.tablet.h,
-    };
+/**
+ * Canonical frame sizes:
+ * - mobile  → iPhone (390×844) so the page always hits mobile CSS
+ * - desktop → desktop window so the page always hits desktop CSS
+ */
+function replayViewport(device: HeatmapDevice, session: AnalyticsSession) {
+  if (device === "mobile") {
+    return { w: REPLAY_FRAME.mobile.w, h: REPLAY_FRAME.mobile.h };
   }
-
+  if (device === "tablet") {
+    return { w: REPLAY_FRAME.tablet.w, h: REPLAY_FRAME.tablet.h };
+  }
   return {
     w:
       session.viewport_w >= 1024
@@ -44,17 +41,15 @@ function replayViewport(session: AnalyticsSession) {
   };
 }
 
+/** Map recorded page scrollY into the live iframe document. */
 function mapScrollY(
   scrollY: number,
   recordedDocumentH: number,
-  recordedViewportH: number,
-  liveDocumentH: number,
-  liveViewportH: number
+  liveDocumentH: number
 ): number {
-  const recordedTravel = Math.max(1, recordedDocumentH - recordedViewportH);
-  const liveTravel = Math.max(1, liveDocumentH - liveViewportH);
-  const pct = Math.min(1, Math.max(0, scrollY / recordedTravel));
-  return pct * liveTravel;
+  const recorded = Math.max(1, recordedDocumentH);
+  const live = Math.max(1, liveDocumentH);
+  return Math.max(0, scrollY * (live / recorded));
 }
 
 export function ReplayPlayer({
@@ -68,10 +63,14 @@ export function ReplayPlayer({
 }) {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const indexRef = useRef(0);
+  const liveDocHRef = useRef(Math.max(1, session.document_h));
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [index, setIndex] = useState(0);
-  const [liveDocumentH, setLiveDocumentH] = useState(session.document_h);
+  const [liveDocumentH, setLiveDocumentH] = useState(
+    Math.max(1, session.document_h)
+  );
+  const [frameReady, setFrameReady] = useState(false);
   const [cursor, setCursor] = useState({
     x: 24,
     y: 24,
@@ -83,14 +82,19 @@ export function ReplayPlayer({
     () => events.map((event) => new Date(event.ts).getTime()),
     [events]
   );
-  const start = times[0] ?? Date.now();
+  const start = times[0] ?? 0;
   const end = times[times.length - 1] ?? start;
   const duration = Math.max(1, end - start);
   const current = events[index];
-  const view = useMemo(() => replayViewport(session), [session]);
+  const device = useMemo(() => replayDevice(session), [session]);
+  const view = useMemo(
+    () => replayViewport(device, session),
+    [device, session]
+  );
   const recordedViewportW = Math.max(1, session.viewport_w || view.w);
   const recordedViewportH = Math.max(1, session.viewport_h || view.h);
   const src = `${siteUrl}${session.page === "/" ? "/" : session.page}?${HEATMAP_PREVIEW_PARAM}=1`;
+
   const typedValues = useMemo(() => {
     const values: Record<string, string> = {};
     for (const event of events.slice(0, index + 1)) {
@@ -106,51 +110,57 @@ export function ReplayPlayer({
     if (!frame) return;
     const recordedDocumentH = Math.max(
       1,
-      event?.document_h || session.document_h || liveDocumentH
+      event?.document_h || session.document_h || liveDocHRef.current
     );
-    const recordedH = Math.max(1, event?.viewport_h || recordedViewportH);
     const mapped = mapScrollY(
       scrollY,
       recordedDocumentH,
-      recordedH,
-      Math.max(liveDocumentH, recordedDocumentH),
-      view.h
+      liveDocHRef.current
     );
-    frame.postMessage({ type: "heatmap-scroll", scrollY: mapped }, siteUrl);
+    // "*" so scroll still applies if SITE_URL host differs slightly from the iframe.
+    frame.postMessage({ type: "heatmap-scroll", scrollY: mapped }, "*");
   }
 
   function postInputs(values: Record<string, string>) {
     const frame = frameRef.current?.contentWindow;
     if (!frame) return;
-    frame.postMessage({ type: "heatmap-inputs", values }, siteUrl);
+    frame.postMessage({ type: "heatmap-inputs", values }, "*");
   }
+
+  useEffect(() => {
+    liveDocHRef.current = liveDocumentH;
+  }, [liveDocumentH]);
 
   useEffect(() => {
     indexRef.current = index;
   }, [index]);
 
   useEffect(() => {
-    if (!current) return;
+    setFrameReady(false);
+  }, [src, view.w, view.h]);
+
+  useEffect(() => {
+    if (!current || !frameReady) return;
+
     if (current.x != null && current.y != null) {
       const eventW = Math.max(1, current.viewport_w || recordedViewportW);
       const eventH = Math.max(1, current.viewport_h || recordedViewportH);
-      const viewportX = current.x;
-      const viewportY = current.y - current.scroll_y;
       setCursor({
-        x: viewportX * (view.w / eventW),
-        y: viewportY * (view.h / eventH),
+        x: current.x * (view.w / eventW),
+        y: (current.y - current.scroll_y) * (view.h / eventH),
         visible: true,
         click: current.type === "click",
       });
     }
+
     postScroll(current.scroll_y, current);
     postInputs(typedValues);
   }, [
     current,
+    frameReady,
     liveDocumentH,
     recordedViewportH,
     recordedViewportW,
-    siteUrl,
     typedValues,
     view.h,
     view.w,
@@ -163,20 +173,25 @@ export function ReplayPlayer({
         documentH?: number;
       } | null;
       if (!data) return;
+
       if (data.type === "heatmap-ready" || data.type === "heatmap-viewport") {
         if (typeof data.documentH === "number" && data.documentH > 0) {
-          setLiveDocumentH((prev) =>
-            Math.abs(prev - data.documentH!) < 2 ? prev : data.documentH!
-          );
+          setLiveDocumentH((prev) => {
+            if (Math.abs(prev - data.documentH!) < 2) return prev;
+            liveDocHRef.current = data.documentH!;
+            return data.documentH!;
+          });
         }
       }
-      if (data.type !== "heatmap-ready") return;
-      if (current) postScroll(current.scroll_y, current);
-      postInputs(typedValues);
+
+      if (data.type === "heatmap-ready") {
+        setFrameReady(true);
+      }
     }
+
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [current, typedValues, siteUrl, liveDocumentH, view.h]);
+  }, []);
 
   useEffect(() => {
     if (!playing || events.length === 0) return;
@@ -223,7 +238,7 @@ export function ReplayPlayer({
 
   return (
     <div className="space-y-3">
-      <DeviceFrame viewportW={view.w} viewportH={view.h} device={session.device}>
+      <DeviceFrame viewportW={view.w} viewportH={view.h} device={device}>
         <iframe
           ref={frameRef}
           src={src}
@@ -241,7 +256,7 @@ export function ReplayPlayer({
           >
             <div
               className={`-translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary shadow ${
-                session.device === "mobile" ? "size-5" : "size-4"
+                device === "mobile" ? "size-5" : "size-4"
               } ${cursor.click ? "scale-125" : ""}`}
             />
             {cursor.click ? (

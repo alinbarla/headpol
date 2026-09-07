@@ -107,12 +107,13 @@ export function ReplayBridge({ adminOrigins }: { adminOrigins: string[] }) {
     report("heatmap-ready");
 
     function onMessage(event: MessageEvent) {
-      if (!allowed.has(event.origin)) return;
+      if (allowed.size > 0 && !allowed.has(event.origin)) return;
       if (isScrollMessage(event.data)) {
         const top = Math.max(0, event.data.scrollY);
-        window.scrollTo({ top, left: 0, behavior: "auto" });
-        document.documentElement.scrollTop = top;
-        document.body.scrollTop = top;
+        // Force layout scroll — visualViewport can diverge inside phone iframes.
+        window.scrollTo(0, top);
+        doc.scrollTop = top;
+        if (document.body) document.body.scrollTop = top;
         requestAnimationFrame(() => {
           requestAnimationFrame(() => report("heatmap-viewport"));
         });

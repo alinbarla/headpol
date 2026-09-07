@@ -16,7 +16,9 @@ export function useDeviceFit(viewportW: number, viewportH: number) {
       if (!host) return;
       const maxW = Math.max(host.clientWidth, 1);
       const maxH = Math.min(window.innerHeight * 0.72, 860);
-      setScale(Math.min(maxW / Math.max(viewportW, 1), maxH / Math.max(viewportH, 1)));
+      setScale(
+        Math.min(maxW / Math.max(viewportW, 1), maxH / Math.max(viewportH, 1), 1)
+      );
     }
 
     update();
@@ -46,7 +48,6 @@ export function DeviceFrame({
   const { hostRef, scale } = useDeviceFit(viewportW, viewportH);
   const phone = device === "mobile";
   const tablet = device === "tablet";
-  const compact = phone || tablet || viewportW < 768;
   const screenW = viewportW * scale;
   const screenH = viewportH * scale;
 
@@ -57,7 +58,7 @@ export function DeviceFrame({
           {device} · {Math.round(viewportW)}×{Math.round(viewportH)}
         </p>
 
-        {compact ? (
+        {phone || tablet ? (
           <div
             className={cn(
               "bg-zinc-900 shadow-xl ring-1 ring-zinc-700",
@@ -66,7 +67,7 @@ export function DeviceFrame({
           >
             {phone ? (
               <div className="mb-2 flex justify-center">
-                <div className="h-5 w-24 rounded-full bg-black" />
+                <div className="h-5 w-28 rounded-full bg-black" />
               </div>
             ) : null}
             <div
@@ -99,7 +100,7 @@ export function DeviceFrame({
               <span className="size-2.5 rounded-full bg-amber-400/80" />
               <span className="size-2.5 rounded-full bg-emerald-400/80" />
               <span className="ml-2 truncate rounded-md bg-background/70 px-2 py-0.5 text-[10px] text-muted-foreground">
-                desktop
+                desktop · {Math.round(viewportW)}×{Math.round(viewportH)}
               </span>
             </div>
             <div
