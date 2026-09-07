@@ -98,11 +98,6 @@ export const OPENING_HOURS = {
   },
 } as const;
 
-import {
-  MUNICIPALITY_NAMES,
-  MUNICIPALITY_PAGE_SLUGS,
-} from "@/lib/content/municipalities";
-
 /**
  * Areas we serve (Stockholms län kommuner except Norrtälje, plus Tumba).
  * Surfaced in chips and AreaServed schema for local relevance.
