@@ -85,9 +85,10 @@ export function HeatmapViewer({
   const frameH = Math.max(previewH || PREVIEW_HEIGHT, 1);
   const recordedWidth = Math.max(sourceWidth || frameW, 1);
   const recordedHeight = Math.max(sourceHeight || frameSize.documentH, 1);
+  // Logical full-page overlay height — used only for scroll mapping, not canvas allocation.
   const overlayHeight = Math.max(frameH, (recordedHeight / recordedWidth) * frameW);
   const previewDocH = Math.max(frameSize.documentH, recordedHeight, 1);
-  const offsetY = -frameSize.scrollY * (overlayHeight / previewDocH);
+  const offsetY = frameSize.scrollY * (overlayHeight / previewDocH);
 
   return (
     <DeviceFrame viewportW={frameW} viewportH={frameH} device={device}>
@@ -102,23 +103,15 @@ export function HeatmapViewer({
         sandbox="allow-scripts allow-same-origin"
       />
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div
-          className="relative"
-          style={{
-            width: frameW,
-            height: overlayHeight,
-            transform: `translateY(${offsetY}px)`,
-          }}
-        >
-          <HeatmapCanvas
-            cells={cells}
-            maxCount={maxCount}
-            sourceWidth={recordedWidth}
-            sourceHeight={recordedHeight}
-            width={frameW}
-            height={overlayHeight}
-          />
-        </div>
+        <HeatmapCanvas
+          cells={cells}
+          maxCount={maxCount}
+          sourceWidth={recordedWidth}
+          sourceHeight={recordedHeight}
+          width={frameW}
+          height={frameH}
+          offsetY={offsetY}
+        />
       </div>
     </DeviceFrame>
   );

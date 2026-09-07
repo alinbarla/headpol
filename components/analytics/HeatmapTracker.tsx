@@ -110,11 +110,6 @@ function pointFromEvent(event: MouseEvent | PointerEvent) {
   return { x: pageX, y: pageY, scrollY: size.scrollY };
 }
 
-function pointFromTouch(touch: Touch) {
-  const size = metrics();
-  return { x: touch.pageX, y: touch.pageY, scrollY: size.scrollY };
-}
-
 function metrics() {
   const doc = document.documentElement;
   const visual = window.visualViewport;
@@ -200,7 +195,7 @@ export function HeatmapTracker() {
     }
 
     let cancelled = false;
-    let queue: UserEvent[] = [];
+    const queue: UserEvent[] = [];
     let lastMove = 0;
     let lastScroll = 0;
     const lastValues = new Map<string, string>();
@@ -211,6 +206,12 @@ export function HeatmapTracker() {
     let autofillStyle: HTMLStyleElement | null = null;
     let sessionId = "";
     let visitorId = "";
+    // Touch move streams during scroll can OOM low-memory mobile browsers.
+    const coarsePointer =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(pointer: coarse)").matches;
+    const moveSampleMs = coarsePointer ? MOVE_SAMPLE_MS * 4 : MOVE_SAMPLE_MS;
+    const maxQueue = BATCH_SIZE * 4;
 
     function flush(beacon = false) {
       if (queue.length === 0) return;
@@ -220,6 +221,11 @@ export function HeatmapTracker() {
     }
 
     function push(event: UserEvent) {
+      if (queue.length >= maxQueue) {
+        // Drop oldest non-click noise first so taps still flush.
+        const dropAt = queue.findIndex((item) => item.type === "move" || item.type === "attention");
+        queue.splice(dropAt >= 0 ? dropAt : 0, 1);
+      }
       queue.push(event);
       if (queue.length >= BATCH_SIZE) flush(false);
     }
@@ -263,6 +269,10 @@ export function HeatmapTracker() {
     }
 
     function onPointerMove(event: PointerEvent) {
+      // Finger-drag on phones is scroll, not a cursor path — skip to avoid
+      // flooding the queue and crashing low-memory browsers on long pages.
+      if (event.pointerType === "touch" || coarsePointer) return;
+
       const now = Date.now();
       const point = pointFromEvent(event);
       const gx = Math.floor(point.x / 50);
@@ -273,7 +283,7 @@ export function HeatmapTracker() {
         attentionCell = { gx, gy, x: point.x, y: point.y, since: now };
       }
 
-      if (now - lastMove < MOVE_SAMPLE_MS) return;
+      if (now - lastMove < moveSampleMs) return;
       lastMove = now;
       push({
         type: "move",
@@ -311,22 +321,6 @@ export function HeatmapTracker() {
       if (Date.now() - lastTap < 450) return;
       const point = pointFromEvent(event);
       recordTap(point.x, point.y, point.scrollY);
-    }
-
-    function onTouchMove(event: TouchEvent) {
-      const touch = event.touches[0];
-      if (!touch) return;
-      const now = Date.now();
-      if (now - lastMove < MOVE_SAMPLE_MS) return;
-      lastMove = now;
-      const point = pointFromTouch(touch);
-      push({
-        type: "move",
-        x: point.x,
-        y: point.y,
-        scrollY: point.scrollY,
-        timestamp: now,
-      });
     }
 
     function onScroll() {
@@ -377,7 +371,6 @@ export function HeatmapTracker() {
         window.addEventListener("pointermove", onPointerMove, { passive: true });
         window.addEventListener("pointerup", onPointerUp, { capture: true });
         window.addEventListener("click", onClick, { capture: true });
-        window.addEventListener("touchmove", onTouchMove, { passive: true });
         window.addEventListener("scroll", onScroll, { passive: true });
         window.visualViewport?.addEventListener("scroll", onScroll);
         window.visualViewport?.addEventListener("resize", onScroll);
@@ -391,7 +384,8 @@ export function HeatmapTracker() {
 
         snapshotFields();
         flushTimer = window.setInterval(() => flush(false), FLUSH_INTERVAL_MS);
-        pollTimer = window.setInterval(snapshotFields, 400);
+        // Autofill polling is cheaper on a longer interval for phones.
+        pollTimer = window.setInterval(snapshotFields, coarsePointer ? 1200 : 400);
       })
       .catch(() => {
         // Stay silent if the config endpoint is down.
@@ -405,7 +399,6 @@ export function HeatmapTracker() {
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", onPointerUp, true);
       window.removeEventListener("click", onClick, true);
-      window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("scroll", onScroll);
       window.visualViewport?.removeEventListener("scroll", onScroll);
       window.visualViewport?.removeEventListener("resize", onScroll);
