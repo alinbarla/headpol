@@ -4,8 +4,8 @@ import { useEffect, useState, type ReactNode } from "react";
 import { HeatmapEmptyState } from "@/components/admin/heatmap/HeatmapLegend";
 
 /**
- * Heatmap preview/replay mounts iframes and canvases that can OOM mobile
- * browsers. Keep those trees unmounted below the md breakpoint.
+ * Heatmap preview mounts iframes and canvases that can OOM mobile browsers.
+ * Keep that tree unmounted below the md breakpoint.
  */
 export function HeatmapDesktopOnly({
   children,
