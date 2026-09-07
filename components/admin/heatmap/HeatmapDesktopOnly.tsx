@@ -9,8 +9,8 @@ import { HeatmapEmptyState } from "@/components/admin/heatmap/HeatmapLegend";
  */
 export function HeatmapDesktopOnly({
   children,
-  title = "Desktop only",
-  body = "Open heatmap on a computer. It is hidden on phones to keep the browser stable.",
+  title = "Preview on desktop",
+  body = "The visual heatmap preview is desktop-only. Filters, stats and sessions stay available here.",
 }: {
   children: ReactNode;
   title?: string;
@@ -27,15 +27,11 @@ export function HeatmapDesktopOnly({
   }, []);
 
   if (desktop === null) {
-    return <div className="mt-6 min-h-40" aria-hidden="true" />;
+    return <div className="min-h-24" aria-hidden="true" />;
   }
 
   if (!desktop) {
-    return (
-      <div className="mt-6">
-        <HeatmapEmptyState title={title} body={body} />
-      </div>
-    );
+    return <HeatmapEmptyState title={title} body={body} />;
   }
 
   return <>{children}</>;

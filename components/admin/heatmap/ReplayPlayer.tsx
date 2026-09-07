@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DeviceFrame } from "@/components/admin/heatmap/DeviceFrame";
+import { HeatmapDesktopOnly } from "@/components/admin/heatmap/HeatmapDesktopOnly";
 import { HEATMAP_PREVIEW_PARAM } from "@/lib/analytics/constants";
 import type { AnalyticsEventRow, AnalyticsSession } from "@/lib/analytics/types";
 import { Button } from "@/components/shadcn/button";
@@ -136,95 +137,108 @@ export function ReplayPlayer({
     };
   }, [playing, speed, events.length, duration, start, times]);
 
-  const typedEntries = Object.entries(typedValues);
+  const finalTypedEntries = useMemo(() => {
+    const values: Record<string, string> = {};
+    for (const event of events) {
+      if (event.type === "input" && event.field) {
+        values[event.field] = event.value ?? "";
+      }
+    }
+    return Object.entries(values);
+  }, [events]);
 
   return (
     <div className="space-y-3">
-      <DeviceFrame viewportW={view.w} viewportH={view.h} device={session.device}>
-        <iframe
-          ref={frameRef}
-          src={src}
-          title={`Replay of ${session.page}`}
-          width={view.w}
-          height={view.h}
-          className="block bg-background"
-          style={{ width: view.w, height: view.h, border: 0 }}
-          sandbox="allow-scripts allow-same-origin"
-        />
-        {cursor.visible ? (
-          <div
-            className="pointer-events-none absolute left-0 top-0 z-10"
-            style={{ transform: `translate(${cursor.x}px, ${cursor.y}px)` }}
-          >
+      <HeatmapDesktopOnly
+        title="Replay on desktop"
+        body="The visual session replay is desktop-only. Form text from this session is still listed below."
+      >
+        <DeviceFrame viewportW={view.w} viewportH={view.h} device={session.device}>
+          <iframe
+            ref={frameRef}
+            src={src}
+            title={`Replay of ${session.page}`}
+            width={view.w}
+            height={view.h}
+            className="block bg-background"
+            style={{ width: view.w, height: view.h, border: 0 }}
+            sandbox="allow-scripts allow-same-origin"
+          />
+          {cursor.visible ? (
             <div
-              className={`-translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary shadow ${
-                session.device === "mobile" ? "size-5" : "size-4"
-              } ${cursor.click ? "scale-125" : ""}`}
-            />
-            {cursor.click ? (
-              <div className="absolute left-1/2 top-1/2 size-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/70" />
-            ) : null}
-          </div>
-        ) : null}
-      </DeviceFrame>
+              className="pointer-events-none absolute left-0 top-0 z-10"
+              style={{ transform: `translate(${cursor.x}px, ${cursor.y}px)` }}
+            >
+              <div
+                className={`-translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary shadow ${
+                  session.device === "mobile" ? "size-5" : "size-4"
+                } ${cursor.click ? "scale-125" : ""}`}
+              />
+              {cursor.click ? (
+                <div className="absolute left-1/2 top-1/2 size-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/70" />
+              ) : null}
+            </div>
+          ) : null}
+        </DeviceFrame>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <Button type="button" size="sm" onClick={() => setPlaying((value) => !value)}>
-          {playing ? "Pause" : "Play"}
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          onClick={() => {
-            setPlaying(false);
-            setIndex(0);
-          }}
-        >
-          Reset
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant={speed === 1 ? "secondary" : "outline"}
-          onClick={() => setSpeed(1)}
-        >
-          1x
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant={speed === 2 ? "secondary" : "outline"}
-          onClick={() => setSpeed(2)}
-        >
-          2x
-        </Button>
-        <input
-          type="range"
-          min={0}
-          max={Math.max(0, events.length - 1)}
-          value={index}
-          onChange={(event) => {
-            setPlaying(false);
-            setIndex(Number(event.target.value));
-          }}
-          className="min-w-40 flex-1 accent-[var(--primary)]"
-          aria-label="Scrub replay"
-        />
-        <span className="text-xs text-muted-foreground">
-          {events.length === 0 ? "0/0" : `${index + 1}/${events.length}`}
-        </span>
-      </div>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <Button type="button" size="sm" onClick={() => setPlaying((value) => !value)}>
+            {playing ? "Pause" : "Play"}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              setPlaying(false);
+              setIndex(0);
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={speed === 1 ? "secondary" : "outline"}
+            onClick={() => setSpeed(1)}
+          >
+            1x
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={speed === 2 ? "secondary" : "outline"}
+            onClick={() => setSpeed(2)}
+          >
+            2x
+          </Button>
+          <input
+            type="range"
+            min={0}
+            max={Math.max(0, events.length - 1)}
+            value={index}
+            onChange={(event) => {
+              setPlaying(false);
+              setIndex(Number(event.target.value));
+            }}
+            className="min-w-40 flex-1 accent-[var(--primary)]"
+            aria-label="Scrub replay"
+          />
+          <span className="text-xs text-muted-foreground">
+            {events.length === 0 ? "0/0" : `${index + 1}/${events.length}`}
+          </span>
+        </div>
+      </HeatmapDesktopOnly>
 
       <div className="rounded-lg border border-border p-3">
         <p className="text-sm font-medium">Typed in form</p>
-        {typedEntries.length === 0 ? (
+        {finalTypedEntries.length === 0 ? (
           <p className="mt-1 text-sm text-muted-foreground">
-            Nothing typed yet at this point in the session.
+            Nothing typed in this session.
           </p>
         ) : (
           <dl className="mt-2 space-y-1.5 text-sm">
-            {typedEntries.map(([field, value]) => (
+            {finalTypedEntries.map(([field, value]) => (
               <div key={field} className="grid gap-0.5 sm:grid-cols-[10rem_1fr]">
                 <dt className="font-mono text-xs text-muted-foreground">{field}</dt>
                 <dd className="break-words">{value || "—"}</dd>
