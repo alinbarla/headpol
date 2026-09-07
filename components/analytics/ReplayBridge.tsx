@@ -109,12 +109,13 @@ export function ReplayBridge({ adminOrigins }: { adminOrigins: string[] }) {
     function onMessage(event: MessageEvent) {
       if (!allowed.has(event.origin)) return;
       if (isScrollMessage(event.data)) {
-        window.scrollTo({
-          top: Math.max(0, event.data.scrollY),
-          left: 0,
-          behavior: "auto",
+        const top = Math.max(0, event.data.scrollY);
+        window.scrollTo({ top, left: 0, behavior: "auto" });
+        document.documentElement.scrollTop = top;
+        document.body.scrollTop = top;
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => report("heatmap-viewport"));
         });
-        requestAnimationFrame(() => report("heatmap-viewport"));
         return;
       }
       if (isInputsMessage(event.data)) {

@@ -2,15 +2,59 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DeviceFrame } from "@/components/admin/heatmap/DeviceFrame";
-import { HEATMAP_PREVIEW_PARAM } from "@/lib/analytics/constants";
+import { HEATMAP_PREVIEW_PARAM, REPLAY_FRAME } from "@/lib/analytics/constants";
 import type { AnalyticsEventRow, AnalyticsSession } from "@/lib/analytics/types";
 import { Button } from "@/components/shadcn/button";
 
-function sessionViewport(session: AnalyticsSession) {
+/** Pick a stable device frame so the iframe hits the right CSS breakpoints. */
+function replayViewport(session: AnalyticsSession) {
+  if (session.device === "mobile") {
+    // Prefer the recorded phone size when it is already phone-class; otherwise
+    // fall back to a canonical iPhone frame so the page does not reflow as desktop.
+    const recordedPhone =
+      session.viewport_w > 0 &&
+      session.viewport_w < 768 &&
+      session.viewport_h > 0;
+    return {
+      w: recordedPhone ? Math.round(session.viewport_w) : REPLAY_FRAME.mobile.w,
+      h: recordedPhone ? Math.round(session.viewport_h) : REPLAY_FRAME.mobile.h,
+    };
+  }
+
+  if (session.device === "tablet") {
+    const recordedTablet =
+      session.viewport_w >= 768 &&
+      session.viewport_w < 1024 &&
+      session.viewport_h > 0;
+    return {
+      w: recordedTablet ? Math.round(session.viewport_w) : REPLAY_FRAME.tablet.w,
+      h: recordedTablet ? Math.round(session.viewport_h) : REPLAY_FRAME.tablet.h,
+    };
+  }
+
   return {
-    w: Math.max(session.viewport_w, 1),
-    h: Math.max(session.viewport_h, 1),
+    w:
+      session.viewport_w >= 1024
+        ? Math.round(session.viewport_w)
+        : REPLAY_FRAME.desktop.w,
+    h:
+      session.viewport_h >= 600
+        ? Math.round(session.viewport_h)
+        : REPLAY_FRAME.desktop.h,
   };
+}
+
+function mapScrollY(
+  scrollY: number,
+  recordedDocumentH: number,
+  recordedViewportH: number,
+  liveDocumentH: number,
+  liveViewportH: number
+): number {
+  const recordedTravel = Math.max(1, recordedDocumentH - recordedViewportH);
+  const liveTravel = Math.max(1, liveDocumentH - liveViewportH);
+  const pct = Math.min(1, Math.max(0, scrollY / recordedTravel));
+  return pct * liveTravel;
 }
 
 export function ReplayPlayer({
@@ -27,6 +71,7 @@ export function ReplayPlayer({
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [index, setIndex] = useState(0);
+  const [liveDocumentH, setLiveDocumentH] = useState(session.document_h);
   const [cursor, setCursor] = useState({
     x: 24,
     y: 24,
@@ -42,7 +87,9 @@ export function ReplayPlayer({
   const end = times[times.length - 1] ?? start;
   const duration = Math.max(1, end - start);
   const current = events[index];
-  const view = sessionViewport(session);
+  const view = useMemo(() => replayViewport(session), [session]);
+  const recordedViewportW = Math.max(1, session.viewport_w || view.w);
+  const recordedViewportH = Math.max(1, session.viewport_h || view.h);
   const src = `${siteUrl}${session.page === "/" ? "/" : session.page}?${HEATMAP_PREVIEW_PARAM}=1`;
   const typedValues = useMemo(() => {
     const values: Record<string, string> = {};
@@ -54,10 +101,22 @@ export function ReplayPlayer({
     return values;
   }, [events, index]);
 
-  function postScroll(scrollY: number) {
+  function postScroll(scrollY: number, event?: AnalyticsEventRow | null) {
     const frame = frameRef.current?.contentWindow;
     if (!frame) return;
-    frame.postMessage({ type: "heatmap-scroll", scrollY }, siteUrl);
+    const recordedDocumentH = Math.max(
+      1,
+      event?.document_h || session.document_h || liveDocumentH
+    );
+    const recordedH = Math.max(1, event?.viewport_h || recordedViewportH);
+    const mapped = mapScrollY(
+      scrollY,
+      recordedDocumentH,
+      recordedH,
+      Math.max(liveDocumentH, recordedDocumentH),
+      view.h
+    );
+    frame.postMessage({ type: "heatmap-scroll", scrollY: mapped }, siteUrl);
   }
 
   function postInputs(values: Record<string, string>) {
@@ -73,27 +132,51 @@ export function ReplayPlayer({
   useEffect(() => {
     if (!current) return;
     if (current.x != null && current.y != null) {
+      const eventW = Math.max(1, current.viewport_w || recordedViewportW);
+      const eventH = Math.max(1, current.viewport_h || recordedViewportH);
+      const viewportX = current.x;
+      const viewportY = current.y - current.scroll_y;
       setCursor({
-        x: current.x,
-        y: current.y - current.scroll_y,
+        x: viewportX * (view.w / eventW),
+        y: viewportY * (view.h / eventH),
         visible: true,
         click: current.type === "click",
       });
     }
-    postScroll(current.scroll_y);
+    postScroll(current.scroll_y, current);
     postInputs(typedValues);
-  }, [current, siteUrl, typedValues]);
+  }, [
+    current,
+    liveDocumentH,
+    recordedViewportH,
+    recordedViewportW,
+    siteUrl,
+    typedValues,
+    view.h,
+    view.w,
+  ]);
 
   useEffect(() => {
     function onMessage(event: MessageEvent) {
-      const data = event.data as { type?: string } | null;
-      if (!data || data.type !== "heatmap-ready") return;
-      if (current) postScroll(current.scroll_y);
+      const data = event.data as {
+        type?: string;
+        documentH?: number;
+      } | null;
+      if (!data) return;
+      if (data.type === "heatmap-ready" || data.type === "heatmap-viewport") {
+        if (typeof data.documentH === "number" && data.documentH > 0) {
+          setLiveDocumentH((prev) =>
+            Math.abs(prev - data.documentH!) < 2 ? prev : data.documentH!
+          );
+        }
+      }
+      if (data.type !== "heatmap-ready") return;
+      if (current) postScroll(current.scroll_y, current);
       postInputs(typedValues);
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [current, typedValues, siteUrl]);
+  }, [current, typedValues, siteUrl, liveDocumentH, view.h]);
 
   useEffect(() => {
     if (!playing || events.length === 0) return;

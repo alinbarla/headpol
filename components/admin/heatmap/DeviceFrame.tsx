@@ -44,7 +44,11 @@ export function DeviceFrame({
   children: ReactNode;
 }) {
   const { hostRef, scale } = useDeviceFit(viewportW, viewportH);
-  const compact = device === "mobile" || viewportW < 768;
+  const phone = device === "mobile";
+  const tablet = device === "tablet";
+  const compact = phone || tablet || viewportW < 768;
+  const screenW = viewportW * scale;
+  const screenH = viewportH * scale;
 
   return (
     <div ref={hostRef} className="w-full">
@@ -52,30 +56,70 @@ export function DeviceFrame({
         <p className="mb-2 text-xs text-muted-foreground">
           {device} · {Math.round(viewportW)}×{Math.round(viewportH)}
         </p>
-        <div
-          className={cn(
-            "relative overflow-hidden bg-black/40",
-            compact
-              ? "rounded-[2rem] shadow-lg ring-8 ring-zinc-800"
-              : "rounded-lg border border-border"
-          )}
-          style={{
-            width: viewportW * scale,
-            height: viewportH * scale,
-          }}
-        >
+
+        {compact ? (
           <div
-            className="absolute left-0 top-0 overflow-hidden"
-            style={{
-              width: viewportW,
-              height: viewportH,
-              transform: `scale(${scale})`,
-              transformOrigin: "top left",
-            }}
+            className={cn(
+              "bg-zinc-900 shadow-xl ring-1 ring-zinc-700",
+              phone ? "rounded-[2.75rem] p-3" : "rounded-[1.75rem] p-2.5"
+            )}
           >
-            {children}
+            {phone ? (
+              <div className="mb-2 flex justify-center">
+                <div className="h-5 w-24 rounded-full bg-black" />
+              </div>
+            ) : null}
+            <div
+              className={cn(
+                "relative overflow-hidden bg-black",
+                phone ? "rounded-[2.1rem]" : "rounded-[1.25rem]"
+              )}
+              style={{ width: screenW, height: screenH }}
+            >
+              <div
+                className="absolute left-0 top-0 overflow-hidden"
+                style={{
+                  width: viewportW,
+                  height: viewportH,
+                  transform: `scale(${scale})`,
+                  transformOrigin: "top left",
+                }}
+              >
+                {children}
+              </div>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div
+            className="overflow-hidden rounded-xl border border-border bg-muted shadow-lg"
+            style={{ width: screenW }}
+          >
+            <div className="flex h-9 items-center gap-2 border-b border-border bg-secondary/80 px-3">
+              <span className="size-2.5 rounded-full bg-red-400/80" />
+              <span className="size-2.5 rounded-full bg-amber-400/80" />
+              <span className="size-2.5 rounded-full bg-emerald-400/80" />
+              <span className="ml-2 truncate rounded-md bg-background/70 px-2 py-0.5 text-[10px] text-muted-foreground">
+                desktop
+              </span>
+            </div>
+            <div
+              className="relative overflow-hidden bg-background"
+              style={{ width: screenW, height: screenH }}
+            >
+              <div
+                className="absolute left-0 top-0 overflow-hidden"
+                style={{
+                  width: viewportW,
+                  height: viewportH,
+                  transform: `scale(${scale})`,
+                  transformOrigin: "top left",
+                }}
+              >
+                {children}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -27,6 +27,13 @@ export const CONFIG_CACHE_MS = 30_000;
 
 export const HEATMAP_PREVIEW_PARAM = "heatmapPreview";
 
+/** Canonical replay frame sizes so CSS breakpoints match the recorded device class. */
+export const REPLAY_FRAME = {
+  mobile: { w: 390, h: 844 },
+  tablet: { w: 820, h: 1180 },
+  desktop: { w: 1280, h: 800 },
+} as const;
+
 export const RANGE_MS: Record<HeatmapRange, number> = {
   "24h": 24 * 60 * 60 * 1000,
   "7d": 7 * 24 * 60 * 60 * 1000,
