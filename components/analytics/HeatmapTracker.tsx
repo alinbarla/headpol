@@ -35,6 +35,14 @@ function readOrCreate(key: string): string {
 }
 
 function deviceFromViewport(): HeatmapDevice {
+  const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+  // Prefer UA so phones in landscape / "Request Desktop Website" still land in mobile.
+  if (/iPhone|iPod|Android.+Mobile|Windows Phone|webOS|BlackBerry|IEMobile/i.test(ua)) {
+    return "mobile";
+  }
+  if (/iPad|Android(?!.*Mobile)|Tablet/i.test(ua)) {
+    return "tablet";
+  }
   const width = window.innerWidth;
   if (width < 768) return "mobile";
   if (width < 1024) return "tablet";
@@ -113,9 +121,15 @@ function pointFromEvent(event: MouseEvent | PointerEvent) {
 function metrics() {
   const doc = document.documentElement;
   const visual = window.visualViewport;
+  // visualViewport can briefly report 0 on mobile Safari; never send that
+  // upstream or Zod rejects the whole batch (min 1).
+  const viewportW = Math.round(visual?.width || window.innerWidth || doc.clientWidth || 1);
+  const viewportH = Math.round(
+    visual?.height || window.innerHeight || doc.clientHeight || 1
+  );
   return {
-    viewportW: Math.round(visual?.width ?? window.innerWidth),
-    viewportH: Math.round(visual?.height ?? window.innerHeight),
+    viewportW: Math.max(1, viewportW),
+    viewportH: Math.max(1, viewportH),
     documentH: Math.max(doc.scrollHeight, doc.offsetHeight, 1),
     scrollX: window.scrollX || doc.scrollLeft || 0,
     scrollY: layoutScrollY(),
@@ -383,7 +397,15 @@ export function HeatmapTracker() {
         document.addEventListener("visibilitychange", onVisibility);
         window.addEventListener("pagehide", onHidden);
 
+        // Desktop gets free move samples; phones skip those. Seed a scroll
+        // event and flush immediately so a session row is always created.
+        push({
+          type: "scroll",
+          scrollY: layoutScrollY(),
+          timestamp: Date.now(),
+        });
         snapshotFields();
+        flush(false);
         flushTimer = window.setInterval(() => flush(false), FLUSH_INTERVAL_MS);
         // Autofill polling is cheaper on a longer interval for phones.
         pollTimer = window.setInterval(snapshotFields, coarsePointer ? 1200 : 400);
