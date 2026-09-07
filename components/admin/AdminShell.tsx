@@ -27,7 +27,12 @@ const NAV = [
   { href: "/admin/bookings", label: "Bookings", icon: ListIcon },
   { href: "/admin/payments", label: "Payments", icon: CreditCardIcon },
   { href: "/admin/seo", label: "SEO", icon: SearchIcon },
-  { href: "/admin/heatmap", label: "Heatmap", icon: FlameIcon },
+  {
+    href: "/admin/heatmap",
+    label: "Heatmap",
+    icon: FlameIcon,
+    desktopOnly: true,
+  },
   { href: "/admin/mail-list", label: "Mail list", icon: MailIcon },
   { href: "/admin/assistant", label: "Assistant", icon: MessageSquareIcon },
   {
@@ -89,7 +94,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-40 flex overflow-x-auto border-t border-border bg-background/95 backdrop-blur md:hidden">
-        {NAV.map((item) => {
+        {NAV.filter((item) => !item.desktopOnly).map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href, item.exact);
           return (

@@ -187,12 +187,23 @@ function sendBatch(
   });
 }
 
+function isMobileViewport(): boolean {
+  if (typeof window === "undefined") return false;
+  if (window.innerWidth < 768) return true;
+  return (
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(pointer: coarse) and (max-width: 1023px)").matches
+  );
+}
+
 export function HeatmapTracker() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (new URLSearchParams(window.location.search).get(HEATMAP_PREVIEW_PARAM) === "1") {
       return;
     }
+    // Heatmap collection stays off on phones/tablets to avoid mobile browser crashes.
+    if (isMobileViewport()) return;
 
     let cancelled = false;
     const queue: UserEvent[] = [];
@@ -206,11 +217,7 @@ export function HeatmapTracker() {
     let autofillStyle: HTMLStyleElement | null = null;
     let sessionId = "";
     let visitorId = "";
-    // Touch move streams during scroll can OOM low-memory mobile browsers.
-    const coarsePointer =
-      typeof window.matchMedia === "function" &&
-      window.matchMedia("(pointer: coarse)").matches;
-    const moveSampleMs = coarsePointer ? MOVE_SAMPLE_MS * 4 : MOVE_SAMPLE_MS;
+    const moveSampleMs = MOVE_SAMPLE_MS;
     const maxQueue = BATCH_SIZE * 4;
 
     function flush(beacon = false) {
@@ -269,9 +276,7 @@ export function HeatmapTracker() {
     }
 
     function onPointerMove(event: PointerEvent) {
-      // Finger-drag on phones is scroll, not a cursor path — skip to avoid
-      // flooding the queue and crashing low-memory browsers on long pages.
-      if (event.pointerType === "touch" || coarsePointer) return;
+      if (event.pointerType === "touch") return;
 
       const now = Date.now();
       const point = pointFromEvent(event);
@@ -384,8 +389,7 @@ export function HeatmapTracker() {
 
         snapshotFields();
         flushTimer = window.setInterval(() => flush(false), FLUSH_INTERVAL_MS);
-        // Autofill polling is cheaper on a longer interval for phones.
-        pollTimer = window.setInterval(snapshotFields, coarsePointer ? 1200 : 400);
+        pollTimer = window.setInterval(snapshotFields, 400);
       })
       .catch(() => {
         // Stay silent if the config endpoint is down.

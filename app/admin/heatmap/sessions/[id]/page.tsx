@@ -5,6 +5,7 @@ import { loadReplay } from "@/lib/analytics/replay";
 import { SITE_URL } from "@/lib/seo";
 import { formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { HeatmapDesktopOnly } from "@/components/admin/heatmap/HeatmapDesktopOnly";
 import { ReplayPlayer } from "@/components/admin/heatmap/ReplayPlayer";
 import { Button } from "@/components/shadcn/button";
 
@@ -32,20 +33,22 @@ export default async function HeatmapSessionPage({
             {formatTimestamp(session.started_at)}
           </p>
         </div>
-        <Button asChild variant="outline" size="sm">
+        <Button asChild variant="outline" size="sm" className="hidden md:inline-flex">
           <Link href="/admin/heatmap">Back to heatmap</Link>
         </Button>
       </div>
 
-      <div className="mt-6">
-        <ReplayPlayer siteUrl={SITE_URL} session={session} events={events} />
-      </div>
+      <HeatmapDesktopOnly body="Open session replay on a computer. It is hidden on phones to keep the browser stable.">
+        <div className="mt-6">
+          <ReplayPlayer siteUrl={SITE_URL} session={session} events={events} />
+        </div>
 
-      <p className="mt-4 text-xs text-muted-foreground">
-        Event-stream replay. Form text typed on the public site is shown below
-        and filled into the preview. Password and payment fields are not stored.
-        {events.length === 0 ? " This session has no events yet." : ""}
-      </p>
+        <p className="mt-4 text-xs text-muted-foreground">
+          Event-stream replay. Form text typed on the public site is shown below
+          and filled into the preview. Password and payment fields are not stored.
+          {events.length === 0 ? " This session has no events yet." : ""}
+        </p>
+      </HeatmapDesktopOnly>
     </AdminShell>
   );
 }
