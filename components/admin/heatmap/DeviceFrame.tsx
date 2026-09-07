@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { clampFrameSize } from "@/lib/analytics/replayFrame";
 import type { HeatmapDevice } from "@/lib/analytics/types";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +16,7 @@ export function useDeviceFit(viewportW: number, viewportH: number) {
     function update() {
       if (!host) return;
       const maxW = Math.max(host.clientWidth, 1);
-      const maxH = Math.min(window.innerHeight * 0.72, 860);
+      const maxH = Math.min(window.innerHeight * 0.65, 720);
       setScale(
         Math.min(maxW / Math.max(viewportW, 1), maxH / Math.max(viewportH, 1), 1)
       );
@@ -45,17 +46,22 @@ export function DeviceFrame({
   device: HeatmapDevice;
   children: ReactNode;
 }) {
-  const { hostRef, scale } = useDeviceFit(viewportW, viewportH);
+  // Belt-and-suspenders: never lay out an iframe larger than the safe budget.
+  const safe = useMemo(
+    () => clampFrameSize(viewportW, viewportH),
+    [viewportW, viewportH]
+  );
+  const { hostRef, scale } = useDeviceFit(safe.w, safe.h);
   const phone = device === "mobile";
   const tablet = device === "tablet";
-  const screenW = viewportW * scale;
-  const screenH = viewportH * scale;
+  const screenW = safe.w * scale;
+  const screenH = safe.h * scale;
 
   return (
     <div ref={hostRef} className="w-full">
       <div className="flex flex-col items-center">
         <p className="mb-2 text-xs text-muted-foreground">
-          {device} · {Math.round(viewportW)}×{Math.round(viewportH)}
+          {device} · {safe.w}×{safe.h}
         </p>
 
         {phone || tablet ? (
@@ -80,8 +86,8 @@ export function DeviceFrame({
               <div
                 className="absolute left-0 top-0 overflow-hidden"
                 style={{
-                  width: viewportW,
-                  height: viewportH,
+                  width: safe.w,
+                  height: safe.h,
                   transform: `scale(${scale})`,
                   transformOrigin: "top left",
                 }}
@@ -100,7 +106,7 @@ export function DeviceFrame({
               <span className="size-2.5 rounded-full bg-amber-400/80" />
               <span className="size-2.5 rounded-full bg-emerald-400/80" />
               <span className="ml-2 truncate rounded-md bg-background/70 px-2 py-0.5 text-[10px] text-muted-foreground">
-                desktop · {Math.round(viewportW)}×{Math.round(viewportH)}
+                desktop · {safe.w}×{safe.h}
               </span>
             </div>
             <div
@@ -110,8 +116,8 @@ export function DeviceFrame({
               <div
                 className="absolute left-0 top-0 overflow-hidden"
                 style={{
-                  width: viewportW,
-                  height: viewportH,
+                  width: safe.w,
+                  height: safe.h,
                   transform: `scale(${scale})`,
                   transformOrigin: "top left",
                 }}

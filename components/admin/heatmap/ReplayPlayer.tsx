@@ -2,44 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DeviceFrame } from "@/components/admin/heatmap/DeviceFrame";
-import { HEATMAP_PREVIEW_PARAM, REPLAY_FRAME } from "@/lib/analytics/constants";
-import type {
-  AnalyticsEventRow,
-  AnalyticsSession,
-  HeatmapDevice,
-} from "@/lib/analytics/types";
+import { HEATMAP_PREVIEW_PARAM } from "@/lib/analytics/constants";
+import {
+  resolveReplayDevice,
+  safeReplayFrame,
+} from "@/lib/analytics/replayFrame";
+import type { AnalyticsEventRow, AnalyticsSession } from "@/lib/analytics/types";
 import { Button } from "@/components/shadcn/button";
-
-/** Resolve the device class for chrome + iframe breakpoints. */
-function replayDevice(session: AnalyticsSession): HeatmapDevice {
-  if (session.device === "mobile" || session.viewport_w < 768) return "mobile";
-  if (session.device === "tablet" || session.viewport_w < 1024) return "tablet";
-  return "desktop";
-}
-
-/**
- * Canonical frame sizes:
- * - mobile  → iPhone (390×844) so the page always hits mobile CSS
- * - desktop → desktop window so the page always hits desktop CSS
- */
-function replayViewport(device: HeatmapDevice, session: AnalyticsSession) {
-  if (device === "mobile") {
-    return { w: REPLAY_FRAME.mobile.w, h: REPLAY_FRAME.mobile.h };
-  }
-  if (device === "tablet") {
-    return { w: REPLAY_FRAME.tablet.w, h: REPLAY_FRAME.tablet.h };
-  }
-  return {
-    w:
-      session.viewport_w >= 1024
-        ? Math.round(session.viewport_w)
-        : REPLAY_FRAME.desktop.w,
-    h:
-      session.viewport_h >= 600
-        ? Math.round(session.viewport_h)
-        : REPLAY_FRAME.desktop.h,
-  };
-}
 
 /** Map recorded page scrollY into the live iframe document. */
 function mapScrollY(
@@ -86,11 +55,15 @@ export function ReplayPlayer({
   const end = times[times.length - 1] ?? start;
   const duration = Math.max(1, end - start);
   const current = events[index];
-  const device = useMemo(() => replayDevice(session), [session]);
-  const view = useMemo(
-    () => replayViewport(device, session),
-    [device, session]
+  const device = useMemo(
+    () =>
+      resolveReplayDevice({
+        device: session.device,
+        viewportW: session.viewport_w,
+      }),
+    [session.device, session.viewport_w]
   );
+  const view = useMemo(() => safeReplayFrame(device), [device]);
   const recordedViewportW = Math.max(1, session.viewport_w || view.w);
   const recordedViewportH = Math.max(1, session.viewport_h || view.h);
   const src = `${siteUrl}${session.page === "/" ? "/" : session.page}?${HEATMAP_PREVIEW_PARAM}=1`;
@@ -117,7 +90,6 @@ export function ReplayPlayer({
       recordedDocumentH,
       liveDocHRef.current
     );
-    // "*" so scroll still applies if SITE_URL host differs slightly from the iframe.
     frame.postMessage({ type: "heatmap-scroll", scrollY: mapped }, "*");
   }
 
