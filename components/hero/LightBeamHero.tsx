@@ -43,9 +43,13 @@ export function LightBeamHero() {
             </p>
             <h1 className="headline-display relative text-3xl font-bold text-text-primary sm:text-4xl lg:text-5xl">
               {t.rich("title", {
-                lead: (chunks) => <span className="sr-only">{chunks}</span>,
+                lead: (chunks) => (
+                  <span className="block text-[0.72em] font-semibold leading-snug text-beam sm:text-[0.78em]">
+                    {chunks}
+                  </span>
+                ),
                 visible: (chunks) => (
-                  <span className="inline-block first-letter:uppercase">{chunks}</span>
+                  <span className="mt-1 inline-block first-letter:uppercase">{chunks}</span>
                 ),
               })}
             </h1>

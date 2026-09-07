@@ -333,13 +333,11 @@ export async function buildHomeStructuredData(
     url: localeUrl("sv", "stralkastarrenovering"),
   };
 
+  // LocalBusiness is emitted once in the locale layout (standalone, for naive
+  // crawlers). Keep @id references here so the graph still ties together.
   return {
     "@context": "https://schema.org",
     "@graph": [
-      localBusinessNode(
-        [{ "@id": POLERING_ID }, { "@id": RENOVERING_ID }],
-        tMeta("description")
-      ),
       organizationNode(),
       websiteNode(locale),
       polering,
@@ -384,11 +382,8 @@ export function buildClusterStructuredData(
     item: url,
   });
 
+  // LocalBusiness lives in the locale layout only — avoid duplicate entities.
   const graph: Record<string, unknown>[] = [
-    localBusinessNode(
-      [{ "@id": POLERING_ID }, { "@id": RENOVERING_ID }],
-      page.description
-    ),
     organizationNode(),
     websiteNode("sv"),
     webPageNode({

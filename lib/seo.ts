@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import { CONTACT_EMAIL, CONTACT_PHONE } from "@/lib/booking";
+import {
+  MUNICIPALITY_NAMES,
+  MUNICIPALITY_PAGE_SLUGS,
+} from "@/lib/content/municipalities";
 import { type Locale } from "@/lib/i18n";
 
 function resolveSiteUrl(): string {
@@ -26,7 +30,7 @@ export const PUBLISHED_DATE =
   process.env.NEXT_PUBLIC_PUBLISHED_DATE ?? "2026-01-01";
 
 /** Last meaningful public-content change. Do not use `new Date()` in schema. */
-export const DATE_MODIFIED = "2026-08-30";
+export const DATE_MODIFIED = "2026-09-07";
 
 /** Optional Google Search Console verification token. */
 export const GOOGLE_SITE_VERIFICATION =
@@ -94,33 +98,19 @@ export const OPENING_HOURS = {
   },
 } as const;
 
-/** Areas we serve, surfaced in copy and AreaServed schema for local relevance. */
-export const SERVICE_AREAS = [
-  "Stockholm",
-  "Solna",
-  "Sundbyberg",
-  "Nacka",
-  "Täby",
-  "Lidingö",
-  "Huddinge",
-  "Tumba",
-  "Södertälje",
-  "Haninge",
-  "Järfälla",
-  "Sollentuna",
-  "Danderyd",
-];
+import {
+  MUNICIPALITY_NAMES,
+  MUNICIPALITY_PAGE_SLUGS,
+} from "@/lib/content/municipalities";
 
-/** Swedish cluster pages for municipalities that have unique local copy. */
-export const AREA_PAGE_SLUGS: Record<string, string> = {
-  Stockholm: "stralkastarpolering-stockholm",
-  Solna: "stralkastarpolering-solna",
-  Nacka: "stralkastarpolering-nacka",
-  Huddinge: "stralkastarpolering-huddinge",
-  Tumba: "stralkastarpolering-tumba",
-  Södertälje: "stralkastarpolering-sodertalje",
-  Haninge: "stralkastarpolering-haninge",
-};
+/**
+ * Areas we serve (Stockholms län kommuner except Norrtälje, plus Tumba).
+ * Surfaced in chips and AreaServed schema for local relevance.
+ */
+export const SERVICE_AREAS = MUNICIPALITY_NAMES;
+
+/** Swedish cluster pages — every SERVICE_AREAS entry has a unique local page. */
+export const AREA_PAGE_SLUGS: Record<string, string> = MUNICIPALITY_PAGE_SLUGS;
 
 export const SOCIAL_PROFILES: string[] = [
   // Add real profiles (Google Business, Facebook, Instagram) when available.
@@ -131,6 +121,7 @@ export const KEYWORDS: Record<Locale, string[]> = {
   sv: [
     "strålkastarpolering",
     "strålkastarpolering Stockholm",
+    "strålkastarpolering Stockholms län",
     "strålkastare restaurering",
     "polera strålkastare",
     "strålkastarrenovering",
@@ -143,6 +134,11 @@ export const KEYWORDS: Record<Locale, string[]> = {
     "strålkastare besiktning",
     "rengöra strålkastare",
     "bil strålkastare Stockholm",
+    "strålkastarpolering Huddinge",
+    "strålkastarpolering Solna",
+    "strålkastarpolering Nacka",
+    "strålkastarpolering Södertälje",
+    "mobil strålkastarpolering",
   ],
 };
 

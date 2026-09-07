@@ -1,13 +1,9 @@
+import { LOCATION_SLUGS } from "@/lib/content/municipalities";
+
 export const CLUSTER_SLUGS = [
   "stralkastarpolering",
   "stralkastarrenovering",
-  "stralkastarpolering-stockholm",
-  "stralkastarpolering-huddinge",
-  "stralkastarpolering-tumba",
-  "stralkastarpolering-sodertalje",
-  "stralkastarpolering-haninge",
-  "stralkastarpolering-nacka",
-  "stralkastarpolering-solna",
+  ...LOCATION_SLUGS,
   "priser",
   "foretagskunder",
   "fore-bilder",

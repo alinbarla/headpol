@@ -16,11 +16,11 @@ export function ServiceAreaSection() {
           <p className="mt-4 text-lg leading-relaxed text-text-secondary">{t("subtitle")}</p>
         </div>
 
-        <ul className="mt-8 flex flex-wrap gap-3">
+        <ul className="mt-8 flex flex-wrap gap-2.5 sm:gap-3">
           {SERVICE_AREAS.map((area) => {
             const slug = AREA_PAGE_SLUGS[area];
             const className =
-              "rounded-full border border-beam/25 bg-beam/5 px-4 py-2 text-sm font-medium text-text-primary";
+              "rounded-full border border-beam/25 bg-beam/5 px-3 py-1.5 text-sm font-medium text-text-primary sm:px-4 sm:py-2";
 
             if (slug) {
               return (

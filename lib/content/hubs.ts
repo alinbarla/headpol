@@ -47,7 +47,7 @@ export const HUB_PAGES: ClusterDoc[] = [
         heading: "Pris och tid",
         paragraphs: [
           "Ett par strålkastare på personbil kostar 899 kr inklusive moms, skydd och 12 månaders garanti. Motorcykel och moped från 499 kr. Ett vanligt jobb tar 45–60 minuter. Du kan vänta eller lämna bilen.",
-          "Samma pris i hela vårt område. Ingen zonavgift för Huddinge, Tumba, Södertälje, Haninge, Nacka eller Solna.",
+          "Samma pris i hela vårt område. Ingen zonavgift för kommunerna i Stockholms län vi tar — från Solna och Sundbyberg till Södertälje, Värmdö och Nynäshamn.",
         ],
       },
     ],
@@ -72,6 +72,9 @@ export const HUB_PAGES: ClusterDoc[] = [
       { slug: "stralkastarrenovering", label: "Strålkastarrenovering" },
       { slug: "priser", label: "Priser" },
       { slug: "stralkastarpolering-stockholm", label: "Stockholm" },
+      { slug: "stralkastarpolering-huddinge", label: "Huddinge" },
+      { slug: "stralkastarpolering-solna", label: "Solna" },
+      { slug: "stralkastarpolering-nacka", label: "Nacka" },
       { slug: "faq", label: "FAQ" },
     ],
   },
@@ -173,6 +176,8 @@ export const HUB_PAGES: ClusterDoc[] = [
       { slug: "stralkastarpolering", label: "Polera strålkastare" },
       { slug: "fore-bilder", label: "Före och efter" },
       { slug: "priser", label: "Priser" },
+      { slug: "stralkastarpolering-stockholm", label: "Stockholm" },
+      { slug: "stralkastarpolering-botkyrka", label: "Botkyrka" },
       { slug: "faq", label: "FAQ" },
     ],
   },
@@ -181,7 +186,7 @@ export const HUB_PAGES: ClusterDoc[] = [
     kind: "other",
     title: "Pris för strålkastarpolering – 899 kr/par",
     description:
-      "Fast pris för strålkastarpolering i Stockholm: 899 kr/par för personbil, från 499 kr för MC. Jämfört med att byta strålkastare. Ingen zonavgift.",
+      "Fast pris för strålkastarpolering i Stockholms län: 899 kr/par för personbil, från 499 kr för MC. Samma pris i kommunerna vi tar. Ingen zonavgift.",
     h1: "Priser för strålkastarpolering",
     lead: "Ett par strålkastare på personbil kostar 899 kr inklusive moms. UV-keramiskt skydd och 12 månaders garanti ingår. Samma pris i hela Stockholmsområdet.",
     priceTiers: [
@@ -246,7 +251,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         question: "Kostar det extra utanför innerstan?",
         answer:
-          "Nej. Huddinge, Tumba, Södertälje, Haninge, Nacka, Solna och övriga kommuner vi tar har samma fastpris.",
+          "Nej. Alla kommuner i Stockholms län vi åker till — bland annat Huddinge, Botkyrka, Tumba, Södertälje, Haninge, Nacka, Solna, Täby och Värmdö — har samma fastpris.",
       },
     ],
     related: [
@@ -388,13 +393,16 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         question: "Kommer ni till mig?",
         answer:
-          "Ja, i Stockholm med omnejd — bland annat Huddinge, Tumba, Södertälje, Haninge, Nacka och Solna. Samma pris, ingen zonavgift.",
+          "Ja, i Stockholms län (inte Norrtälje). Vi har lokala sidor för kommunerna vi tar — bland annat Huddinge, Botkyrka, Södertälje, Haninge, Nacka, Solna, Sundbyberg, Täby, Lidingö och Värmdö. Samma pris, ingen zonavgift.",
       },
     ],
     related: [
       { slug: "stralkastarpolering", label: "Polera strålkastare" },
       { slug: "stralkastarrenovering", label: "Strålkastarrenovering" },
       { slug: "priser", label: "Priser" },
+      { slug: "stralkastarpolering-stockholm", label: "Stockholm" },
+      { slug: "stralkastarpolering-taby", label: "Täby" },
+      { slug: "stralkastarpolering-sodertalje", label: "Södertälje" },
     ],
   },
   {
@@ -436,6 +444,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       { slug: "stralkastarrenovering", label: "Metoden" },
       { slug: "priser", label: "Priser" },
       { slug: "foretagskunder", label: "Företag" },
+      { slug: "stralkastarpolering-stockholm", label: "Områden i länet" },
     ],
   },
 ];
