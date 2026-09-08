@@ -16,6 +16,8 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
+    // Do not emit `Host:`. Google ignores it; Next would serialize SITE_URL
+    // (with https://), which is an invalid Host value for the bots that do
+    // honor the directive.
   };
 }
