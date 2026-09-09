@@ -258,7 +258,12 @@ export async function refreshPlaceReviews(): Promise<RefreshPlaceReviewsResult> 
 
   try {
     const stored = await writeStoredPlaceReviews(live);
+    // next-intl serves the homepage from app/[locale]/page.tsx with
+    // localePrefix "never", so revalidate both the public URL and the
+    // locale segment — otherwise a static build keeps stale HTML.
     revalidatePath("/");
+    revalidatePath("/sv");
+    revalidatePath("/[locale]", "page");
     return {
       ok: true,
       source: "google",
