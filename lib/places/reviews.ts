@@ -1,7 +1,15 @@
 import "server-only";
 
-const REVALIDATE_SECONDS = 43200;
+import { revalidatePath } from "next/cache";
+import {
+  getSupabaseAdminClient,
+  withSupabaseTimeout,
+} from "@/lib/supabase/server";
+
 const MAX_REVIEWS = 5;
+/** Prefer the stored snapshot unless it is older than this. */
+const STORE_MAX_AGE_MS = 36 * 60 * 60 * 1000;
+const GOOGLE_REVIEWS_SETTINGS_KEY = "google_place_reviews";
 const FIELD_MASK =
   "reviews,rating,userRatingCount,reviews.authorAttribution,reviews.rating,reviews.text,reviews.relativePublishTimeDescription,reviews.name";
 
@@ -21,6 +29,10 @@ export type PlaceReviewsData = {
   reviews: PlaceReview[];
   rating: number | null;
   userRatingCount: number | null;
+};
+
+type StoredPlaceReviews = PlaceReviewsData & {
+  fetchedAt: string;
 };
 
 const EMPTY: PlaceReviewsData = {
@@ -84,11 +96,84 @@ function normalizeReview(review: PlacesApiReview, index: number): PlaceReview | 
   };
 }
 
+function parseStored(value: unknown): StoredPlaceReviews | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = value as Record<string, unknown>;
+  if (typeof raw.fetchedAt !== "string") return null;
+  if (!Array.isArray(raw.reviews)) return null;
+
+  const reviews = raw.reviews.filter((review): review is PlaceReview => {
+    if (!review || typeof review !== "object") return false;
+    const item = review as Partial<PlaceReview>;
+    return (
+      typeof item.name === "string" &&
+      typeof item.rating === "number" &&
+      typeof item.authorAttribution?.displayName === "string"
+    );
+  });
+
+  return {
+    fetchedAt: raw.fetchedAt,
+    reviews,
+    rating: typeof raw.rating === "number" ? raw.rating : null,
+    userRatingCount:
+      typeof raw.userRatingCount === "number" ? raw.userRatingCount : null,
+  };
+}
+
+function isFresh(stored: StoredPlaceReviews, now = Date.now()): boolean {
+  const fetchedAt = Date.parse(stored.fetchedAt);
+  if (!Number.isFinite(fetchedAt)) return false;
+  return now - fetchedAt < STORE_MAX_AGE_MS;
+}
+
+async function readStoredPlaceReviews(): Promise<StoredPlaceReviews | null> {
+  try {
+    const supabase = getSupabaseAdminClient();
+    const { data, error } = await withSupabaseTimeout(
+      supabase
+        .from("settings")
+        .select("value")
+        .eq("key", GOOGLE_REVIEWS_SETTINGS_KEY)
+        .maybeSingle()
+    );
+
+    if (error || !data) return null;
+    return parseStored(data.value);
+  } catch (err) {
+    console.error("[places] Failed to read stored reviews:", err);
+    return null;
+  }
+}
+
+async function writeStoredPlaceReviews(
+  data: PlaceReviewsData
+): Promise<StoredPlaceReviews> {
+  const stored: StoredPlaceReviews = {
+    ...data,
+    fetchedAt: new Date().toISOString(),
+  };
+
+  const supabase = getSupabaseAdminClient();
+  const { error } = await withSupabaseTimeout(
+    supabase.from("settings").upsert(
+      { key: GOOGLE_REVIEWS_SETTINGS_KEY, value: stored },
+      { onConflict: "key" }
+    )
+  );
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return stored;
+}
+
 /**
- * Live Google Place reviews for the homepage. Empty when env is missing or
- * Google errors — callers must hide, not crash.
+ * Live Place Details call. Always uncached — used by the background refresh
+ * and as a bootstrap when the store is empty.
  */
-export async function getPlaceReviews(): Promise<PlaceReviewsData> {
+export async function fetchPlaceReviewsFromGoogle(): Promise<PlaceReviewsData> {
   const apiKey = getPlacesApiKey();
   const placeId = getGooglePlaceId();
   if (!apiKey || !placeId) return EMPTY;
@@ -104,7 +189,7 @@ export async function getPlaceReviews(): Promise<PlaceReviewsData> {
         "X-Goog-Api-Key": apiKey,
         "X-Goog-FieldMask": FIELD_MASK,
       },
-      next: { revalidate: REVALIDATE_SECONDS },
+      cache: "no-store",
     });
 
     if (!res.ok) {
@@ -129,4 +214,116 @@ export async function getPlaceReviews(): Promise<PlaceReviewsData> {
     console.error("[places] Reviews fetch error:", err);
     return EMPTY;
   }
+}
+
+export type RefreshPlaceReviewsResult = {
+  ok: boolean;
+  source: "google" | "unchanged";
+  reviewCount: number;
+  rating: number | null;
+  userRatingCount: number | null;
+  fetchedAt: string | null;
+  error?: string;
+};
+
+/**
+ * Background refresh: pull from Google, persist to settings, revalidate the
+ * homepage so the next visitor sees the new snapshot.
+ */
+export async function refreshPlaceReviews(): Promise<RefreshPlaceReviewsResult> {
+  if (!isPlacesConfigured()) {
+    return {
+      ok: false,
+      source: "unchanged",
+      reviewCount: 0,
+      rating: null,
+      userRatingCount: null,
+      fetchedAt: null,
+      error: "Missing GOOGLE_PLACES_API_KEY or GOOGLE_PLACE_ID",
+    };
+  }
+
+  const live = await fetchPlaceReviewsFromGoogle();
+  if (live.reviews.length === 0 && live.rating == null) {
+    return {
+      ok: false,
+      source: "unchanged",
+      reviewCount: 0,
+      rating: null,
+      userRatingCount: null,
+      fetchedAt: null,
+      error: "Places API returned no review data",
+    };
+  }
+
+  try {
+    const stored = await writeStoredPlaceReviews(live);
+    revalidatePath("/");
+    return {
+      ok: true,
+      source: "google",
+      reviewCount: stored.reviews.length,
+      rating: stored.rating,
+      userRatingCount: stored.userRatingCount,
+      fetchedAt: stored.fetchedAt,
+    };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Store failed";
+    console.error("[places] Failed to store reviews:", message);
+    return {
+      ok: false,
+      source: "unchanged",
+      reviewCount: live.reviews.length,
+      rating: live.rating,
+      userRatingCount: live.userRatingCount,
+      fetchedAt: null,
+      error: message,
+    };
+  }
+}
+
+/**
+ * Homepage reader. Prefer the background-fetched snapshot; bootstrap from
+ * Google when the store is empty or stale so the section still appears.
+ */
+export async function getPlaceReviews(): Promise<PlaceReviewsData> {
+  const stored = await readStoredPlaceReviews();
+  if (stored && isFresh(stored) && stored.reviews.length > 0) {
+    return {
+      reviews: stored.reviews,
+      rating: stored.rating,
+      userRatingCount: stored.userRatingCount,
+    };
+  }
+
+  if (!isPlacesConfigured()) {
+    if (stored?.reviews.length) {
+      return {
+        reviews: stored.reviews,
+        rating: stored.rating,
+        userRatingCount: stored.userRatingCount,
+      };
+    }
+    return EMPTY;
+  }
+
+  const live = await fetchPlaceReviewsFromGoogle();
+  if (live.reviews.length === 0 && live.rating == null) {
+    if (stored?.reviews.length) {
+      return {
+        reviews: stored.reviews,
+        rating: stored.rating,
+        userRatingCount: stored.userRatingCount,
+      };
+    }
+    return EMPTY;
+  }
+
+  try {
+    await writeStoredPlaceReviews(live);
+  } catch (err) {
+    console.error("[places] Bootstrap store failed:", err);
+  }
+
+  return live;
 }
