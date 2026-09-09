@@ -19,7 +19,13 @@ function randomId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
   }
-  return `hp_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+  // Ingest requires a UUID — never fall back to a non-UUID token or the
+  // whole batch is rejected and no session row is created.
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (ch) => {
+    const n = (Math.random() * 16) | 0;
+    const v = ch === "x" ? n : (n & 0x3) | 0x8;
+    return v.toString(16);
+  });
 }
 
 function readOrCreate(key: string): string {
@@ -36,11 +42,20 @@ function readOrCreate(key: string): string {
 
 function deviceFromViewport(): HeatmapDevice {
   const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+  // iPadOS / iPhone "Request Desktop Website" spoofs Macintosh — detect via touch.
+  const touchMac =
+    typeof navigator !== "undefined" &&
+    navigator.platform === "MacIntel" &&
+    navigator.maxTouchPoints > 1;
   // Prefer UA so phones in landscape / "Request Desktop Website" still land in mobile.
   if (/iPhone|iPod|Android.+Mobile|Windows Phone|webOS|BlackBerry|IEMobile/i.test(ua)) {
     return "mobile";
   }
-  if (/iPad|Android(?!.*Mobile)|Tablet/i.test(ua)) {
+  if (/iPad|Android(?!.*Mobile)|Tablet/i.test(ua) || touchMac) {
+    // Spoofed-desktop iPhones still report a phone-sized screen.
+    if (touchMac && Math.min(window.screen.width, window.screen.height) < 500) {
+      return "mobile";
+    }
     return "tablet";
   }
   const width = window.innerWidth;
@@ -217,6 +232,7 @@ export function HeatmapTracker() {
       null;
     let flushTimer: number | undefined;
     let pollTimer: number | undefined;
+    let seedRetryTimer: number | undefined;
     let autofillStyle: HTMLStyleElement | null = null;
     let sessionId = "";
     let visitorId = "";
@@ -398,14 +414,25 @@ export function HeatmapTracker() {
         window.addEventListener("pagehide", onHidden);
 
         // Desktop gets free move samples; phones skip those. Seed a scroll
-        // event and flush immediately so a session row is always created.
-        push({
-          type: "scroll",
-          scrollY: layoutScrollY(),
-          timestamp: Date.now(),
-        });
-        snapshotFields();
-        flush(false);
+        // event and flush immediately so a session row is always created —
+        // otherwise short mobile visits can leave with an empty queue and
+        // never appear in admin.
+        function seedSession() {
+          push({
+            type: "scroll",
+            scrollY: layoutScrollY(),
+            timestamp: Date.now(),
+          });
+          snapshotFields();
+          flush(false);
+        }
+        seedSession();
+        // Cellular / Safari can drop the first keepalive request; re-seed once
+        // so the session still registers even if the first POST is lost.
+        seedRetryTimer = window.setTimeout(() => {
+          if (cancelled) return;
+          seedSession();
+        }, 750);
         flushTimer = window.setInterval(() => flush(false), FLUSH_INTERVAL_MS);
         // Autofill polling is cheaper on a longer interval for phones.
         pollTimer = window.setInterval(snapshotFields, coarsePointer ? 1200 : 400);
@@ -418,6 +445,7 @@ export function HeatmapTracker() {
       cancelled = true;
       window.clearInterval(flushTimer);
       window.clearInterval(pollTimer);
+      window.clearTimeout(seedRetryTimer);
       autofillStyle?.remove();
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", onPointerUp, true);
