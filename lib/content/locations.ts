@@ -15,7 +15,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
         heading: "Täckning i länet",
         paragraphs: [
           "Vi tar adresser i Stockholms stad och kommunerna runt om, ungefär 40 km från centrum. Söderut kör vi bland annat till Huddinge, Botkyrka, Tumba, Södertälje, Salem och Haninge. Österut till Nacka, Tyresö och Värmdö. Norrut till Solna, Sundbyberg, Täby, Sollentuna, Järfälla och vidare mot Upplands Väsby och Sigtuna.",
-          "Postnummer 10xxx–19xxx går att boka i kalendern. Norrtälje (76xxx) tar vi inte. Ligger du precis utanför, ring så bedömer vi restiden från fall till fall.",
+          "Postnummer 10xxx–19xxx går att boka i kalendern, utom Märsta (195 00–195 94). Norrtälje (76xxx) tar vi inte. Ligger du precis utanför, ring så bedömer vi restiden från fall till fall.",
         ],
       },
       {
@@ -50,7 +50,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     faqs: [
       {
         question: "Tar ni hela Stockholms län?",
-        answer: "Större delen, ja — inte Norrtälje. Kalendern släpper igenom postnummer 10xxx–19xxx. Osäker? Skriv adressen i bokningen eller ring 076-344 11 68.",
+        answer: "Större delen, ja — inte Norrtälje och inte Märsta (195 00–195 94). Kalendern släpper igenom övriga postnummer 10xxx–19xxx. Osäker? Skriv adressen i bokningen eller ring 076-344 11 68.",
       },
       {
         question: "Fungerar det med gatuparkering i stan?",
@@ -923,16 +923,16 @@ export const LOCATION_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-sigtuna",
     kind: "location",
-    title: "Strålkastarpolering Sigtuna – Märsta, Rosersberg och flygplatsnära",
-    description: "Mobil strålkastarpolering i Sigtuna kommun. Märsta, Sigtuna stad och Rosersberg. Fast pris 899 kr/par, ingen zonavgift.",
+    title: "Strålkastarpolering Sigtuna – Sigtuna stad, Rosersberg och flygplatsnära",
+    description: "Mobil strålkastarpolering i Sigtuna kommun. Sigtuna stad och Rosersberg. Fast pris 899 kr/par, ingen zonavgift. Märsta tar vi inte.",
     h1: "Strålkastarpolering i Sigtuna",
-    lead: "Sigtuna kommun är Märsta, Sigtuna stad och Rosersberg mer än bara gamla stan. Vi tar villa och gårds-P utomhus — samma 899 kr som i city.",
+    lead: "Vi tar Sigtuna stad och Rosersberg — villa och gårds-P utomhus, samma 899 kr som i city. Märsta (195 00–195 94) går inte att boka.",
     locationName: "Sigtuna",
     sections: [
       {
-        heading: "Märsta, Sigtuna och Rosersberg",
+        heading: "Sigtuna stad och Rosersberg",
         paragraphs: [
-          "Märsta har mest volym: villa, radhus och flerbostadshus med gård. Sigtuna stad: undvik trånga medeltida gränder som arbetsyta — boka uppfart eller förenings-P.",
+          "Sigtuna stad: undvik trånga medeltida gränder som arbetsyta — boka uppfart eller förenings-P. Märsta tar vi inte.",
           "Rosersberg och områden mot Arlanda: företagsgårdar passar flottor. Privatbil funkar på bostadsadress.",
         ],
       },
@@ -945,7 +945,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Pris",
         paragraphs: [
-          "899 kr/par i hela kommunen. Ingen milersättning inom området.",
+          "899 kr/par i Sigtuna stad och Rosersberg. Märsta ingår inte. Ingen milersättning inom området.",
         ],
       },
       {
@@ -958,7 +958,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     faqs: [
       {
         question: "Tar ni Märsta?",
-        answer: "Ja, Märsta är Sigtuna kommun. Samma pris.",
+        answer: "Nej, Märsta (195 00–195 94) tar vi inte i bokningen. Sigtuna stad och Rosersberg går att boka.",
       },
       {
         question: "Kan ni stå vid Arlanda P?",
