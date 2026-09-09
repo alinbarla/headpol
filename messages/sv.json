@@ -154,7 +154,7 @@
   "serviceArea": {
     "title": "Strålkastarpolering i hela Stockholms län",
     "subtitle": "Vi kommer till dig i Stockholms stad och kommunerna runt om — stora som små. Varje område har en egen sida med lokal information.",
-    "note": "Norrtälje (76xxx) och Märsta (195 00–195 94) tar vi inte. Bor du strax utanför övriga listan? Hör av dig — vi bedömer restiden från fall till fall.",
+    "note": "Norrtälje (76xxx) och Sigtuna kommun tar vi inte: Märsta (195 00–195 94), Rosersberg (195 95–195 96) och Sigtuna stad (193 00–193 91). Bor du strax utanför övriga listan? Hör av dig — vi bedömer restiden från fall till fall.",
     "readMore": "Läs om hela länet"
   },
   "reviews": {
@@ -214,7 +214,7 @@
       },
       {
         "question": "Måste jag lämna in bilen eller kommer ni till mig?",
-        "answer": "Vi kommer till dig i Stockholms län (inte Norrtälje och inte Märsta): hemma, på jobbet eller på uppfarten. Varje kommun vi tar har en egen sida. Ring eller boka i kalendern."
+        "answer": "Vi kommer till dig i Stockholms län (inte Norrtälje och inte Sigtuna kommun): hemma, på jobbet eller på uppfarten. Varje kommun vi tar har en egen sida. Ring eller boka i kalendern."
       },
       {
         "question": "Vad är skillnaden mot att byta strålkastare?",
@@ -337,7 +337,7 @@
     "title": "Kontakt",
     "phone": "076-344 11 68",
     "email": "teo@stralkastarpolering.se",
-    "area": "Stockholms län (inte Norrtälje, inte Märsta)",
+    "area": "Stockholms län (inte Norrtälje, inte Sigtuna kommun)",
     "hours": "Öppet lör–sön 08:00–20:00, mån–fre 16:00–20:00",
     "call": "Ring nu",
     "emailAction": "Skicka e-post"

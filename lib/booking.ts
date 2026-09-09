@@ -14,13 +14,15 @@ export const BOOKING_OLD_PRICE = "1499kr/par";
 
 /**
  * Bookable postal codes (PostNord / Swedish postcode system):
- * 10xxx–19xxx covers Stockholms län except Norrtälje and Märsta.
- * Märsta (195 00–195 94) is not served.
+ * 10xxx–19xxx covers Stockholms län except Norrtälje and Sigtuna kommun.
+ * Sigtuna stad (193 00–193 91), Märsta (195 00–195 94) and Rosersberg
+ * (195 95–195 96) are not served.
  * 76xxx (Norrtälje) is not yet served — the booking form shows the out-of-area message.
  */
 export const STOCKHOLM_COUNTY_POSTAL_RANGES = [
-  { min: 10000, max: 19499 },
-  { min: 19595, max: 19999 },
+  { min: 10000, max: 19299 },
+  { min: 19400, max: 19499 },
+  { min: 19600, max: 19999 },
 ] as const;
 
 export function digitsFromPostalCode(value: string): string {

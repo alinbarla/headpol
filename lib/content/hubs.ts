@@ -393,7 +393,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         question: "Kommer ni till mig?",
         answer:
-          "Ja, i Stockholms län (inte Norrtälje och inte Märsta). Vi har lokala sidor för kommunerna vi tar — bland annat Huddinge, Botkyrka, Södertälje, Haninge, Nacka, Solna, Sundbyberg, Täby, Lidingö och Värmdö. Samma pris, ingen zonavgift.",
+          "Ja, i Stockholms län (inte Norrtälje och inte Sigtuna kommun). Vi har lokala sidor för kommunerna vi tar — bland annat Huddinge, Botkyrka, Södertälje, Haninge, Nacka, Solna, Sundbyberg, Täby, Lidingö och Värmdö. Samma pris, ingen zonavgift.",
       },
     ],
     related: [

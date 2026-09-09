@@ -14,8 +14,8 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Täckning i länet",
         paragraphs: [
-          "Vi tar adresser i Stockholms stad och kommunerna runt om, ungefär 40 km från centrum. Söderut kör vi bland annat till Huddinge, Botkyrka, Tumba, Södertälje, Salem och Haninge. Österut till Nacka, Tyresö och Värmdö. Norrut till Solna, Sundbyberg, Täby, Sollentuna, Järfälla och vidare mot Upplands Väsby och Sigtuna.",
-          "Postnummer 10xxx–19xxx går att boka i kalendern, utom Märsta (195 00–195 94). Norrtälje (76xxx) tar vi inte. Ligger du precis utanför, ring så bedömer vi restiden från fall till fall.",
+          "Vi tar adresser i Stockholms stad och kommunerna runt om, ungefär 40 km från centrum. Söderut kör vi bland annat till Huddinge, Botkyrka, Tumba, Södertälje, Salem och Haninge. Österut till Nacka, Tyresö och Värmdö. Norrut till Solna, Sundbyberg, Täby, Sollentuna, Järfälla och Upplands Väsby.",
+          "Postnummer 10xxx–19xxx går att boka i kalendern, utom Sigtuna kommun: Märsta (195 00–195 94), Rosersberg (195 95–195 96) och Sigtuna stad (193 00–193 91). Norrtälje (76xxx) tar vi inte. Ligger du precis utanför, ring så bedömer vi restiden från fall till fall.",
         ],
       },
       {
@@ -50,7 +50,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     faqs: [
       {
         question: "Tar ni hela Stockholms län?",
-        answer: "Större delen, ja — inte Norrtälje och inte Märsta (195 00–195 94). Kalendern släpper igenom övriga postnummer 10xxx–19xxx. Osäker? Skriv adressen i bokningen eller ring 076-344 11 68.",
+        answer: "Större delen, ja — inte Norrtälje och inte Sigtuna kommun (Märsta, Sigtuna stad, Rosersberg). Kalendern släpper igenom övriga postnummer 10xxx–19xxx. Osäker? Skriv adressen i bokningen eller ring 076-344 11 68.",
       },
       {
         question: "Fungerar det med gatuparkering i stan?",
@@ -923,46 +923,46 @@ export const LOCATION_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-sigtuna",
     kind: "location",
-    title: "Strålkastarpolering Sigtuna – Sigtuna stad, Rosersberg och flygplatsnära",
-    description: "Mobil strålkastarpolering i Sigtuna kommun. Sigtuna stad och Rosersberg. Fast pris 899 kr/par, ingen zonavgift. Märsta tar vi inte.",
+    title: "Strålkastarpolering Sigtuna – Märsta, Sigtuna stad och Rosersberg",
+    description: "Vi tar inte Sigtuna kommun i bokningen. Märsta (195 00–195 94), Sigtuna stad (193 00–193 91) och Rosersberg (195 95–195 96) ligger utanför området.",
     h1: "Strålkastarpolering i Sigtuna",
-    lead: "Vi tar Sigtuna stad och Rosersberg — villa och gårds-P utomhus, samma 899 kr som i city. Märsta (195 00–195 94) går inte att boka.",
+    lead: "Sigtuna kommun går inte att boka just nu. Märsta, Sigtuna stad och Rosersberg visar utomområde i kalendern. Närmaste bokningsbara område är Upplands Väsby.",
     locationName: "Sigtuna",
     sections: [
       {
-        heading: "Sigtuna stad och Rosersberg",
+        heading: "Märsta, Sigtuna stad och Rosersberg",
         paragraphs: [
-          "Sigtuna stad: undvik trånga medeltida gränder som arbetsyta — boka uppfart eller förenings-P. Märsta tar vi inte.",
-          "Rosersberg och områden mot Arlanda: företagsgårdar passar flottor. Privatbil funkar på bostadsadress.",
+          "Postnummer i Märsta (195 00–195 94), Sigtuna stad (193 00–193 91) och Rosersberg (195 95–195 96) släpps inte igenom i bokningen.",
+          "Bor du i Upplands Väsby eller längre in mot stan går det att boka som vanligt.",
         ],
       },
       {
         heading: "E4 norrut",
         paragraphs: [
-          "Infart via E4. Trafik mot Arlanda kan påverka vardag. Söndag är lugnare. Ange bomkod.",
+          "Adresser i Sigtuna kommun längs E4 mot Arlanda går inte att boka. Kalendern visar utomområde.",
         ],
       },
       {
         heading: "Pris",
         paragraphs: [
-          "899 kr/par i Sigtuna stad och Rosersberg. Märsta ingår inte. Ingen milersättning inom området.",
+          "Sigtuna kommun ingår inte i det bokningsbara området. Ingen zonavgift i de kommuner vi tar.",
         ],
       },
       {
         heading: "Företagsbilar",
         paragraphs: [
-          "Flera tjänstebilar samma eftermiddag: se företagssidan.",
+          "Företagsadresser i Sigtuna kommun går inte att boka. Se företagssidan för adresser i kommuner vi tar.",
         ],
       },
     ],
     faqs: [
       {
-        question: "Tar ni Märsta?",
-        answer: "Nej, Märsta (195 00–195 94) tar vi inte i bokningen. Sigtuna stad och Rosersberg går att boka.",
+        question: "Tar ni Märsta, Sigtuna stad eller Rosersberg?",
+        answer: "Nej. Märsta (195 00–195 94), Sigtuna stad (193 00–193 91) och Rosersberg (195 95–195 96) tar vi inte i bokningen.",
       },
       {
         question: "Kan ni stå vid Arlanda P?",
-        answer: "Nej. Boka bostad eller företagsgård ni råder över.",
+        answer: "Nej. Arlanda och Sigtuna kommun ligger utanför det bokningsbara området.",
       },
     ],
     related: relatedForMunicipality(
@@ -1047,7 +1047,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Pris",
         paragraphs: [
-          "899 kr/par. Samma som Sollentuna och Sigtuna. Garanti ingår.",
+          "899 kr/par. Samma som Sollentuna. Garanti ingår.",
         ],
       },
       {
