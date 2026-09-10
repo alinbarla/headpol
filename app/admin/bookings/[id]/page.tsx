@@ -173,9 +173,9 @@ export default async function BookingDetailPage({
           <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
             {SOURCE_LABELS[booking.source]}
           </span>
-          {acquisitionLabel(booking.acquisition_channel) && (
+          {acquisition && (
             <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
-              {acquisitionLabel(booking.acquisition_channel)}
+              {acquisition}
             </span>
           )}
         </div>
@@ -253,7 +253,7 @@ export default async function BookingDetailPage({
             <Row
               label="Channel"
               value={
-                acquisitionLabel(booking.acquisition_channel) ??
+                acquisition ??
                 (booking.source === "web" ? "Unknown" : "—")
               }
             />
