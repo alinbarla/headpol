@@ -1,3 +1,5 @@
+import type { AcquisitionChannel } from "@/lib/supabase/server";
+
 export type HeatmapEventType = "click" | "move" | "scroll" | "attention" | "input";
 
 export type HeatmapDevice = "mobile" | "tablet" | "desktop";
@@ -66,6 +68,15 @@ export type AnalyticsSession = {
   ended_at: string;
   event_count: number;
   max_scroll_pct: number;
+  acquisition_channel: AcquisitionChannel | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_content: string | null;
+  utm_term: string | null;
+  gclid: string | null;
+  landing_path: string | null;
+  referrer_host: string | null;
 };
 
 export type AnalyticsEventRow = {

@@ -49,6 +49,7 @@ export async function updateAnalyticsSettingsAction(
   });
   revalidatePath("/admin/settings");
   revalidatePath("/admin/heatmap");
+  revalidatePath("/admin/visitors");
   return { ok: true, message: "Heatmap settings saved" };
 }
 
@@ -101,5 +102,6 @@ export async function purgeAnalyticsAction(
   await logAdminAction("analytics.purge", { entityType: "analytics" });
   revalidatePath("/admin/settings");
   revalidatePath("/admin/heatmap");
+  revalidatePath("/admin/visitors");
   return { ok: true, message: "Heatmap data deleted" };
 }

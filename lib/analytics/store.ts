@@ -9,7 +9,25 @@ import type {
   HeatmapDevice,
   UserEvent,
 } from "@/lib/analytics/types";
+import type { AcquisitionChannel } from "@/lib/supabase/server";
 import { getSupabaseAdminClient, withSupabaseTimeout } from "@/lib/supabase/server";
+
+const SESSION_SELECT =
+  "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, ip, started_at, ended_at, event_count, max_scroll_pct, acquisition_channel, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, landing_path, referrer_host";
+
+function acquisitionColumns(envelope: SessionEnvelope) {
+  return {
+    acquisition_channel: envelope.acquisitionChannel ?? null,
+    utm_source: envelope.utmSource ?? null,
+    utm_medium: envelope.utmMedium ?? null,
+    utm_campaign: envelope.utmCampaign ?? null,
+    utm_content: envelope.utmContent ?? null,
+    utm_term: envelope.utmTerm ?? null,
+    gclid: envelope.gclid ?? null,
+    landing_path: envelope.landingPath ?? null,
+    referrer_host: envelope.referrerHost ?? null,
+  };
+}
 
 export type SessionEnvelope = {
   sessionId: string;
@@ -21,6 +39,15 @@ export type SessionEnvelope = {
   documentH: number;
   device: HeatmapDevice;
   ip: string | null;
+  acquisitionChannel?: AcquisitionChannel | null;
+  utmSource?: string | null;
+  utmMedium?: string | null;
+  utmCampaign?: string | null;
+  utmContent?: string | null;
+  utmTerm?: string | null;
+  gclid?: string | null;
+  landingPath?: string | null;
+  referrerHost?: string | null;
 };
 
 type EventInsert = {
@@ -151,6 +178,7 @@ export async function startOrTouchSession(
         ended_at: now,
         event_count: 0,
         max_scroll_pct: Number(maxScroll.toFixed(2)),
+        ...acquisitionColumns(envelope),
       })
     );
 
@@ -289,6 +317,132 @@ export async function deleteExpiredAnalytics(retentionDays: number): Promise<num
   return (data ?? []).length;
 }
 
+export async function upsertVisitSession(
+  envelope: SessionEnvelope
+): Promise<void> {
+  const supabase = getSupabaseAdminClient();
+  const now = new Date().toISOString();
+
+  const { data: existing } = await withSupabaseTimeout(
+    supabase
+      .from("analytics_sessions")
+      .select("id, acquisition_channel, ip")
+      .eq("id", envelope.sessionId)
+      .maybeSingle()
+  );
+
+  const row = existing as
+    | {
+        id: string;
+        acquisition_channel: AcquisitionChannel | null;
+        ip: string | null;
+      }
+    | null;
+
+  if (!row) {
+    const { error } = await withSupabaseTimeout(
+      supabase.from("analytics_sessions").insert({
+        id: envelope.sessionId,
+        visitor_id: envelope.visitorId,
+        page: envelope.page,
+        referrer: envelope.referrer,
+        viewport_w: envelope.viewportW,
+        viewport_h: envelope.viewportH,
+        document_h: envelope.documentH,
+        device: envelope.device,
+        ip: envelope.ip,
+        started_at: now,
+        ended_at: now,
+        event_count: 0,
+        max_scroll_pct: 0,
+        ...acquisitionColumns(envelope),
+      })
+    );
+
+    if (error && error.code !== "23505") {
+      throw new Error(error.message);
+    }
+    return;
+  }
+
+  const patch: Record<string, unknown> = {
+    ended_at: now,
+    page: envelope.page,
+    document_h: envelope.documentH,
+    viewport_w: envelope.viewportW,
+    viewport_h: envelope.viewportH,
+    device: envelope.device,
+  };
+
+  if (!row.ip && envelope.ip) {
+    patch.ip = envelope.ip;
+  }
+
+  // First classified touch wins — don't overwrite Ads with a later direct hit.
+  if (!row.acquisition_channel && envelope.acquisitionChannel) {
+    Object.assign(patch, acquisitionColumns(envelope));
+  }
+
+  await withSupabaseTimeout(
+    supabase.from("analytics_sessions").update(patch).eq("id", envelope.sessionId)
+  );
+}
+
+export async function listVisitors(options: {
+  fromIso: string;
+  device: HeatmapDevice | "all";
+  channel?: AcquisitionChannel | "all";
+  limit?: number;
+  offset?: number;
+}): Promise<AnalyticsSession[]> {
+  const supabase = getSupabaseAdminClient();
+  let query = supabase
+    .from("analytics_sessions")
+    .select(SESSION_SELECT)
+    .gte("started_at", options.fromIso)
+    .order("started_at", { ascending: false })
+    .range(
+      options.offset ?? 0,
+      (options.offset ?? 0) + (options.limit ?? 100) - 1
+    );
+
+  if (options.device !== "all") {
+    query = query.eq("device", options.device);
+  }
+
+  if (options.channel && options.channel !== "all") {
+    query = query.eq("acquisition_channel", options.channel);
+  }
+
+  const { data, error } = await withSupabaseTimeout(query);
+  if (error) throw new Error(error.message);
+  return (data ?? []) as AnalyticsSession[];
+}
+
+export async function countVisitors(options: {
+  fromIso: string;
+  device: HeatmapDevice | "all";
+  channel?: AcquisitionChannel | "all";
+}): Promise<number> {
+  const supabase = getSupabaseAdminClient();
+  let query = supabase
+    .from("analytics_sessions")
+    .select("id", { count: "exact", head: true })
+    .gte("started_at", options.fromIso);
+
+  if (options.device !== "all") {
+    query = query.eq("device", options.device);
+  }
+
+  if (options.channel && options.channel !== "all") {
+    query = query.eq("acquisition_channel", options.channel);
+  }
+
+  const { count, error } = await withSupabaseTimeout(query);
+  if (error) throw new Error(error.message);
+  return count ?? 0;
+}
+
 export async function listTrackedPages(
   fromIso: string
 ): Promise<string[]> {
@@ -319,9 +473,7 @@ export async function listRecentSessions(options: {
   const supabase = getSupabaseAdminClient();
   let query = supabase
     .from("analytics_sessions")
-    .select(
-      "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, ip, started_at, ended_at, event_count, max_scroll_pct"
-    )
+    .select(SESSION_SELECT)
     .eq("page", options.page)
     .gte("started_at", options.fromIso)
     .order("started_at", { ascending: false })
@@ -343,9 +495,7 @@ export async function getSessionById(
   const { data, error } = await withSupabaseTimeout(
     supabase
       .from("analytics_sessions")
-      .select(
-        "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, ip, started_at, ended_at, event_count, max_scroll_pct"
-      )
+      .select(SESSION_SELECT)
       .eq("id", id)
       .maybeSingle()
   );
