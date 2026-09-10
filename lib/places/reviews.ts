@@ -10,13 +10,28 @@ const MAX_REVIEWS = 5;
 /** Prefer the stored snapshot unless it is older than this. */
 const STORE_MAX_AGE_MS = 36 * 60 * 60 * 1000;
 const GOOGLE_REVIEWS_SETTINGS_KEY = "google_place_reviews";
-const FIELD_MASK =
-  "reviews,rating,userRatingCount,reviews.authorAttribution,reviews.rating,reviews.text,reviews.relativePublishTimeDescription,reviews.name";
+const FIELD_MASK = [
+  "rating",
+  "userRatingCount",
+  "googleMapsUri",
+  "googleMapsLinks.placeUri",
+  "googleMapsLinks.reviewsUri",
+  "googleMapsLinks.writeAReviewUri",
+  "reviews",
+  "reviews.name",
+  "reviews.rating",
+  "reviews.text",
+  "reviews.relativePublishTimeDescription",
+  "reviews.googleMapsUri",
+  "reviews.authorAttribution",
+].join(",");
 
 export type PlaceReview = {
   name: string;
   relativePublishTimeDescription?: string;
   rating: number;
+  /** Direct Google Maps link to this review on the business profile. */
+  googleMapsUri?: string;
   text?: { text: string; languageCode?: string };
   authorAttribution: {
     displayName: string;
@@ -29,6 +44,12 @@ export type PlaceReviewsData = {
   reviews: PlaceReview[];
   rating: number | null;
   userRatingCount: number | null;
+  /** Google Maps URL for the business profile. */
+  googleMapsUri?: string;
+  /** Google Maps URL that opens the place's reviews list. */
+  reviewsUri?: string;
+  /** Google Maps URL to write a new review. */
+  writeReviewUri?: string;
 };
 
 type StoredPlaceReviews = PlaceReviewsData & {
@@ -39,7 +60,21 @@ const EMPTY: PlaceReviewsData = {
   reviews: [],
   rating: null,
   userRatingCount: null,
+  googleMapsUri: undefined,
+  reviewsUri: undefined,
+  writeReviewUri: undefined,
 };
+
+/** Best URL for the public Google Business / Maps profile. */
+export function getGoogleBusinessProfileUrl(
+  data?: Pick<PlaceReviewsData, "googleMapsUri" | "reviewsUri"> | null
+): string | null {
+  if (data?.reviewsUri?.trim()) return data.reviewsUri.trim();
+  if (data?.googleMapsUri?.trim()) return data.googleMapsUri.trim();
+  const placeId = getGooglePlaceId();
+  if (!placeId) return null;
+  return `https://www.google.com/maps/search/?api=1&query_place_id=${encodeURIComponent(placeId)}`;
+}
 
 export function getGooglePlaceId(): string | null {
   const id = process.env.GOOGLE_PLACE_ID?.trim();
@@ -59,6 +94,7 @@ type PlacesApiReview = {
   name?: string;
   relativePublishTimeDescription?: string;
   rating?: number;
+  googleMapsUri?: string;
   text?: { text?: string; languageCode?: string };
   authorAttribution?: {
     displayName?: string;
@@ -71,6 +107,12 @@ type PlacesApiResponse = {
   reviews?: PlacesApiReview[];
   rating?: number;
   userRatingCount?: number;
+  googleMapsUri?: string;
+  googleMapsLinks?: {
+    placeUri?: string;
+    reviewsUri?: string;
+    writeAReviewUri?: string;
+  };
 };
 
 function normalizeReview(review: PlacesApiReview, index: number): PlaceReview | null {
@@ -79,12 +121,14 @@ function normalizeReview(review: PlacesApiReview, index: number): PlaceReview | 
   if (!displayName || typeof rating !== "number") return null;
 
   const body = review.text?.text?.trim();
+  const googleMapsUri = review.googleMapsUri?.trim() || undefined;
 
   return {
     name: review.name?.trim() || `review-${index}`,
     relativePublishTimeDescription:
       review.relativePublishTimeDescription?.trim() || undefined,
     rating,
+    googleMapsUri,
     text: body
       ? { text: body, languageCode: review.text?.languageCode }
       : undefined,
@@ -110,7 +154,13 @@ function parseStored(value: unknown): StoredPlaceReviews | null {
       typeof item.rating === "number" &&
       typeof item.authorAttribution?.displayName === "string"
     );
-  });
+  }).map((review) => ({
+    ...review,
+    googleMapsUri:
+      typeof review.googleMapsUri === "string" && review.googleMapsUri.trim()
+        ? review.googleMapsUri.trim()
+        : undefined,
+  }));
 
   return {
     fetchedAt: raw.fetchedAt,
@@ -118,6 +168,31 @@ function parseStored(value: unknown): StoredPlaceReviews | null {
     rating: typeof raw.rating === "number" ? raw.rating : null,
     userRatingCount:
       typeof raw.userRatingCount === "number" ? raw.userRatingCount : null,
+    googleMapsUri:
+      typeof raw.googleMapsUri === "string" && raw.googleMapsUri.trim()
+        ? raw.googleMapsUri.trim()
+        : undefined,
+    reviewsUri:
+      typeof raw.reviewsUri === "string" && raw.reviewsUri.trim()
+        ? raw.reviewsUri.trim()
+        : undefined,
+    writeReviewUri:
+      typeof raw.writeReviewUri === "string" && raw.writeReviewUri.trim()
+        ? raw.writeReviewUri.trim()
+        : undefined,
+  };
+}
+
+function toPublicPlaceReviews(
+  stored: StoredPlaceReviews | PlaceReviewsData
+): PlaceReviewsData {
+  return {
+    reviews: stored.reviews,
+    rating: stored.rating,
+    userRatingCount: stored.userRatingCount,
+    googleMapsUri: stored.googleMapsUri,
+    reviewsUri: stored.reviewsUri,
+    writeReviewUri: stored.writeReviewUri,
   };
 }
 
@@ -125,6 +200,11 @@ function isFresh(stored: StoredPlaceReviews, now = Date.now()): boolean {
   const fetchedAt = Date.parse(stored.fetchedAt);
   if (!Number.isFinite(fetchedAt)) return false;
   return now - fetchedAt < STORE_MAX_AGE_MS;
+}
+
+/** Older snapshots predate Maps profile URIs — refresh once. */
+function hasMapsLinks(stored: StoredPlaceReviews): boolean {
+  return Boolean(stored.googleMapsUri || stored.reviewsUri);
 }
 
 async function readStoredPlaceReviews(): Promise<StoredPlaceReviews | null> {
@@ -204,11 +284,22 @@ export async function fetchPlaceReviewsFromGoogle(): Promise<PlaceReviewsData> {
       .filter((review): review is PlaceReview => review !== null)
       .slice(0, MAX_REVIEWS);
 
+    const placeUri =
+      data.googleMapsLinks?.placeUri?.trim() ||
+      data.googleMapsUri?.trim() ||
+      undefined;
+    const reviewsUri = data.googleMapsLinks?.reviewsUri?.trim() || undefined;
+    const writeReviewUri =
+      data.googleMapsLinks?.writeAReviewUri?.trim() || undefined;
+
     return {
       reviews,
       rating: typeof data.rating === "number" ? data.rating : null,
       userRatingCount:
         typeof data.userRatingCount === "number" ? data.userRatingCount : null,
+      googleMapsUri: placeUri,
+      reviewsUri,
+      writeReviewUri,
     };
   } catch (err) {
     console.error("[places] Reviews fetch error:", err);
@@ -293,21 +384,18 @@ export async function refreshPlaceReviews(): Promise<RefreshPlaceReviewsResult> 
  */
 export async function getPlaceReviews(): Promise<PlaceReviewsData> {
   const stored = await readStoredPlaceReviews();
-  if (stored && isFresh(stored) && stored.reviews.length > 0) {
-    return {
-      reviews: stored.reviews,
-      rating: stored.rating,
-      userRatingCount: stored.userRatingCount,
-    };
+  if (
+    stored &&
+    isFresh(stored) &&
+    stored.reviews.length > 0 &&
+    hasMapsLinks(stored)
+  ) {
+    return toPublicPlaceReviews(stored);
   }
 
   if (!isPlacesConfigured()) {
     if (stored?.reviews.length) {
-      return {
-        reviews: stored.reviews,
-        rating: stored.rating,
-        userRatingCount: stored.userRatingCount,
-      };
+      return toPublicPlaceReviews(stored);
     }
     return EMPTY;
   }
@@ -315,11 +403,7 @@ export async function getPlaceReviews(): Promise<PlaceReviewsData> {
   const live = await fetchPlaceReviewsFromGoogle();
   if (live.reviews.length === 0 && live.rating == null) {
     if (stored?.reviews.length) {
-      return {
-        reviews: stored.reviews,
-        rating: stored.rating,
-        userRatingCount: stored.userRatingCount,
-      };
+      return toPublicPlaceReviews(stored);
     }
     return EMPTY;
   }

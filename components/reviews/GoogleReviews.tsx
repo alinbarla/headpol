@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { ReviewAvatar } from "@/components/reviews/ReviewAvatar";
 import { ReviewText } from "@/components/reviews/ReviewText";
 import {
+  getGoogleBusinessProfileUrl,
   getGooglePlaceId,
   getPlaceReviews,
   type PlaceReview,
@@ -53,7 +54,8 @@ function ReviewStars({
 function AuthorName({ review }: { review: PlaceReview }) {
   const name = review.authorAttribution.displayName;
   const href = review.authorAttribution.uri;
-  const className = "font-semibold text-text-primary";
+  const className =
+    "pointer-events-auto relative z-10 font-semibold text-text-primary";
 
   if (!href) {
     return <p className={className}>{name}</p>;
@@ -71,15 +73,23 @@ function AuthorName({ review }: { review: PlaceReview }) {
   );
 }
 
+function writeReviewUrl(
+  data: Awaited<ReturnType<typeof getPlaceReviews>>,
+  placeId: string | null
+): string | null {
+  if (data.writeReviewUri?.trim()) return data.writeReviewUri.trim();
+  if (!placeId) return null;
+  return `https://search.google.com/local/writereview?placeid=${encodeURIComponent(placeId)}`;
+}
+
 export async function GoogleReviews() {
   const data = await getPlaceReviews();
   if (data.reviews.length === 0) return null;
 
   const t = await getTranslations("reviews");
   const placeId = getGooglePlaceId();
-  const writeReviewHref = placeId
-    ? `https://search.google.com/local/writereview?placeid=${encodeURIComponent(placeId)}`
-    : null;
+  const profileHref = getGoogleBusinessProfileUrl(data);
+  const writeReviewHref = writeReviewUrl(data, placeId);
 
   const ratingLabel =
     data.rating != null
@@ -88,6 +98,11 @@ export async function GoogleReviews() {
           maximumFractionDigits: 1,
         })
       : null;
+
+  const showSummary =
+    ratingLabel != null &&
+    data.rating != null &&
+    data.userRatingCount != null;
 
   return (
     <div className="mt-12">
@@ -103,18 +118,40 @@ export async function GoogleReviews() {
         </span>
       </div>
 
-      {ratingLabel && data.rating != null && data.userRatingCount != null ? (
+      {showSummary ? (
         <p className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-text-secondary">
-          <ReviewStars
-            rating={data.rating}
-            srLabel={t("googleStarsSr", { rating: ratingLabel })}
-          />
-          <span>
-            {t("googleSummary", {
-              rating: ratingLabel,
-              count: data.userRatingCount,
-            })}
-          </span>
+          {profileHref ? (
+            <a
+              href={profileHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 transition-colors hover:text-beam"
+            >
+              <ReviewStars
+                rating={data.rating!}
+                srLabel={t("googleStarsSr", { rating: ratingLabel })}
+              />
+              <span>
+                {t("googleSummary", {
+                  rating: ratingLabel,
+                  count: data.userRatingCount!,
+                })}
+              </span>
+            </a>
+          ) : (
+            <>
+              <ReviewStars
+                rating={data.rating!}
+                srLabel={t("googleStarsSr", { rating: ratingLabel })}
+              />
+              <span>
+                {t("googleSummary", {
+                  rating: ratingLabel,
+                  count: data.userRatingCount!,
+                })}
+              </span>
+            </>
+          )}
         </p>
       ) : null}
 
@@ -123,11 +160,29 @@ export async function GoogleReviews() {
           const starSr = t("googleStarsSr", {
             rating: review.rating.toLocaleString("sv-SE"),
           });
+          const reviewHref =
+            review.googleMapsUri?.trim() || profileHref || null;
+          const openLabel = t("googleOpenReview", {
+            name: review.authorAttribution.displayName,
+          });
 
           return (
             <li key={review.name}>
-              <blockquote className="h-full rounded-2xl border border-white/10 bg-void-elevated p-5">
-                <div className="flex items-center gap-3">
+              <blockquote className="relative h-full rounded-2xl border border-white/10 bg-void-elevated p-5 transition-colors hover:border-beam/40">
+                {reviewHref ? (
+                  <a
+                    href={reviewHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute inset-0 z-0 rounded-2xl"
+                    aria-label={openLabel}
+                  />
+                ) : null}
+                <div
+                  className={`relative z-10 flex items-center gap-3${
+                    reviewHref ? " pointer-events-none" : ""
+                  }`}
+                >
                   {review.authorAttribution.photoUri ? (
                     <ReviewAvatar src={review.authorAttribution.photoUri} />
                   ) : null}
@@ -139,14 +194,24 @@ export async function GoogleReviews() {
                   </div>
                 </div>
                 {review.text?.text ? (
-                  <ReviewText
-                    text={review.text.text}
-                    moreLabel={t("googleReadMore")}
-                    lessLabel={t("googleReadLess")}
-                  />
+                  <div
+                    className={`relative z-10${
+                      reviewHref ? " pointer-events-none" : ""
+                    }`}
+                  >
+                    <ReviewText
+                      text={review.text.text}
+                      moreLabel={t("googleReadMore")}
+                      lessLabel={t("googleReadLess")}
+                    />
+                  </div>
                 ) : null}
                 {review.relativePublishTimeDescription ? (
-                  <cite className="mt-3 block text-xs not-italic text-text-muted">
+                  <cite
+                    className={`relative z-10 mt-3 block text-xs not-italic text-text-muted${
+                      reviewHref ? " pointer-events-none" : ""
+                    }`}
+                  >
                     {review.relativePublishTimeDescription}
                   </cite>
                 ) : null}
