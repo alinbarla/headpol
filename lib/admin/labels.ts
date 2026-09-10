@@ -1,4 +1,5 @@
 import type {
+  AcquisitionChannel,
   BookingSource,
   BookingStatus,
   PaymentStatus,
@@ -34,6 +35,21 @@ export const SOURCE_LABELS: Record<BookingSource, string> = {
   walk_in: "Walk-in",
   admin: "Admin",
 };
+
+export const ACQUISITION_LABELS: Record<AcquisitionChannel, string> = {
+  google_ads: "Google Ads",
+  organic_search: "Organic search",
+  direct: "Direct",
+  referral: "Referral",
+  unknown: "Unknown",
+};
+
+export function acquisitionLabel(
+  channel: AcquisitionChannel | null | undefined
+): string | null {
+  if (!channel) return null;
+  return ACQUISITION_LABELS[channel] ?? channel;
+}
 
 export const PAYMENT_METHOD_LABELS: Record<string, string> = {
   card: "Card",

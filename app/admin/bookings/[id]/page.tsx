@@ -14,6 +14,7 @@ import {
   PAYMENT_TONE,
   SOURCE_LABELS,
   STATUS_TONE,
+  acquisitionLabel,
   mapsLink,
   paymentMethodLabel,
   telLink,
@@ -118,6 +119,7 @@ export default async function BookingDetailPage({
   const phone = telLink(booking.customer_phone);
   const maps = mapsLink(booking.customer_address);
   const locale = booking.locale === "en" ? "en" : "sv";
+  const acquisition = acquisitionLabel(booking.acquisition_channel);
   const confirmationPayment =
     payments.find(
       (payment) =>
@@ -171,6 +173,11 @@ export default async function BookingDetailPage({
           <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
             {SOURCE_LABELS[booking.source]}
           </span>
+          {acquisitionLabel(booking.acquisition_channel) && (
+            <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
+              {acquisitionLabel(booking.acquisition_channel)}
+            </span>
+          )}
         </div>
       </div>
 
@@ -235,6 +242,42 @@ export default async function BookingDetailPage({
                 }`}
               />
             )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Traffic</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <Row
+              label="Channel"
+              value={
+                acquisitionLabel(booking.acquisition_channel) ??
+                (booking.source === "web" ? "Unknown" : "—")
+              }
+            />
+            <Row label="Campaign" value={booking.utm_campaign} />
+            <Row
+              label="UTM"
+              value={
+                [booking.utm_source, booking.utm_medium, booking.utm_term]
+                  .filter(Boolean)
+                  .join(" / ") || null
+              }
+            />
+            <Row label="Landing" value={booking.landing_path} />
+            <Row label="Referrer" value={booking.referrer_host} />
+            <Row
+              label="Google Ads click"
+              value={
+                booking.gclid
+                  ? `Yes (${booking.gclid.slice(0, 12)}…)`
+                  : booking.acquisition_channel
+                    ? "No"
+                    : null
+              }
+            />
           </CardContent>
         </Card>
 

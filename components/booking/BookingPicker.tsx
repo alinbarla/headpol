@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { DayPicker, type Matcher } from "react-day-picker";
 import { sv, enGB } from "date-fns/locale";
 import { useLocale, useTranslations } from "next-intl";
+import { attributionForBookingPost } from "@/lib/attribution/storage";
 import {
   DEFAULT_BOOKING_RULES,
   type AvailabilityMap,
@@ -253,6 +254,7 @@ export function BookingPicker() {
           postalCode: formatSwedishPostalCode(postalCode),
           locale,
           withdrawalConsent,
+          attribution: attributionForBookingPost(),
         }),
       });
 

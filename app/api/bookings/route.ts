@@ -1,6 +1,10 @@
 import { after, NextResponse } from "next/server";
 import { removeConvertedDroppedVisitor } from "@/lib/analytics/droppedVisitors";
 import {
+  classifyAcquisition,
+  type AttributionInput,
+} from "@/lib/attribution/classify";
+import {
   applyDailyBookingCaps,
   buildAvailabilityMap,
   isDateAtBookingCap,
@@ -122,6 +126,7 @@ export async function POST(request: Request) {
       postalCode?: string;
       locale?: string;
       withdrawalConsent?: boolean;
+      attribution?: Partial<AttributionInput> | null;
     };
 
     const { date, time } = body;
@@ -195,6 +200,7 @@ export async function POST(request: Request) {
       time,
       contact,
       priceOre: rules.priceOre,
+      attribution: body.attribution ?? null,
     });
 
     if ("error" in booking) {
@@ -270,8 +276,10 @@ async function insertBooking(input: {
     locale: string;
   };
   priceOre: number;
+  attribution?: Partial<AttributionInput> | null;
 }): Promise<InsertResult> {
   const supabase = getSupabaseAdminClient();
+  const classified = classifyAcquisition(input.attribution);
 
   const row = {
     booking_date: input.date,
@@ -289,6 +297,15 @@ async function insertBooking(input: {
     customer_phone: input.contact.phone,
     customer_address: `${input.contact.address}, ${input.contact.postalCode}`,
     locale: input.contact.locale,
+    acquisition_channel: classified.channel,
+    utm_source: classified.utmSource,
+    utm_medium: classified.utmMedium,
+    utm_campaign: classified.utmCampaign,
+    utm_content: classified.utmContent,
+    utm_term: classified.utmTerm,
+    gclid: classified.gclid,
+    landing_path: classified.landingPath,
+    referrer_host: classified.referrerHost,
   };
 
   const attempt = async () =>

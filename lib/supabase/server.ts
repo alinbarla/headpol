@@ -17,6 +17,13 @@ export type PaymentStatus =
 
 export type BookingSource = "web" | "phone" | "walk_in" | "admin";
 
+export type AcquisitionChannel =
+  | "google_ads"
+  | "organic_search"
+  | "direct"
+  | "referral"
+  | "unknown";
+
 export type BookingRecord = {
   id: string;
   booking_date: string;
@@ -38,6 +45,15 @@ export type BookingRecord = {
   cancelled_at: string | null;
   cancellation_reason: string | null;
   reminder_sent_at: string | null;
+  acquisition_channel: AcquisitionChannel | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_content: string | null;
+  utm_term: string | null;
+  gclid: string | null;
+  landing_path: string | null;
+  referrer_host: string | null;
 };
 
 export type PaymentRecord = {

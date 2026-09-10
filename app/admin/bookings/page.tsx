@@ -8,6 +8,7 @@ import {
   PAYMENT_TONE,
   SOURCE_LABELS,
   STATUS_TONE,
+  acquisitionLabel,
 } from "@/lib/admin/labels";
 import { formatOre, fromDbTime } from "@/lib/booking";
 import type { BookingStatus } from "@/lib/supabase/server";
@@ -100,7 +101,9 @@ export default async function BookingsPage({
         </p>
       ) : (
         <ul className="mt-4 divide-y divide-border overflow-hidden rounded-xl border border-border">
-          {rows.map((booking) => (
+          {rows.map((booking) => {
+            const acquisition = acquisitionLabel(booking.acquisition_channel);
+            return (
             <li key={booking.id} className="flex items-stretch bg-card">
               <Link
                 href={`/admin/bookings/${booking.id}`}
@@ -123,6 +126,7 @@ export default async function BookingsPage({
                     {booking.customer_phone ?? booking.customer_email ?? "—"}
                     {" · "}
                     {SOURCE_LABELS[booking.source]}
+                    {acquisition ? ` · ${acquisition}` : ""}
                   </p>
                 </div>
 
@@ -150,7 +154,8 @@ export default async function BookingsPage({
                 <DeleteBookingButton booking={booking} />
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
 
