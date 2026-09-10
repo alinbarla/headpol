@@ -202,14 +202,9 @@ function isFresh(stored: StoredPlaceReviews, now = Date.now()): boolean {
   return now - fetchedAt < STORE_MAX_AGE_MS;
 }
 
-/** Older snapshots predate Maps profile/review URIs — refresh once. */
+/** Older snapshots predate Maps profile URIs — refresh once. */
 function hasMapsLinks(stored: StoredPlaceReviews): boolean {
-  if (!stored.googleMapsUri && !stored.reviewsUri) return false;
-  return stored.reviews.every(
-    (review) =>
-      typeof review.googleMapsUri === "string" &&
-      review.googleMapsUri.length > 0
-  );
+  return Boolean(stored.googleMapsUri || stored.reviewsUri);
 }
 
 async function readStoredPlaceReviews(): Promise<StoredPlaceReviews | null> {

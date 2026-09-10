@@ -160,7 +160,8 @@ export async function GoogleReviews() {
           const starSr = t("googleStarsSr", {
             rating: review.rating.toLocaleString("sv-SE"),
           });
-          const reviewHref = review.googleMapsUri?.trim() || null;
+          const reviewHref =
+            review.googleMapsUri?.trim() || profileHref || null;
           const openLabel = t("googleOpenReview", {
             name: review.authorAttribution.displayName,
           });
