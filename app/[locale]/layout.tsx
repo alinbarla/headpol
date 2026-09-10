@@ -6,6 +6,7 @@ import {
   GoogleTagManager,
   GoogleTagManagerNoscript,
 } from "@/components/analytics/GoogleTagManager";
+import { AttributionCapture } from "@/components/analytics/AttributionCapture";
 import { HeatmapTracker } from "@/components/analytics/HeatmapTracker";
 import { ReplayBridge } from "@/components/analytics/ReplayBridge";
 import { getAdminOrigins } from "@/lib/analytics/origins";
@@ -148,6 +149,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
       </head>
       <body className="min-h-full antialiased">
         <GoogleTagManagerNoscript />
+        <AttributionCapture />
         <HeatmapTracker />
         <ReplayBridge adminOrigins={adminOrigins} />
         <div className="grain-overlay" aria-hidden="true" />

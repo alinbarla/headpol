@@ -8,7 +8,7 @@ import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY } from "@/lib/booking";
 import { routing, type Locale } from "@/lib/i18n";
 import { BRAND, buildPageMetadata } from "@/lib/seo";
 
-const UPDATED = "2026-09-06";
+const UPDATED = "2026-09-10";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -69,6 +69,11 @@ function PrivacySv() {
         <li>Adress och postnummer där arbetet ska utföras</li>
         <li>Bokad tid, språkval och eventuella noteringar om besöket</li>
         <li>Betalningsstatus och belopp — vi lagrar aldrig dina kortuppgifter</li>
+        <li>
+          Trafikkälla till bokningen (till exempel UTM-parametrar, Google Ads
+          klick-id och hänvisande webbplats) så vi ser om du kom via annons,
+          sökning eller direkt
+        </li>
       </ul>
 
       <h2>Varför vi behandlar dem</h2>
@@ -89,6 +94,11 @@ function PrivacySv() {
           För att förstå hur besökare använder webbplatsen (klick, musrörelse
           och rullning) och förbättra den. Rättslig grund: berättigat
           intresse.
+        </li>
+        <li>
+          För att se vilken kanal (till exempel Google Ads, organisk sökning
+          eller direkttrafik) som ledde till en bokning. Rättslig grund:
+          berättigat intresse.
         </li>
       </ul>
       <p>
@@ -159,9 +169,11 @@ function PrivacySv() {
         klick, musrörelse, rullning och text som skrivs i formulär (plus
         ungefärlig IP-adress). Lösenord och betalningsfält sparas inte. Det
         sparas i sessionStorage, inte som en kaka. Bara admin kan se
-        underlaget. Ditt språkval kan sparas lokalt i
-        webbläsaren. Betalsidan hos Stripe sätter egna kakor som krävs för att
-        betalningen ska fungera säkert.
+        underlaget. Trafikkälla (UTM, klick-id och hänvisande webbplats) sparas
+        lokalt i webbläsaren upp till 30 dagar och kopplas till bokningen när
+        du slutför den. Ditt språkval kan sparas lokalt i webbläsaren.
+        Betalsidan hos Stripe sätter egna kakor som krävs för att betalningen
+        ska fungera säkert.
       </p>
 
       <p>
@@ -192,6 +204,11 @@ function PrivacyEn() {
         <li>The address and postcode where the work is carried out</li>
         <li>Your booked time, language preference and any notes about the visit</li>
         <li>Payment status and amount — we never store your card details</li>
+        <li>
+          Traffic source for the booking (for example UTM parameters, a Google
+          Ads click id and the referring website) so we can see whether you
+          arrived via an ad, search or direct visit
+        </li>
       </ul>
 
       <h2>Why we process it</h2>
@@ -211,6 +228,10 @@ function PrivacyEn() {
         <li>
           To understand how visitors use the site (clicks, cursor movement and
           scroll) and improve it. Legal basis: legitimate interest.
+        </li>
+        <li>
+          To see which channel (for example Google Ads, organic search or
+          direct traffic) led to a booking. Legal basis: legitimate interest.
         </li>
       </ul>
       <p>
@@ -275,7 +296,10 @@ function PrivacyEn() {
         heatmap collection is enabled in admin we record first-party click,
         cursor, scroll and form-text events (plus an approximate IP address).
         Password and payment fields are not stored. That lives in
-        sessionStorage, not a cookie, and only admin can see it. Your language preference may be stored locally in your
+        sessionStorage, not a cookie, and only admin can see it. Traffic source
+        (UTM parameters, click id and referring website) is stored locally in
+        your browser for up to 30 days and attached to the booking when you
+        complete it. Your language preference may be stored locally in your
         browser. Stripe&apos;s checkout page sets its own cookies that are
         necessary for the payment to work securely.
       </p>
