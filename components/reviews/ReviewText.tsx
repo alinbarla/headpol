@@ -49,7 +49,7 @@ export function ReviewText({
           type="button"
           aria-expanded={expanded}
           aria-controls={textId}
-          className="mt-1 text-sm font-semibold text-beam hover:underline"
+          className="pointer-events-auto relative z-10 mt-1 text-sm font-semibold text-beam hover:underline"
           onClick={() => setExpanded((open) => !open)}
         >
           {expanded ? lessLabel : moreLabel}

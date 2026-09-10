@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { Footer } from "@/components/layout/Footer";
 import { PriceCards } from "@/components/content/PriceCards";
 import { ResultCompare } from "@/components/reviews/ResultCompare";
-import { ReviewRating } from "@/components/reviews/ReviewRating";
+import { LiveReviewRating } from "@/components/reviews/LiveReviewRating";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
@@ -57,7 +57,7 @@ export async function ClusterPage({
           <h1 className="headline-display mt-6 max-w-4xl text-3xl font-bold text-text-primary sm:text-4xl lg:text-5xl">
             {page.h1}
           </h1>
-          <ReviewRating label={t("ratingLabel")} srLabel={t("ratingSr")} />
+          <LiveReviewRating namespace="cluster" />
           <p className="mt-4 max-w-3xl text-lg leading-relaxed text-text-secondary">
             {page.lead}
           </p>

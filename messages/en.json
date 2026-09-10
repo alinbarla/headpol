@@ -22,7 +22,7 @@
     "eyebrow": "Limited spots this week",
     "title": "<lead>Headlight polishing in Stockholm – </lead><visible>crystal-clear headlights again</visible>",
     "ratingLabel": "Reviews",
-    "ratingSr": "4.9 out of 5 stars based on 134 reviews",
+    "ratingSr": "{rating} out of 5 stars based on {count, plural, one {# review} other {# reviews}}",
     "subtitle": "Premium restoration + UV ceramic protection = headlights like new, money saved and a <guarantee>12-month warranty</guarantee>.",
     "semantic": "Professional headlight polishing and restoration in Stockholm. We remove oxidation, yellowing and scratches from plastic lenses and finish with UV ceramic protection. We come to you at home, at work or in the garage.",
     "ctaPrimary": "Call now — we come to you!",
@@ -161,7 +161,15 @@
     "subtitle": "Oxidised plastic versus a clear surface after sanding, polishing and UV ceramic protection. We show the work, not invented reviews.",
     "cta": "See how the restoration works",
     "beforeAfterAlt": "Before and after headlight restoration on the same car",
-    "afterAlt": "Car after headlight restoration with a clear lens"
+    "afterAlt": "Car after headlight restoration with a clear lens",
+    "googleTitle": "What customers say on Google",
+    "googleAttribution": "Google",
+    "googleSummary": "{rating} out of 5 ({count, plural, one {# review} other {# reviews}} on Google)",
+    "googleStarsSr": "{rating} out of 5 stars",
+    "googleOpenReview": "Open {name}'s review on Google",
+    "googleCta": "Leave a review on Google",
+    "googleReadMore": "Read more",
+    "googleReadLess": "Show less"
   },
   "faq": {
     "title": "Headlight restoration FAQ",
@@ -331,7 +339,7 @@
   "cluster": {
     "homeCrumb": "Home",
     "ratingLabel": "Reviews",
-    "ratingSr": "4.9 out of 5 stars based on 134 reviews",
+    "ratingSr": "{rating} out of 5 stars based on {count, plural, one {# review} other {# reviews}}",
     "ctaTitle": "Book headlight restoration",
     "ctaBody": "We come to you. Fixed price 899 SEK/pair, UV ceramic protection and a 12-month warranty.",
     "ctaBook": "Book a time",

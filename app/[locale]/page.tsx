@@ -8,6 +8,7 @@ import { ServicesSection } from "@/components/services/ServicesSection";
 import { TrustSection } from "@/components/trust/TrustSection";
 import { ServiceAreaSection } from "@/components/area/ServiceAreaSection";
 import { ReviewsSection } from "@/components/reviews/ReviewsSection";
+import { LiveReviewRating } from "@/components/reviews/LiveReviewRating";
 import { FaqSection } from "@/components/faq/FaqSection";
 import { BookingPicker } from "@/components/booking/BookingPicker";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -48,7 +49,7 @@ export default async function HomePage({ params }: PageProps) {
       <JsonLd data={structuredData} />
       <SiteHeader />
       <main id="content">
-        <LightBeamHero />
+        <LightBeamHero reviewRating={<LiveReviewRating namespace="hero" />} />
         <BenefitsSection />
         <ProcessStoryboard />
         <ServicesSection />

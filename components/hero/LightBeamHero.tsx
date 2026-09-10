@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { useMounted } from "@/lib/useMounted";
@@ -7,10 +8,14 @@ import { CONTACT_PHONE } from "@/lib/booking";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { PriceSticker } from "@/components/ui/PriceSticker";
-import { ReviewRating } from "@/components/reviews/ReviewRating";
 import { HeroShowcaseImage } from "./HeroShowcaseImage";
 
-export function LightBeamHero() {
+export function LightBeamHero({
+  reviewRating,
+}: {
+  /** Live Google rating from a server component (stars + profile link). */
+  reviewRating?: ReactNode;
+}) {
   const t = useTranslations("hero");
   const mounted = useMounted();
   const stats = t.raw("stats") as Array<{ value: string; label: string }>;
@@ -53,7 +58,7 @@ export function LightBeamHero() {
                 ),
               })}
             </h1>
-            <ReviewRating label={t("ratingLabel")} srLabel={t("ratingSr")} />
+            {reviewRating}
             <p className="mt-4 max-w-xl text-lg leading-relaxed text-text-secondary">
               {t.rich("subtitle", {
                 guarantee: (chunks) => (
