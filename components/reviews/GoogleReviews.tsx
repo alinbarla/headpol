@@ -1,5 +1,6 @@
 import { StarIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { GoogleMapsLink } from "@/components/reviews/GoogleMapsLink";
 import { ReviewAvatar } from "@/components/reviews/ReviewAvatar";
 import { ReviewText } from "@/components/reviews/ReviewText";
 import {
@@ -119,13 +120,11 @@ export async function GoogleReviews() {
       </div>
 
       {showSummary ? (
-        <p className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-text-secondary">
+        <p className="mb-6 text-sm text-text-secondary">
           {profileHref ? (
-            <a
+            <GoogleMapsLink
               href={profileHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 transition-colors hover:text-beam"
+              className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 underline decoration-beam/55 underline-offset-4 transition-colors hover:text-beam hover:decoration-beam"
             >
               <ReviewStars
                 rating={data.rating!}
@@ -137,9 +136,9 @@ export async function GoogleReviews() {
                   count: data.userRatingCount!,
                 })}
               </span>
-            </a>
+            </GoogleMapsLink>
           ) : (
-            <>
+            <span className="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
               <ReviewStars
                 rating={data.rating!}
                 srLabel={t("googleStarsSr", { rating: ratingLabel })}
@@ -150,7 +149,7 @@ export async function GoogleReviews() {
                   count: data.userRatingCount!,
                 })}
               </span>
-            </>
+            </span>
           )}
         </p>
       ) : null}

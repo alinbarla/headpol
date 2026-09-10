@@ -1,4 +1,5 @@
 import { StarIcon } from "lucide-react";
+import { GoogleMapsLink } from "@/components/reviews/GoogleMapsLink";
 
 function Star({ fillPercent }: { fillPercent: number }) {
   return (
@@ -29,6 +30,9 @@ function formatRating(rating: number, locale: string): string {
   });
 }
 
+const linkClassName =
+  "mt-4 inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-text-secondary underline decoration-beam/55 underline-offset-4 transition-colors hover:text-beam hover:decoration-beam";
+
 export function ReviewRating({
   label,
   srLabel,
@@ -46,42 +50,33 @@ export function ReviewRating({
   locale?: string;
 }) {
   const score = formatRating(rating, locale);
-  const stars = (
-    <span className="inline-flex items-center gap-0.5" aria-hidden="true">
-      {Array.from({ length: 5 }, (_, index) => {
-        const fill = Math.max(0, Math.min(1, rating - index)) * 100;
-        return <Star key={index} fillPercent={fill} />;
-      })}
-    </span>
-  );
-  const scoreText = (
-    <span>
-      {score} ({count})
-    </span>
-  );
-
-  const body = href ? (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 transition-colors hover:text-beam"
-    >
-      {stars}
-      {scoreText}
-    </a>
-  ) : (
+  const content = (
     <>
-      {stars}
-      {scoreText}
+      <span className="font-medium text-text-primary">{label}</span>
+      <span className="inline-flex items-center gap-0.5" aria-hidden="true">
+        {Array.from({ length: 5 }, (_, index) => {
+          const fill = Math.max(0, Math.min(1, rating - index)) * 100;
+          return <Star key={index} fillPercent={fill} />;
+        })}
+      </span>
+      <span>
+        {score} ({count})
+      </span>
+      <span className="sr-only">{srLabel}</span>
     </>
   );
 
+  if (href) {
+    return (
+      <GoogleMapsLink href={href} className={linkClassName}>
+        {content}
+      </GoogleMapsLink>
+    );
+  }
+
   return (
     <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-text-secondary">
-      <span className="font-medium text-text-primary">{label}</span>
-      {body}
-      <span className="sr-only">{srLabel}</span>
+      {content}
     </p>
   );
 }
