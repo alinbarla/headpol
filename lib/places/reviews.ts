@@ -196,6 +196,25 @@ function toPublicPlaceReviews(
   };
 }
 
+export type PlaceReviewsSnapshot = {
+  configured: boolean;
+  fetchedAt: string | null;
+  data: PlaceReviewsData;
+};
+
+/**
+ * Admin/status reader: returns the stored snapshot without calling Google.
+ * Does not bootstrap a live fetch — use `refreshPlaceReviews` for that.
+ */
+export async function getStoredPlaceReviewsSnapshot(): Promise<PlaceReviewsSnapshot> {
+  const stored = await readStoredPlaceReviews();
+  return {
+    configured: isPlacesConfigured(),
+    fetchedAt: stored?.fetchedAt ?? null,
+    data: stored ? toPublicPlaceReviews(stored) : EMPTY,
+  };
+}
+
 function isFresh(stored: StoredPlaceReviews, now = Date.now()): boolean {
   const fetchedAt = Date.parse(stored.fetchedAt);
   if (!Number.isFinite(fetchedAt)) return false;

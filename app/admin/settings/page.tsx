@@ -2,10 +2,15 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { listRecentAudit } from "@/lib/admin/data";
 import { getAnalyticsSettings } from "@/lib/analytics/settings";
 import { getBookingRules } from "@/lib/bookingRules";
+import {
+  getStoredPlaceReviewsSnapshot,
+  isPlacesConfigured,
+} from "@/lib/places/reviews";
 import { isDataForSeoConfigured } from "@/lib/seo/providers/dataforseo";
 import { getStripeWebhookStatus, isStripeConfigured } from "@/lib/stripe";
 import { formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { GoogleReviewsSettingsCard } from "@/components/admin/GoogleReviewsSettingsCard";
 import { HeatmapSettingsCard } from "@/components/admin/heatmap/HeatmapSettingsCard";
 import { RulesForm } from "@/components/admin/RulesForm";
 import { StripeWebhookCard } from "@/components/admin/StripeWebhookCard";
@@ -21,12 +26,14 @@ export const dynamic = "force-dynamic";
 export default async function SettingsPage() {
   await requireAdmin();
 
-  const [rules, audit, webhookStatus, analyticsSettings] = await Promise.all([
-    getBookingRules(),
-    listRecentAudit(40),
-    getStripeWebhookStatus(),
-    getAnalyticsSettings(),
-  ]);
+  const [rules, audit, webhookStatus, analyticsSettings, reviewsSnapshot] =
+    await Promise.all([
+      getBookingRules(),
+      listRecentAudit(40),
+      getStripeWebhookStatus(),
+      getAnalyticsSettings(),
+      getStoredPlaceReviewsSnapshot(),
+    ]);
 
   return (
     <AdminShell>
@@ -43,6 +50,8 @@ export default async function SettingsPage() {
           <StripeWebhookCard status={webhookStatus} />
 
           <HeatmapSettingsCard settings={analyticsSettings} />
+
+          <GoogleReviewsSettingsCard snapshot={reviewsSnapshot} />
 
           <Card>
             <CardHeader>
@@ -72,6 +81,18 @@ export default async function SettingsPage() {
                 ok={Boolean(process.env.CRON_SECRET)}
                 okLabel="Enabled"
                 offLabel="CRON_SECRET missing"
+              />
+              <StatusRow
+                label="Google Places"
+                ok={isPlacesConfigured()}
+                okLabel="Reviews API ready"
+                offLabel="GOOGLE_PLACE_ID / GOOGLE_PLACES_API_KEY missing"
+              />
+              <StatusRow
+                label="Reviews schedule"
+                ok={Boolean(process.env.CRON_SECRET)}
+                okLabel="Route ready — schedule via Supabase pg_cron"
+                offLabel="CRON_SECRET missing; /api/cron/reviews will refuse"
               />
               <StatusRow
                 label="DataForSEO"
