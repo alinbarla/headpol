@@ -1,14 +1,15 @@
 import type { Metadata, Viewport } from "next";
 import { Libre_Franklin, Public_Sans } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
-import { MotionProvider } from "@/components/motion/MotionProvider";
 import {
   GoogleTagManager,
   GoogleTagManagerNoscript,
 } from "@/components/analytics/GoogleTagManager";
+import { DeferredGoogleTagManager } from "@/components/analytics/DeferredGoogleTagManager";
+import { GTM_ID } from "@/lib/seo";
 import { AttributionCapture } from "@/components/analytics/AttributionCapture";
-import { HeatmapTracker } from "@/components/analytics/HeatmapTracker";
-import { ReplayBridge } from "@/components/analytics/ReplayBridge";
+import { LazyHeatmapTracker } from "@/components/analytics/LazyHeatmapTracker";
+import { LazyReplayBridge } from "@/components/analytics/LazyReplayBridge";
 import { getAdminOrigins } from "@/lib/analytics/origins";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
@@ -30,18 +31,34 @@ import "../globals.css";
 const libreFranklin = Libre_Franklin({
   variable: "--font-libre",
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
+  weight: ["700"],
   display: "swap",
   preload: true,
+  fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
+});
+
+const libreFranklinRest = Libre_Franklin({
+  subsets: ["latin"],
+  weight: ["600", "800"],
+  display: "swap",
+  preload: false,
   fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
 });
 
 const publicSans = Public_Sans({
   variable: "--font-public",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400"],
   display: "swap",
   preload: true,
+  fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
+});
+
+const publicSansRest = Public_Sans({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  display: "swap",
+  preload: false,
   fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
 });
 
@@ -135,13 +152,20 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   }
 
   setRequestLocale(locale);
-  const messages = await getMessages();
+  const allMessages = await getMessages();
+  const messages = Object.fromEntries(
+    (['nav', 'hero', 'process', 'booking', 'contact'] as const).map((namespace) => [
+      namespace,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (allMessages as Record<string, unknown>)[namespace],
+    ])
+  );
   const tMeta = await getTranslations({ locale, namespace: "metadata" });
   const adminOrigins = getAdminOrigins();
   const placeReviews = await getPlaceReviews();
 
   return (
-    <html lang={htmlLang(locale)} className={`${libreFranklin.variable} ${publicSans.variable} h-full`}>
+    <html lang={htmlLang(locale)} className={`${libreFranklin.variable} ${libreFranklinRest.className} ${publicSans.variable} ${publicSansRest.className} h-full`}>
       <head>
         <GoogleTagManager />
         <JsonLd
@@ -154,12 +178,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
       </head>
       <body className="min-h-full antialiased">
         <GoogleTagManagerNoscript />
+        {GTM_ID ? <DeferredGoogleTagManager gtmId={GTM_ID} /> : null}
         <AttributionCapture />
-        <HeatmapTracker />
-        <ReplayBridge adminOrigins={adminOrigins} />
+        <LazyHeatmapTracker />
+        <LazyReplayBridge adminOrigins={adminOrigins} />
         <div className="grain-overlay" aria-hidden="true" />
         <NextIntlClientProvider messages={messages}>
-          <MotionProvider>{children}</MotionProvider>
+          {children}
         </NextIntlClientProvider>
       </body>
     </html>

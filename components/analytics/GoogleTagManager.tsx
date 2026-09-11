@@ -1,25 +1,21 @@
 import { GTM_ID } from "@/lib/seo";
 
-const gtmBootstrap = GTM_ID
-  ? `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','${GTM_ID}');`
+/** Tiny dataLayer stub so early pushes are not lost before gtm.js loads. */
+const dataLayerStub = GTM_ID
+  ? `window.dataLayer=window.dataLayer||[];`
   : "";
 
 /**
- * Official GTM snippet. Native `<script>` inside `<head>` so it sits as high
- * as Google asks. `next/script` cannot do that here: the root layout does not
- * own `<html>`, so `beforeInteractive` is queued in `<body>`.
+ * Head-only dataLayer stub. Actual gtm.js is loaded by DeferredGoogleTagManager
+ * after window load + idle so Ads/GTM stay off the critical path.
  */
 export function GoogleTagManager() {
   if (!GTM_ID) return null;
 
   return (
     <script
-      id="gtm-bootstrap"
-      dangerouslySetInnerHTML={{ __html: gtmBootstrap }}
+      id="gtm-datalayer-stub"
+      dangerouslySetInnerHTML={{ __html: dataLayerStub }}
     />
   );
 }

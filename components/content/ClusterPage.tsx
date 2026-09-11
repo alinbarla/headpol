@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { Footer } from "@/components/layout/Footer";
 import { PriceCards } from "@/components/content/PriceCards";
-import { ResultCompare } from "@/components/reviews/ResultCompare";
+import { ResultCompareDynamic } from "@/components/reviews/ResultCompareDynamic";
 import { LiveReviewRating } from "@/components/reviews/LiveReviewRating";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/Button";
@@ -76,7 +76,7 @@ export async function ClusterPage({
                   </p>
                 </div>
               ) : null}
-              <ResultCompare />
+              <ResultCompareDynamic />
             </div>
           ) : page.images && page.images.length > 0 ? (
             <ul className="mt-10 grid gap-6 sm:grid-cols-2">

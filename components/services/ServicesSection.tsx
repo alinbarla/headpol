@@ -1,8 +1,6 @@
-"use client";
-
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { useLocale, useTranslations } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { PriceSticker } from "@/components/ui/PriceSticker";
 
@@ -26,9 +24,9 @@ const serviceIcons: ReactNode[] = [
   </svg>,
 ];
 
-export function ServicesSection() {
-  const t = useTranslations("services");
-  const locale = useLocale();
+export async function ServicesSection() {
+  const t = await getTranslations("services");
+  const locale = await getLocale();
   const items = t.raw("items") as Array<{
     title: string;
     description: string;

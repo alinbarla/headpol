@@ -3,14 +3,14 @@ import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import { LightBeamHero } from "@/components/hero/LightBeamHero";
 import { BenefitsSection } from "@/components/benefits/BenefitsSection";
-import { ProcessStoryboard } from "@/components/process/ProcessStoryboard";
+import { ProcessStoryboardDynamic } from "@/components/process/ProcessStoryboardDynamic";
 import { ServicesSection } from "@/components/services/ServicesSection";
 import { TrustSection } from "@/components/trust/TrustSection";
 import { ServiceAreaSection } from "@/components/area/ServiceAreaSection";
 import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 import { LiveReviewRating } from "@/components/reviews/LiveReviewRating";
 import { FaqSection } from "@/components/faq/FaqSection";
-import { BookingPicker } from "@/components/booking/BookingPicker";
+import { BookingPickerDynamic } from "@/components/booking/BookingPickerDynamic";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { Footer } from "@/components/layout/Footer";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -51,12 +51,12 @@ export default async function HomePage({ params }: PageProps) {
       <main id="content">
         <LightBeamHero reviewRating={<LiveReviewRating namespace="hero" />} />
         <BenefitsSection />
-        <ProcessStoryboard />
+        <ProcessStoryboardDynamic />
         <ServicesSection />
         <TrustSection />
         <ServiceAreaSection />
         <ReviewsSection />
-        <BookingPicker />
+        <BookingPickerDynamic />
         <FaqSection />
       </main>
       <Footer />

@@ -1,12 +1,10 @@
-"use client";
-
 import Link from "next/link";
-import { useLocale, useTranslations } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 
-export function FaqSection() {
-  const t = useTranslations("faq");
-  const locale = useLocale();
+export async function FaqSection() {
+  const t = await getTranslations("faq");
+  const locale = await getLocale();
   const items = t.raw("items") as Array<{
     question: string;
     answer: string;

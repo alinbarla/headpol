@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { GoogleReviews } from "@/components/reviews/GoogleReviews";
 import { Container } from "@/components/ui/Container";
-import { ResultCompare } from "@/components/reviews/ResultCompare";
+import { ResultCompareDynamic } from "@/components/reviews/ResultCompareDynamic";
 
 export async function ReviewsSection() {
   const t = await getTranslations("reviews");
@@ -18,7 +18,7 @@ export async function ReviewsSection() {
           <p className="mt-4 text-lg leading-relaxed text-text-secondary">{t("subtitle")}</p>
         </div>
 
-        <ResultCompare />
+        <ResultCompareDynamic />
 
         <GoogleReviews />
 

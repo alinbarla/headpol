@@ -1,16 +1,14 @@
-"use client";
-
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_DISPLAY } from "@/lib/booking";
 import { AREA_PAGE_SLUGS, SERVICE_AREAS } from "@/lib/seo";
 
-export function Footer() {
-  const t = useTranslations("footer");
-  const tContact = useTranslations("contact");
-  const tNav = useTranslations("nav");
-  const tLegal = useTranslations("legal");
+export async function Footer() {
+  const t = await getTranslations("footer");
+  const tContact = await getTranslations("contact");
+  const tNav = await getTranslations("nav");
+  const tLegal = await getTranslations("legal");
   const year = new Date().getFullYear();
 
   const links = [

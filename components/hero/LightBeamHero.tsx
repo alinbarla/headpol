@@ -1,23 +1,18 @@
-"use client";
-
 import type { ReactNode } from "react";
-import { motion } from "framer-motion";
-import { useTranslations } from "next-intl";
-import { useMounted } from "@/lib/useMounted";
+import { getTranslations } from "next-intl/server";
 import { CONTACT_PHONE } from "@/lib/booking";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { PriceSticker } from "@/components/ui/PriceSticker";
 import { HeroShowcaseImage } from "./HeroShowcaseImage";
 
-export function LightBeamHero({
+export async function LightBeamHero({
   reviewRating,
 }: {
   /** Live Google rating from a server component (stars + profile link). */
   reviewRating?: ReactNode;
 }) {
-  const t = useTranslations("hero");
-  const mounted = useMounted();
+  const t = await getTranslations("hero");
   const stats = t.raw("stats") as Array<{ value: string; label: string }>;
 
   return (
@@ -38,11 +33,7 @@ export function LightBeamHero({
 
       <Container className="relative z-10">
         <div className="grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14">
-          <motion.div
-            initial={false}
-            animate={mounted ? { opacity: 1, y: 0 } : undefined}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          >
+          <div className="hero-enter hero-enter-delay-0">
             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-beam font-display">
               {t("eyebrow")}
             </p>
@@ -66,14 +57,9 @@ export function LightBeamHero({
                 ),
               })}
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={false}
-            animate={mounted ? { opacity: 1, y: 0 } : undefined}
-            transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
-            className="relative lg:col-start-2 lg:row-span-2 lg:row-start-1"
-          >
+          <div className="hero-enter hero-enter-delay-1 relative lg:col-start-2 lg:row-span-2 lg:row-start-1">
             <div
               className="pointer-events-none absolute -inset-4 rounded-3xl bg-beam/10 blur-3xl"
               aria-hidden="true"
@@ -89,14 +75,9 @@ export function LightBeamHero({
               </div>
             </div>
             <p className="mt-10 text-center text-sm text-text-muted">{t("imageHint")}</p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={false}
-            animate={mounted ? { opacity: 1, y: 0 } : undefined}
-            transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
-            className="lg:col-start-1"
-          >
+          <div className="hero-enter hero-enter-delay-2 lg:col-start-1">
             <div className="flex flex-wrap items-center gap-4">
               <Button href={`tel:${CONTACT_PHONE}`} variant="dark">
                 {t("ctaPrimary")}
@@ -119,7 +100,7 @@ export function LightBeamHero({
                 </div>
               ))}
             </dl>
-          </motion.div>
+          </div>
         </div>
         <p className="relative z-10 mt-10 max-w-3xl text-base leading-relaxed text-text-secondary lg:mt-12">
           {t("semantic")}

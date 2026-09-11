@@ -1,15 +1,13 @@
-"use client";
-
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
 const HERO_IMAGE = "/images/step-map/hero.webp";
 
-export function HeroShowcaseImage() {
-  const t = useTranslations("hero");
+export async function HeroShowcaseImage() {
+  const t = await getTranslations("hero");
 
   return (
-    <div className="hero-media-frame w-full overflow-hidden rounded-2xl border border-beam/20 shadow-[0_0_60px_rgba(255,243,38,0.12)]">
+    <div className="hero-media-frame relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-beam/20 shadow-[0_0_60px_rgba(255,243,38,0.12)]">
       <Image
         src={HERO_IMAGE}
         alt={t("imageAlt")}

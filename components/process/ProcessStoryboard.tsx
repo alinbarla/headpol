@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, MotionConfig } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { useReducedMotion } from "@/lib/useReducedMotion";
@@ -86,6 +86,7 @@ export function ProcessStoryboard() {
   }>;
 
   return (
+    <MotionConfig reducedMotion="user">
     <section id="process" className="section-anchor py-24 sm:py-32">
       <Container>
         <div className="mb-12 max-w-3xl md:mb-16">
@@ -126,5 +127,6 @@ export function ProcessStoryboard() {
         </ol>
       </Container>
     </section>
+    </MotionConfig>
   );
 }
