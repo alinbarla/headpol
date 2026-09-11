@@ -78,7 +78,7 @@ All process photos are served through `next/image`, so they are automatically re
 - Set `NEXT_PUBLIC_SITE_URL` (see `.env.example`) to your production origin. It powers canonical URLs, hreflang, `sitemap.xml`, `robots.txt` and Open Graph.
 - Business name, contact (NAP), geo, opening hours, service areas and keywords live in [`lib/seo.ts`](lib/seo.ts).
 - Structured data (`Organization`, `LocalBusiness/AutoRepair`, `WebSite`, `Service`, `WebPage`, `BreadcrumbList`, `FAQPage`) is built in [`lib/structuredData.ts`](lib/structuredData.ts).
-- Review schema is gated behind `REVIEWS_ARE_REAL` in `lib/structuredData.ts` (currently `true`).
+- Review schema (`aggregateRating` on LocalBusiness) is gated by `REVIEWS_ARE_REAL` in [`lib/structuredData.ts`](lib/structuredData.ts). The locale layout passes the cached Google Places snapshot from `getPlaceReviews()` so every public page emits the same LocalBusiness entity.
 
 ### Brand name
 

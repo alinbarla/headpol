@@ -19,11 +19,16 @@ import {
 } from "@/lib/seo";
 
 /**
- * Whether the visible testimonials are real. Reviews/AggregateRating schema is
- * only emitted when this is true, to comply with Google's review snippet policy
- * and the July 2026 fake/incentivized review guideline.
+ * Whether Google Places rating may be emitted as AggregateRating on
+ * LocalBusiness. Only set true when the same rating is visible on-page
+ * (GoogleReviews / LiveReviewRating) so rich-result rules are met.
  */
 export const REVIEWS_ARE_REAL = true;
+
+export type LocalBusinessReviewsInput = {
+  rating?: number | null;
+  userRatingCount?: number | null;
+};
 
 const ORG_ID = `${SITE_URL}/#organization`;
 const BUSINESS_ID = `${SITE_URL}/#localbusiness`;
@@ -89,8 +94,12 @@ function organizationNode() {
 
 function localBusinessNode(
   makesOffer: Array<{ "@id": string }>,
-  description?: string
+  description?: string,
+  reviews?: LocalBusinessReviewsInput
 ) {
+  const rating = reviews?.rating;
+  const userRatingCount = reviews?.userRatingCount;
+
   return {
     // String type (not an array): audit tools often only read the first @type
     // and miss LocalBusiness when it is listed after AutoRepair.
@@ -159,19 +168,36 @@ function localBusinessNode(
     makesOffer,
     knowsAbout: ["Strålkastarpolering", "Strålkastarrenovering"],
     ...(SOCIAL_PROFILES.length ? { sameAs: SOCIAL_PROFILES } : {}),
+    ...(REVIEWS_ARE_REAL && rating != null && userRatingCount != null
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: rating,
+            reviewCount: userRatingCount,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
   };
 }
 
 /**
  * Standalone LocalBusiness JSON-LD (not nested in @graph). Naive SEO crawlers
  * look for a top-level `"@type": "LocalBusiness"` and skip @graph arrays.
+ * Emitted from the locale layout so every public page carries the same entity
+ * (including AggregateRating when Places data is available).
  */
-export function buildLocalBusinessJsonLd(description?: string) {
+export function buildLocalBusinessJsonLd(
+  description?: string,
+  reviews?: LocalBusinessReviewsInput
+) {
   return {
     "@context": "https://schema.org",
     ...localBusinessNode(
       [{ "@id": POLERING_ID }, { "@id": RENOVERING_ID }],
-      description
+      description,
+      reviews
     ),
   };
 }

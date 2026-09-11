@@ -24,6 +24,7 @@ import {
   ogLocale,
 } from "@/lib/seo";
 import { buildLocalBusinessJsonLd } from "@/lib/structuredData";
+import { getPlaceReviews } from "@/lib/places/reviews";
 import "../globals.css";
 
 const libreFranklin = Libre_Franklin({
@@ -137,6 +138,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   const messages = await getMessages();
   const tMeta = await getTranslations({ locale, namespace: "metadata" });
   const adminOrigins = getAdminOrigins();
+  const placeReviews = await getPlaceReviews();
 
   return (
     <html lang={htmlLang(locale)} className={`${libreFranklin.variable} ${publicSans.variable} h-full`}>
@@ -144,7 +146,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         <GoogleTagManager />
         <JsonLd
           id="local-business"
-          data={buildLocalBusinessJsonLd(tMeta("description"))}
+          data={buildLocalBusinessJsonLd(tMeta("description"), {
+            rating: placeReviews.rating,
+            userRatingCount: placeReviews.userRatingCount,
+          })}
         />
       </head>
       <body className="min-h-full antialiased">
