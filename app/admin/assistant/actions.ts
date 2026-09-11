@@ -14,6 +14,7 @@ import {
   systemPrompt,
   type AssistantContextKind,
 } from "@/lib/assistant/context";
+import { lastGithubAppSnapshot } from "@/lib/assistant/github";
 import { completeChat, historyToMoonshot, isMoonshotConfigured } from "@/lib/assistant/moonshot";
 import {
   createThread,
@@ -32,17 +33,20 @@ import type {
 const SKIPPED_REPLY =
   "Assistant is not configured. Set MOONSHOT_API_KEY and try again.";
 
+/** GitHub app dumps can be large; other attachments stay smaller in practice. */
+const ATTACHMENT_TEXT_MAX = 120_000;
+
 const attachmentSchema = z.object({
   name: z.string().min(1).max(200),
   size: z.number().int().nonnegative().max(20_000_000),
   type: z.string().max(200),
-  text: z.string().max(20_000).optional(),
+  text: z.string().max(ATTACHMENT_TEXT_MAX).optional(),
 });
 
 const sendSchema = z.object({
   threadId: z.union([z.uuid(), z.literal("")]).optional(),
   message: z.string().max(20_000),
-  attachments: z.array(attachmentSchema).max(8),
+  attachments: z.array(attachmentSchema).max(12),
   thinking: z.boolean().optional(),
 });
 
@@ -72,16 +76,36 @@ export async function createThreadAction(): Promise<ActionState> {
 
 export async function getContextSnapshotAction(
   kind: AssistantContextKind | string
-): Promise<ActionState & { text?: string; label?: string; kind?: AssistantContextKind }> {
+): Promise<
+  ActionState & {
+    text?: string;
+    parts?: Array<{ name: string; text: string }>;
+    label?: string;
+    kind?: AssistantContextKind;
+  }
+> {
   await requireAdmin();
   if (!isAssistantContextKind(kind)) {
     return fail("Unknown data type.");
   }
   try {
+    if (kind === "github") {
+      const parts = await lastGithubAppSnapshot();
+      const text = parts.map((part) => part.text).join("\n\n");
+      return {
+        ok: true,
+        text,
+        parts,
+        kind,
+        label: ASSISTANT_CONTEXT_LABELS[kind],
+      };
+    }
+
     const text = await buildContextForKind(kind);
     return {
       ok: true,
       text,
+      parts: [{ name: ASSISTANT_CONTEXT_LABELS[kind], text }],
       kind,
       label: ASSISTANT_CONTEXT_LABELS[kind],
     };

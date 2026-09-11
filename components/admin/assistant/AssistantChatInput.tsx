@@ -30,8 +30,8 @@ import {
 } from "@/components/shadcn/dropdown-menu";
 
 const LONG_PASTE = 300;
-const MAX_ATTACHMENTS = 8;
-const MAX_TEXT_CHARS = 20_000;
+const MAX_ATTACHMENTS = 12;
+const MAX_TEXT_CHARS = 120_000;
 
 function newId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -132,26 +132,35 @@ export function AssistantChatInput({
     setLoadingKind(kind);
     try {
       const result = await getContextSnapshotAction(kind);
-      if (!result.ok || !result.text) {
+      if (!result.ok || (!result.text && !result.parts?.length)) {
         toast.error(result.message ?? "Could not load data.");
         return;
       }
       const label = result.label ?? ASSISTANT_CONTEXT_LABELS[kind];
-      addFiles([
-        {
+      const parts =
+        result.parts && result.parts.length > 0
+          ? result.parts
+          : result.text
+            ? [{ name: label, text: result.text }]
+            : [];
+
+      addFiles(
+        parts.map((part) => ({
           id: newId(),
-          name: label,
-          size: result.text.length,
+          name: part.name,
+          size: part.text.length,
           type: "text/plain",
-          text: result.text.slice(0, MAX_TEXT_CHARS),
-          kind: "dashboard",
+          text: part.text.slice(0, MAX_TEXT_CHARS),
+          kind: "dashboard" as const,
           contextKind: kind,
-        },
-      ]);
+        }))
+      );
       setMessage((current) =>
         current.trim()
           ? current
-          : `Summarize the attached ${label.toLowerCase()} data.`
+          : kind === "github"
+            ? "Review the attached latest app source from GitHub."
+            : `Summarize the attached ${label.toLowerCase()} data.`
       );
     } finally {
       setLoadingKind(null);

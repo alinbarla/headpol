@@ -19,7 +19,7 @@ export const ASSISTANT_CONTEXT_LABELS: Record<AssistantContextKind, string> = {
   payments: "Payments",
   bookings: "Bookings",
   calendar: "Calendar",
-  github: "Last GitHub push",
+  github: "Latest app source",
 };
 
 export function isAssistantContextKind(

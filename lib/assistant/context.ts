@@ -38,7 +38,8 @@ export {
 } from "./context-kinds";
 
 const CONTEXT_CAP = 6000;
-const ATTACH_CAP = 20_000;
+/** Per-kind attach budget; GitHub uses multi-part packing in github.ts instead. */
+const ATTACH_CAP = 120_000;
 
 const SYSTEM_PROMPT = `You are the Strålkastarpolering admin assistant. You help the shop owner with bookings, payments, availability, analytics, SEO, and recent code changes already collected for this business.
 
