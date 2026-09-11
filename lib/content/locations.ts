@@ -102,7 +102,8 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     faqs: [
       {
         question: "Kan ni ta bilen på jobbet i Arenastaden?",
-        answer: "Ja om det finns en utomhusplats ni får använda en timme. Garageplan utan avrinning säger vi nej till.",
+        answer:
+          "Ja om det finns en utomhusplats ni får använda en timme. Arenastaden har egen sida. Garageplan utan avrinning säger vi nej till.",
       },
       {
         question: "Ingår Sundbyberg?",
@@ -112,6 +113,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     related: relatedForMunicipality(
       "Solna",
       [
+        { slug: "stralkastarpolering-arenastaden", label: "Arenastaden" },
         { slug: "stralkastarpolering-sundbyberg", label: "Sundbyberg" },
         { slug: "foretagskunder", label: "Företag" },
         { slug: "priser", label: "Priser" },
@@ -205,15 +207,23 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     faqs: [
       {
         question: "Tar ni Saltsjöbaden?",
-        answer: "Ja. Längre restid, samma pris. Söndag är oftast smidigast.",
+        answer:
+          "Ja. Saltsjöbaden har egen sida. Längre restid, samma pris. Söndag är oftast smidigast.",
       },
       {
         question: "Sickla köpkvarter som mötesplats?",
-        answer: "Dålig arbetsyta. Bättre med hemadress eller arbetsplats med egen P utomhus.",
+        answer:
+          "Dålig arbetsyta. Sickla har egen sida — hellre hemadress eller arbetsplats med egen P utomhus.",
       },
     ],
     related: relatedForMunicipality(
       "Nacka",
+      [
+        { slug: "stralkastarpolering-sickla", label: "Sickla" },
+        { slug: "stralkastarpolering-alta", label: "Älta" },
+        { slug: "stralkastarpolering-saltsjobaden", label: "Saltsjöbaden" },
+        { slug: "priser", label: "Priser" },
+      ]
     ),
   },
   {
@@ -326,7 +336,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Var vi ställer upp",
         paragraphs: [
-          "I Huddinge kommun är den vanliga platsen en asfalterad eller grusad uppfart vid villa eller radhus. Flemingsberg, Stuvsta, Snättringe, Segeltorp, Skogås och Trångsund funkar samma sak: bilen ute, plats att stå en timme, vatten får rinna av.",
+          "I Huddinge kommun är den vanliga platsen en asfalterad eller grusad uppfart vid villa eller radhus. Flemingsberg, Stuvsta, Snättringe, Segeltorp, Skogås och Trångsund funkar samma sak: bilen ute, plats att stå en timme, vatten får rinna av. Flemingsberg har egen sida.",
           "På arbetsplatser kring Huddinge sjukhus och Flemingsberg bokar vi gärna vardag efter 16. Innergård vid hyres- eller bostadsrätt går om ni kan reservera två rutor så vi kommer åt båda glasen.",
         ],
       },
@@ -351,8 +361,9 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     ],
     faqs: [
       {
-        question: "Tar ni Skogås och Trångsund?",
-        answer: "Ja. Det är Huddinge kommun och samma fastpris. Skriv gatuadressen i bokningen.",
+        question: "Tar ni Flemingsberg?",
+        answer:
+          "Ja. Flemingsberg har egen sida. Samma fastpris — skriv gatuadressen i bokningen.",
       },
       {
         question: "Kan ni stå på en radhusparkering?",
@@ -361,6 +372,11 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     ],
     related: relatedForMunicipality(
       "Huddinge",
+      [
+        { slug: "stralkastarpolering-flemingsberg", label: "Flemingsberg" },
+        { slug: "stralkastarpolering", label: "Polera strålkastare" },
+        { slug: "priser", label: "Priser" },
+      ]
     ),
   },
   {
@@ -401,7 +417,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     faqs: [
       {
         question: "Ingår Tullinge?",
-        answer: "Ja. Tullinge är samma kommun och samma pris. Boka med gatuadress.",
+        answer: "Ja. Tullinge har egen sida — samma kommun och samma pris. Boka med gatuadress.",
       },
       {
         question: "Pendeltågsparkering vid Tumba station?",
@@ -412,6 +428,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       "Tumba",
       [
         { slug: "stralkastarpolering-botkyrka", label: "Botkyrka" },
+        { slug: "stralkastarpolering-tullinge", label: "Tullinge" },
         { slug: "stralkastarpolering", label: "Polera strålkastare" },
       ]
     ),
@@ -428,7 +445,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Kommunen från Tullinge till Fittja",
         paragraphs: [
-          "Tullinge och Tumba är mest villa och radhus — uppfarten är standardarbetsytan. Storvreten och Grödinge har längre slingor men samma 899 kr. Rönninge-gränsen mot Salem tar vi när postnumret går igenom.",
+          "Tullinge och Tumba är mest villa och radhus — uppfarten är standardarbetsytan. Båda har egna sidor. Storvreten och Grödinge har längre slingor men samma 899 kr. Rönninge-gränsen mot Salem tar vi när postnumret går igenom.",
           "Fittja, Alby och Hallunda funkar när bilen står ute på gård eller p-plats ni får använda en timme. Trånga garageplan utan avrinning säger vi nej till. Mer detalj om Tumba-centrum finns på Tumba-sidan.",
         ],
       },
@@ -454,7 +471,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     faqs: [
       {
         question: "Är Tumba och Botkyrka samma sak?",
-        answer: "Tumba är en tätort i Botkyrka. Vi har sidor för båda så du hittar oss oavsett hur du söker — samma pris och samma tjänst.",
+        answer: "Tumba och Tullinge är tätorter i Botkyrka. Vi har sidor för kommun och tätorter så du hittar oss oavsett hur du söker — samma pris och samma tjänst.",
       },
       {
         question: "Tar ni Grödinge?",
@@ -465,6 +482,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       "Botkyrka",
       [
         { slug: "stralkastarpolering-tumba", label: "Tumba" },
+        { slug: "stralkastarpolering-tullinge", label: "Tullinge" },
         { slug: "stralkastarpolering", label: "Polera strålkastare" },
         { slug: "priser", label: "Priser" },
       ]
@@ -560,8 +578,8 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     ],
     faqs: [
       {
-        question: "Tar ni Västerhaninge?",
-        answer: "Ja, det är Haninge kommun. Samma pris. Boka med gatuadress.",
+        question: "Tar ni Handen?",
+        answer: "Ja. Handen har egen sida — Haninge kommun, samma pris. Boka med gatuadress.",
       },
       {
         question: "Går det på Port 73:s parkering?",
@@ -570,6 +588,11 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     ],
     related: relatedForMunicipality(
       "Haninge",
+      [
+        { slug: "stralkastarpolering-handen", label: "Handen" },
+        { slug: "stralkastarpolering", label: "Polera strålkastare" },
+        { slug: "priser", label: "Priser" },
+      ]
     ),
   },
   {
@@ -614,12 +637,13 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       },
       {
         question: "Funkar Barkarby handels-P?",
-        answer: "Sällan — korttid och trafik. Bättre hemma eller på en tjänsteplats utomhus.",
+        answer: "Sällan — korttid och trafik. Barkarby har egen sida. Bättre hemma eller på en tjänsteplats utomhus.",
       },
     ],
     related: relatedForMunicipality(
       "Järfälla",
       [
+        { slug: "stralkastarpolering-barkarby", label: "Barkarby" },
         { slug: "foretagskunder", label: "Företag" },
         { slug: "priser", label: "Priser" },
       ]
@@ -667,11 +691,16 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       },
       {
         question: "Kan ni ta bilen vid kontoret i Tureberg?",
-        answer: "Ja om det finns en utomhusplats ni får använda en timme.",
+        answer: "Ja om det finns en utomhusplats ni får använda en timme. Tureberg har egen sida.",
       },
     ],
     related: relatedForMunicipality(
       "Sollentuna",
+      [
+        { slug: "stralkastarpolering-tureberg", label: "Tureberg" },
+        { slug: "stralkastarpolering", label: "Polera strålkastare" },
+        { slug: "priser", label: "Priser" },
+      ]
     ),
   },
   {
@@ -712,7 +741,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     faqs: [
       {
         question: "Tar ni Djursholm?",
-        answer: "Ja. Det är Danderyd kommun. Samma pris.",
+        answer: "Ja. Djursholm har egen sida — Danderyd kommun, samma pris.",
       },
       {
         question: "Går det vid Mörby centrum?",
@@ -721,6 +750,11 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     ],
     related: relatedForMunicipality(
       "Danderyd",
+      [
+        { slug: "stralkastarpolering-djursholm", label: "Djursholm" },
+        { slug: "stralkastarpolering", label: "Polera strålkastare" },
+        { slug: "priser", label: "Priser" },
+      ]
     ),
   },
   {
@@ -1251,8 +1285,8 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     ],
     faqs: [
       {
-        question: "Tar ni Hemmesta?",
-        answer: "Ja, Värmdö kommun. Samma pris.",
+        question: "Tar ni Gustavsberg?",
+        answer: "Ja. Gustavsberg har egen sida — Värmdö kommun, samma pris.",
       },
       {
         question: "Kan ni åka ut till ö med färja?",
@@ -1261,6 +1295,11 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     ],
     related: relatedForMunicipality(
       "Värmdö",
+      [
+        { slug: "stralkastarpolering-gustavsberg", label: "Gustavsberg" },
+        { slug: "stralkastarpolering", label: "Polera strålkastare" },
+        { slug: "priser", label: "Priser" },
+      ]
     ),
   },
   {
@@ -1300,7 +1339,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     faqs: [
       {
         question: "Tar ni Åkersberga?",
-        answer: "Ja, det är Österåker. Samma pris.",
+        answer: "Ja. Åkersberga har egen sida — Österåker kommun, samma pris.",
       },
       {
         question: "Kan ni stå vid centrum?",
@@ -1309,6 +1348,11 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     ],
     related: relatedForMunicipality(
       "Österåker",
+      [
+        { slug: "stralkastarpolering-akersberga", label: "Åkersberga" },
+        { slug: "stralkastarpolering", label: "Polera strålkastare" },
+        { slug: "priser", label: "Priser" },
+      ]
     ),
   },
 ];

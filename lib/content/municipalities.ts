@@ -1,7 +1,7 @@
 /**
  * Canonical service-area tree for Stockholms län local SEO.
- * Includes every municipality we serve (all except Norrtälje) plus Tumba
- * as a locality page kept alongside Botkyrka.
+ * Includes every municipality we serve (all except Norrtälje) plus
+ * high-search localities kept alongside their parent kommun (Tumba pattern).
  */
 
 export type MunicipalityEntry = {
@@ -21,8 +21,10 @@ export const MUNICIPALITIES: MunicipalityEntry[] = [
     slug: "stralkastarpolering-stockholm",
     neighbors: [
       "Solna",
+      "Arenastaden",
       "Sundbyberg",
       "Nacka",
+      "Sickla",
       "Lidingö",
       "Huddinge",
       "Tyresö",
@@ -31,22 +33,63 @@ export const MUNICIPALITIES: MunicipalityEntry[] = [
   {
     name: "Solna",
     slug: "stralkastarpolering-solna",
-    neighbors: ["Stockholm", "Sundbyberg", "Danderyd", "Lidingö"],
+    neighbors: ["Arenastaden", "Stockholm", "Sundbyberg", "Danderyd", "Lidingö"],
+  },
+  {
+    name: "Arenastaden",
+    slug: "stralkastarpolering-arenastaden",
+    neighbors: ["Solna", "Sundbyberg", "Stockholm"],
+    locality: true,
   },
   {
     name: "Sundbyberg",
     slug: "stralkastarpolering-sundbyberg",
-    neighbors: ["Solna", "Stockholm", "Järfälla", "Sollentuna"],
+    neighbors: ["Solna", "Arenastaden", "Stockholm", "Järfälla", "Sollentuna"],
   },
   {
     name: "Nacka",
     slug: "stralkastarpolering-nacka",
-    neighbors: ["Stockholm", "Tyresö", "Värmdö", "Lidingö"],
+    neighbors: [
+      "Sickla",
+      "Älta",
+      "Saltsjöbaden",
+      "Stockholm",
+      "Tyresö",
+      "Värmdö",
+      "Lidingö",
+    ],
+  },
+  {
+    name: "Sickla",
+    slug: "stralkastarpolering-sickla",
+    neighbors: ["Nacka", "Älta", "Stockholm", "Saltsjöbaden"],
+    locality: true,
+  },
+  {
+    name: "Älta",
+    slug: "stralkastarpolering-alta",
+    neighbors: ["Nacka", "Sickla", "Tyresö", "Saltsjöbaden"],
+    locality: true,
+  },
+  {
+    name: "Saltsjöbaden",
+    slug: "stralkastarpolering-saltsjobaden",
+    neighbors: ["Nacka", "Sickla", "Älta", "Värmdö"],
+    locality: true,
   },
   {
     name: "Täby",
     slug: "stralkastarpolering-taby",
-    neighbors: ["Danderyd", "Sollentuna", "Österåker", "Vallentuna", "Stockholm"],
+    neighbors: [
+      "Danderyd",
+      "Djursholm",
+      "Sollentuna",
+      "Tureberg",
+      "Österåker",
+      "Åkersberga",
+      "Vallentuna",
+      "Stockholm",
+    ],
   },
   {
     name: "Lidingö",
@@ -56,18 +99,38 @@ export const MUNICIPALITIES: MunicipalityEntry[] = [
   {
     name: "Huddinge",
     slug: "stralkastarpolering-huddinge",
-    neighbors: ["Stockholm", "Botkyrka", "Tumba", "Haninge", "Salem"],
+    neighbors: [
+      "Flemingsberg",
+      "Stockholm",
+      "Botkyrka",
+      "Tumba",
+      "Tullinge",
+      "Haninge",
+      "Salem",
+    ],
+  },
+  {
+    name: "Flemingsberg",
+    slug: "stralkastarpolering-flemingsberg",
+    neighbors: ["Huddinge", "Tumba", "Tullinge", "Botkyrka", "Stockholm"],
+    locality: true,
   },
   {
     name: "Tumba",
     slug: "stralkastarpolering-tumba",
-    neighbors: ["Botkyrka", "Huddinge", "Salem", "Södertälje"],
+    neighbors: ["Botkyrka", "Tullinge", "Huddinge", "Flemingsberg", "Salem", "Södertälje"],
+    locality: true,
+  },
+  {
+    name: "Tullinge",
+    slug: "stralkastarpolering-tullinge",
+    neighbors: ["Botkyrka", "Tumba", "Huddinge", "Flemingsberg", "Salem"],
     locality: true,
   },
   {
     name: "Botkyrka",
     slug: "stralkastarpolering-botkyrka",
-    neighbors: ["Tumba", "Huddinge", "Salem", "Södertälje", "Ekerö"],
+    neighbors: ["Tumba", "Tullinge", "Huddinge", "Flemingsberg", "Salem", "Södertälje", "Ekerö"],
   },
   {
     name: "Södertälje",
@@ -77,22 +140,54 @@ export const MUNICIPALITIES: MunicipalityEntry[] = [
   {
     name: "Haninge",
     slug: "stralkastarpolering-haninge",
-    neighbors: ["Huddinge", "Tyresö", "Nynäshamn", "Nacka", "Stockholm"],
+    neighbors: ["Handen", "Huddinge", "Tyresö", "Nynäshamn", "Nacka", "Stockholm"],
+  },
+  {
+    name: "Handen",
+    slug: "stralkastarpolering-handen",
+    neighbors: ["Haninge", "Tyresö", "Nynäshamn", "Stockholm"],
+    locality: true,
   },
   {
     name: "Järfälla",
     slug: "stralkastarpolering-jarfalla",
-    neighbors: ["Sundbyberg", "Sollentuna", "Upplands-Bro", "Stockholm"],
+    neighbors: ["Barkarby", "Sundbyberg", "Sollentuna", "Tureberg", "Upplands-Bro", "Stockholm"],
+  },
+  {
+    name: "Barkarby",
+    slug: "stralkastarpolering-barkarby",
+    neighbors: ["Järfälla", "Sollentuna", "Tureberg", "Sundbyberg", "Stockholm"],
+    locality: true,
   },
   {
     name: "Sollentuna",
     slug: "stralkastarpolering-sollentuna",
-    neighbors: ["Täby", "Järfälla", "Upplands Väsby", "Danderyd", "Stockholm"],
+    neighbors: [
+      "Tureberg",
+      "Täby",
+      "Järfälla",
+      "Barkarby",
+      "Upplands Väsby",
+      "Danderyd",
+      "Stockholm",
+    ],
+  },
+  {
+    name: "Tureberg",
+    slug: "stralkastarpolering-tureberg",
+    neighbors: ["Sollentuna", "Täby", "Järfälla", "Barkarby", "Upplands Väsby", "Stockholm"],
+    locality: true,
   },
   {
     name: "Danderyd",
     slug: "stralkastarpolering-danderyd",
-    neighbors: ["Täby", "Solna", "Lidingö", "Stockholm", "Sollentuna"],
+    neighbors: ["Djursholm", "Täby", "Solna", "Lidingö", "Stockholm", "Sollentuna"],
+  },
+  {
+    name: "Djursholm",
+    slug: "stralkastarpolering-djursholm",
+    neighbors: ["Danderyd", "Täby", "Solna", "Stockholm", "Lidingö"],
+    locality: true,
   },
   {
     name: "Ekerö",
@@ -107,12 +202,12 @@ export const MUNICIPALITIES: MunicipalityEntry[] = [
   {
     name: "Nynäshamn",
     slug: "stralkastarpolering-nynashamn",
-    neighbors: ["Haninge", "Stockholm"],
+    neighbors: ["Haninge", "Handen", "Stockholm"],
   },
   {
     name: "Salem",
     slug: "stralkastarpolering-salem",
-    neighbors: ["Botkyrka", "Tumba", "Huddinge", "Södertälje", "Nykvarn"],
+    neighbors: ["Botkyrka", "Tumba", "Tullinge", "Huddinge", "Södertälje", "Nykvarn"],
   },
   {
     name: "Sigtuna",
@@ -122,37 +217,49 @@ export const MUNICIPALITIES: MunicipalityEntry[] = [
   {
     name: "Tyresö",
     slug: "stralkastarpolering-tyreso",
-    neighbors: ["Nacka", "Haninge", "Stockholm"],
+    neighbors: ["Nacka", "Älta", "Haninge", "Handen", "Stockholm"],
   },
   {
     name: "Upplands Väsby",
     slug: "stralkastarpolering-upplands-vasby",
-    neighbors: ["Sollentuna", "Sigtuna", "Täby", "Stockholm"],
+    neighbors: ["Sollentuna", "Tureberg", "Sigtuna", "Täby", "Stockholm"],
   },
   {
     name: "Upplands-Bro",
     slug: "stralkastarpolering-upplands-bro",
-    neighbors: ["Järfälla", "Sigtuna", "Stockholm"],
+    neighbors: ["Järfälla", "Barkarby", "Sigtuna", "Stockholm"],
   },
   {
     name: "Vallentuna",
     slug: "stralkastarpolering-vallentuna",
-    neighbors: ["Täby", "Österåker", "Sigtuna", "Stockholm"],
+    neighbors: ["Täby", "Österåker", "Åkersberga", "Sigtuna", "Stockholm"],
   },
   {
     name: "Vaxholm",
     slug: "stralkastarpolering-vaxholm",
-    neighbors: ["Österåker", "Värmdö", "Lidingö", "Stockholm"],
+    neighbors: ["Österåker", "Åkersberga", "Värmdö", "Gustavsberg", "Lidingö", "Stockholm"],
   },
   {
     name: "Värmdö",
     slug: "stralkastarpolering-varmdo",
-    neighbors: ["Nacka", "Vaxholm", "Stockholm"],
+    neighbors: ["Gustavsberg", "Nacka", "Saltsjöbaden", "Vaxholm", "Stockholm"],
+  },
+  {
+    name: "Gustavsberg",
+    slug: "stralkastarpolering-gustavsberg",
+    neighbors: ["Värmdö", "Nacka", "Saltsjöbaden", "Vaxholm", "Stockholm"],
+    locality: true,
   },
   {
     name: "Österåker",
     slug: "stralkastarpolering-osteraker",
-    neighbors: ["Täby", "Vaxholm", "Vallentuna", "Stockholm"],
+    neighbors: ["Åkersberga", "Täby", "Vaxholm", "Vallentuna", "Stockholm"],
+  },
+  {
+    name: "Åkersberga",
+    slug: "stralkastarpolering-akersberga",
+    neighbors: ["Österåker", "Täby", "Vaxholm", "Vallentuna", "Stockholm"],
+    locality: true,
   },
 ];
 
