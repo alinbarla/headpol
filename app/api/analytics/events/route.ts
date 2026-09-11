@@ -1,5 +1,6 @@
 import { after } from "next/server";
 import { NextResponse } from "next/server";
+import { isBotUserAgent, truncateUserAgent } from "@/lib/analytics/bots";
 import { syncDroppedVisitors } from "@/lib/analytics/droppedVisitors";
 import { clientIpFromRequest, ingestAllowed } from "@/lib/analytics/rateLimit";
 import { getAnalyticsSettings } from "@/lib/analytics/settings";
@@ -20,6 +21,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
+  const ua = request.headers.get("user-agent");
+  if (isBotUserAgent(ua)) {
+    return new NextResponse(null, { status: 204 });
+  }
+
   const { value, bytes } = await readJsonBody(request);
   const parsed = parseIngestBody(value, bytes);
   if (!parsed) {
@@ -38,6 +44,8 @@ export async function POST(request: Request) {
         documentH: parsed.documentH,
         device: parsed.device,
         ip,
+        isBot: false,
+        userAgent: truncateUserAgent(ua),
       },
       parsed.events
     );

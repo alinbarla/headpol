@@ -64,6 +64,8 @@ export type AnalyticsSession = {
   document_h: number;
   device: HeatmapDevice;
   ip: string | null;
+  is_bot: boolean;
+  user_agent: string | null;
   started_at: string;
   ended_at: string;
   event_count: number;

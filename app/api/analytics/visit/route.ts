@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { isBotUserAgent, truncateUserAgent } from "@/lib/analytics/bots";
 import { MAX_BATCH_BYTES } from "@/lib/analytics/constants";
 import { sanitizePagePath, sanitizeReferrerPath } from "@/lib/analytics/page";
 import { clientIpFromRequest, ingestAllowed } from "@/lib/analytics/rateLimit";
@@ -60,6 +61,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
+  const ua = request.headers.get("user-agent");
+  if (isBotUserAgent(ua)) {
+    return new NextResponse(null, { status: 204 });
+  }
+
   const { value, bytes } = await readJsonBody(request);
   if (bytes > MAX_BATCH_BYTES) {
     return NextResponse.json({ error: "Invalid visit" }, { status: 400 });
@@ -79,9 +85,7 @@ export async function POST(request: Request) {
     (parsed.data.attribution ?? null) as Partial<AttributionInput> | null
   );
 
-  const ua = request.headers.get("user-agent");
-  const device =
-    parsed.data.device ?? deviceFromUserAgent(ua);
+  const device = parsed.data.device ?? deviceFromUserAgent(ua);
 
   try {
     await upsertVisitSession({
@@ -94,6 +98,8 @@ export async function POST(request: Request) {
       documentH: Math.round(parsed.data.documentH ?? 1),
       device,
       ip,
+      isBot: false,
+      userAgent: truncateUserAgent(ua),
       acquisitionChannel: classified.channel,
       utmSource: classified.utmSource,
       utmMedium: classified.utmMedium,

@@ -13,7 +13,7 @@ import type { AcquisitionChannel } from "@/lib/supabase/server";
 import { getSupabaseAdminClient, withSupabaseTimeout } from "@/lib/supabase/server";
 
 const SESSION_SELECT =
-  "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, ip, started_at, ended_at, event_count, max_scroll_pct, acquisition_channel, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, landing_path, referrer_host";
+  "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, ip, is_bot, user_agent, started_at, ended_at, event_count, max_scroll_pct, acquisition_channel, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, landing_path, referrer_host";
 
 function acquisitionColumns(envelope: SessionEnvelope) {
   return {
@@ -39,6 +39,8 @@ export type SessionEnvelope = {
   documentH: number;
   device: HeatmapDevice;
   ip: string | null;
+  isBot?: boolean;
+  userAgent?: string | null;
   acquisitionChannel?: AcquisitionChannel | null;
   utmSource?: string | null;
   utmMedium?: string | null;
@@ -174,6 +176,8 @@ export async function startOrTouchSession(
         document_h: envelope.documentH,
         device: envelope.device,
         ip: envelope.ip,
+        is_bot: envelope.isBot === true,
+        user_agent: envelope.userAgent ?? null,
         started_at: now,
         ended_at: now,
         event_count: 0,
@@ -351,6 +355,8 @@ export async function upsertVisitSession(
         document_h: envelope.documentH,
         device: envelope.device,
         ip: envelope.ip,
+        is_bot: envelope.isBot === true,
+        user_agent: envelope.userAgent ?? null,
         started_at: now,
         ended_at: now,
         event_count: 0,
@@ -399,6 +405,7 @@ export async function listVisitors(options: {
   let query = supabase
     .from("analytics_sessions")
     .select(SESSION_SELECT)
+    .eq("is_bot", false)
     .gte("started_at", options.fromIso)
     .order("started_at", { ascending: false })
     .range(
@@ -428,6 +435,7 @@ export async function countVisitors(options: {
   let query = supabase
     .from("analytics_sessions")
     .select("id", { count: "exact", head: true })
+    .eq("is_bot", false)
     .gte("started_at", options.fromIso);
 
   if (options.device !== "all") {
@@ -451,6 +459,7 @@ export async function listTrackedPages(
     supabase
       .from("analytics_sessions")
       .select("page")
+      .eq("is_bot", false)
       .gte("started_at", fromIso)
       .order("page", { ascending: true })
       .limit(500)
@@ -474,6 +483,7 @@ export async function listRecentSessions(options: {
   let query = supabase
     .from("analytics_sessions")
     .select(SESSION_SELECT)
+    .eq("is_bot", false)
     .eq("page", options.page)
     .gte("started_at", options.fromIso)
     .order("started_at", { ascending: false })
@@ -530,36 +540,38 @@ export async function listEventsForGrid(options: {
   device: HeatmapDevice | "all";
 }): Promise<Array<Pick<AnalyticsEventRow, "x" | "y" | "dwell_ms" | "document_h" | "viewport_w">>> {
   const supabase = getSupabaseAdminClient();
-  let sessionIds: string[] | null = null;
+
+  let sessionQuery = supabase
+    .from("analytics_sessions")
+    .select("id")
+    .eq("is_bot", false)
+    .eq("page", options.page)
+    .gte("started_at", options.fromIso)
+    .limit(2000);
 
   if (options.device !== "all") {
-    const { data: sessions, error: sessionError } = await withSupabaseTimeout(
-      supabase
-        .from("analytics_sessions")
-        .select("id")
-        .eq("page", options.page)
-        .eq("device", options.device)
-        .gte("started_at", options.fromIso)
-        .limit(2000)
-    );
-    if (sessionError) throw new Error(sessionError.message);
-    sessionIds = ((sessions ?? []) as Array<{ id: string }>).map((row) => row.id);
-    if (sessionIds.length === 0) return [];
+    sessionQuery = sessionQuery.eq("device", options.device);
   }
 
-  let query = supabase
-    .from("analytics_events")
-    .select("x, y, dwell_ms, document_h, viewport_w")
-    .eq("page", options.page)
-    .eq("type", options.type)
-    .gte("ts", options.fromIso)
-    .limit(20_000);
+  const { data: sessions, error: sessionError } = await withSupabaseTimeout(
+    sessionQuery
+  );
+  if (sessionError) throw new Error(sessionError.message);
+  const sessionIds = ((sessions ?? []) as Array<{ id: string }>).map(
+    (row) => row.id
+  );
+  if (sessionIds.length === 0) return [];
 
-  if (sessionIds) {
-    query = query.in("session_id", sessionIds);
-  }
-
-  const { data, error } = await withSupabaseTimeout(query);
+  const { data, error } = await withSupabaseTimeout(
+    supabase
+      .from("analytics_events")
+      .select("x, y, dwell_ms, document_h, viewport_w")
+      .eq("page", options.page)
+      .eq("type", options.type)
+      .gte("ts", options.fromIso)
+      .in("session_id", sessionIds)
+      .limit(20_000)
+  );
   if (error) throw new Error(error.message);
   return (data ?? []) as Array<
     Pick<AnalyticsEventRow, "x" | "y" | "dwell_ms" | "document_h" | "viewport_w">
@@ -575,6 +587,7 @@ export async function listSessionScrolls(options: {
   let query = supabase
     .from("analytics_sessions")
     .select("max_scroll_pct")
+    .eq("is_bot", false)
     .eq("page", options.page)
     .gte("started_at", options.fromIso)
     .limit(5000);
@@ -593,7 +606,11 @@ export async function countEventsSince(fromIso: string): Promise<number> {
   const { count, error } = await withSupabaseTimeout(
     supabase
       .from("analytics_events")
-      .select("id", { count: "exact", head: true })
+      .select("id, analytics_sessions!inner(is_bot)", {
+        count: "exact",
+        head: true,
+      })
+      .eq("analytics_sessions.is_bot", false)
       .gte("ts", fromIso)
   );
   if (error) throw new Error(error.message);
