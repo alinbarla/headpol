@@ -354,6 +354,8 @@
     "homeCrumb": "Start",
     "ratingLabel": "Recensioner",
     "ratingSr": "{rating} av 5 stjärnor baserat på {count, plural, one {# recension} other {# recensioner}}",
+    "compareTitle": "Före och efter",
+    "compareLead": "Dra skjutreglaget och se hur matta strålkastare blir klara igen — samma resultat vi gör hos dig.",
     "ctaTitle": "Boka strålkastarpolering",
     "ctaBody": "Vi kommer till dig. Fast pris 899 kr/par, UV-keramiskt skydd och 12 månaders garanti.",
     "ctaBook": "Boka tid",

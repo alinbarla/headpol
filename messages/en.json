@@ -340,6 +340,8 @@
     "homeCrumb": "Home",
     "ratingLabel": "Reviews",
     "ratingSr": "{rating} out of 5 stars based on {count, plural, one {# review} other {# reviews}}",
+    "compareTitle": "Before and after",
+    "compareLead": "Drag the slider to see cloudy headlights turn clear again — the same result we deliver at your address.",
     "ctaTitle": "Book headlight restoration",
     "ctaBody": "We come to you. Fixed price 899 SEK/pair, UV ceramic protection and a 12-month warranty.",
     "ctaBook": "Book a time",

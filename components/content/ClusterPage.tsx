@@ -64,8 +64,18 @@ export async function ClusterPage({
 
           {page.priceTiers && page.priceTiers.length > 0 ? (
             <PriceCards tiers={page.priceTiers} />
-          ) : page.compareSlider ? (
+          ) : page.kind === "location" || page.compareSlider ? (
             <div className="mt-10 max-w-4xl">
+              {page.kind === "location" ? (
+                <div className="mb-5 max-w-2xl">
+                  <h2 className="headline-display text-xl font-bold text-text-primary sm:text-2xl">
+                    {t("compareTitle")}
+                  </h2>
+                  <p className="mt-2 text-sm leading-relaxed text-text-secondary sm:text-base">
+                    {t("compareLead")}
+                  </p>
+                </div>
+              ) : null}
               <ResultCompare />
             </div>
           ) : page.images && page.images.length > 0 ? (
