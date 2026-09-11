@@ -82,13 +82,21 @@ export function HeatmapSettingsCard({ settings }: { settings: AnalyticsSettings 
         <form
           action={purgeAction}
           onSubmit={(event) => {
-            if (!window.confirm("Delete all heatmap sessions and events?")) {
+            if (
+              !window.confirm(
+                "Permanently delete all heatmap recordings, sessions, and visitors data? This cannot be undone."
+              )
+            ) {
               event.preventDefault();
             }
           }}
+          className="space-y-2 border-t border-border pt-4"
         >
+          <p className="text-xs text-muted-foreground">
+            Clears shared analytics data used by Heatmap, Sessions, and Visitors.
+          </p>
           <Button type="submit" variant="destructive" size="sm">
-            Purge heatmap data
+            Purge sessions, heatmap &amp; visitors
           </Button>
         </form>
       </CardContent>
