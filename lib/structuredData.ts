@@ -23,7 +23,7 @@ import {
  * only emitted when this is true, to comply with Google's review snippet policy
  * and the July 2026 fake/incentivized review guideline.
  */
-export const REVIEWS_ARE_REAL = false;
+export const REVIEWS_ARE_REAL = true;
 
 const ORG_ID = `${SITE_URL}/#organization`;
 const BUSINESS_ID = `${SITE_URL}/#localbusiness`;
