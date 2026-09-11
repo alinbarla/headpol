@@ -103,5 +103,8 @@ export async function purgeAnalyticsAction(
   revalidatePath("/admin/settings");
   revalidatePath("/admin/heatmap");
   revalidatePath("/admin/visitors");
-  return { ok: true, message: "Heatmap data deleted" };
+  return {
+    ok: true,
+    message: "Sessions, heatmap, and visitors data deleted",
+  };
 }
