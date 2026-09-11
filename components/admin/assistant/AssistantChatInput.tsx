@@ -272,7 +272,7 @@ export function AssistantChatInput({
                   />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="min-w-48">
+              <DropdownMenuContent align="start" side="top" className="min-w-48">
                 {ASSISTANT_CONTEXT_KINDS.map((kind) => (
                   <DropdownMenuItem
                     key={kind}
