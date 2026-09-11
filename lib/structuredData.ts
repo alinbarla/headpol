@@ -173,7 +173,10 @@ function localBusinessNode(
           aggregateRating: {
             "@type": "AggregateRating",
             ratingValue: rating,
-            reviewCount: userRatingCount,
+            // Places userRatingCount includes star-only ratings (no text).
+            // ratingCount is the honest Schema.org field; reviewCount implies
+            // written reviews. Google accepts either.
+            ratingCount: userRatingCount,
             bestRating: 5,
             worstRating: 1,
           },
