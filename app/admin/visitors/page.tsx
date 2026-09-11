@@ -218,7 +218,8 @@ export default async function VisitorsPage({
                     <th className="py-2 pr-3 font-medium">Source</th>
                     <th className="py-2 pr-3 font-medium">Page</th>
                     <th className="py-2 pr-3 font-medium">Campaign</th>
-                    <th className="py-2 font-medium">Visitor</th>
+                    <th className="py-2 pr-3 font-medium">Visitor</th>
+                    <th className="py-2 font-medium">Session</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -246,10 +247,18 @@ export default async function VisitorsPage({
                             ? visit.referrer_host
                             : "—")}
                       </td>
-                      <td className="py-2 font-mono text-[11px] text-muted-foreground">
+                      <td className="py-2 pr-3 font-mono text-[11px] text-muted-foreground">
                         {visit.visitor_id.length > 14
                           ? `${visit.visitor_id.slice(0, 14)}…`
                           : visit.visitor_id}
+                      </td>
+                      <td className="py-2">
+                        <Link
+                          href={`/admin/heatmap/sessions/${visit.id}`}
+                          className="text-primary hover:underline"
+                        >
+                          Open
+                        </Link>
                       </td>
                     </tr>
                   ))}
