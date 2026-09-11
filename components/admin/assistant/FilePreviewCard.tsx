@@ -1,4 +1,8 @@
 import { FileTextIcon, XIcon } from "lucide-react";
+import {
+  ASSISTANT_CONTEXT_LABELS,
+  type AssistantContextKind,
+} from "@/lib/assistant/context-kinds";
 import type { AssistantAttachment } from "@/lib/assistant/types";
 
 function formatFileSize(bytes: number) {
@@ -15,6 +19,7 @@ export type DraftAttachment = AssistantAttachment & {
   id: string;
   preview?: string;
   kind?: "file" | "paste" | "dashboard";
+  contextKind?: AssistantContextKind;
 };
 
 export function FilePreviewCard({
@@ -27,6 +32,12 @@ export function FilePreviewCard({
   const draft = file as DraftAttachment;
   const isImage = Boolean(draft.preview) || file.type.startsWith("image/");
   const isPaste = draft.kind === "paste" || draft.kind === "dashboard";
+  const dataBadge =
+    draft.kind === "dashboard"
+      ? draft.contextKind
+        ? ASSISTANT_CONTEXT_LABELS[draft.contextKind]
+        : "Data"
+      : "Pasted";
 
   return (
     <div className="group relative h-24 w-28 shrink-0 overflow-hidden rounded-xl border border-border bg-muted">
@@ -42,7 +53,7 @@ export function FilePreviewCard({
             {file.text}
           </p>
           <span className="w-fit rounded border border-border px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
-            {draft.kind === "dashboard" ? "Dashboard" : "Pasted"}
+            {dataBadge}
           </span>
         </div>
       ) : (

@@ -6,9 +6,13 @@ import { z } from "zod";
 import type { ActionState } from "@/app/admin/actions";
 import { logAdminAction, requireAdmin } from "@/lib/admin/auth";
 import {
+  ASSISTANT_CONTEXT_LABELS,
   buildAssistantContext,
+  buildContextForKind,
   composeUserContent,
+  isAssistantContextKind,
   systemPrompt,
+  type AssistantContextKind,
 } from "@/lib/assistant/context";
 import { completeChat, historyToMoonshot, isMoonshotConfigured } from "@/lib/assistant/moonshot";
 import {
@@ -66,17 +70,32 @@ export async function createThreadAction(): Promise<ActionState> {
   redirect("/admin/assistant");
 }
 
+export async function getContextSnapshotAction(
+  kind: AssistantContextKind | string
+): Promise<ActionState & { text?: string; label?: string; kind?: AssistantContextKind }> {
+  await requireAdmin();
+  if (!isAssistantContextKind(kind)) {
+    return fail("Unknown data type.");
+  }
+  try {
+    const text = await buildContextForKind(kind);
+    return {
+      ok: true,
+      text,
+      kind,
+      label: ASSISTANT_CONTEXT_LABELS[kind],
+    };
+  } catch (error) {
+    console.error("[assistant] context snapshot failed", error);
+    return fail(`Could not load ${ASSISTANT_CONTEXT_LABELS[kind]}.`);
+  }
+}
+
+/** @deprecated Use getContextSnapshotAction with a kind. */
 export async function getDashboardSnapshotAction(): Promise<
   ActionState & { text?: string }
 > {
-  await requireAdmin();
-  try {
-    const text = await buildAssistantContext();
-    return { ok: true, text };
-  } catch (error) {
-    console.error("[assistant] dashboard snapshot failed", error);
-    return fail("Could not load dashboard data.");
-  }
+  return getContextSnapshotAction("bookings");
 }
 
 export async function askAssistantAction(

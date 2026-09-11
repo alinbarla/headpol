@@ -110,7 +110,8 @@ export function AssistantChat({
               {greeting()}.
             </p>
             <p className="mt-2 text-sm text-muted-foreground">
-              Ask about bookings or SEO. Replies stay on this page.
+              Ask about bookings, SEO, visitors, or the last GitHub push. Attach
+              data with the paperclip.
             </p>
           </div>
         ) : (
@@ -120,7 +121,7 @@ export function AssistantChat({
         )}
       </div>
 
-      <div className="sticky bottom-20 z-10 bg-background/95 pt-2 pb-2 backdrop-blur md:bottom-4">
+      <div className="sticky bottom-14 z-10 bg-background/95 pt-2 pb-0 backdrop-blur max-md:-mx-4 md:bottom-4 md:pb-2">
         <AssistantChatInput pending={pending} onSend={send} />
       </div>
     </div>
