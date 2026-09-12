@@ -66,7 +66,9 @@ export async function ClusterPage({
             <PriceCards tiers={page.priceTiers} />
           ) : page.kind === "location" || page.compareSlider ? (
             <div className="mt-10 max-w-4xl">
-              {page.kind === "location" ? (
+              {page.kind === "location" ||
+              page.kind === "service-polering" ||
+              page.kind === "service-renovering" ? (
                 <div className="mb-5 max-w-2xl">
                   <h2 className="headline-display text-xl font-bold text-text-primary sm:text-2xl">
                     {t("compareTitle")}
