@@ -2,7 +2,12 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/admin/auth";
 import { RANGE_MS } from "@/lib/analytics/constants";
 import { getAnalyticsSettings } from "@/lib/analytics/settings";
-import { countVisitors, listVisitors } from "@/lib/analytics/store";
+import {
+  countVisitors,
+  listVisitorChartRows,
+  listVisitors,
+} from "@/lib/analytics/store";
+import { VisitorCharts } from "@/components/admin/VisitorCharts";
 import type { HeatmapDevice, HeatmapRange } from "@/lib/analytics/types";
 import {
   ACQUISITION_LABELS,
@@ -97,10 +102,11 @@ export default async function VisitorsPage({
 
   let visitors: Awaited<ReturnType<typeof listVisitors>> = [];
   let total = 0;
+  let chartRows: Awaited<ReturnType<typeof listVisitorChartRows>> = [];
   let loadError: string | null = null;
 
   try {
-    [visitors, total] = await Promise.all([
+    [visitors, total, chartRows] = await Promise.all([
       listVisitors({
         fromIso,
         device,
@@ -109,6 +115,7 @@ export default async function VisitorsPage({
         offset,
       }),
       countVisitors({ fromIso, device, channel }),
+      listVisitorChartRows({ fromIso, device, channel }),
     ]);
   } catch (error) {
     loadError =
@@ -193,6 +200,8 @@ export default async function VisitorsPage({
         ))}
       </div>
 
+      {!loadError ? <VisitorCharts rows={chartRows} range={range} /> : null}
+
       <Card className="mt-6">
         <CardHeader>
           <CardTitle className="text-sm">
@@ -216,7 +225,12 @@ export default async function VisitorsPage({
                     <th className="py-2 pr-3 font-medium">When</th>
                     <th className="py-2 pr-3 font-medium">Device</th>
                     <th className="py-2 pr-3 font-medium">IP</th>
-                    <th className="py-2 pr-3 font-medium">Source</th>
+                    <th className="py-2 pr-3 font-medium">
+                      Source
+                      <span className="block font-normal text-[10px] text-muted-foreground">
+                        channel · utm/referrer
+                      </span>
+                    </th>
                     <th className="py-2 pr-3 font-medium">Page</th>
                     <th className="py-2 pr-3 font-medium">Campaign</th>
                     <th className="py-2 pr-3 font-medium">Visitor</th>
@@ -254,7 +268,21 @@ export default async function VisitorsPage({
                         </div>
                       </td>
                       <td className="py-2 pr-3">
-                        {acquisitionLabel(visit.acquisition_channel) ?? "—"}
+                        <div>
+                          {acquisitionLabel(visit.acquisition_channel) ?? "—"}
+                        </div>
+                        <div className="mt-0.5 font-mono text-[11px] text-muted-foreground">
+                          {visit.utm_source
+                            ? [
+                                visit.utm_source,
+                                visit.utm_medium,
+                              ]
+                                .filter(Boolean)
+                                .join(" / ")
+                            : visit.referrer_host
+                              ? visit.referrer_host
+                              : "—"}
+                        </div>
                       </td>
                       <td className="py-2 pr-3 font-mono text-xs">
                         {visit.page}
