@@ -91,6 +91,8 @@ export default async function HeatmapPage({
     listSessionScrolls({ page, fromIso, device }).catch(() => []),
     countEventsSince(fromIso).catch(() => 0),
   ]);
+  const pageSession =
+    sessions.find((session) => session.page === page) ?? sessions[0];
 
   const gridType = mode === "scroll" ? "click" : mode;
   const gridRows =
@@ -177,13 +179,13 @@ export default async function HeatmapPage({
                     page={page}
                     cells={grid.cells}
                     maxCount={grid.maxCount}
-                    sourceWidth={grid.viewportW || sessions[0]?.viewport_w || 1200}
+                    sourceWidth={grid.viewportW || pageSession?.viewport_w || 1200}
                     sourceHeight={grid.documentH || 2000}
-                    previewW={sessions[0]?.viewport_w || grid.viewportW || 1200}
-                    previewH={sessions[0]?.viewport_h || 800}
+                    previewW={pageSession?.viewport_w || grid.viewportW || 1200}
+                    previewH={pageSession?.viewport_h || 800}
                     device={
                       device === "all"
-                        ? (sessions[0]?.device ?? "desktop")
+                        ? (pageSession?.device ?? "desktop")
                         : device
                     }
                   />
