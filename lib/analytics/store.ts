@@ -13,7 +13,7 @@ import type { AcquisitionChannel } from "@/lib/supabase/server";
 import { getSupabaseAdminClient, withSupabaseTimeout } from "@/lib/supabase/server";
 
 const SESSION_SELECT =
-  "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, ip, is_bot, user_agent, started_at, ended_at, event_count, max_scroll_pct, acquisition_channel, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, landing_path, referrer_host";
+  "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, ip, city, region, country, postal_code, latitude, longitude, is_bot, user_agent, started_at, ended_at, event_count, max_scroll_pct, acquisition_channel, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, landing_path, referrer_host";
 
 function acquisitionColumns(envelope: SessionEnvelope) {
   return {
@@ -29,6 +29,28 @@ function acquisitionColumns(envelope: SessionEnvelope) {
   };
 }
 
+function geoColumns(envelope: SessionEnvelope) {
+  return {
+    city: envelope.city ?? null,
+    region: envelope.region ?? null,
+    country: envelope.country ?? null,
+    postal_code: envelope.postal_code ?? null,
+    latitude: envelope.latitude ?? null,
+    longitude: envelope.longitude ?? null,
+  };
+}
+
+function hasGeo(envelope: SessionEnvelope): boolean {
+  return Boolean(
+    envelope.city ||
+      envelope.region ||
+      envelope.country ||
+      envelope.postal_code ||
+      envelope.latitude != null ||
+      envelope.longitude != null
+  );
+}
+
 export type SessionEnvelope = {
   sessionId: string;
   visitorId: string;
@@ -39,6 +61,12 @@ export type SessionEnvelope = {
   documentH: number;
   device: HeatmapDevice;
   ip: string | null;
+  city?: string | null;
+  region?: string | null;
+  country?: string | null;
+  postal_code?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
   isBot?: boolean;
   userAgent?: string | null;
   acquisitionChannel?: AcquisitionChannel | null;
@@ -194,6 +222,7 @@ export async function startOrTouchSession(
         event_count: 0,
         max_scroll_pct: Number(maxScroll.toFixed(2)),
         ...acquisitionColumns(envelope),
+        ...geoColumns(envelope),
       })
     );
 
@@ -341,7 +370,7 @@ export async function upsertVisitSession(
   const { data: existing } = await withSupabaseTimeout(
     supabase
       .from("analytics_sessions")
-      .select("id, acquisition_channel, ip")
+      .select("id, acquisition_channel, ip, city, country")
       .eq("id", envelope.sessionId)
       .maybeSingle()
   );
@@ -351,6 +380,8 @@ export async function upsertVisitSession(
         id: string;
         acquisition_channel: AcquisitionChannel | null;
         ip: string | null;
+        city: string | null;
+        country: string | null;
       }
     | null;
 
@@ -373,6 +404,7 @@ export async function upsertVisitSession(
         event_count: 0,
         max_scroll_pct: 0,
         ...acquisitionColumns(envelope),
+        ...geoColumns(envelope),
       })
     );
 
@@ -393,6 +425,11 @@ export async function upsertVisitSession(
 
   if (!row.ip && envelope.ip) {
     patch.ip = envelope.ip;
+  }
+
+  // First geo write wins — fill only when the row still has no location.
+  if (!row.city && !row.country && hasGeo(envelope)) {
+    Object.assign(patch, geoColumns(envelope));
   }
 
   // First classified touch wins — don't overwrite Ads with a later direct hit.

@@ -8,6 +8,7 @@ import {
   ACQUISITION_LABELS,
   acquisitionLabel,
 } from "@/lib/admin/labels";
+import { describeLocation } from "@/lib/geo";
 import type { AcquisitionChannel } from "@/lib/supabase/server";
 import { formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -233,7 +234,24 @@ export default async function VisitorsPage({
                       </td>
                       <td className="py-2 pr-3 capitalize">{visit.device}</td>
                       <td className="py-2 pr-3 font-mono text-xs">
-                        {visit.ip ?? "—"}
+                        <div>{visit.ip ?? "—"}</div>
+                        <div className="mt-0.5 text-[11px] text-muted-foreground">
+                          {describeLocation(visit) ?? "—"}
+                          {Number.isFinite(visit.latitude) &&
+                          Number.isFinite(visit.longitude) ? (
+                            <>
+                              {" "}
+                              <a
+                                href={`https://www.google.com/maps?q=${visit.latitude},${visit.longitude}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="underline decoration-dotted underline-offset-2 hover:text-foreground"
+                              >
+                                karta
+                              </a>
+                            </>
+                          ) : null}
+                        </div>
                       </td>
                       <td className="py-2 pr-3">
                         {acquisitionLabel(visit.acquisition_channel) ?? "—"}

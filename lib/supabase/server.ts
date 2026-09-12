@@ -54,6 +54,12 @@ export type BookingRecord = {
   gclid: string | null;
   landing_path: string | null;
   referrer_host: string | null;
+  city: string | null;
+  region: string | null;
+  country: string | null;
+  postal_code: string | null;
+  latitude: number | null;
+  longitude: number | null;
 };
 
 export type PaymentRecord = {
