@@ -955,59 +955,6 @@ export const LOCATION_PAGES: ClusterDoc[] = [
     ),
   },
   {
-    slug: "stralkastarpolering-sigtuna",
-    kind: "location",
-    title: "Polera strålkastare i Sigtuna – 899 kr/par",
-    description: "Polera strålkastare i Sigtuna. Vi tar inte Sigtuna kommun i bokningen. Märsta (195 00–195 94), Sigtuna stad (193 00–193 91) och Rosersberg (195 95–195 96) ligger utanför området.",
-    h1: "Polera strålkastare i Sigtuna",
-    lead: "Vill du polera strålkastare i Sigtuna? Sigtuna kommun går inte att boka just nu. Märsta, Sigtuna stad och Rosersberg visar utomområde i kalendern. Närmaste bokningsbara område är Upplands Väsby.",
-    locationName: "Sigtuna",
-    sections: [
-      {
-        heading: "Märsta, Sigtuna stad och Rosersberg",
-        paragraphs: [
-          "Postnummer i Märsta (195 00–195 94), Sigtuna stad (193 00–193 91) och Rosersberg (195 95–195 96) släpps inte igenom i bokningen.",
-          "Bor du i Upplands Väsby eller längre in mot stan går det att boka som vanligt.",
-        ],
-      },
-      {
-        heading: "E4 norrut",
-        paragraphs: [
-          "Adresser i Sigtuna kommun längs E4 mot Arlanda går inte att boka. Kalendern visar utomområde.",
-        ],
-      },
-      {
-        heading: "Pris",
-        paragraphs: [
-          "Sigtuna kommun ingår inte i det bokningsbara området. Ingen zonavgift i de kommuner vi tar.",
-        ],
-      },
-      {
-        heading: "Företagsbilar",
-        paragraphs: [
-          "Företagsadresser i Sigtuna kommun går inte att boka. Se företagssidan för adresser i kommuner vi tar.",
-        ],
-      },
-    ],
-    faqs: [
-      {
-        question: "Tar ni Märsta, Sigtuna stad eller Rosersberg?",
-        answer: "Nej. Märsta (195 00–195 94), Sigtuna stad (193 00–193 91) och Rosersberg (195 95–195 96) tar vi inte i bokningen.",
-      },
-      {
-        question: "Kan ni stå vid Arlanda P?",
-        answer: "Nej. Arlanda och Sigtuna kommun ligger utanför det bokningsbara området.",
-      },
-    ],
-    related: relatedForMunicipality(
-      "Sigtuna",
-      [
-        { slug: "foretagskunder", label: "Företag" },
-        { slug: "priser", label: "Priser" },
-      ]
-    ),
-  },
-  {
     slug: "stralkastarpolering-tyreso",
     kind: "location",
     title: "Polera strålkastare i Tyresö – 899 kr/par",

@@ -96,6 +96,17 @@ const nextConfig: NextConfig = {
         destination: "https://stralkastarpolering.se/:path*",
         permanent: true,
       },
+      // Out-of-area landings removed — nearest bookable kommun.
+      {
+        source: "/stralkastarpolering-sigtuna",
+        destination: "/stralkastarpolering-upplands-vasby",
+        permanent: true,
+      },
+      {
+        source: "/stralkastarpolering-marsta",
+        destination: "/stralkastarpolering-upplands-vasby",
+        permanent: true,
+      },
     ];
   },
   images: {

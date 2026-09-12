@@ -1,6 +1,6 @@
 /**
  * Canonical service-area tree for Stockholms län local SEO.
- * Includes every municipality we serve (all except Norrtälje) plus
+ * Includes every municipality we serve (all except Norrtälje and Sigtuna) plus
  * high-search localities kept alongside their parent kommun (Tumba pattern).
  */
 
@@ -210,11 +210,6 @@ export const MUNICIPALITIES: MunicipalityEntry[] = [
     neighbors: ["Botkyrka", "Tumba", "Tullinge", "Huddinge", "Södertälje", "Nykvarn"],
   },
   {
-    name: "Sigtuna",
-    slug: "stralkastarpolering-sigtuna",
-    neighbors: ["Upplands Väsby", "Vallentuna", "Upplands-Bro", "Stockholm"],
-  },
-  {
     name: "Tyresö",
     slug: "stralkastarpolering-tyreso",
     neighbors: ["Nacka", "Älta", "Haninge", "Handen", "Stockholm"],
@@ -222,17 +217,17 @@ export const MUNICIPALITIES: MunicipalityEntry[] = [
   {
     name: "Upplands Väsby",
     slug: "stralkastarpolering-upplands-vasby",
-    neighbors: ["Sollentuna", "Tureberg", "Sigtuna", "Täby", "Stockholm"],
+    neighbors: ["Sollentuna", "Tureberg", "Täby", "Stockholm"],
   },
   {
     name: "Upplands-Bro",
     slug: "stralkastarpolering-upplands-bro",
-    neighbors: ["Järfälla", "Barkarby", "Sigtuna", "Stockholm"],
+    neighbors: ["Järfälla", "Barkarby", "Stockholm"],
   },
   {
     name: "Vallentuna",
     slug: "stralkastarpolering-vallentuna",
-    neighbors: ["Täby", "Österåker", "Åkersberga", "Sigtuna", "Stockholm"],
+    neighbors: ["Täby", "Österåker", "Åkersberga", "Stockholm"],
   },
   {
     name: "Vaxholm",
