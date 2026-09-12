@@ -156,13 +156,15 @@ function PrivacySv() {
       <h2>Kakor och mätning</h2>
       <p>
         Vi använder Google Tag Manager och Google Ads för att mäta när en
-        bokning blir betald. Det kan sätta förstaparts-kakor (till exempel
-        GCLID) i din webbläsare. Vi kör inte Google Analytics och samlar inte
-        in klick-, mus- eller formulärhändelser på webbplatsen. Trafikkälla
-        (UTM, klick-id och hänvisande webbplats) sparas lokalt i webbläsaren
-        upp till 30 dagar och kopplas till bokningen när du slutför den. Ditt
-        språkval kan sparas lokalt i webbläsaren. Betalsidan hos Stripe sätter
-        egna kakor som krävs för att betalningen ska fungera säkert.
+        bokning blir betald, men bara efter att du godkänt analys- eller
+        marknadsföringskakor i cookie-bannern. Det kan sätta förstaparts-kakor
+        (till exempel GCLID) i din webbläsare. Vi kör inte Google Analytics och
+        samlar inte in klick-, mus- eller formulärhändelser på webbplatsen.
+        Trafikkälla (UTM, klick-id och hänvisande webbplats) sparas lokalt i
+        webbläsaren upp till 30 dagar och kopplas till bokningen när du slutför
+        den. Ditt språkval kan sparas lokalt i webbläsaren. Betalsidan hos
+        Stripe sätter egna kakor som krävs för att betalningen ska fungera
+        säkert.
       </p>
 
       <p>

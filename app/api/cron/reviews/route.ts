@@ -2,13 +2,12 @@ import { isAuthorizedCron, unauthorized } from "@/lib/cron";
 import { refreshPlaceReviews } from "@/lib/places/reviews";
 
 export const runtime = "nodejs";
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 /**
- * Background Google Places refresh. Not registered in vercel.json (Hobby is
- * capped at two crons) — scheduled via Supabase pg_cron (see
- * supabase/reviews-cron-schedule.example.sql) and also invoked from the daily
- * analytics-retention cron.
+ * Background Google Places refresh. Registered in vercel.json (Hobby second
+ * cron slot, after reminders). Optional Supabase pg_cron can call the same
+ * path — see supabase/reviews-cron-schedule.example.sql.
  */
 async function handle(request: Request) {
   if (!isAuthorizedCron(request)) return unauthorized();

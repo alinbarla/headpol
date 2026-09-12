@@ -4,9 +4,8 @@
 -- Replace REPLACE_CRON_SECRET, then run only the schedule below.
 -- Do not commit the filled-in secret.
 --
--- Vercel Hobby only allows two vercel.json crons, so this job lives in
--- Supabase like the SEO daily audit. The analytics-retention cron also
--- refreshes reviews as a backup.
+-- Vercel Hobby already schedules /api/cron/reviews daily via vercel.json.
+-- Use this Supabase job only if you want a second refresh window.
 
 select cron.schedule(
   'google-reviews-daily',

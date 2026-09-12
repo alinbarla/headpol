@@ -1,10 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Libre_Franklin, Public_Sans } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
-import {
-  GoogleTagManager,
-  GoogleTagManagerNoscript,
-} from "@/components/analytics/GoogleTagManager";
+import { GoogleTagManager } from "@/components/analytics/GoogleTagManager";
 import { DeferredGoogleTagManager } from "@/components/analytics/DeferredGoogleTagManager";
 import { GTM_ID } from "@/lib/seo";
 import { AttributionCapture } from "@/components/analytics/AttributionCapture";
@@ -174,7 +171,6 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         />
       </head>
       <body className="min-h-full antialiased">
-        <GoogleTagManagerNoscript />
         {GTM_ID ? <DeferredGoogleTagManager gtmId={GTM_ID} /> : null}
         <AttributionCapture />
         <div className="grain-overlay" aria-hidden="true" />

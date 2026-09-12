@@ -7,17 +7,6 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const isDev = process.env.NODE_ENV === "development";
 
-/** Same-origin only, plus Supabase (browser calls the booking API which lives on our origin). */
-const supabaseOrigin = (() => {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!url) return "";
-  try {
-    return new URL(url).origin;
-  } catch {
-    return "";
-  }
-})();
-
 const publicSiteOrigin = (() => {
   const url = process.env.NEXT_PUBLIC_SITE_URL;
   if (!url) return "https://stralkastarpolering.se";
@@ -59,7 +48,7 @@ const csp = [
   `img-src 'self' blob: data: ${googleTag.img}`,
   "media-src 'self'",
   "font-src 'self'",
-  `connect-src 'self' ${googleTag.connect}${supabaseOrigin ? ` ${supabaseOrigin}` : ""}`,
+  `connect-src 'self' ${googleTag.connect}`,
   `frame-src 'self' ${googleTag.frame} ${publicSiteOrigin}${isDev ? ' http://localhost:3000 http://127.0.0.1:3000' : ''}`,
   "object-src 'none'",
   "base-uri 'self'",

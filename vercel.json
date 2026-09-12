@@ -4,6 +4,6 @@
   "regions": ["arn1"],
   "crons": [
     { "path": "/api/cron/reminders", "schedule": "0 16 * * *" },
-    { "path": "/api/cron/analytics-retention", "schedule": "15 2 * * *" }
+    { "path": "/api/cron/reviews", "schedule": "15 2 * * *" }
   ]
 }

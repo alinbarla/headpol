@@ -2,19 +2,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Cookie, Shield, Info, X, ChevronDown, ChevronUp, Check } from "lucide-react";
+import {
+  ALL_PREFS,
+  CONSENT_KEY,
+  DENIED_PREFS,
+  persistPrefs,
+  readStoredPrefs,
+  type CookiePrefs,
+} from "@/lib/analytics/consent";
 import { cn } from "@/lib/utils";
-
-type Prefs = {
-  necessary: boolean;
-  functional: boolean;
-  analytics: boolean;
-  marketing: boolean;
-};
 
 interface CookiePanelProps {
   title?: string;
   message?: string;
   acceptText?: string;
+  rejectText?: string;
   customizeText?: string;
   icon?: "cookie" | "shield" | "info";
   className?: string;
@@ -27,6 +29,7 @@ const CookiePanel = (props: CookiePanelProps) => {
     title = "Denna webbplats använder cookies",
     message = "Vi använder cookies för att förbättra din upplevelse.",
     acceptText = "Acceptera alla",
+    rejectText = "Neka alla",
     customizeText = "Anpassa",
     icon = "cookie",
     className,
@@ -37,60 +40,57 @@ const CookiePanel = (props: CookiePanelProps) => {
   const [visible, setVisible] = useState(false);
   const [render, setRender] = useState(false);
   const [showPrefs, setShowPrefs] = useState(false);
-  const [prefs, setPrefs] = useState<Prefs>({
-    necessary: true,
-    functional: false,
-    analytics: false,
-    marketing: false,
-  });
+  const [prefs, setPrefs] = useState<CookiePrefs>(DENIED_PREFS);
 
   const prefsRef = useRef<HTMLDivElement | null>(null);
   const [prefsHeight, setPrefsHeight] = useState<number>(0);
 
   useEffect(() => {
     const stored =
-      typeof window !== "undefined"
-        ? localStorage.getItem("cookie-consent")
-        : null;
+      typeof window !== "undefined" ? localStorage.getItem(CONSENT_KEY) : null;
 
     if (!stored) {
       setRender(true);
       requestAnimationFrame(() => setVisible(true));
     }
 
-    const storedPrefs = localStorage.getItem("cookie-preferences");
-    if (storedPrefs) {
-      try {
-        const parsed = JSON.parse(storedPrefs) as Prefs;
-        setPrefs({ ...parsed, necessary: true });
-      } catch {
-        // Ignore malformed stored preferences.
-      }
-    }
+    const storedPrefs = readStoredPrefs();
+    if (storedPrefs) setPrefs(storedPrefs);
   }, []);
 
   useEffect(() => {
     if (showPrefs && prefsRef.current) {
-      const h = prefsRef.current.scrollHeight;
-      setPrefsHeight(h);
+      setPrefsHeight(prefsRef.current.scrollHeight);
     } else {
       setPrefsHeight(0);
     }
   }, [showPrefs, prefs]);
 
-  const closeWithExit = (val?: "true" | "false") => {
-    if (val) localStorage.setItem("cookie-consent", val);
+  const closeBanner = () => {
     setVisible(false);
     setTimeout(() => setRender(false), 300);
   };
 
-  const savePreferences = () => {
-    localStorage.setItem("cookie-preferences", JSON.stringify(prefs));
-    localStorage.setItem("cookie-consent", "true");
+  const acceptAll = () => {
+    setPrefs(ALL_PREFS);
+    persistPrefs(ALL_PREFS);
     setShowPrefs(false);
+    closeBanner();
+  };
 
-    setVisible(false);
-    setTimeout(() => setRender(false), 300);
+  const rejectAll = () => {
+    setPrefs(DENIED_PREFS);
+    persistPrefs(DENIED_PREFS);
+    setShowPrefs(false);
+    closeBanner();
+  };
+
+  const savePreferences = () => {
+    const next = { ...prefs, necessary: true as const };
+    setPrefs(next);
+    persistPrefs(next);
+    setShowPrefs(false);
+    closeBanner();
   };
 
   if (!render) return null;
@@ -106,7 +106,7 @@ const CookiePanel = (props: CookiePanelProps) => {
   }: {
     title: string;
     desc: string;
-    field: keyof Prefs;
+    field: keyof CookiePrefs;
     locked?: boolean;
   }) => (
     <div className="flex items-start gap-2 p-2 rounded-lg border border-border">
@@ -169,9 +169,9 @@ const CookiePanel = (props: CookiePanelProps) => {
 
           <button
             type="button"
-            onClick={() => closeWithExit()}
+            onClick={rejectAll}
             className="ml-auto inline-flex size-8 items-center justify-center rounded-md hover:bg-foreground/5 cursor-pointer"
-            aria-label="Stäng cookie-banner"
+            aria-label="Neka alla cookies"
           >
             <X className="size-4 text-muted-foreground" />
           </button>
@@ -195,7 +195,7 @@ const CookiePanel = (props: CookiePanelProps) => {
           .
         </p>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => setShowPrefs((p) => !p)}
@@ -217,7 +217,19 @@ const CookiePanel = (props: CookiePanelProps) => {
 
           <button
             type="button"
-            onClick={() => closeWithExit("true")}
+            onClick={rejectAll}
+            className={cn(
+              "px-3 py-1.5 rounded-md border border-border/70 text-xs cursor-pointer",
+              "bg-background text-foreground",
+              "hover:bg-muted transition-colors"
+            )}
+          >
+            {rejectText}
+          </button>
+
+          <button
+            type="button"
+            onClick={acceptAll}
             className={cn(
               "px-3 py-1.5 rounded-md text-xs cursor-pointer",
               "bg-primary text-primary-foreground",

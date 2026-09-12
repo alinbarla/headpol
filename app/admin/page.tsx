@@ -2,13 +2,11 @@ import Link from "next/link";
 import { AlertTriangleIcon, PlusIcon } from "lucide-react";
 import { requireAdmin } from "@/lib/admin/auth";
 import { getDashboardData } from "@/lib/admin/data";
-import { getAcquisitionFunnel } from "@/lib/admin/funnel";
 import { ADMIN_LOCALE } from "@/lib/admin/labels";
 import { formatOre } from "@/lib/booking";
 import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
 import { getStripeWebhookStatus, isStripeConfigured } from "@/lib/stripe";
 import { formatDateKey } from "@/lib/time";
-import { AcquisitionFunnelCard } from "@/components/admin/AcquisitionFunnelCard";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BookingCard } from "@/components/admin/BookingCard";
 import { StripeBalanceCard } from "@/components/admin/StripeBalanceCard";
@@ -19,7 +17,6 @@ export const dynamic = "force-dynamic";
 export default async function AdminTodayPage() {
   await requireAdmin();
   let data = await getDashboardData();
-  const funnel = await getAcquisitionFunnel(30);
   const webhookStatus = isStripeConfigured()
     ? await getStripeWebhookStatus()
     : null;
@@ -79,10 +76,6 @@ export default async function AdminTodayPage() {
         <Stat label="Paid this week" value={formatOre(data.weekRevenueOre)} />
         <Stat label="Paid this month" value={formatOre(data.monthRevenueOre)} />
         <StripeBalanceCard />
-      </div>
-
-      <div className="mt-6">
-        <AcquisitionFunnelCard data={funnel} />
       </div>
 
       {data.needsAttention.length > 0 && (
