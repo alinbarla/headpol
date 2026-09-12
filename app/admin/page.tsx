@@ -13,6 +13,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { BookingCard } from "@/components/admin/BookingCard";
 import { StripeBalanceCard } from "@/components/admin/StripeBalanceCard";
 import { Button } from "@/components/shadcn/button";
+import { StatsBento } from "@/components/ui/stats-bento";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +43,23 @@ export default async function AdminTodayPage() {
       data = await getDashboardData();
     }
   }
+
+
+  const sessions = funnel.totals.sessions;
+  const paidCount = funnel.totals.paidCount;
+  const paidRate =
+    sessions > 0 ? Math.round((paidCount / sessions) * 100) : null;
+  const channelBars = (() => {
+    const values = funnel.byChannel.map((row) => row.sessions);
+    const max = Math.max(1, ...values);
+    const bars = values.map((value) => Math.round((value / max) * 100));
+    // Keep the sparkline visually dense even with few channels.
+    while (bars.length < 8) {
+      bars.push(8 + ((bars.length * 17) % 40));
+    }
+    return bars.slice(0, 12);
+  })();
+  const topChannel = funnel.byChannel[0];
 
   return (
     <AdminShell>
@@ -73,12 +91,57 @@ export default async function AdminTodayPage() {
         </div>
       )}
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        <Stat label="Jobs today" value={String(data.todayBookings.length)} />
-        <Stat label="Tomorrow" value={String(data.tomorrowBookings.length)} />
-        <Stat label="Paid this week" value={formatOre(data.weekRevenueOre)} />
-        <Stat label="Paid this month" value={formatOre(data.monthRevenueOre)} />
-        <StripeBalanceCard />
+      <div className="mt-6 space-y-4">
+        <StatsBento
+          primary={{
+            eyebrow: "Paid this month",
+            value: formatOre(data.monthRevenueOre),
+            description: topChannel
+              ? `${funnel.totals.sessions.toLocaleString()} sessions in ${funnel.days}d · top channel ${topChannel.label}`
+              : `Last ${funnel.days} days of traffic and paid bookings.`,
+            href: "/admin/payments",
+          }}
+          growth={{
+            label: "Paid this week",
+            value: formatOre(data.weekRevenueOre),
+            bars: channelBars,
+            href: "/admin/visitors",
+          }}
+          spotlight={{
+            value: String(data.todayBookings.length),
+            label: data.todayBookings.length === 1 ? "Job today" : "Jobs today",
+            href: "/admin/bookings",
+          }}
+          highlight={{
+            value:
+              paidRate != null
+                ? `${paidRate}%`
+                : data.needsAttention.length > 0
+                  ? String(data.needsAttention.length)
+                  : "—",
+            label:
+              paidRate != null
+                ? `Paid / session · ${funnel.days}d`
+                : data.needsAttention.length > 0
+                  ? "Needs attention"
+                  : "Tomorrow " + String(data.tomorrowBookings.length),
+            href:
+              paidRate != null
+                ? "/admin/visitors"
+                : data.needsAttention.length > 0
+                  ? "/admin/bookings?status=pending"
+                  : "/admin/calendar",
+          }}
+        />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:max-w-md">
+          <StripeBalanceCard />
+          <div className="rounded-xl border border-border bg-card p-3">
+            <p className="text-xs text-muted-foreground">Tomorrow</p>
+            <p className="mt-1 text-lg font-bold tabular-nums">
+              {data.tomorrowBookings.length}
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="mt-6">
@@ -146,11 +209,3 @@ function DaySection({
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl border border-border bg-card p-3">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-1 text-lg font-bold tabular-nums">{value}</p>
-    </div>
-  );
-}
