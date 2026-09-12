@@ -227,9 +227,9 @@ const CookiePanel = (props: CookiePanelProps) => {
             type="button"
             onClick={rejectAll}
             className={cn(
-              "px-3 py-1.5 rounded-md border border-border/70 text-xs cursor-pointer",
-              "bg-background text-foreground",
-              "hover:bg-muted transition-colors"
+              "px-3 py-1.5 rounded-md text-xs cursor-pointer",
+              "bg-foreground text-background",
+              "hover:bg-foreground/90 transition-colors"
             )}
           >
             {rejectText}
