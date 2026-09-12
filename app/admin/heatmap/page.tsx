@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { requireAdmin } from "@/lib/admin/auth";
 import { buildHeatmapGrid } from "@/lib/analytics/aggregate";
 import { RANGE_MS } from "@/lib/analytics/constants";
@@ -25,6 +26,7 @@ import { HeatmapTabs } from "@/components/admin/heatmap/HeatmapTabs";
 import { HeatmapViewer } from "@/components/admin/heatmap/HeatmapViewer";
 import { ScrollDepthChart } from "@/components/admin/heatmap/ScrollDepthChart";
 import { SessionTable } from "@/components/admin/heatmap/SessionTable";
+import { IncludeOwnIpCheckbox } from "@/components/admin/IncludeOwnIpCheckbox";
 import { Button } from "@/components/shadcn/button";
 import {
   Card,
@@ -79,18 +81,32 @@ export default async function HeatmapPage({
   const range = parseRange(readParam(params, "range"));
   const device = parseDevice(readParam(params, "device"));
   const mode = parseMode(readParam(params, "mode"));
+  const includeMine = readParam(params, "includeMine") === "1";
   const fromIso = new Date(Date.now() - RANGE_MS[range]).toISOString();
 
-  const pages = await listTrackedPages(fromIso).catch(() => []);
+  const pages = await listTrackedPages(fromIso, {
+    includeExcludedIps: includeMine,
+  }).catch(() => []);
   const page = readParam(params, "page") ?? pages[0] ?? "/";
 
   // Sessions list matches Visitors: every visit in range for the device filter,
   // not only the page selected for the visual heatmap grid.
   const [sessions, scrolls, eventCount] = await Promise.all([
-    listRecentSessions({ fromIso, device, limit: 100 }).catch(() => []),
-    listSessionScrolls({ page, fromIso, device }).catch(() => []),
-    countEventsSince(fromIso).catch(() => 0),
+    listRecentSessions({
+      fromIso,
+      device,
+      limit: 100,
+      includeExcludedIps: includeMine,
+    }).catch(() => []),
+    listSessionScrolls({
+      page,
+      fromIso,
+      device,
+      includeExcludedIps: includeMine,
+    }).catch(() => []),
+    countEventsSince(fromIso, { includeExcludedIps: includeMine }).catch(() => 0),
   ]);
+
   const pageSession =
     sessions.find((session) => session.page === page) ?? sessions[0];
 
@@ -103,6 +119,7 @@ export default async function HeatmapPage({
           type: gridType,
           fromIso,
           device,
+          includeExcludedIps: includeMine,
         }).catch(() => []);
 
   const grid = buildHeatmapGrid(gridRows, mode === "attention");
@@ -133,8 +150,20 @@ export default async function HeatmapPage({
             range={range}
             device={device}
             mode={mode}
+            includeMine={includeMine}
           />
-          <HeatmapTabs page={page} range={range} device={device} mode={mode} />
+          <div className="mt-3">
+            <Suspense fallback={null}>
+              <IncludeOwnIpCheckbox checked={includeMine} />
+            </Suspense>
+          </div>
+          <HeatmapTabs
+            page={page}
+            range={range}
+            device={device}
+            mode={mode}
+            includeMine={includeMine}
+          />
 
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             <StatCard label="Events in range" value={String(eventCount)} />

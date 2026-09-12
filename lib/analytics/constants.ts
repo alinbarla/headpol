@@ -44,3 +44,6 @@ export const RANGE_MS: Record<HeatmapRange, number> = {
 export const VISITOR_STORAGE_KEY = "hp_vid";
 export const SESSION_STORAGE_KEY = "hp_sid";
 export const SAMPLE_STORAGE_KEY = "hp_sample";
+
+/** Admin/office IPs hidden from Visitors + Heatmap by default. */
+export const EXCLUDED_VIEWER_IPS = ["78.82.154.188"] as const;
