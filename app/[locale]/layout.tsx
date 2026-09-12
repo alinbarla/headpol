@@ -12,6 +12,7 @@ import { LazyHeatmapTracker } from "@/components/analytics/LazyHeatmapTracker";
 import { LazyReplayBridge } from "@/components/analytics/LazyReplayBridge";
 import { getAdminOrigins } from "@/lib/analytics/origins";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { CookiePanel } from "@/components/ui/cookie-banner-1";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing, type Locale } from "@/lib/i18n";
@@ -186,6 +187,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>
+        <CookiePanel
+          privacyHref="/integritetspolicy"
+          termsHref="/villkor"
+        />
       </body>
     </html>
   );
