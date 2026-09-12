@@ -4,9 +4,9 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering",
     kind: "service-polering",
-    title: "Polera strålkastare – så blir de blanka igen",
+    title: "Polera strålkastare – 899 kr/par, 12 mån garanti",
     description:
-      "Polera strålkastare mobil i Stockholm: oxidation bort, UV-keramiskt skydd och 12 mån garanti. 899 kr/par — vi kommer till dig.",
+      "Polera strålkastare mobil i Stockholm: 899 kr/par, UV-keramiskt skydd och 12 månaders garanti. Vi kommer till dig.",
     h1: "Polera strålkastare",
     lead: "När folk säger att de vill polera strålkastare menar de nästan alltid samma sak: glasen har blivit gula eller mjölkiga och de vill ha blanka strålkastare igen. Det är inte smuts. Det är plasten som oxiderat — och det går att fixa utan att byta hela enheten.",
     sections: [
@@ -82,9 +82,9 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarrenovering",
     kind: "service-renovering",
-    title: "Strålkastarrenovering – oxidation, slipning och UV-skydd",
+    title: "Strålkastarrenovering – 899 kr/par, 12 mån garanti",
     description:
-      "Strålkastarrenovering när du vill polera strålkastare på riktigt: oxidation, våtslipning, UV-keramiskt skydd, livslängd och när det inte fungerar.",
+      "Strålkastarrenovering i Stockholm: 899 kr/par, UV-keramiskt skydd och 12 månaders garanti. Slipning, polering och när det inte fungerar.",
     h1: "Strålkastarrenovering",
     lead: "En strålkastarrenovering är hela återställningen — mer än att bara polera strålkastare till tillfällig glans. Slipning, polering och nytt UV-skydd räknas. Här är processen, materialen och gränserna för vad som går att rädda.",
     sections: [
@@ -185,9 +185,9 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "priser",
     kind: "other",
-    title: "Pris för att polera strålkastare – 899 kr/par",
+    title: "Pris för att polera strålkastare – 899 kr/par, 12 mån garanti",
     description:
-      "Polera strålkastare till fast pris i Stockholms län: 899 kr/par för personbil, från 499 kr för MC. Samma pris i kommunerna vi tar. Ingen zonavgift.",
+      "Polera strålkastare till fast pris i Stockholms län: 899 kr/par för personbil, från 499 kr för MC. UV-skydd och 12 månaders garanti ingår. Ingen zonavgift.",
     h1: "Priser för att polera strålkastare",
     lead: "Vill du polera strålkastare utan överraskningar? Ett par på personbil kostar 899 kr inklusive moms. UV-keramiskt skydd och 12 månaders garanti ingår. Samma pris i hela Stockholmsområdet.",
     priceTiers: [
@@ -264,9 +264,9 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "foretagskunder",
     kind: "other",
-    title: "Polera strålkastare för företag och bilhandlare",
+    title: "Polera strålkastare för företag – från 899 kr/par, 12 mån garanti",
     description:
-      "Volympris när ni behöver polera strålkastare på flera bilar. Mobil service för bilhandlare, åkerier och vagnparker i Stockholm — vi kommer till er gård eller verkstad.",
+      "Volympris när ni behöver polera strålkastare på flera bilar. Från 899 kr/par med UV-skydd och 12 månaders garanti. Mobil service för bilhandlare och vagnparker i Stockholm.",
     h1: "Polera strålkastare för företag",
     lead: "Gula strålkastare på en bil i lager sänker intrycket av hela bilen. När ni vill polera strålkastare i volym tar vi flera bilar på samma adress — bilhandlare, åkeri och vagnpark.",
     sections: [
@@ -298,9 +298,9 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "fore-bilder",
     kind: "other",
-    title: "Före och efter: polera strålkastare",
+    title: "Före och efter: polera strålkastare – 899 kr/par, 12 mån garanti",
     description:
-      "Bilder före och efter när vi polerar strålkastare. Oxiderad, gul plast mot klar yta efter slipning, polering och UV-keramiskt skydd.",
+      "Bilder före och efter när vi polerar strålkastare. 899 kr/par, UV-keramiskt skydd och 12 månaders garanti. Oxiderad plast mot klar yta.",
     h1: "Före och efter att polera strålkastare",
     lead: "Så ser det ut när vi polerar strålkastare: oxiderad, gul plast före — klar yta efter slipning, polering och UV-keramiskt skydd. Samma resultat på din uppfart.",
     sections: [
@@ -322,9 +322,9 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "faq",
     kind: "faq",
-    title: "Vanliga frågor om att polera strålkastare",
+    title: "FAQ: polera strålkastare – 899 kr/par, 12 mån garanti",
     description:
-      "FAQ om att polera strålkastare och strålkastarrenovering: matta glas, gulnad, besiktning, pris, byte, sprickor, DIY och mobil service i Stockholm.",
+      "FAQ om att polera strålkastare: 899 kr/par, 12 månaders garanti, matta glas, gulnad, besiktning, byte, DIY och mobil service i Stockholm.",
     h1: "Vanliga frågor om att polera strålkastare",
     lead: "Här är svaren vi ger oftast när kunder vill polera strålkastare: matta och gulnade glas, besiktning, pris, byte mot renovering, sprickor, kit hemma och mobil service i Stockholm.",
     sections: [
@@ -409,9 +409,9 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "om-oss",
     kind: "other",
-    title: "Om oss – mobil hjälp att polera strålkastare",
+    title: "Om oss – polera strålkastare 899 kr/par, 12 mån garanti",
     description:
-      "Vi kommer till dig och polerar strålkastare i Stockholms län. Fast pris, UV-keramiskt skydd och 12 månaders garanti — ingen inlämningsverkstad.",
+      "Vi kommer till dig och polerar strålkastare i Stockholms län. Fast pris 899 kr/par, UV-keramiskt skydd och 12 månaders garanti — ingen inlämningsverkstad.",
     h1: "Om oss",
     lead: "Vi är en mobil tjänst som hjälper dig polera strålkastare där bilen står. Fast pris, UV-keramiskt skydd och 12 månaders garanti i Stockholms län.",
     sections: [
