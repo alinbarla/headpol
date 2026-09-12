@@ -16,12 +16,14 @@ export function HeatmapFilters({
   range,
   device,
   mode,
+  includeMine = false,
 }: {
   page: string;
   pages: string[];
   range: HeatmapRange;
   device: HeatmapDevice | "all";
   mode: string;
+  includeMine?: boolean;
 }) {
   const router = useRouter();
   const options = pages.includes(page) ? pages : [page, ...pages];
@@ -36,6 +38,7 @@ export function HeatmapFilters({
     search.set("range", next.range ?? range);
     search.set("device", next.device ?? device);
     search.set("mode", mode);
+    if (includeMine) search.set("includeMine", "1");
     router.replace(`/admin/heatmap?${search.toString()}`);
   }
 

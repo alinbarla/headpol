@@ -16,11 +16,13 @@ export function HeatmapTabs({
   range,
   device,
   mode,
+  includeMine = false,
 }: {
   page: string;
   range: HeatmapRange;
   device: HeatmapDevice | "all";
   mode: HeatmapMode;
+  includeMine?: boolean;
 }) {
   return (
     <div className="mt-4 flex flex-wrap gap-1 rounded-lg bg-muted p-1">
@@ -31,6 +33,7 @@ export function HeatmapTabs({
           device,
           mode: tab.mode,
         });
+        if (includeMine) search.set("includeMine", "1");
         const active = tab.mode === mode;
         return (
           <Link

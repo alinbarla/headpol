@@ -1,6 +1,7 @@
 import "server-only";
 
 import {
+  EXCLUDED_VIEWER_IPS,
   MAX_EVENTS_PER_SESSION,
 } from "@/lib/analytics/constants";
 import type {
@@ -14,6 +15,23 @@ import { getSupabaseAdminClient, withSupabaseTimeout } from "@/lib/supabase/serv
 
 const SESSION_SELECT =
   "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, ip, city, region, country, postal_code, latitude, longitude, is_bot, user_agent, started_at, ended_at, event_count, max_scroll_pct, acquisition_channel, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, landing_path, referrer_host";
+
+
+type IpFilterOptions = {
+  /** When true, include sessions from EXCLUDED_VIEWER_IPS. Default false. */
+  includeExcludedIps?: boolean;
+};
+
+function withoutExcludedIps<
+  T extends { neq: (column: string, value: string) => T },
+>(query: T, includeExcludedIps?: boolean): T {
+  if (includeExcludedIps) return query;
+  let next = query;
+  for (const ip of EXCLUDED_VIEWER_IPS) {
+    next = next.neq("ip", ip);
+  }
+  return next;
+}
 
 function acquisitionColumns(envelope: SessionEnvelope) {
   return {
@@ -433,6 +451,7 @@ export async function listVisitors(options: {
   channel?: AcquisitionChannel | "all";
   limit?: number;
   offset?: number;
+  includeExcludedIps?: boolean;
 }): Promise<AnalyticsSession[]> {
   const supabase = getSupabaseAdminClient();
   let query = supabase
@@ -445,6 +464,7 @@ export async function listVisitors(options: {
       options.offset ?? 0,
       (options.offset ?? 0) + (options.limit ?? 100) - 1
     );
+  query = withoutExcludedIps(query, options.includeExcludedIps);
 
   if (options.device !== "all") {
     query = query.eq("device", options.device);
@@ -483,6 +503,7 @@ export async function listVisitorChartRows(options: {
   device: HeatmapDevice | "all";
   channel?: AcquisitionChannel | "all";
   limit?: number;
+  includeExcludedIps?: boolean;
 }): Promise<VisitorChartRow[]> {
   const supabase = getSupabaseAdminClient();
   let query = supabase
@@ -492,6 +513,7 @@ export async function listVisitorChartRows(options: {
     .gte("started_at", options.fromIso)
     .order("started_at", { ascending: true })
     .limit(options.limit ?? 2000);
+  query = withoutExcludedIps(query, options.includeExcludedIps);
 
   if (options.device !== "all") {
     query = query.eq("device", options.device);
@@ -510,6 +532,7 @@ export async function countVisitors(options: {
   fromIso: string;
   device: HeatmapDevice | "all";
   channel?: AcquisitionChannel | "all";
+  includeExcludedIps?: boolean;
 }): Promise<number> {
   const supabase = getSupabaseAdminClient();
   let query = supabase
@@ -517,6 +540,7 @@ export async function countVisitors(options: {
     .select("id", { count: "exact", head: true })
     .eq("is_bot", false)
     .gte("started_at", options.fromIso);
+  query = withoutExcludedIps(query, options.includeExcludedIps);
 
   if (options.device !== "all") {
     query = query.eq("device", options.device);
@@ -532,18 +556,19 @@ export async function countVisitors(options: {
 }
 
 export async function listTrackedPages(
-  fromIso: string
+  fromIso: string,
+  options: IpFilterOptions = {}
 ): Promise<string[]> {
   const supabase = getSupabaseAdminClient();
-  const { data, error } = await withSupabaseTimeout(
-    supabase
-      .from("analytics_sessions")
-      .select("page")
-      .eq("is_bot", false)
-      .gte("started_at", fromIso)
-      .order("page", { ascending: true })
-      .limit(500)
-  );
+  let query = supabase
+    .from("analytics_sessions")
+    .select("page")
+    .eq("is_bot", false)
+    .gte("started_at", fromIso)
+    .order("page", { ascending: true })
+    .limit(500);
+  query = withoutExcludedIps(query, options.includeExcludedIps);
+  const { data, error } = await withSupabaseTimeout(query);
 
   if (error) throw new Error(error.message);
   const pages = new Set<string>();
@@ -559,6 +584,7 @@ export async function listRecentSessions(options: {
   fromIso: string;
   device: HeatmapDevice | "all";
   limit?: number;
+  includeExcludedIps?: boolean;
 }): Promise<AnalyticsSession[]> {
   const supabase = getSupabaseAdminClient();
   let query = supabase
@@ -568,6 +594,7 @@ export async function listRecentSessions(options: {
     .gte("started_at", options.fromIso)
     .order("started_at", { ascending: false })
     .limit(options.limit ?? 100);
+  query = withoutExcludedIps(query, options.includeExcludedIps);
 
   if (options.page && options.page !== "all") {
     query = query.eq("page", options.page);
@@ -622,6 +649,7 @@ export async function listEventsForGrid(options: {
   type: "click" | "move" | "attention";
   fromIso: string;
   device: HeatmapDevice | "all";
+  includeExcludedIps?: boolean;
 }): Promise<Array<Pick<AnalyticsEventRow, "x" | "y" | "dwell_ms" | "document_h" | "viewport_w">>> {
   const supabase = getSupabaseAdminClient();
 
@@ -632,6 +660,7 @@ export async function listEventsForGrid(options: {
     .eq("page", options.page)
     .gte("started_at", options.fromIso)
     .limit(2000);
+  sessionQuery = withoutExcludedIps(sessionQuery, options.includeExcludedIps);
 
   if (options.device !== "all") {
     sessionQuery = sessionQuery.eq("device", options.device);
@@ -666,6 +695,7 @@ export async function listSessionScrolls(options: {
   page: string;
   fromIso: string;
   device: HeatmapDevice | "all";
+  includeExcludedIps?: boolean;
 }): Promise<Array<{ max_scroll_pct: number }>> {
   const supabase = getSupabaseAdminClient();
   let query = supabase
@@ -675,6 +705,7 @@ export async function listSessionScrolls(options: {
     .eq("page", options.page)
     .gte("started_at", options.fromIso)
     .limit(5000);
+  query = withoutExcludedIps(query, options.includeExcludedIps);
 
   if (options.device !== "all") {
     query = query.eq("device", options.device);
@@ -685,18 +716,25 @@ export async function listSessionScrolls(options: {
   return (data ?? []) as Array<{ max_scroll_pct: number }>;
 }
 
-export async function countEventsSince(fromIso: string): Promise<number> {
+export async function countEventsSince(
+  fromIso: string,
+  options: IpFilterOptions = {}
+): Promise<number> {
   const supabase = getSupabaseAdminClient();
-  const { count, error } = await withSupabaseTimeout(
-    supabase
-      .from("analytics_events")
-      .select("id, analytics_sessions!inner(is_bot)", {
-        count: "exact",
-        head: true,
-      })
-      .eq("analytics_sessions.is_bot", false)
-      .gte("ts", fromIso)
-  );
+  let query = supabase
+    .from("analytics_events")
+    .select("id, analytics_sessions!inner(is_bot, ip)", {
+      count: "exact",
+      head: true,
+    })
+    .eq("analytics_sessions.is_bot", false)
+    .gte("ts", fromIso);
+  if (!options.includeExcludedIps) {
+    for (const ip of EXCLUDED_VIEWER_IPS) {
+      query = query.neq("analytics_sessions.ip", ip);
+    }
+  }
+  const { count, error } = await withSupabaseTimeout(query);
   if (error) throw new Error(error.message);
   return count ?? 0;
 }

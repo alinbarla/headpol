@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { requireAdmin } from "@/lib/admin/auth";
 import { RANGE_MS } from "@/lib/analytics/constants";
 import { getAnalyticsSettings } from "@/lib/analytics/settings";
@@ -24,6 +25,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/shadcn/card";
+import { IncludeOwnIpCheckbox } from "@/components/admin/IncludeOwnIpCheckbox";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -74,12 +76,14 @@ function hrefFor(opts: {
   range: HeatmapRange;
   device: HeatmapDevice | "all";
   channel: AcquisitionChannel | "all";
+  includeMine?: boolean;
   page?: number;
 }): string {
   const search = new URLSearchParams();
   search.set("range", opts.range);
   if (opts.device !== "all") search.set("device", opts.device);
   if (opts.channel !== "all") search.set("channel", opts.channel);
+  if (opts.includeMine) search.set("includeMine", "1");
   if (opts.page && opts.page > 1) search.set("page", String(opts.page));
   return `/admin/visitors?${search.toString()}`;
 }
@@ -96,6 +100,7 @@ export default async function VisitorsPage({
   const range = parseRange(readParam(params, "range"));
   const device = parseDevice(readParam(params, "device"));
   const channel = parseChannel(readParam(params, "channel"));
+  const includeMine = readParam(params, "includeMine") === "1";
   const page = parsePage(readParam(params, "page"));
   const fromIso = new Date(Date.now() - RANGE_MS[range]).toISOString();
   const offset = (page - 1) * PAGE_SIZE;
@@ -111,11 +116,12 @@ export default async function VisitorsPage({
         fromIso,
         device,
         channel,
+        includeExcludedIps: includeMine,
         limit: PAGE_SIZE,
         offset,
       }),
-      countVisitors({ fromIso, device, channel }),
-      listVisitorChartRows({ fromIso, device, channel }),
+      countVisitors({ fromIso, device, channel, includeExcludedIps: includeMine }),
+      listVisitorChartRows({ fromIso, device, channel, includeExcludedIps: includeMine }),
     ]);
   } catch (error) {
     loadError =
@@ -146,7 +152,7 @@ export default async function VisitorsPage({
         {(["24h", "7d", "30d"] as const).map((value) => (
           <Link
             key={value}
-            href={hrefFor({ range: value, device, channel })}
+            href={hrefFor({ range: value, device, channel, includeMine })}
             className={cn(
               "rounded-md border px-3 py-1.5 text-xs",
               range === value
@@ -161,7 +167,7 @@ export default async function VisitorsPage({
         {(["all", "desktop", "tablet", "mobile"] as const).map((value) => (
           <Link
             key={value}
-            href={hrefFor({ range, device: value, channel })}
+            href={hrefFor({ range, device: value, channel, includeMine })}
             className={cn(
               "rounded-md border px-3 py-1.5 text-xs capitalize",
               device === value
@@ -185,7 +191,7 @@ export default async function VisitorsPage({
         ).map((value) => (
           <Link
             key={value}
-            href={hrefFor({ range, device, channel: value })}
+            href={hrefFor({ range, device, channel: value, includeMine })}
             className={cn(
               "rounded-md border px-3 py-1.5 text-xs",
               channel === value
@@ -198,6 +204,12 @@ export default async function VisitorsPage({
               : ACQUISITION_LABELS[value]}
           </Link>
         ))}
+      </div>
+
+      <div className="mt-3">
+        <Suspense fallback={null}>
+        <IncludeOwnIpCheckbox checked={includeMine} />
+      </Suspense>
       </div>
 
       {!loadError ? <VisitorCharts rows={chartRows} range={range} /> : null}
@@ -321,6 +333,7 @@ export default async function VisitorsPage({
                     range,
                     device,
                     channel,
+                    includeMine,
                     page: page - 1,
                   })}
                   className="text-sm text-primary hover:underline"
@@ -341,6 +354,7 @@ export default async function VisitorsPage({
                     range,
                     device,
                     channel,
+                    includeMine,
                     page: page + 1,
                   })}
                   className="text-sm text-primary hover:underline"
