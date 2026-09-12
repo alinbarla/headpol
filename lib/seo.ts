@@ -114,11 +114,11 @@ export const SOCIAL_PROFILES: string[] = [
 /** Keywords used in <meta keywords> and content guidance. */
 export const KEYWORDS: Record<Locale, string[]> = {
   sv: [
+    "polera strålkastare",
     "strålkastarpolering",
     "strålkastarpolering Stockholm",
     "strålkastarpolering Stockholms län",
     "strålkastare restaurering",
-    "polera strålkastare",
     "strålkastarrenovering",
     "strålkastarrenovering Stockholm",
     "renovera strålkastare",

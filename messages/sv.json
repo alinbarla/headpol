@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Strålkastarpolering Stockholm – 899 kr/par, vi kommer till dig",
-    "description": "Mobil strålkastarpolering i Stockholms län. 899 kr/par, UV-keramiskt skydd och 12 månaders garanti. Vi kommer till din adress i kommunerna runt Stockholm."
+    "title": "Polera strålkastare Stockholm – 899 kr/par, vi kommer till dig",
+    "description": "Polera strålkastare mobil i Stockholms län. 899 kr/par, UV-keramiskt skydd och 12 månaders garanti. Vi kommer till din adress."
   },
   "nav": {
     "brand": "Strålkastarpolering",
@@ -20,11 +20,11 @@
   },
   "hero": {
     "eyebrow": "Begränsat antal platser denna vecka",
-    "title": "<lead>Strålkastarpolering i Stockholm – </lead><visible>kristallklara strålkastare igen</visible>",
+    "title": "<lead>Polera strålkastare i Stockholm – </lead><visible>kristallklara igen</visible>",
     "ratingLabel": "Recensioner",
     "ratingSr": "{rating} av 5 stjärnor baserat på {count, plural, one {# recension} other {# recensioner}}",
-    "subtitle": "Vi slipar, polerar och lägger UV-keramiskt skydd. 899 kr/par och <guarantee>12 månaders garanti</guarantee>. Vi kommer till dig.",
-    "semantic": "Strålkastarpolering i Stockholm på din adress. Vi tar bort oxidation, gulnad och repor från plaststrålkastare och avslutar med UV-keramiskt skydd.",
+    "subtitle": "Vi slipar, polerar och lägger UV-keramiskt skydd när du vill polera strålkastare. 899 kr/par och <guarantee>12 månaders garanti</guarantee>. Vi kommer till dig.",
+    "semantic": "Polera strålkastare i Stockholm på din adress. Vi tar bort oxidation, gulnad och repor från plaststrålkastare och avslutar med UV-keramiskt skydd.",
     "ctaPrimary": "Ring nu – vi kommer till dig!",
     "ctaSecondary": "Boka tid",
     "oldPrice": "1499kr",
@@ -39,9 +39,18 @@
     "imageHint": "Före och efter, från matt och gult till glasklart",
     "imageAlt": "Gulnad plaststrålkastare före polering, samma lampa efter",
     "stats": [
-      { "value": "899kr/par", "label": "Fast pris" },
-      { "value": "12 mån", "label": "Garanti" },
-      { "value": "Hem till dig", "label": "Vi kommer till dig" }
+      {
+        "value": "899kr/par",
+        "label": "Fast pris"
+      },
+      {
+        "value": "12 mån",
+        "label": "Garanti"
+      },
+      {
+        "value": "Hem till dig",
+        "label": "Vi kommer till dig"
+      }
     ]
   },
   "benefits": {
@@ -106,10 +115,10 @@
     ]
   },
   "services": {
-    "title": "Priser för strålkastarpolering och renovering",
+    "title": "Priser för att polera strålkastare",
     "readMore": "Alla priser och vad som ingår",
     "readMorePolish": "Läs mer om att polera strålkastare",
-    "subtitle": "Slipning, polering och UV-keramiskt skydd för båda strålkastarna. 899 kr/par.",
+    "subtitle": "Slipning, polering och UV-keramiskt skydd när du vill polera strålkastare. 899 kr/par.",
     "exampleNote": "Tjänster & priser",
     "guaranteeNote": "Slipning, polering och UV-keramiskt skydd ingår. 899 kr/par och 12 månaders garanti.",
     "priceUnit": "par",
@@ -173,7 +182,7 @@
     "googleReadLess": "Visa mindre"
   },
   "faq": {
-    "title": "Vanliga frågor om strålkastarpolering",
+    "title": "Vanliga frågor om att polera strålkastare",
     "subtitle": "Svar på det bilägare i Stockholm undrar mest om polering och renovering av strålkastare.",
     "readMore": "Alla frågor och längre svar",
     "items": [
@@ -354,10 +363,10 @@
     "homeCrumb": "Start",
     "ratingLabel": "Recensioner",
     "ratingSr": "{rating} av 5 stjärnor baserat på {count, plural, one {# recension} other {# recensioner}}",
-    "compareTitle": "Före och efter",
-    "compareLead": "Dra skjutreglaget och se hur matta strålkastare blir klara igen — samma resultat vi gör hos dig.",
-    "ctaTitle": "Boka strålkastarpolering",
-    "ctaBody": "Vi kommer till dig. Fast pris 899 kr/par, UV-keramiskt skydd och 12 månaders garanti.",
+    "compareTitle": "Före och efter: polera strålkastare",
+    "compareLead": "Dra skjutreglaget och se resultatet när vi polerar strålkastare — samma finish vi gör hos dig.",
+    "ctaTitle": "Boka att polera strålkastare",
+    "ctaBody": "Vi kommer till dig och polerar strålkastare. Fast pris 899 kr/par, UV-keramiskt skydd och 12 månaders garanti.",
     "ctaBook": "Boka tid",
     "ctaCall": "Ring nu",
     "relatedTitle": "Läs också",

@@ -284,7 +284,6 @@ export const LOCATION_SLUGS = MUNICIPALITIES.map((entry) => entry.slug);
 export function relatedForMunicipality(
   name: string,
   extras: Array<{ slug: string; label: string }> = [
-    { slug: "stralkastarpolering", label: "Polera strålkastare" },
     { slug: "priser", label: "Priser" },
   ]
 ): Array<{ slug: string; label: string }> {
@@ -294,9 +293,15 @@ export function relatedForMunicipality(
     .filter(Boolean)
     .map((neighbor) => ({ slug: neighbor.slug, label: neighbor.name }));
 
+  // Always surface the money-page keyword anchor, even when callers pass custom extras.
+  const moneyPage = {
+    slug: "stralkastarpolering",
+    label: "Polera strålkastare",
+  };
+
   const seen = new Set<string>();
   const links: Array<{ slug: string; label: string }> = [];
-  for (const link of [...neighborLinks, ...extras]) {
+  for (const link of [...neighborLinks, moneyPage, ...extras]) {
     if (seen.has(link.slug) || link.slug === entry?.slug) continue;
     seen.add(link.slug);
     links.push(link);

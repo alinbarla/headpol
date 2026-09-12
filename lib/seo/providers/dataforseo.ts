@@ -500,7 +500,7 @@ export type ContentMentionRow = {
 };
 
 export async function fetchContentMentions(
-  keyword = "strålkastarpolering"
+  keyword = "polera strålkastare"
 ): Promise<{ total: number | null; items: ContentMentionRow[] }> {
   const results = await dfsPost<{
     total_count?: number;

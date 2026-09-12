@@ -2,7 +2,8 @@ import { isAuthorizedCron, unauthorized } from "@/lib/cron";
 import { runAllSeoTools } from "@/lib/seo/runAll";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+/** SERP (8 live keywords) runs first; cheap checks follow. Needs headroom beyond 60s. */
+export const maxDuration = 120;
 
 async function handle(request: Request) {
   if (!isAuthorizedCron(request)) return unauthorized();

@@ -9,11 +9,11 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-arenastaden",
     kind: "location",
-    title: "Strålkastarpolering Arenastaden – kontor, Mall of Scandinavia och jobb-P",
+    title: "Polera strålkastare i Arenastaden – 899 kr/par",
     description:
-      "Mobil strålkastarpolering i Arenastaden, Solna. Jobbparkering, tjänstebil och gård utomhus. Fast pris 899 kr/par, vi kommer till dig efter 16.",
-    h1: "Strålkastarpolering i Arenastaden",
-    lead: "Arenastaden är Solnas kontors- och eventkvarter: Friends, Mall of Scandinavia och många tjänstebilar. Här styr platsen mer än kilometrarna från city — bilen behöver stå ute en timme.",
+      "Polera strålkastare i Arenastaden, Solna. Jobbparkering, tjänstebil och gård utomhus. Fast pris 899 kr/par, vi kommer till dig efter 16.",
+    h1: "Polera strålkastare i Arenastaden",
+    lead: "Vill du polera strålkastare i Arenastaden? Arenastaden är Solnas kontors- och eventkvarter: Friends, Mall of Scandinavia och många tjänstebilar. Här styr platsen mer än kilometrarna från city — bilen behöver stå ute en timme.",
     locationName: "Arenastaden",
     sections: [
       {
@@ -63,11 +63,11 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-sickla",
     kind: "location",
-    title: "Strålkastarpolering Sickla – Nacka Forum, nybygge och gård-P",
+    title: "Polera strålkastare i Sickla – 899 kr/par",
     description:
-      "Mobil strålkastarpolering i Sickla, Nacka. Bostadsgård, villa och arbetsplats utomhus. Fast pris 899 kr/par. Undvik köpcentrumets korttids-P.",
-    h1: "Strålkastarpolering i Sickla",
-    lead: "Sickla är Nackas täta port mot stan: nybygge, Nacka Forum och mycket garage. Vi tar jobbet när bilen står ute på gård, uppfart eller tjänsteplats — inte i köpcentrumets angöring.",
+      "Polera strålkastare i Sickla, Nacka. Bostadsgård, villa och arbetsplats utomhus. Fast pris 899 kr/par. Undvik köpcentrumets korttids-P.",
+    h1: "Polera strålkastare i Sickla",
+    lead: "Vill du polera strålkastare i Sickla? Sickla är Nackas täta port mot stan: nybygge, Nacka Forum och mycket garage. Vi tar jobbet när bilen står ute på gård, uppfart eller tjänsteplats — inte i köpcentrumets angöring.",
     locationName: "Sickla",
     sections: [
       {
@@ -116,11 +116,11 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-alta",
     kind: "location",
-    title: "Strålkastarpolering Älta – radhus, villa och gård i Nacka",
+    title: "Polera strålkastare i Älta – 899 kr/par",
     description:
-      "Mobil strålkastarpolering i Älta, Nacka. Radhusgård, villauppfart och Fisksätra-nära adresser. Fast pris 899 kr/par, vi kommer till dig.",
-    h1: "Strålkastarpolering i Älta",
-    lead: "Älta ligger i Nacka mellan Sickla och Tyresö: radhus, lamellhus och villa. Vi tar jobbet på uppfart eller gårdsplats utomhus till samma 899 kr/par.",
+      "Polera strålkastare i Älta, Nacka. Radhusgård, villauppfart och Fisksätra-nära adresser. Fast pris 899 kr/par, vi kommer till dig.",
+    h1: "Polera strålkastare i Älta",
+    lead: "Vill du polera strålkastare i Älta? Älta ligger i Nacka mellan Sickla och Tyresö: radhus, lamellhus och villa. Vi tar jobbet på uppfart eller gårdsplats utomhus till samma 899 kr/par.",
     locationName: "Älta",
     sections: [
       {
@@ -170,11 +170,11 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-saltsjobaden",
     kind: "location",
-    title: "Strålkastarpolering Saltsjöbaden – villa, sjöläge och Nacka",
+    title: "Polera strålkastare i Saltsjöbaden – 899 kr/par",
     description:
-      "Mobil strålkastarpolering i Saltsjöbaden, Nacka. Villauppfarter mot sjön, Boo-hållet och längre slinga från stan. Fast pris 899 kr/par.",
-    h1: "Strålkastarpolering i Saltsjöbaden",
-    lead: "Saltsjöbaden är Nackas sjönära villaområden — längre slinga från stan, samma pris. Uppfarten är arbetsytan; brygga och båtplats är det inte.",
+      "Polera strålkastare i Saltsjöbaden, Nacka. Villauppfarter mot sjön, Boo-hållet och längre slinga från stan. Fast pris 899 kr/par.",
+    h1: "Polera strålkastare i Saltsjöbaden",
+    lead: "Vill du polera strålkastare i Saltsjöbaden? Saltsjöbaden är Nackas sjönära villaområden — längre slinga från stan, samma pris. Uppfarten är arbetsytan; brygga och båtplats är det inte.",
     locationName: "Saltsjöbaden",
     sections: [
       {
@@ -223,11 +223,11 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-tureberg",
     kind: "location",
-    title: "Strålkastarpolering Tureberg – centrum, kontor och Sollentuna",
+    title: "Polera strålkastare i Tureberg – 899 kr/par",
     description:
-      "Mobil strålkastarpolering i Tureberg, Sollentuna. Hemadress, kontors-P utomhus och Edsberg-nära. Fast pris 899 kr/par. Undvik centrumets korttids-P.",
-    h1: "Strålkastarpolering i Tureberg",
-    lead: "Tureberg är Sollentunas tätort längs E4: centrum, kontor och bostäder. Vi tar jobbet hemma eller på en utomhusplats ni får använda en timme — inte på korttids-P vid gallerian.",
+      "Polera strålkastare i Tureberg, Sollentuna. Hemadress, kontors-P utomhus och Edsberg-nära. Fast pris 899 kr/par. Undvik centrumets korttids-P.",
+    h1: "Polera strålkastare i Tureberg",
+    lead: "Vill du polera strålkastare i Tureberg? Tureberg är Sollentunas tätort längs E4: centrum, kontor och bostäder. Vi tar jobbet hemma eller på en utomhusplats ni får använda en timme — inte på korttids-P vid gallerian.",
     locationName: "Tureberg",
     sections: [
       {
@@ -276,11 +276,11 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-djursholm",
     kind: "location",
-    title: "Strålkastarpolering Djursholm – villa, uppfart och Danderyd",
+    title: "Polera strålkastare i Djursholm – 899 kr/par",
     description:
-      "Mobil strålkastarpolering i Djursholm, Danderyd. Långa villauppfarter, Stocksund-nära och sjönära tomter. Fast pris 899 kr/par, ingen zonavgift.",
-    h1: "Strålkastarpolering i Djursholm",
-    lead: "Djursholm är Danderyds villaområden — långa uppfarter, ibland branta, mer sjönära än centrumparkering. Vi kommer till uppfarten till samma 899 kr/par som övriga länet.",
+      "Polera strålkastare i Djursholm, Danderyd. Långa villauppfarter, Stocksund-nära och sjönära tomter. Fast pris 899 kr/par, ingen zonavgift.",
+    h1: "Polera strålkastare i Djursholm",
+    lead: "Vill du polera strålkastare i Djursholm? Djursholm är Danderyds villaområden — långa uppfarter, ibland branta, mer sjönära än centrumparkering. Vi kommer till uppfarten till samma 899 kr/par som övriga länet.",
     locationName: "Djursholm",
     sections: [
       {
@@ -329,11 +329,11 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-akersberga",
     kind: "location",
-    title: "Strålkastarpolering Åkersberga – villa, tätort och Österåker",
+    title: "Polera strålkastare i Åkersberga – 899 kr/par",
     description:
-      "Mobil strålkastarpolering i Åkersberga, Österåker. Villauppfart och radhusgård. Fast pris 899 kr/par, ingen zonavgift. Undvik centrumets korttids-P.",
-    h1: "Strålkastarpolering i Åkersberga",
-    lead: "Åkersberga är Österåkers tätort norr/ost om Täby: villa, radhus och lite centrum. Vi tar jobbet på uppfarten — samma 899 kr/par som i Täby och Vaxholm.",
+      "Polera strålkastare i Åkersberga, Österåker. Villauppfart och radhusgård. Fast pris 899 kr/par, ingen zonavgift. Undvik centrumets korttids-P.",
+    h1: "Polera strålkastare i Åkersberga",
+    lead: "Vill du polera strålkastare i Åkersberga? Åkersberga är Österåkers tätort norr/ost om Täby: villa, radhus och lite centrum. Vi tar jobbet på uppfarten — samma 899 kr/par som i Täby och Vaxholm.",
     locationName: "Åkersberga",
     sections: [
       {
@@ -382,11 +382,11 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-flemingsberg",
     kind: "location",
-    title: "Strålkastarpolering Flemingsberg – sjukhus, campus och Huddinge",
+    title: "Polera strålkastare i Flemingsberg – 899 kr/par",
     description:
-      "Mobil strålkastarpolering i Flemingsberg, Huddinge. Arbetsplats efter 16, villa och radhus. Fast pris 899 kr/par längs Huddingevägen.",
-    h1: "Strålkastarpolering i Flemingsberg",
-    lead: "Flemingsberg är Huddinges knutpunkt med sjukhus, campus och blandad bebyggelse. Vi tar jobbet på uppfart, gårds-P eller tjänsteplats utomhus — gärna vardag efter 16.",
+      "Polera strålkastare i Flemingsberg, Huddinge. Arbetsplats efter 16, villa och radhus. Fast pris 899 kr/par längs Huddingevägen.",
+    h1: "Polera strålkastare i Flemingsberg",
+    lead: "Vill du polera strålkastare i Flemingsberg? Flemingsberg är Huddinges knutpunkt med sjukhus, campus och blandad bebyggelse. Vi tar jobbet på uppfart, gårds-P eller tjänsteplats utomhus — gärna vardag efter 16.",
     locationName: "Flemingsberg",
     sections: [
       {
@@ -436,11 +436,11 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-handen",
     kind: "location",
-    title: "Strålkastarpolering Handen – Haninge centrum, Vendelsö och Vega",
+    title: "Polera strålkastare i Handen – 899 kr/par",
     description:
-      "Mobil strålkastarpolering i Handen, Haninge. Hellre bostadsadress än centrum-P. Fast pris 899 kr/par via väg 73.",
-    h1: "Strålkastarpolering i Handen",
-    lead: "Handen är Haninges centrum — genomfart och korttids-P. Vi tar jobbet hellre på en bostadsadress en kilometer bort, i Vendelsö, Vega eller Brandbergen, till samma 899 kr/par.",
+      "Polera strålkastare i Handen, Haninge. Hellre bostadsadress än centrum-P. Fast pris 899 kr/par via väg 73.",
+    h1: "Polera strålkastare i Handen",
+    lead: "Vill du polera strålkastare i Handen? Handen är Haninges centrum — genomfart och korttids-P. Vi tar jobbet hellre på en bostadsadress en kilometer bort, i Vendelsö, Vega eller Brandbergen, till samma 899 kr/par.",
     locationName: "Handen",
     sections: [
       {
@@ -490,11 +490,11 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-barkarby",
     kind: "location",
-    title: "Strålkastarpolering Barkarby – nybygge, handel och Järfälla",
+    title: "Polera strålkastare i Barkarby – 899 kr/par",
     description:
-      "Mobil strålkastarpolering i Barkarby, Järfälla. Nybygge, tjänsteplats utomhus och villa i Viksjö-nära. Fast pris 899 kr/par. Undvik handelsområdets korttids-P.",
-    h1: "Strålkastarpolering i Barkarby",
-    lead: "Barkarby blandar handelsområde, nybygge och närhet till Jakobsberg. Vi tar jobbet när bilen står ute — hemma, på gården eller på en tjänsteplats — inte på köpcentrumets korttids-P.",
+      "Polera strålkastare i Barkarby, Järfälla. Nybygge, tjänsteplats utomhus och villa i Viksjö-nära. Fast pris 899 kr/par. Undvik handelsområdets korttids-P.",
+    h1: "Polera strålkastare i Barkarby",
+    lead: "Vill du polera strålkastare i Barkarby? Barkarby blandar handelsområde, nybygge och närhet till Jakobsberg. Vi tar jobbet när bilen står ute — hemma, på gården eller på en tjänsteplats — inte på köpcentrumets korttids-P.",
     locationName: "Barkarby",
     sections: [
       {
@@ -544,11 +544,11 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-gustavsberg",
     kind: "location",
-    title: "Strålkastarpolering Gustavsberg – Värmdö, Hemmesta och villa",
+    title: "Polera strålkastare i Gustavsberg – 899 kr/par",
     description:
-      "Mobil strålkastarpolering i Gustavsberg, Värmdö. Villauppfart och radhus. Fast pris 899 kr/par via Värmdöleden. Undvik centrumets korttids-P.",
-    h1: "Strålkastarpolering i Gustavsberg",
-    lead: "Gustavsberg är Värmdös tätort längs Värmdöleden. Längre väg från stan — samma pris. Vi tar villa och radhus på uppfarten; centrumparkering är sämre arbetsyta.",
+      "Polera strålkastare i Gustavsberg, Värmdö. Villauppfart och radhus. Fast pris 899 kr/par via Värmdöleden. Undvik centrumets korttids-P.",
+    h1: "Polera strålkastare i Gustavsberg",
+    lead: "Vill du polera strålkastare i Gustavsberg? Gustavsberg är Värmdös tätort längs Värmdöleden. Längre väg från stan — samma pris. Vi tar villa och radhus på uppfarten; centrumparkering är sämre arbetsyta.",
     locationName: "Gustavsberg",
     sections: [
       {
@@ -598,11 +598,11 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering-tullinge",
     kind: "location",
-    title: "Strålkastarpolering Tullinge – villa, Botkyrka och Tumba-nära",
+    title: "Polera strålkastare i Tullinge – 899 kr/par",
     description:
-      "Mobil strålkastarpolering i Tullinge, Botkyrka. Villa- och radhusuppfarter. Fast pris 899 kr/par, samma som Tumba. Vi kommer till dig.",
-    h1: "Strålkastarpolering i Tullinge",
-    lead: "Tullinge är Botkyrkas villa- och radhusområden nära Tumba. Uppfarten är arbetsytan — samma 899 kr/par som i övriga länet, ingen zonavgift.",
+      "Polera strålkastare i Tullinge, Botkyrka. Villa- och radhusuppfarter. Fast pris 899 kr/par, samma som Tumba. Vi kommer till dig.",
+    h1: "Polera strålkastare i Tullinge",
+    lead: "Vill du polera strålkastare i Tullinge? Tullinge är Botkyrkas villa- och radhusområden nära Tumba. Uppfarten är arbetsytan — samma 899 kr/par som i övriga länet, ingen zonavgift.",
     locationName: "Tullinge",
     sections: [
       {

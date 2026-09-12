@@ -87,7 +87,11 @@ function organizationNode() {
       areaServed: "SE",
       availableLanguage: ["sv-SE"],
     },
-    knowsAbout: ["Strålkastarpolering", "Strålkastarrenovering"],
+    knowsAbout: [
+      "Polera strålkastare",
+      "Strålkastarpolering",
+      "Strålkastarrenovering",
+    ],
     ...(SOCIAL_PROFILES.length ? { sameAs: SOCIAL_PROFILES } : {}),
   };
 }
@@ -166,7 +170,11 @@ function localBusinessNode(
       },
     ],
     makesOffer,
-    knowsAbout: ["Strålkastarpolering", "Strålkastarrenovering"],
+    knowsAbout: [
+      "Polera strålkastare",
+      "Strålkastarpolering",
+      "Strålkastarrenovering",
+    ],
     ...(SOCIAL_PROFILES.length ? { sameAs: SOCIAL_PROFILES } : {}),
     ...(REVIEWS_ARE_REAL && rating != null && userRatingCount != null
       ? {
@@ -335,6 +343,8 @@ export async function buildHomeStructuredData(
   }>;
 
   const poleringName =
+    locale === "sv" ? "Polera strålkastare" : "Polish headlights";
+  const poleringType =
     locale === "sv" ? "Strålkastarpolering" : "Headlight polishing";
   const renoveringName =
     locale === "sv" ? "Strålkastarrenovering" : "Headlight restoration";
@@ -342,8 +352,9 @@ export async function buildHomeStructuredData(
   const polering = {
     "@type": "Service",
     "@id": POLERING_ID,
-    serviceType: poleringName,
+    serviceType: poleringType,
     name: poleringName,
+    alternateName: poleringType,
     description: tServices("subtitle"),
     provider: { "@id": BUSINESS_ID },
     areaServed: areaServed(),

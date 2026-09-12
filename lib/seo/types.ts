@@ -18,14 +18,17 @@ export const SEO_AUDIT_TYPES = [
 
 export type SeoAuditType = (typeof SEO_AUDIT_TYPES)[number];
 
-/** Cheap/fast DataForSEO calls the daily 60s job can afford. */
+/**
+ * Daily cron priority: SERP ranks first (the signal that rankings moved),
+ * then cheap site checks. PageSpeed stays manual — it burns the 60s budget.
+ */
 export const DAILY_SEO_TYPES: SeoAuditType[] = [
+  "dfs-serp",
   "backlink-check",
   "sitemap-check",
   "meta-audit",
   "broken-links",
   "structured-data",
-  "pagespeed",
   "dfs-keywords",
   "dfs-labs",
   "dfs-domain",
@@ -35,7 +38,6 @@ export const DAILY_SEO_TYPES: SeoAuditType[] = [
 /** Slow or quota-limited tools — no hourly cooldown on manual or Update data runs. */
 export const MANUAL_SEO_TYPES: SeoAuditType[] = [
   "pagespeed",
-  "dfs-serp",
   "dfs-onpage",
   "dfs-content",
   "dfs-ai",

@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Headlight polishing and restoration in Stockholm | Strålkastarpolering",
-    "description": "Crystal-clear headlights again. Premium restoration + UV ceramic protection, 899 SEK/pair and a 12-month warranty. We come to you in Stockholm."
+    "title": "Polish headlights in Stockholm – 899 SEK/pair, we come to you",
+    "description": "Mobile headlight polishing in Stockholm County. 899 SEK/pair, UV ceramic protection and 12-month warranty. We come to your address."
   },
   "nav": {
     "brand": "Strålkastarpolering",
@@ -20,11 +20,11 @@
   },
   "hero": {
     "eyebrow": "Limited spots this week",
-    "title": "<lead>Headlight polishing in Stockholm – </lead><visible>crystal-clear headlights again</visible>",
+    "title": "<lead>Polish headlights in Stockholm – </lead><visible>crystal clear again</visible>",
     "ratingLabel": "Reviews",
     "ratingSr": "{rating} out of 5 stars based on {count, plural, one {# review} other {# reviews}}",
     "subtitle": "Premium restoration + UV ceramic protection = headlights like new, money saved and a <guarantee>12-month warranty</guarantee>.",
-    "semantic": "Professional headlight polishing and restoration in Stockholm. We remove oxidation, yellowing and scratches from plastic lenses and finish with UV ceramic protection. We come to you at home, at work or in the garage.",
+    "semantic": "Polish headlights in Stockholm at your address. We remove oxidation, yellowing and scratches from plastic headlights and finish with UV ceramic protection.",
     "ctaPrimary": "Call now — we come to you!",
     "ctaSecondary": "Book a time",
     "oldPrice": "1499kr",
@@ -39,9 +39,18 @@
     "imageHint": "Before and after — from cloudy and yellow to crystal clear",
     "imageAlt": "Before and after of a restored headlight in Stockholm",
     "stats": [
-      { "value": "899kr/pair", "label": "Premium restoration" },
-      { "value": "12 months", "label": "Warranty" },
-      { "value": "We come to you", "label": "Mobile service" }
+      {
+        "value": "899kr/pair",
+        "label": "Premium restoration"
+      },
+      {
+        "value": "12 months",
+        "label": "Warranty"
+      },
+      {
+        "value": "We come to you",
+        "label": "Mobile service"
+      }
     ]
   },
   "benefits": {
@@ -340,9 +349,9 @@
     "homeCrumb": "Home",
     "ratingLabel": "Reviews",
     "ratingSr": "{rating} out of 5 stars based on {count, plural, one {# review} other {# reviews}}",
-    "compareTitle": "Before and after",
+    "compareTitle": "Before and after: polish headlights",
     "compareLead": "Drag the slider to see cloudy headlights turn clear again — the same result we deliver at your address.",
-    "ctaTitle": "Book headlight restoration",
+    "ctaTitle": "Book headlight polishing",
     "ctaBody": "We come to you. Fixed price 899 SEK/pair, UV ceramic protection and a 12-month warranty.",
     "ctaBook": "Book a time",
     "ctaCall": "Call now",

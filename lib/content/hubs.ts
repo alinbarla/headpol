@@ -6,21 +6,21 @@ export const HUB_PAGES: ClusterDoc[] = [
     kind: "service-polering",
     title: "Polera strålkastare – så blir de blanka igen",
     description:
-      "Så polerar du inte bara ytan: oxidation, kit hemma, när blanka strålkastare håller och när glaset inte går att rädda. 899 kr/par.",
+      "Polera strålkastare mobil i Stockholm: oxidation bort, UV-keramiskt skydd och 12 mån garanti. 899 kr/par — vi kommer till dig.",
     h1: "Polera strålkastare",
-    lead: "När folk säger att de vill polera strålkastare menar de nästan alltid samma sak: glasen har blivit gula eller mjölkiga och de vill ha blanka strålkastare igen. Det är inte smuts. Det är plasten som oxiderat.",
+    lead: "När folk säger att de vill polera strålkastare menar de nästan alltid samma sak: glasen har blivit gula eller mjölkiga och de vill ha blanka strålkastare igen. Det är inte smuts. Det är plasten som oxiderat — och det går att fixa utan att byta hela enheten.",
     sections: [
       {
         heading: "Vad som egentligen hänt med glaset",
         paragraphs: [
           "Moderna strålkastare är polykarbonat. Fabriken lade ett tunt UV-skydd som solen sakta nöter bort. När skyddet är borta oxiderar plasten en bit in, inte bara på ytan. En trasa och polish räcker därför sällan mer än någon vecka.",
-          "En riktig strålkastarpolering tar bort det skadade skiktet, polerar tillbaka klarheten och lägger ett nytt skydd. Utan det sista steget gulnar plasten fort igen.",
+          "Att polera strålkastare på riktigt betyder att ta bort det skadade skiktet, polera tillbaka klarheten och lägga ett nytt skydd. Utan det sista steget gulnar plasten fort igen.",
         ],
       },
       {
-        heading: "Vem det passar",
+        heading: "Vem det passar att polera strålkastare för",
         paragraphs: [
-          "De flesta moderna bilar, motorcyklar och mopeder har strålkastare av polykarbonat. De går att polera så länge glaset inte är sprucket eller fyllt med fukt på insidan.",
+          "De flesta moderna bilar, motorcyklar och mopeder har strålkastare av polykarbonat. Du kan polera strålkastare så länge glaset inte är sprucket eller fyllt med fukt på insidan.",
         ],
         bullets: [
           "Gulnade eller mjölkiga glas före besiktning",
@@ -30,22 +30,23 @@ export const HUB_PAGES: ClusterDoc[] = [
         ],
       },
       {
-        heading: "Kit hemma eller göra jobbet ordentligt",
+        heading: "Polera strålkastare själv eller låta proffs göra det",
         paragraphs: [
-          "Kit från affären kan se bra ut i några veckor. Många saknar ett UV-skydd som faktiskt ersätter fabrikslackeringen. Slipningen tar bort det som fanns kvar av originalskyddet, så utan nytt skydd kommer gulnaden tillbaka.",
+          "Kit från affären kan se bra ut i några veckor när du försöker polera strålkastare själv. Många saknar ett UV-skydd som faktiskt ersätter fabrikslackeringen. Slipningen tar bort det som fanns kvar av originalskyddet, så utan nytt skydd kommer gulnaden tillbaka.",
           "Vi slipar vått från P400 upp till P3000, polerar med polymer och lägger UV-keramiskt skydd. Det är därför vi kan lämna 12 månaders garanti. Ett kit på uppfarten ger sällan samma sak.",
         ],
       },
       {
         heading: "När glaset inte går att rädda",
         paragraphs: [
-          "Spricka genom plasten, imma på insidan eller en enhet som sitter fel går inte att polera bort. Då säger vi det innan vi börjar och tar inte betalt.",
+          "Spricka genom plasten, imma på insidan eller en enhet som sitter fel går inte att polera bort. Då säger vi det innan vi börjar och tar inte betalt — hellre än att polera strålkastare som inte blir bättre.",
           "Ytliga repor och hela oxidationen går däremot. Osäker? Skicka en bild eller vänta tills vi tittar på plats.",
         ],
       },
       {
-        heading: "Pris och tid",
+        heading: "När ska man boka att polera strålkastare?",
         paragraphs: [
+          "Boka när glasen syns gula i dagsljus, när ljusbilden känns svag på landsväg, eller inför besiktning och försäljning. Ju tidigare du polerar strålkastare efter att UV-skyddet slitits, desto enklare är slipningen.",
           "Ett par strålkastare på personbil kostar 899 kr inklusive moms, skydd och 12 månaders garanti. Motorcykel och moped från 499 kr. Ett vanligt jobb tar 45–60 minuter. Du kan vänta eller lämna bilen.",
           "Samma pris i hela vårt område. Ingen zonavgift för kommunerna i Stockholms län vi tar — från Solna och Sundbyberg till Södertälje, Värmdö och Nynäshamn.",
         ],
@@ -53,17 +54,17 @@ export const HUB_PAGES: ClusterDoc[] = [
     ],
     faqs: [
       {
-        question: "Hur får man blanka strålkastare som håller?",
+        question: "Hur får man blanka strålkastare som håller när man polerar strålkastare?",
         answer:
           "Slipning tills oxidationen är borta, sedan polering och ett UV-skydd som faktiskt sitter. Puts på ytan ger glans en kort tid. Skyddet är det som gör att ytan inte gulnar igen efter några månader.",
       },
       {
-        question: "Kan man polera matta strålkastare?",
+        question: "Kan man polera strålkastare som är matta?",
         answer:
-          "Ja. Matt yta är oxidation i plasten. Vi slipar bort skiktet och polerar tillbaka klarheten, sedan lägger vi UV-skydd så det inte återgår på några månader.",
+          "Ja. Matt yta är oxidation i plasten. När vi polerar strålkastare slipar vi bort skiktet och polerar tillbaka klarheten, sedan lägger vi UV-skydd så det inte återgår på några månader.",
       },
       {
-        question: "Måste jag lämna in bilen?",
+        question: "Måste jag lämna in bilen för att polera strålkastare?",
         answer:
           "Nej. Vi kommer till den adress du anger: uppfart, arbetsplats eller innergård, så länge bilen står utomhus och vi kommer åt båda sidorna.",
       },
@@ -83,9 +84,9 @@ export const HUB_PAGES: ClusterDoc[] = [
     kind: "service-renovering",
     title: "Strålkastarrenovering – oxidation, slipning och UV-skydd",
     description:
-      "Så går en strålkastarrenovering till: varför strålkastare gulnar, polykarbonat, våtslipning, polering, UV-keramiskt skydd, livslängd och när det inte fungerar.",
+      "Strålkastarrenovering när du vill polera strålkastare på riktigt: oxidation, våtslipning, UV-keramiskt skydd, livslängd och när det inte fungerar.",
     h1: "Strålkastarrenovering",
-    lead: "En strålkastarrenovering är hela återställningen, inte bara en yta som får glans. När du vill renovera strålkastare är det slipning, polering och nytt UV-skydd som räknas. Här är processen, materialen och gränserna för vad som går att rädda.",
+    lead: "En strålkastarrenovering är hela återställningen — mer än att bara polera strålkastare till tillfällig glans. Slipning, polering och nytt UV-skydd räknas. Här är processen, materialen och gränserna för vad som går att rädda.",
     sections: [
       {
         heading: "Restaurering är samma sak",
@@ -184,11 +185,11 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "priser",
     kind: "other",
-    title: "Pris för strålkastarpolering – 899 kr/par",
+    title: "Pris för att polera strålkastare – 899 kr/par",
     description:
-      "Fast pris för strålkastarpolering i Stockholms län: 899 kr/par för personbil, från 499 kr för MC. Samma pris i kommunerna vi tar. Ingen zonavgift.",
-    h1: "Priser för strålkastarpolering",
-    lead: "Ett par strålkastare på personbil kostar 899 kr inklusive moms. UV-keramiskt skydd och 12 månaders garanti ingår. Samma pris i hela Stockholmsområdet.",
+      "Polera strålkastare till fast pris i Stockholms län: 899 kr/par för personbil, från 499 kr för MC. Samma pris i kommunerna vi tar. Ingen zonavgift.",
+    h1: "Priser för att polera strålkastare",
+    lead: "Vill du polera strålkastare utan överraskningar? Ett par på personbil kostar 899 kr inklusive moms. UV-keramiskt skydd och 12 månaders garanti ingår. Samma pris i hela Stockholmsområdet.",
     priceTiers: [
       {
         title: "Personbil",
@@ -263,11 +264,11 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "foretagskunder",
     kind: "other",
-    title: "Strålkastarpolering för företag och bilhandlare",
+    title: "Polera strålkastare för företag och bilhandlare",
     description:
-      "Volympris och mobil strålkastarpolering för bilhandlare, åkerier och vagnparker i Stockholm. Vi kommer till er gård eller verkstad.",
-    h1: "Företag och bilhandlare",
-    lead: "Gula strålkastare på en bil i lager sänker intrycket av hela bilen. På en vagnpark syns det i besiktning och nattkörning. Vi tar flera bilar på samma adress.",
+      "Volympris när ni behöver polera strålkastare på flera bilar. Mobil service för bilhandlare, åkerier och vagnparker i Stockholm — vi kommer till er gård eller verkstad.",
+    h1: "Polera strålkastare för företag",
+    lead: "Gula strålkastare på en bil i lager sänker intrycket av hela bilen. När ni vill polera strålkastare i volym tar vi flera bilar på samma adress — bilhandlare, åkeri och vagnpark.",
     sections: [
       {
         heading: "Bilhandlare",
@@ -297,11 +298,11 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "fore-bilder",
     kind: "other",
-    title: "Före och efter strålkastarpolering",
+    title: "Före och efter: polera strålkastare",
     description:
-      "Bilder före och efter strålkastarpolering. Oxiderad, gul plast mot klar yta efter slipning, polering och UV-keramiskt skydd.",
-    h1: "Före och efter",
-    lead: "Samma strålkastare, samma bil, före och efter. Det du ser är oxidation som slipats bort och ytan som förseglats — inte ett filter och inte en ny lampa.",
+      "Bilder före och efter när vi polerar strålkastare. Oxiderad, gul plast mot klar yta efter slipning, polering och UV-keramiskt skydd.",
+    h1: "Före och efter att polera strålkastare",
+    lead: "Så ser det ut när vi polerar strålkastare: oxiderad, gul plast före — klar yta efter slipning, polering och UV-keramiskt skydd. Samma resultat på din uppfart.",
     sections: [
       {
         heading: "Vad bilderna visar",
@@ -321,11 +322,11 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "faq",
     kind: "faq",
-    title: "Vanliga frågor om strålkastarpolering",
+    title: "Vanliga frågor om att polera strålkastare",
     description:
-      "FAQ om strålkastarpolering och strålkastarrenovering: matta glas, gulnad, besiktning, pris, byte, sprickor, DIY och mobil service i Stockholm.",
-    h1: "Vanliga frågor",
-    lead: "Korta svar på det folk faktiskt söker på. Behöver du processen i detalj, gå vidare till strålkastarrenovering. Pris finns samlat på prissidan.",
+      "FAQ om att polera strålkastare och strålkastarrenovering: matta glas, gulnad, besiktning, pris, byte, sprickor, DIY och mobil service i Stockholm.",
+    h1: "Vanliga frågor om att polera strålkastare",
+    lead: "Här är svaren vi ger oftast när kunder vill polera strålkastare: matta och gulnade glas, besiktning, pris, byte mot renovering, sprickor, kit hemma och mobil service i Stockholm.",
     sections: [
       {
         heading: "Sökintention och längre svar",
@@ -408,11 +409,11 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "om-oss",
     kind: "other",
-    title: "Om oss – strålkastarpolering på plats i Stockholm",
+    title: "Om oss – mobil hjälp att polera strålkastare",
     description:
-      "Vi utför strålkastarpolering mobilt i Stockholm: våtslipning, polymerpolering och UV-keramiskt skydd med 12 månaders garanti. Fast pris, inget verkstadsbesök.",
+      "Vi kommer till dig och polerar strålkastare i Stockholms län. Fast pris, UV-keramiskt skydd och 12 månaders garanti — ingen inlämningsverkstad.",
     h1: "Om oss",
-    lead: "Strålkastarpolering är en mobil tjänst i Stockholms län. Vi tar med materialet till din bil i stället för att du ska lämna in den.",
+    lead: "Vi är en mobil tjänst som hjälper dig polera strålkastare där bilen står. Fast pris, UV-keramiskt skydd och 12 månaders garanti i Stockholms län.",
     sections: [
       {
         heading: "Hur vi arbetar",
