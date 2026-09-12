@@ -226,9 +226,12 @@ export async function startOrTouchSession(
       .from("analytics_sessions")
       .update({
         ended_at: now,
+        page: envelope.page,
         document_h: envelope.documentH,
         viewport_w: envelope.viewportW,
         viewport_h: envelope.viewportH,
+        // Keep device in sync when heatmap events refine UA/touch classification.
+        device: envelope.device,
         max_scroll_pct: Number(
           Math.max(Number(row.max_scroll_pct), maxScroll).toFixed(2)
         ),
@@ -504,7 +507,8 @@ export async function listTrackedPages(
 }
 
 export async function listRecentSessions(options: {
-  page: string;
+  /** When omitted or `"all"`, return sessions across every page. */
+  page?: string | "all";
   fromIso: string;
   device: HeatmapDevice | "all";
   limit?: number;
@@ -514,10 +518,13 @@ export async function listRecentSessions(options: {
     .from("analytics_sessions")
     .select(SESSION_SELECT)
     .eq("is_bot", false)
-    .eq("page", options.page)
     .gte("started_at", options.fromIso)
     .order("started_at", { ascending: false })
-    .limit(options.limit ?? 40);
+    .limit(options.limit ?? 100);
+
+  if (options.page && options.page !== "all") {
+    query = query.eq("page", options.page);
+  }
 
   if (options.device !== "all") {
     query = query.eq("device", options.device);

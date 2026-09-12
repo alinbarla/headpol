@@ -13,7 +13,8 @@ import {
   SESSION_STORAGE_KEY,
   VISITOR_STORAGE_KEY,
 } from "@/lib/analytics/constants";
-import type { AnalyticsConfig, HeatmapDevice, UserEvent } from "@/lib/analytics/types";
+import { deviceFromViewport } from "@/lib/analytics/device";
+import type { AnalyticsConfig, UserEvent } from "@/lib/analytics/types";
 
 function randomId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -38,30 +39,6 @@ function readOrCreate(key: string): string {
   } catch {
     return randomId();
   }
-}
-
-function deviceFromViewport(): HeatmapDevice {
-  const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
-  // iPadOS / iPhone "Request Desktop Website" spoofs Macintosh — detect via touch.
-  const touchMac =
-    typeof navigator !== "undefined" &&
-    navigator.platform === "MacIntel" &&
-    navigator.maxTouchPoints > 1;
-  // Prefer UA so phones in landscape / "Request Desktop Website" still land in mobile.
-  if (/iPhone|iPod|Android.+Mobile|Windows Phone|webOS|BlackBerry|IEMobile/i.test(ua)) {
-    return "mobile";
-  }
-  if (/iPad|Android(?!.*Mobile)|Tablet/i.test(ua) || touchMac) {
-    // Spoofed-desktop iPhones still report a phone-sized screen.
-    if (touchMac && Math.min(window.screen.width, window.screen.height) < 500) {
-      return "mobile";
-    }
-    return "tablet";
-  }
-  const width = window.innerWidth;
-  if (width < 768) return "mobile";
-  if (width < 1024) return "tablet";
-  return "desktop";
 }
 
 const SKIPPED_INPUT_TYPES = new Set([

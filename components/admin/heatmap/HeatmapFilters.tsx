@@ -42,7 +42,7 @@ export function HeatmapFilters({
   return (
     <div className="mt-4 flex flex-col gap-2 sm:flex-row">
       <Select value={page} onValueChange={(value) => replace({ page: value })}>
-        <SelectTrigger className="sm:w-56" aria-label="Page">
+        <SelectTrigger className="sm:w-56" aria-label="Heatmap page">
           <SelectValue placeholder="Page" />
         </SelectTrigger>
         <SelectContent>
@@ -76,6 +76,10 @@ export function HeatmapFilters({
           <SelectItem value="mobile">Mobile</SelectItem>
         </SelectContent>
       </Select>
+      <p className="w-full text-xs text-muted-foreground sm:pl-0.5">
+        Page filter applies to the heatmap grid. Session list includes every
+        visit in range for the device filter.
+      </p>
     </div>
   );
 }
