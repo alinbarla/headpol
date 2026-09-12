@@ -12,14 +12,6 @@ import {
   acquisitionLabel,
   paymentMethodLabel,
 } from "@/lib/admin/labels";
-import { RANGE_MS } from "@/lib/analytics/constants";
-import {
-  countEventsSince,
-  countVisitors,
-  listRecentSessions,
-  listTrackedPages,
-  listVisitors,
-} from "@/lib/analytics/store";
 import { formatOre, fromDbTime } from "@/lib/booking";
 import { toolHeadline } from "@/lib/seo/overview";
 import { latestAuditLogs } from "@/lib/seo/store";
@@ -41,7 +33,7 @@ const CONTEXT_CAP = 6000;
 /** Per-kind attach budget; GitHub uses multi-part packing in github.ts instead. */
 const ATTACH_CAP = 120_000;
 
-const SYSTEM_PROMPT = `You are the Strålkastarpolering admin assistant. You help the shop owner with bookings, payments, availability, analytics, SEO, and recent code changes already collected for this business.
+const SYSTEM_PROMPT = `You are the Strålkastarpolering admin assistant. You help the shop owner with bookings, payments, availability, SEO, and recent code changes already collected for this business.
 
 Rules:
 - Reply in Swedish unless the user writes in another language.
@@ -80,108 +72,8 @@ async function seoLines(): Promise<string> {
   return ["Latest SEO headlines (never run stays —):", ...lines].join("\n");
 }
 
-async function visitorsLines(): Promise<string> {
-  const fromIso = new Date(Date.now() - RANGE_MS["7d"]).toISOString();
-  const [total, rows] = await Promise.all([
-    countVisitors({ fromIso, device: "all", channel: "all" }),
-    listVisitors({ fromIso, device: "all", channel: "all", limit: 40 }),
-  ]);
 
-  const byDevice = new Map<string, number>();
-  const byChannel = new Map<string, number>();
-  for (const row of rows) {
-    byDevice.set(row.device, (byDevice.get(row.device) ?? 0) + 1);
-    const channel =
-      acquisitionLabel(row.acquisition_channel) ??
-      row.acquisition_channel ??
-      "unknown";
-    byChannel.set(channel, (byChannel.get(channel) ?? 0) + 1);
-  }
 
-  const lines = [
-    `Visitors last 7d: ${total} sessions (showing up to 40).`,
-    "By device (sample):",
-    ...[...byDevice.entries()].map(([k, n]) => `- ${k}: ${n}`),
-    "By channel (sample):",
-    ...[...byChannel.entries()].map(([k, n]) => `- ${k}: ${n}`),
-    "Recent:",
-    ...rows.slice(0, 25).map((row) => {
-      const channel =
-        acquisitionLabel(row.acquisition_channel) ??
-        row.acquisition_channel ??
-        "unknown";
-      return `- ${row.started_at.slice(0, 16)} · ${row.page} · ${row.device} · ${channel} · scroll ${row.max_scroll_pct}% · ${row.event_count} events`;
-    }),
-  ];
-  return lines.join("\n");
-}
-
-async function heatmapLines(): Promise<string> {
-  const fromIso = new Date(Date.now() - RANGE_MS["7d"]).toISOString();
-  const [eventCount, pages] = await Promise.all([
-    countEventsSince(fromIso),
-    listTrackedPages(fromIso),
-  ]);
-
-  const topPages = pages.slice(0, 12);
-  const sessionCounts = await Promise.all(
-    topPages.map(async (page) => {
-      const sessions = await listRecentSessions({
-        page,
-        fromIso,
-        device: "all",
-        limit: 40,
-      });
-      const events = sessions.reduce((sum, row) => sum + row.event_count, 0);
-      const avgScroll =
-        sessions.length === 0
-          ? 0
-          : Math.round(
-              sessions.reduce((sum, row) => sum + row.max_scroll_pct, 0) /
-                sessions.length
-            );
-      return { page, sessions: sessions.length, events, avgScroll };
-    })
-  );
-
-  sessionCounts.sort((a, b) => b.sessions - a.sessions);
-
-  return [
-    `Heatmap summary last 7d: ${eventCount} events across ${pages.length} pages.`,
-    "Top pages (session sample ≤40 each):",
-    ...sessionCounts.map(
-      (row) =>
-        `- ${row.page}: ${row.sessions} sessions · ~${row.events} events · avg scroll ${row.avgScroll}%`
-    ),
-    "Open /admin/heatmap for the visual grid.",
-  ].join("\n");
-}
-
-async function sessionsLines(): Promise<string> {
-  const fromIso = new Date(Date.now() - RANGE_MS["7d"]).toISOString();
-  const rows = await listVisitors({
-    fromIso,
-    device: "all",
-    channel: "all",
-    limit: 50,
-  });
-
-  if (rows.length === 0) {
-    return "Sessions last 7d: none.";
-  }
-
-  return [
-    `Recent sessions last 7d (${rows.length} shown):`,
-    ...rows.map((row) => {
-      const channel =
-        acquisitionLabel(row.acquisition_channel) ??
-        row.acquisition_channel ??
-        "unknown";
-      const ended = row.ended_at.slice(0, 16);
-      return `- ${row.started_at.slice(0, 16)}→${ended} · ${row.page} · ${row.device} · ${channel} · scroll ${row.max_scroll_pct}% · ${row.event_count} events · id ${row.id.slice(0, 8)}`;
-    }),
-  ].join("\n");
-}
 
 async function paymentsLines(): Promise<string> {
   const today = stockholmDateKey();
@@ -267,12 +159,6 @@ export async function buildContextForKind(
     switch (kind) {
       case "seo":
         return seoLines();
-      case "visitors":
-        return visitorsLines();
-      case "heatmap":
-        return heatmapLines();
-      case "sessions":
-        return sessionsLines();
       case "payments":
         return paymentsLines();
       case "bookings":

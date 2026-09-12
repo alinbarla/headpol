@@ -60,7 +60,7 @@ const csp = [
   "media-src 'self'",
   "font-src 'self'",
   `connect-src 'self' ${googleTag.connect}${supabaseOrigin ? ` ${supabaseOrigin}` : ""}`,
-  `frame-src 'self' ${googleTag.frame} ${publicSiteOrigin} http://localhost:3000 http://127.0.0.1:3000`,
+  `frame-src 'self' ${googleTag.frame} ${publicSiteOrigin}${isDev ? ' http://localhost:3000 http://127.0.0.1:3000' : ''}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { logAdminAction, login, logout, requireAdmin } from "@/lib/admin/auth";
-import { removeConvertedDroppedVisitor } from "@/lib/analytics/droppedVisitors";
 import { getBookingById, getPaymentsForBooking } from "@/lib/admin/data";
 import { BOOKING_STATUS_LABELS } from "@/lib/admin/labels";
 import {
@@ -22,11 +21,9 @@ import {
 } from "@/lib/bookingNotify";
 import {
   createBookingCheckoutSession,
-  createRefund,
-  fetchStripeReceipt,
+    fetchStripeReceipt,
   isStripeConfigured,
-  mapRefundStatus,
-  repairStripeWebhookEndpoint,
+    repairStripeWebhookEndpoint,
   sendStripeReceiptEmail,
 } from "@/lib/stripe";
 import {
@@ -36,6 +33,7 @@ import {
   markAdminNotificationRead,
 } from "@/lib/admin/notifications";
 import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
+import { refundBookingPayment } from "@/lib/stripeRefund";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
 import {
   addDaysToDateKey,
@@ -180,10 +178,6 @@ export async function createBookingAction(
   }
 
   const bookingId = data.id as string;
-
-  await removeConvertedDroppedVisitor(input.email, input.phone).catch((error) => {
-    console.error("[admin] dropped visitor cleanup failed", error);
-  });
 
   await logAdminAction("booking.create", {
     entityType: "booking",
@@ -812,45 +806,14 @@ async function refundBooking(input: {
   amountOre: number;
   reason: string;
 }): Promise<ActionState> {
-  const payments = await getPaymentsForBooking(input.bookingId);
-  const paid = payments.find(
-    (payment) =>
-      payment.stripe_payment_intent_id &&
-      (payment.status === "paid" || payment.status === "partially_refunded")
-  );
-
-  if (!paid?.stripe_payment_intent_id) {
-    return fail("No Stripe payment to refund");
-  }
-
-  const alreadyRefunded = await sumSucceededRefunds(paid.id);
-  if (input.amountOre + alreadyRefunded > paid.amount_ore) {
-    return fail("The amount is more than what was paid");
-  }
-
-  const refund = await createRefund({
-    paymentIntentId: paid.stripe_payment_intent_id,
-    amountOre: input.amountOre,
+  const result = await refundBookingPayment({
     bookingId: input.bookingId,
+    amountOre: input.amountOre,
     reason: input.reason,
+    createdBy: "admin",
   });
 
-  if (!refund) return fail("Stripe declined the refund");
-
-  const status = mapRefundStatus(refund.status);
-  const supabase = getSupabaseAdminClient();
-
-  // Swish settles asynchronously, so this row may stay pending until the
-  // refund.updated webhook arrives.
-  await supabase.from("refunds").insert({
-    payment_id: paid.id,
-    booking_id: input.bookingId,
-    stripe_refund_id: refund.id,
-    amount_ore: input.amountOre,
-    reason: input.reason,
-    status,
-    created_by: "admin",
-  });
+  if (!result.ok) return fail(result.message);
 
   await logAdminAction("refund.create", {
     entityType: "booking",
@@ -858,32 +821,18 @@ async function refundBooking(input: {
     details: {
       amountOre: input.amountOre,
       reason: input.reason,
-      stripeRefundId: refund.id,
-      status,
+      stripeRefundId: result.stripeRefundId,
+      status: result.status,
     },
   });
 
   return {
     ok: true,
     message:
-      status === "succeeded"
+      result.status === "succeeded"
         ? "Refund completed"
         : "Refund started, Stripe will confirm it",
   };
-}
-
-async function sumSucceededRefunds(paymentId: string): Promise<number> {
-  const supabase = getSupabaseAdminClient();
-  const { data } = await supabase
-    .from("refunds")
-    .select("amount_ore, status")
-    .eq("payment_id", paymentId)
-    .in("status", ["pending", "succeeded"]);
-
-  return ((data ?? []) as Array<{ amount_ore: number }>).reduce(
-    (total, row) => total + row.amount_ore,
-    0
-  );
 }
 
 // -- Availability -----------------------------------------------------------

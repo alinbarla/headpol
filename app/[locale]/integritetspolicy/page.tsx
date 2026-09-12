@@ -91,11 +91,6 @@ function PrivacySv() {
           förpliktelse enligt bokföringslagen.
         </li>
         <li>
-          För att förstå hur besökare använder webbplatsen (klick, musrörelse
-          och rullning) och förbättra den. Rättslig grund: berättigat
-          intresse.
-        </li>
-        <li>
           För att se vilken kanal (till exempel Google Ads, organisk sökning
           eller direkttrafik) som ledde till en bokning. Rättslig grund:
           berättigat intresse.
@@ -143,9 +138,7 @@ function PrivacySv() {
         Bokningsuppgifter sparas i tre år, vilket motsvarar reklamationstiden
         enligt konsumenttjänstlagen. Underlag som räknas som
         räkenskapsinformation, till exempel betalningar och återbetalningar,
-        sparas i sju år enligt bokföringslagen. Anonyma interaktionshändelser
-        för heatmap raderas automatiskt efter den retentionstid som ställs in
-        i admin (standard 30 dagar).
+        sparas i sju år enligt bokföringslagen.
       </p>
 
       <h2>Dina rättigheter</h2>
@@ -164,16 +157,12 @@ function PrivacySv() {
       <p>
         Vi använder Google Tag Manager och Google Ads för att mäta när en
         bokning blir betald. Det kan sätta förstaparts-kakor (till exempel
-        GCLID) i din webbläsare. Vi kör inte Google Analytics för sidstatistik.
-        När heatmap-insamling är på i admin samlar vi förstaparts-händelser om
-        klick, musrörelse, rullning och text som skrivs i formulär (plus
-        ungefärlig IP-adress). Lösenord och betalningsfält sparas inte. Det
-        sparas i sessionStorage, inte som en kaka. Bara admin kan se
-        underlaget. Trafikkälla (UTM, klick-id och hänvisande webbplats) sparas
-        lokalt i webbläsaren upp till 30 dagar och kopplas till bokningen när
-        du slutför den. Ditt språkval kan sparas lokalt i webbläsaren.
-        Betalsidan hos Stripe sätter egna kakor som krävs för att betalningen
-        ska fungera säkert.
+        GCLID) i din webbläsare. Vi kör inte Google Analytics och samlar inte
+        in klick-, mus- eller formulärhändelser på webbplatsen. Trafikkälla
+        (UTM, klick-id och hänvisande webbplats) sparas lokalt i webbläsaren
+        upp till 30 dagar och kopplas till bokningen när du slutför den. Ditt
+        språkval kan sparas lokalt i webbläsaren. Betalsidan hos Stripe sätter
+        egna kakor som krävs för att betalningen ska fungera säkert.
       </p>
 
       <p>
@@ -226,10 +215,6 @@ function PrivacyEn() {
           obligation.
         </li>
         <li>
-          To understand how visitors use the site (clicks, cursor movement and
-          scroll) and improve it. Legal basis: legitimate interest.
-        </li>
-        <li>
           To see which channel (for example Google Ads, organic search or
           direct traffic) led to a booking. Legal basis: legitimate interest.
         </li>
@@ -271,9 +256,7 @@ function PrivacyEn() {
         Booking data is kept for three years, matching the complaint period
         under the Swedish Consumer Services Act. Records that count as
         accounting information, such as payments and refunds, are kept for seven
-        years as required by the Swedish Bookkeeping Act. Anonymous heatmap
-        interaction events are deleted automatically after the retention period
-        set in admin (30 days by default).
+        years as required by the Swedish Bookkeeping Act.
       </p>
 
       <h2>Your rights</h2>
@@ -292,16 +275,13 @@ function PrivacyEn() {
       <p>
         We use Google Tag Manager and Google Ads to measure when a booking is
         paid. That may set first-party cookies (for example GCLID) in your
-        browser. We do not run Google Analytics for page statistics. When
-        heatmap collection is enabled in admin we record first-party click,
-        cursor, scroll and form-text events (plus an approximate IP address).
-        Password and payment fields are not stored. That lives in
-        sessionStorage, not a cookie, and only admin can see it. Traffic source
-        (UTM parameters, click id and referring website) is stored locally in
-        your browser for up to 30 days and attached to the booking when you
-        complete it. Your language preference may be stored locally in your
-        browser. Stripe&apos;s checkout page sets its own cookies that are
-        necessary for the payment to work securely.
+        browser. We do not run Google Analytics and do not collect click,
+        cursor or form-field events on the site. Traffic source (UTM
+        parameters, click id and referring website) is stored locally in your
+        browser for up to 30 days and attached to the booking when you complete
+        it. Your language preference may be stored locally in your browser.
+        Stripe&apos;s checkout page sets its own cookies that are necessary for
+        the payment to work securely.
       </p>
 
       <p>

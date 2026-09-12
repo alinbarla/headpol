@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { AvailabilityOverride } from "@/lib/availability";
+import { SLOT_OCCUPYING_STATUSES } from "@/lib/booking";
 import {
   addDaysToDateKey,
   endOfIsoWeek,
@@ -23,10 +24,7 @@ const BOOKING_COLUMNS =
 
 /** Statuses that occupy a slot; `cancelled` and `expired` release it. */
 export const ACTIVE_STATUSES: BookingStatus[] = [
-  "pending",
-  "confirmed",
-  "completed",
-  "no_show",
+  ...SLOT_OCCUPYING_STATUSES,
 ];
 
 export async function listBookingsBetween(

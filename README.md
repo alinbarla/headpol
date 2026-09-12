@@ -7,7 +7,7 @@ A bilingual (Swedish / English) marketing site for a headlight restoration busin
 - **Swedish-first i18n** — `/sv` (default) and `/en`
 - **Hero before/after slider** — [img-comparison-slider](https://github.com/sneas/img-comparison-slider) in the header
 - **Process storyboard** — vertical cinematic timeline of restoration steps
-- **Booking picker** — Supabase-backed slots (Sun–Fri 16:00–20:00), booked times greyed out
+- **Booking picker** — Supabase-backed slots (Mon–Fri 16:00–20:00, Sat–Sun 08:00–20:00), booked times greyed out
 - **Contact** — phone `+46 76 344 11 68`, email `teo@stralkastarpolering.se`
 
 ## Development
@@ -30,16 +30,7 @@ npm start
 
 Import [alinbarla/headpol](https://github.com/alinbarla/headpol) in Vercel (Next.js is detected automatically). Hosting region is Stockholm (`arn1`).
 
-Add these environment variables for Production and Preview:
-
-| Name | Notes |
-|---|---|
-| `NEXT_PUBLIC_SITE_URL` | Canonical origin, no trailing slash. Use `https://stralkastarpolering.se` once the domain is attached, or the `*.vercel.app` URL until then. |
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key |
-| `GMAIL_USER` | `teo@stralkastarpolering.se` |
-| `GMAIL_APP_PASSWORD` | Gmail app password (server-only) |
-| `MOONSHOT_API_KEY` | Server-only. Admin Assistant at `/assistant`. Chats skip with a saved notice if unset. Optional `MOONSHOT_MODEL` defaults to `kimi-k3`. |
+Copy [`.env.example`](.env.example) for the full list of environment variables (Supabase service role, admin PIN/session secret, Stripe, `CRON_SECRET`, DataForSEO, Google Places, etc.). Set the same keys for Production and Preview in Vercel.
 
 `NEXT_PUBLIC_*` values are baked in at **build** time, so set them before the first production deploy.
 
@@ -58,10 +49,10 @@ Update [`lib/booking.ts`](lib/booking.ts) and the `contact` section in both mess
 ### Supabase bookings
 
 1. Copy `.env.example` to `.env.local` and add your Supabase URL + anon key.
-2. Migration lives in `supabase/migrations/202603160001_create_bookings.sql` (already applied if using the linked project).
+2. Migrations live in `supabase/migrations/` (start with `202603160001_create_bookings.sql`) (already applied if using the linked project).
 3. Bookings table: `bookings(booking_date, booking_time, status)` with unique slot constraint.
 
-Available slots: **Sat–Sun 08:00–19:00**, **Mon–Fri 16:00–19:00** (service window until 20:00).
+Available slots (defaults): **Mon–Fri 16:00–20:00**, **Sat–Sun 08:00–20:00**. Hours are editable in admin settings.
 
 ### Images
 

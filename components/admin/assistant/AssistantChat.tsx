@@ -110,7 +110,7 @@ export function AssistantChat({
               {greeting()}.
             </p>
             <p className="mt-2 text-sm text-muted-foreground">
-              Ask about bookings, SEO, visitors, or the last GitHub push. Attach
+              Ask about bookings, SEO, or the last GitHub push. Attach
               data with the paperclip.
             </p>
           </div>

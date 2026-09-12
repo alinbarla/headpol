@@ -13,8 +13,9 @@ import {
   readPaymentMethod,
 } from "@/lib/stripe";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
+import { handlePaidSlotConflict } from "@/lib/stripeRefund";
 
-export type SettleResult = "settled" | "already" | "unpaid" | "missing";
+export type SettleResult = "settled" | "already" | "unpaid" | "missing" | "conflict";
 
 /**
  * Marks a booking paid from a Stripe Checkout Session. Used by the webhook
@@ -54,7 +55,7 @@ export async function settlePaidCheckout(
 
   const { data: existing } = await supabase
     .from("bookings")
-    .select("id, status, payment_status, source")
+    .select("id, status, payment_status, source, booking_date, booking_time")
     .eq("id", bookingId)
     .maybeSingle();
 
@@ -80,21 +81,8 @@ export async function settlePaidCheckout(
     return "already";
   }
 
-  const { error: paymentError } = await supabase
-    .from("payments")
-    .update({
-      status: "paid",
-      method: readPaymentMethod(session),
-      stripe_payment_intent_id: paymentIntentId,
-      receipt_url: receipt?.receiptUrl ?? null,
-      paid_at: new Date().toISOString(),
-    })
-    .eq("stripe_checkout_session_id", session.id);
-
-  if (paymentError) {
-    console.error("[stripe] could not mark payment paid", paymentError.message);
-  }
-
+  // Confirm the booking before marking the payment paid so a unique-slot
+  // conflict never leaves a paid ledger row without a confirmed booking.
   const { data: updated, error: bookingError } = await supabase
     .from("bookings")
     .update({
@@ -114,10 +102,37 @@ export async function settlePaidCheckout(
 
   if (bookingError) {
     console.error("[stripe] could not mark booking paid", bookingError.message);
-    return "missing";
+    const amountOre = session.amount_total ?? null;
+    const slotLabel =
+      existing.booking_date && existing.booking_time
+        ? `${existing.booking_date} ${fromDbTime(existing.booking_time)}`
+        : null;
+    await handlePaidSlotConflict({
+      bookingId,
+      sessionId: session.id,
+      amountOre,
+      slotLabel,
+      errorMessage: bookingError.message,
+    });
+    return "conflict";
   }
 
   if (!updated) return "already";
+
+  const { error: paymentError } = await supabase
+    .from("payments")
+    .update({
+      status: "paid",
+      method: readPaymentMethod(session),
+      stripe_payment_intent_id: paymentIntentId,
+      receipt_url: receipt?.receiptUrl ?? null,
+      paid_at: new Date().toISOString(),
+    })
+    .eq("stripe_checkout_session_id", session.id);
+
+  if (paymentError) {
+    console.error("[stripe] could not mark payment paid", paymentError.message);
+  }
 
   const time = fromDbTime(updated.booking_time);
   const amountOre = session.amount_total ?? updated.price_ore;

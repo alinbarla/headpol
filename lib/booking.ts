@@ -25,6 +25,12 @@ export const STOCKHOLM_COUNTY_POSTAL_RANGES = [
   { min: 19600, max: 19999 },
 ] as const;
 
+
+/** Statuses that occupy a calendar slot (matches bookings_active_slot_unique). */
+export const SLOT_OCCUPYING_STATUSES: Array<
+  "pending" | "confirmed" | "completed" | "no_show"
+> = ["pending", "confirmed", "completed", "no_show"];
+
 export function digitsFromPostalCode(value: string): string {
   return value.replace(/\D/g, "").slice(0, 5);
 }

@@ -1,5 +1,4 @@
-import { after, NextResponse } from "next/server";
-import { removeConvertedDroppedVisitor } from "@/lib/analytics/droppedVisitors";
+import { NextResponse } from "next/server";
 import {
   classifyAcquisition,
   type AttributionInput,
@@ -12,7 +11,7 @@ import {
   type AvailabilityMap,
   type BookingRules,
 } from "@/lib/availability";
-import { fromDbTime, slotKey, toDbTime } from "@/lib/booking";
+import { fromDbTime, slotKey, toDbTime, SLOT_OCCUPYING_STATUSES } from "@/lib/booking";
 import { getAvailabilityOverrides, getBookingRules } from "@/lib/bookingRules";
 import { parseBookingContact } from "@/lib/bookingNotify";
 import { createBookingCheckoutSession, isStripeConfigured } from "@/lib/stripe";
@@ -63,7 +62,7 @@ export async function GET(request: Request) {
         .select("booking_date, booking_time, hold_expires_at")
         .gte("booking_date", from)
         .lte("booking_date", to)
-        .in("status", ["pending", "confirmed"])
+        .in("status", [...SLOT_OCCUPYING_STATUSES])
     );
 
     if (error) {
@@ -210,14 +209,6 @@ export async function POST(request: Request) {
       );
     }
 
-    after(() => {
-      void removeConvertedDroppedVisitor(contact.email, contact.phone).catch(
-        (error) => {
-          console.error("[bookings] dropped visitor cleanup failed", error);
-        }
-      );
-    });
-
     const checkout = await createBookingCheckoutSession({
       bookingId: booking.data.id,
       amountOre: rules.priceOre,
@@ -346,7 +337,7 @@ async function dayBookingCount(dateKey: string): Promise<number> {
       .from("bookings")
       .select("hold_expires_at")
       .eq("booking_date", dateKey)
-      .in("status", ["pending", "confirmed"])
+      .in("status", [...SLOT_OCCUPYING_STATUSES])
   );
 
   if (error || !data) return 0;
