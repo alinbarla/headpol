@@ -40,17 +40,6 @@ function geoColumns(envelope: SessionEnvelope) {
   };
 }
 
-function hasGeo(envelope: SessionEnvelope): boolean {
-  return Boolean(
-    envelope.city ||
-      envelope.region ||
-      envelope.country ||
-      envelope.postal_code ||
-      envelope.latitude != null ||
-      envelope.longitude != null
-  );
-}
-
 export type SessionEnvelope = {
   sessionId: string;
   visitorId: string;
@@ -370,7 +359,7 @@ export async function upsertVisitSession(
   const { data: existing } = await withSupabaseTimeout(
     supabase
       .from("analytics_sessions")
-      .select("id, acquisition_channel, ip, city, country")
+      .select("id, acquisition_channel, ip")
       .eq("id", envelope.sessionId)
       .maybeSingle()
   );
@@ -380,8 +369,6 @@ export async function upsertVisitSession(
         id: string;
         acquisition_channel: AcquisitionChannel | null;
         ip: string | null;
-        city: string | null;
-        country: string | null;
       }
     | null;
 
@@ -425,11 +412,6 @@ export async function upsertVisitSession(
 
   if (!row.ip && envelope.ip) {
     patch.ip = envelope.ip;
-  }
-
-  // First geo write wins — fill only when the row still has no location.
-  if (!row.city && !row.country && hasGeo(envelope)) {
-    Object.assign(patch, geoColumns(envelope));
   }
 
   // First classified touch wins — don't overwrite Ads with a later direct hit.

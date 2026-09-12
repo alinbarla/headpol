@@ -99,7 +99,7 @@ export async function POST(request: Request) {
       viewportH: Math.round(parsed.data.viewportH ?? 1),
       documentH: Math.round(parsed.data.documentH ?? 1),
       device,
-      ip: geo.ip ?? ip,
+      ip,
       city: geo.city,
       region: geo.region,
       country: geo.country,

@@ -6,6 +6,7 @@ import { clientIpFromRequest, ingestAllowed } from "@/lib/analytics/rateLimit";
 import { getAnalyticsSettings } from "@/lib/analytics/settings";
 import { insertEventBatch, resolveHeatmapDevice } from "@/lib/analytics/store";
 import { parseIngestBody, readJsonBody } from "@/lib/analytics/validate";
+import { visitorGeo } from "@/lib/geo";
 
 export const runtime = "nodejs";
 export const maxDuration = 15;
@@ -46,6 +47,7 @@ export async function POST(request: Request) {
         documentH: parsed.documentH,
         device,
         ip,
+        ...visitorGeo(request.headers),
         isBot: false,
         userAgent: truncateUserAgent(ua),
       },

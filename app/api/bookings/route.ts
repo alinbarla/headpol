@@ -291,6 +291,7 @@ async function insertBooking(input: {
     customer_email: input.contact.email,
     customer_phone: input.contact.phone,
     customer_address: `${input.contact.address}, ${input.contact.postalCode}`,
+    customer_postal_code: input.contact.postalCode,
     locale: input.contact.locale,
     acquisition_channel: classified.channel,
     utm_source: classified.utmSource,
@@ -301,12 +302,12 @@ async function insertBooking(input: {
     gclid: classified.gclid,
     landing_path: classified.landingPath,
     referrer_host: classified.referrerHost,
-    city: geo?.city ?? null,
-    region: geo?.region ?? null,
-    country: geo?.country ?? null,
-    postal_code: geo?.postal_code ?? null,
-    latitude: geo?.latitude ?? null,
-    longitude: geo?.longitude ?? null,
+    geo_city: geo?.city ?? null,
+    geo_region: geo?.region ?? null,
+    geo_country: geo?.country ?? null,
+    geo_postal_code: geo?.postal_code ?? null,
+    geo_latitude: geo?.latitude ?? null,
+    geo_longitude: geo?.longitude ?? null,
   };
 
   const attempt = async () =>
