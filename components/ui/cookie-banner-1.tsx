@@ -277,7 +277,7 @@ const CookiePanel = (props: CookiePanelProps) => {
 
               <PrefRow
                 title="Analys"
-                desc="Hjälper oss förbättra webbplatsen."
+                desc="Trafikkälla (annonser, organiskt, hänvisning), heatmap och besöksstatistik."
                 field="analytics"
                 prefs={prefs}
                 setPrefs={setPrefs}

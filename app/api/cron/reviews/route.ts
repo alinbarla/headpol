@@ -1,19 +1,50 @@
 import { isAuthorizedCron, unauthorized } from "@/lib/cron";
+import { getAnalyticsSettings } from "@/lib/analytics/settings";
+import { deleteExpiredAnalytics } from "@/lib/analytics/store";
 import { refreshPlaceReviews } from "@/lib/places/reviews";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
 /**
- * Background Google Places refresh. Registered in vercel.json (Hobby second
- * cron slot, after reminders). Optional Supabase pg_cron can call the same
- * path — see supabase/reviews-cron-schedule.example.sql.
+ * Daily Hobby cron: refresh Google reviews and purge expired analytics
+ * sessions (Visitors / heatmap) past the configured retention.
  */
 async function handle(request: Request) {
   if (!isAuthorizedCron(request)) return unauthorized();
 
-  const result = await refreshPlaceReviews();
-  return Response.json(result, { status: result.ok ? 200 : 502 });
+  const settings = await getAnalyticsSettings();
+
+  let deletedSessions = 0;
+  let retentionError: string | null = null;
+
+  try {
+    deletedSessions = await deleteExpiredAnalytics(settings.retentionDays);
+  } catch (error) {
+    retentionError =
+      error instanceof Error ? error.message : "Retention failed";
+    console.error("[cron] reviews retention failed", retentionError);
+  }
+
+  const reviews = await refreshPlaceReviews();
+
+  if (retentionError) {
+    return Response.json(
+      {
+        retentionDays: settings.retentionDays,
+        deletedSessions,
+        error: retentionError,
+        reviews,
+      },
+      { status: 500 }
+    );
+  }
+
+  return Response.json({
+    retentionDays: settings.retentionDays,
+    deletedSessions,
+    reviews,
+  });
 }
 
 export async function GET(request: Request) {

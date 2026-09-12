@@ -6,13 +6,16 @@ import type { ReactNode } from "react";
 import {
   CalendarDaysIcon,
   CreditCardIcon,
+  FlameIcon,
   HomeIcon,
   ListIcon,
   LogOutIcon,
+  MailIcon,
   MessageSquareIcon,
   SearchIcon,
   SettingsIcon,
   SlidersHorizontalIcon,
+  UsersIcon,
 } from "lucide-react";
 import { logoutAction } from "@/app/admin/actions";
 import { NotificationBell } from "@/components/admin/NotificationBell";
@@ -25,6 +28,9 @@ const NAV = [
   { href: "/admin/bookings", label: "Bookings", icon: ListIcon },
   { href: "/admin/payments", label: "Payments", icon: CreditCardIcon },
   { href: "/admin/seo", label: "SEO", icon: SearchIcon },
+  { href: "/admin/heatmap", label: "Heatmap", icon: FlameIcon },
+  { href: "/admin/visitors", label: "Visitors", icon: UsersIcon },
+  { href: "/admin/mail-list", label: "Mail list", icon: MailIcon },
   { href: "/admin/assistant", label: "Assistant", icon: MessageSquareIcon },
   {
     href: "/admin/availability",

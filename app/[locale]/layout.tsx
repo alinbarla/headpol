@@ -5,6 +5,9 @@ import { GoogleTagManager } from "@/components/analytics/GoogleTagManager";
 import { DeferredGoogleTagManager } from "@/components/analytics/DeferredGoogleTagManager";
 import { GTM_ID } from "@/lib/seo";
 import { AttributionCapture } from "@/components/analytics/AttributionCapture";
+import { LazyHeatmapTracker } from "@/components/analytics/LazyHeatmapTracker";
+import { LazyReplayBridge } from "@/components/analytics/LazyReplayBridge";
+import { getAdminOrigins } from "@/lib/analytics/origins";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { CookiePanel } from "@/components/ui/cookie-banner-1";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
@@ -156,6 +159,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
     ])
   );
   const tMeta = await getTranslations({ locale, namespace: "metadata" });
+  const adminOrigins = getAdminOrigins();
   const placeReviews = await getPlaceReviews();
 
   return (
@@ -173,6 +177,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
       <body className="min-h-full antialiased">
         {GTM_ID ? <DeferredGoogleTagManager gtmId={GTM_ID} /> : null}
         <AttributionCapture />
+        <LazyHeatmapTracker />
+        <LazyReplayBridge adminOrigins={adminOrigins} />
         <div className="grain-overlay" aria-hidden="true" />
         <NextIntlClientProvider messages={messages}>
           {children}

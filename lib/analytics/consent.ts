@@ -62,3 +62,8 @@ export function persistPrefs(prefs: CookiePrefs) {
   localStorage.setItem(CONSENT_KEY, "true");
   pushConsentUpdate(prefs);
 }
+
+/** First-party visitors / heatmap / form capture require the Analys toggle. */
+export function allowsFirstPartyAnalytics(prefs: CookiePrefs | null): boolean {
+  return Boolean(prefs?.analytics);
+}

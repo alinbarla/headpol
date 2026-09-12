@@ -1,5 +1,8 @@
 export const ASSISTANT_CONTEXT_KINDS = [
   "seo",
+  "visitors",
+  "heatmap",
+  "sessions",
   "payments",
   "bookings",
   "calendar",
@@ -10,6 +13,9 @@ export type AssistantContextKind = (typeof ASSISTANT_CONTEXT_KINDS)[number];
 
 export const ASSISTANT_CONTEXT_LABELS: Record<AssistantContextKind, string> = {
   seo: "SEO",
+  visitors: "Visitors",
+  heatmap: "Heatmap",
+  sessions: "Sessions",
   payments: "Payments",
   bookings: "Bookings",
   calendar: "Calendar",
