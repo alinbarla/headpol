@@ -277,7 +277,7 @@ const CookiePanel = (props: CookiePanelProps) => {
 
               <PrefRow
                 title="Analys"
-                desc="Trafikkälla (annonser, organiskt, hänvisning), heatmap och besöksstatistik."
+                desc="Tredjeparts-mätning via Google (Consent Mode). Förstaparts-besök, källa och heatmap sparas oberoende av detta val."
                 field="analytics"
                 prefs={prefs}
                 setPrefs={setPrefs}

@@ -97,7 +97,7 @@ export default async function SettingsPage() {
               <StatusRow
                 label="Heatmap"
                 ok={analyticsSettings.enabled}
-                okLabel="Collecting when visitors grant Analys"
+                okLabel="Collecting from landing (Analys toggle is cosmetic)"
                 offLabel="Off — enable in the card above"
               />
               <StatusRow

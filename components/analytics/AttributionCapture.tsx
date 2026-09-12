@@ -1,17 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import {
   HEATMAP_PREVIEW_PARAM,
   SESSION_STORAGE_KEY,
   VISITOR_STORAGE_KEY,
 } from "@/lib/analytics/constants";
 import type { HeatmapDevice } from "@/lib/analytics/types";
-import {
-  allowsFirstPartyAnalytics,
-  CONSENT_UPDATED_EVENT,
-  readStoredPrefs,
-} from "@/lib/analytics/consent";
 import { parseLandingAttribution } from "@/lib/attribution/classify";
 import {
   attributionForBookingPost,
@@ -22,7 +18,11 @@ function randomId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
   }
-  return `hp_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (char) => {
+    const r = (Math.random() * 16) | 0;
+    const v = char === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 }
 
 function readOrCreateVisitorId(): string {
@@ -48,20 +48,11 @@ function readOrCreateSessionId(): string {
     ) {
       return existing;
     }
-    const uuid =
-      typeof crypto !== "undefined" && "randomUUID" in crypto
-        ? crypto.randomUUID()
-        : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (char) => {
-            const r = (Math.random() * 16) | 0;
-            const v = char === "x" ? r : (r & 0x3) | 0x8;
-            return v.toString(16);
-          });
+    const uuid = randomId();
     sessionStorage.setItem(SESSION_STORAGE_KEY, uuid);
     return uuid;
   } catch {
-    return typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : "00000000-0000-4000-8000-000000000001";
+    return randomId();
   }
 }
 
@@ -82,8 +73,6 @@ function referrerPath(): string | null {
 }
 
 function sendVisitBeacon() {
-  if (!allowsFirstPartyAnalytics(readStoredPrefs())) return;
-
   const doc = document.documentElement;
   const visual = window.visualViewport;
   const body = JSON.stringify({
@@ -91,14 +80,14 @@ function sendVisitBeacon() {
     visitorId: readOrCreateVisitorId(),
     page: window.location.pathname || "/",
     referrer: referrerPath(),
-    viewportW: Math.round(visual?.width ?? window.innerWidth),
-    viewportH: Math.round(visual?.height ?? window.innerHeight),
+    viewportW: Math.max(1, Math.round(visual?.width || window.innerWidth || 1)),
+    viewportH: Math.max(1, Math.round(visual?.height || window.innerHeight || 1)),
     documentH: Math.max(doc.scrollHeight, doc.offsetHeight, 1),
     device: deviceFromViewport(),
     attribution: attributionForBookingPost(),
   });
 
-  void fetch("/api/analytics/visit", {
+  void fetch("/api/hp/visit", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body,
@@ -109,10 +98,12 @@ function sendVisitBeacon() {
 }
 
 /**
- * Always stores marketing touch in localStorage for bookings. Server visit
- * beacons (Visitors admin) only fire after Analys consent.
+ * Stores marketing touch in localStorage for bookings and sends visit beacons
+ * (Visitors / Channels) from the first landing — not gated on Analys consent.
  */
 export function AttributionCapture() {
+  const pathname = usePathname();
+
   useEffect(() => {
     try {
       if (
@@ -133,17 +124,7 @@ export function AttributionCapture() {
     } catch {
       // Never block the page for attribution failures.
     }
-
-    const onConsent = () => {
-      try {
-        sendVisitBeacon();
-      } catch {
-        // ignore
-      }
-    };
-    window.addEventListener(CONSENT_UPDATED_EVENT, onConsent);
-    return () => window.removeEventListener(CONSENT_UPDATED_EVENT, onConsent);
-  }, []);
+  }, [pathname]);
 
   return null;
 }
