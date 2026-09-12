@@ -1,15 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import {
-  allowsGtm,
-  CONSENT_UPDATED_EVENT,
-  readStoredPrefs,
-} from "@/lib/analytics/consent";
+import { pushConsentUpdate, readStoredPrefs } from "@/lib/analytics/consent";
 
 /**
- * Loads gtm.js after consent + window `load` + requestIdleCallback (2s timeout).
- * Without analytics/marketing consent the script never injects.
+ * Always loads gtm.js after window `load` + requestIdleCallback (2s timeout).
+ * Consent Mode defaults stay denied in the head stub; tags that need cookies
+ * wait for grant. Loading GTM in the denied state lets Google receive
+ * cookieless pings and model conversions for Ads / Smart Bidding.
  */
 export function DeferredGoogleTagManager({ gtmId }: { gtmId: string }) {
   useEffect(() => {
@@ -21,7 +19,11 @@ export function DeferredGoogleTagManager({ gtmId }: { gtmId: string }) {
 
     const inject = () => {
       if (cancelled || document.getElementById("gtm-script")) return;
-      if (!allowsGtm(readStoredPrefs())) return;
+
+      // Re-apply stored choice before gtm.js so returning visitors are not
+      // stuck on the denied defaults from the head stub.
+      const prefs = readStoredPrefs();
+      if (prefs) pushConsentUpdate(prefs);
 
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
@@ -33,7 +35,7 @@ export function DeferredGoogleTagManager({ gtmId }: { gtmId: string }) {
     };
 
     const schedule = () => {
-      if (!allowsGtm(readStoredPrefs())) return;
+      if (cancelled || document.getElementById("gtm-script")) return;
       const ric = window.requestIdleCallback;
       if (typeof ric === "function") {
         idleId = ric(() => inject(), { timeout: 2000 });
@@ -42,19 +44,15 @@ export function DeferredGoogleTagManager({ gtmId }: { gtmId: string }) {
       }
     };
 
-    const onConsent = () => schedule();
-
     if (document.readyState === "complete") {
       schedule();
     } else {
       window.addEventListener("load", schedule, { once: true });
     }
-    window.addEventListener(CONSENT_UPDATED_EVENT, onConsent);
 
     return () => {
       cancelled = true;
       window.removeEventListener("load", schedule);
-      window.removeEventListener(CONSENT_UPDATED_EVENT, onConsent);
       if (idleId !== undefined && typeof window.cancelIdleCallback === "function") {
         window.cancelIdleCallback(idleId);
       }

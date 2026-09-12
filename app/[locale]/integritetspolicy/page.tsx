@@ -155,10 +155,11 @@ function PrivacySv() {
 
       <h2>Kakor och mätning</h2>
       <p>
-        Vi använder Google Tag Manager och Google Ads för att mäta när en
-        bokning blir betald, men bara efter att du godkänt analys- eller
-        marknadsföringskakor i cookie-bannern. Det kan sätta förstaparts-kakor
-        (till exempel GCLID) i din webbläsare. Vi kör inte Google Analytics och
+        Vi laddar Google Tag Manager med Consent Mode (standard: nekad). Då kan
+        Google ta emot cookiefria pings även om du nekar kakor, men lagring och
+        personalisering aktiveras först när du godkänt analys- eller
+        marknadsföringskakor i cookie-bannern. Efter godkännande kan förstaparts-
+        kakor (till exempel GCLID) sättas. Vi kör inte Google Analytics och
         samlar inte in klick-, mus- eller formulärhändelser på webbplatsen.
         Trafikkälla (UTM, klick-id och hänvisande webbplats) sparas lokalt i
         webbläsaren upp till 30 dagar och kopplas till bokningen när du slutför
@@ -275,11 +276,12 @@ function PrivacyEn() {
 
       <h2>Cookies and measurement</h2>
       <p>
-        We use Google Tag Manager and Google Ads to measure when a booking is
-        paid, but only after you accept analytics or marketing cookies in the
-        cookie banner. That may set first-party cookies (for example GCLID) in
-        your browser. We do not run Google Analytics and do not collect click,
-        cursor or form-field events on the site. Traffic source (UTM
+        We load Google Tag Manager with Consent Mode (default: denied). That
+        lets Google receive cookieless pings even if you refuse cookies, but
+        storage and personalization stay off until you accept analytics or
+        marketing cookies in the cookie banner. After you accept, first-party
+        cookies (for example GCLID) may be set. We do not run Google Analytics
+        and do not collect click, cursor or form-field events on the site. Traffic source (UTM
         parameters, click id and referring website) is stored locally in your
         browser for up to 30 days and attached to the booking when you complete
         it. Your language preference may be stored locally in your browser.

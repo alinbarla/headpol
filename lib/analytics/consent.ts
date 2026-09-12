@@ -38,10 +38,6 @@ export function readStoredPrefs(): CookiePrefs | null {
   }
 }
 
-export function allowsGtm(prefs: CookiePrefs | null): boolean {
-  return Boolean(prefs?.analytics || prefs?.marketing);
-}
-
 export function pushConsentUpdate(prefs: CookiePrefs) {
   window.dataLayer = window.dataLayer || [];
   // Match Google's snippet: push the Arguments object, not a plain array.
