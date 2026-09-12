@@ -42,9 +42,10 @@ export function GoogleReviewsSettingsCard({
       <CardContent className="space-y-4">
         <ActionToast state={state} />
         <p className="text-sm text-muted-foreground">
-          Pull live rating and reviews from Google Places into Supabase. The
-          same job also runs on a Supabase pg_cron schedule (and as a backup
-          from analytics retention).
+          Pull live rating and reviews from Google Places into Supabase. After
+          a successful fetch, every public page updates (hero rating, cluster
+          pages, and AggregateRating schema). The same job also runs on a
+          Supabase pg_cron schedule (and as a backup from analytics retention).
         </p>
 
         <dl className="grid gap-2 text-sm">

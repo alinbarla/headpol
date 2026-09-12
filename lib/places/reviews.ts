@@ -337,8 +337,22 @@ export type RefreshPlaceReviewsResult = {
 };
 
 /**
- * Background refresh: pull from Google, persist to settings, revalidate the
- * homepage so the next visitor sees the new snapshot.
+ * Invalidate every public route that embeds live Places rating data:
+ * locale layout (AggregateRating JSON-LD), homepage hero, reviews section,
+ * and all cluster/[slug] pages that render LiveReviewRating.
+ */
+function revalidatePlaceReviewsPages(): void {
+  // Root layout purge — clears client cache and marks all routes stale.
+  revalidatePath("/", "layout");
+  // next-intl localePrefix "never": file routes live under [locale].
+  revalidatePath("/[locale]", "layout");
+  revalidatePath("/[locale]/[slug]", "page");
+  revalidatePath("/api/reviews");
+}
+
+/**
+ * Background / manual refresh: pull from Google, persist to settings,
+ * revalidate all public pages so the next visitor sees the new snapshot.
  */
 export async function refreshPlaceReviews(): Promise<RefreshPlaceReviewsResult> {
   if (!isPlacesConfigured()) {
@@ -368,12 +382,7 @@ export async function refreshPlaceReviews(): Promise<RefreshPlaceReviewsResult> 
 
   try {
     const stored = await writeStoredPlaceReviews(live);
-    // next-intl serves the homepage from app/[locale]/page.tsx with
-    // localePrefix "never", so revalidate both the public URL and the
-    // locale segment — otherwise a static build keeps stale HTML.
-    revalidatePath("/");
-    revalidatePath("/sv");
-    revalidatePath("/[locale]", "page");
+    revalidatePlaceReviewsPages();
     return {
       ok: true,
       source: "google",
