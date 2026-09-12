@@ -1,5 +1,4 @@
 export type VisitorGeo = {
-  ip: string | null;
   city: string | null;
   region: string | null;
   country: string | null;
@@ -55,23 +54,12 @@ function parseCoord(raw: string | null): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-function readIp(headers: Headers): string | null {
-  const realIp = headerValue(headers, "x-real-ip");
-  if (realIp) return realIp;
-
-  const forwarded = headerValue(headers, "x-forwarded-for");
-  if (!forwarded) return null;
-  const first = forwarded.split(",")[0]?.trim() ?? "";
-  return first === "" ? null : first;
-}
-
 /**
  * Read Vercel request geo headers. All fields are null on localhost —
  * headers are absent there; that is expected, not an error.
  */
 export function visitorGeo(headers: Headers): VisitorGeo {
   return {
-    ip: readIp(headers),
     city: decodeCity(headerValue(headers, "x-vercel-ip-city")),
     region: headerValue(headers, "x-vercel-ip-country-region"),
     country: headerValue(headers, "x-vercel-ip-country"),

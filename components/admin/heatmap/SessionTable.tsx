@@ -7,6 +7,7 @@ import { deleteSessionsAction } from "@/app/admin/heatmap/actions";
 import { ActionToast, SubmitButton } from "@/components/admin/SubmitButton";
 import { Button } from "@/components/shadcn/button";
 import type { AnalyticsSession } from "@/lib/analytics/types";
+import { describeLocation } from "@/lib/geo";
 import { formatTimestamp } from "@/lib/time";
 
 const initial: ActionState = { ok: true };
@@ -111,7 +112,26 @@ export function SessionTable({ sessions }: { sessions: AnalyticsSession[] }) {
                   {formatTimestamp(session.started_at)}
                 </td>
                 <td className="py-2 pr-3 font-mono text-xs">{session.page}</td>
-                <td className="py-2 pr-3 font-mono text-xs">{session.ip ?? "—"}</td>
+                <td className="py-2 pr-3 font-mono text-xs">
+                  <div>{session.ip ?? "—"}</div>
+                  <div className="mt-0.5 text-[11px] text-muted-foreground">
+                    {describeLocation(session) ?? "—"}
+                    {Number.isFinite(session.latitude) &&
+                    Number.isFinite(session.longitude) ? (
+                      <>
+                        {" "}
+                        <a
+                          href={`https://www.google.com/maps?q=${session.latitude},${session.longitude}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="underline decoration-dotted underline-offset-2 hover:text-foreground"
+                        >
+                          karta
+                        </a>
+                      </>
+                    ) : null}
+                  </div>
+                </td>
                 <td className="py-2 pr-3 capitalize">{session.device}</td>
                 <td className="py-2 pr-3">{session.event_count}</td>
                 <td className="py-2 pr-3">
