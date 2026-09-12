@@ -459,6 +459,53 @@ export async function listVisitors(options: {
   return (data ?? []) as AnalyticsSession[];
 }
 
+export type VisitorChartRow = Pick<
+  AnalyticsSession,
+  | "id"
+  | "visitor_id"
+  | "started_at"
+  | "device"
+  | "page"
+  | "country"
+  | "acquisition_channel"
+  | "utm_source"
+  | "utm_medium"
+  | "utm_campaign"
+  | "referrer_host"
+>;
+
+const CHART_SELECT =
+  "id, visitor_id, started_at, device, page, country, acquisition_channel, utm_source, utm_medium, utm_campaign, referrer_host";
+
+/** Lightweight rows for visitor charts (capped for admin UI responsiveness). */
+export async function listVisitorChartRows(options: {
+  fromIso: string;
+  device: HeatmapDevice | "all";
+  channel?: AcquisitionChannel | "all";
+  limit?: number;
+}): Promise<VisitorChartRow[]> {
+  const supabase = getSupabaseAdminClient();
+  let query = supabase
+    .from("analytics_sessions")
+    .select(CHART_SELECT)
+    .eq("is_bot", false)
+    .gte("started_at", options.fromIso)
+    .order("started_at", { ascending: true })
+    .limit(options.limit ?? 2000);
+
+  if (options.device !== "all") {
+    query = query.eq("device", options.device);
+  }
+
+  if (options.channel && options.channel !== "all") {
+    query = query.eq("acquisition_channel", options.channel);
+  }
+
+  const { data, error } = await withSupabaseTimeout(query);
+  if (error) throw new Error(error.message);
+  return (data ?? []) as VisitorChartRow[];
+}
+
 export async function countVisitors(options: {
   fromIso: string;
   device: HeatmapDevice | "all";
