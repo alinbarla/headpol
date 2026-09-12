@@ -276,8 +276,9 @@ function PrivacyEn() {
       <h2>Cookies and measurement</h2>
       <p>
         We use Google Tag Manager and Google Ads to measure when a booking is
-        paid. That may set first-party cookies (for example GCLID) in your
-        browser. We do not run Google Analytics and do not collect click,
+        paid, but only after you accept analytics or marketing cookies in the
+        cookie banner. That may set first-party cookies (for example GCLID) in
+        your browser. We do not run Google Analytics and do not collect click,
         cursor or form-field events on the site. Traffic source (UTM
         parameters, click id and referring website) is stored locally in your
         browser for up to 30 days and attached to the booking when you complete

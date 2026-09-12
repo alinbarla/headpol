@@ -24,6 +24,53 @@ interface CookiePanelProps {
   termsHref?: string;
 }
 
+function PrefRow({
+  title,
+  desc,
+  field,
+  locked,
+  prefs,
+  setPrefs,
+}: {
+  title: string;
+  desc: string;
+  field: keyof CookiePrefs;
+  locked?: boolean;
+  prefs: CookiePrefs;
+  setPrefs: React.Dispatch<React.SetStateAction<CookiePrefs>>;
+}) {
+  return (
+    <div className="flex items-start gap-2 p-2 rounded-lg border border-border">
+      <button
+        type="button"
+        disabled={locked}
+        onClick={() => !locked && setPrefs((p) => ({ ...p, [field]: !p[field] }))}
+        className={cn(
+          "mt-0.5 inline-flex size-5 items-center justify-center rounded border",
+          locked
+            ? "bg-muted text-muted-foreground border-border cursor-not-allowed"
+            : "bg-background border-border hover:bg-accent cursor-pointer"
+        )}
+        aria-pressed={prefs[field]}
+        aria-label={`${title} cookie preference`}
+      >
+        {prefs[field] && <Check className="size-4" />}
+      </button>
+
+      <div className="flex-1">
+        <div className="text-xs font-medium">
+          {title}{" "}
+          {locked && (
+            <span className="text-[10px] text-muted-foreground">(krävs)</span>
+          )}
+        </div>
+
+        <p className="text-[10px] text-muted-foreground mt-0.5">{desc}</p>
+      </div>
+    </div>
+  );
+}
+
 const CookiePanel = (props: CookiePanelProps) => {
   const {
     title = "Denna webbplats använder cookies",
@@ -46,16 +93,18 @@ const CookiePanel = (props: CookiePanelProps) => {
   const [prefsHeight, setPrefsHeight] = useState<number>(0);
 
   useEffect(() => {
-    const stored =
-      typeof window !== "undefined" ? localStorage.getItem(CONSENT_KEY) : null;
-
-    if (!stored) {
-      setRender(true);
-      requestAnimationFrame(() => setVisible(true));
-    }
-
+    const stored = localStorage.getItem(CONSENT_KEY);
     const storedPrefs = readStoredPrefs();
-    if (storedPrefs) setPrefs(storedPrefs);
+
+    const frame = requestAnimationFrame(() => {
+      if (storedPrefs) setPrefs(storedPrefs);
+      if (!stored) {
+        setRender(true);
+        requestAnimationFrame(() => setVisible(true));
+      }
+    });
+
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
@@ -97,47 +146,6 @@ const CookiePanel = (props: CookiePanelProps) => {
 
   const IconEl =
     icon === "shield" ? Shield : icon === "info" ? Info : Cookie;
-
-  const PrefRow = ({
-    title,
-    desc,
-    field,
-    locked,
-  }: {
-    title: string;
-    desc: string;
-    field: keyof CookiePrefs;
-    locked?: boolean;
-  }) => (
-    <div className="flex items-start gap-2 p-2 rounded-lg border border-border">
-      <button
-        type="button"
-        disabled={locked}
-        onClick={() => !locked && setPrefs((p) => ({ ...p, [field]: !p[field] }))}
-        className={cn(
-          "mt-0.5 inline-flex size-5 items-center justify-center rounded border",
-          locked
-            ? "bg-muted text-muted-foreground border-border cursor-not-allowed"
-            : "bg-background border-border hover:bg-accent cursor-pointer"
-        )}
-        aria-pressed={prefs[field]}
-        aria-label={`${title} cookie preference`}
-      >
-        {prefs[field] && <Check className="size-4" />}
-      </button>
-
-      <div className="flex-1">
-        <div className="text-xs font-medium">
-          {title}{" "}
-          {locked && (
-            <span className="text-[10px] text-muted-foreground">(krävs)</span>
-          )}
-        </div>
-
-        <p className="text-[10px] text-muted-foreground mt-0.5">{desc}</p>
-      </div>
-    </div>
-  );
 
   return (
     <div
@@ -255,24 +263,32 @@ const CookiePanel = (props: CookiePanelProps) => {
                 desc="Krävs för att webbplatsen ska fungera."
                 field="necessary"
                 locked
+                prefs={prefs}
+                setPrefs={setPrefs}
               />
 
               <PrefRow
                 title="Funktionella"
                 desc="Sparar dina preferenser."
                 field="functional"
+                prefs={prefs}
+                setPrefs={setPrefs}
               />
 
               <PrefRow
                 title="Analys"
                 desc="Hjälper oss förbättra webbplatsen."
                 field="analytics"
+                prefs={prefs}
+                setPrefs={setPrefs}
               />
 
               <PrefRow
                 title="Marknadsföring"
                 desc="Personligt anpassade annonser."
                 field="marketing"
+                prefs={prefs}
+                setPrefs={setPrefs}
               />
 
               <div className="flex justify-end gap-2 mt-1">

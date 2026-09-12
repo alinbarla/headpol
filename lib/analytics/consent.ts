@@ -45,9 +45,12 @@ export function allowsGtm(prefs: CookiePrefs | null): boolean {
 export function pushConsentUpdate(prefs: CookiePrefs) {
   window.dataLayer = window.dataLayer || [];
   // Match Google's snippet: push the Arguments object, not a plain array.
-  function gtag(..._args: unknown[]) {
+  function gtag(command: string, action: string, params: Record<string, string>) {
     // eslint-disable-next-line prefer-rest-params
     window.dataLayer.push(arguments as unknown as Record<string, unknown>);
+    void command;
+    void action;
+    void params;
   }
   gtag("consent", "update", {
     ad_storage: prefs.marketing ? "granted" : "denied",
