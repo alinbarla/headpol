@@ -4,7 +4,7 @@ import { isBotUserAgent, truncateUserAgent } from "@/lib/analytics/bots";
 import { syncDroppedVisitors } from "@/lib/analytics/droppedVisitors";
 import { clientIpFromRequest, ingestAllowed } from "@/lib/analytics/rateLimit";
 import { getAnalyticsSettings } from "@/lib/analytics/settings";
-import { insertEventBatch } from "@/lib/analytics/store";
+import { insertEventBatch, resolveHeatmapDevice } from "@/lib/analytics/store";
 import { parseIngestBody, readJsonBody } from "@/lib/analytics/validate";
 
 export const runtime = "nodejs";
@@ -32,6 +32,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid batch" }, { status: 400 });
   }
 
+  const device = resolveHeatmapDevice(
+    parsed.device,
+    request.headers.get("user-agent")
+  );
+
   try {
     await insertEventBatch(
       {
@@ -42,7 +47,7 @@ export async function POST(request: Request) {
         viewportW: parsed.viewportW,
         viewportH: parsed.viewportH,
         documentH: parsed.documentH,
-        device: parsed.device,
+        device,
         ip,
         isBot: false,
         userAgent: truncateUserAgent(ua),

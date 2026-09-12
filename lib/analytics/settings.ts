@@ -7,7 +7,6 @@ import {
 import type { AnalyticsSettings } from "@/lib/analytics/types";
 import {
   getSupabaseAdminClient,
-  getSupabaseServerClient,
   withSupabaseTimeout,
 } from "@/lib/supabase/server";
 
@@ -37,10 +36,13 @@ export function parseAnalyticsSettings(value: unknown): AnalyticsSettings {
 
 /**
  * Fail closed: a missing row or unreachable database means collection stays off.
+ * Uses the service-role client because RLS only allows public SELECT of
+ * `booking_rules` — `analytics_settings` is otherwise invisible and the
+ * tracker would never start.
  */
 export async function getAnalyticsSettings(): Promise<AnalyticsSettings> {
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = getSupabaseAdminClient();
     const { data, error } = await withSupabaseTimeout(
       supabase
         .from("settings")
