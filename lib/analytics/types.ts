@@ -64,6 +64,12 @@ export type AnalyticsSession = {
   document_h: number;
   device: HeatmapDevice;
   ip: string | null;
+  city: string | null;
+  region: string | null;
+  country: string | null;
+  postal_code: string | null;
+  latitude: number | null;
+  longitude: number | null;
   is_bot: boolean;
   user_agent: string | null;
   started_at: string;

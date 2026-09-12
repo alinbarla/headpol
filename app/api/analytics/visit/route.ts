@@ -17,6 +17,7 @@ import {
   MAX_REFERRER_HOST_LENGTH,
   MAX_UTM_LENGTH,
 } from "@/lib/attribution/constants";
+import { visitorGeo } from "@/lib/geo";
 
 export const runtime = "nodejs";
 export const maxDuration = 15;
@@ -86,6 +87,7 @@ export async function POST(request: Request) {
   );
 
   const device = parsed.data.device ?? deviceFromUserAgent(ua);
+  const geo = visitorGeo(request.headers);
 
   try {
     await upsertVisitSession({
@@ -97,7 +99,13 @@ export async function POST(request: Request) {
       viewportH: Math.round(parsed.data.viewportH ?? 1),
       documentH: Math.round(parsed.data.documentH ?? 1),
       device,
-      ip,
+      ip: geo.ip ?? ip,
+      city: geo.city,
+      region: geo.region,
+      country: geo.country,
+      postal_code: geo.postal_code,
+      latitude: geo.latitude,
+      longitude: geo.longitude,
       isBot: false,
       userAgent: truncateUserAgent(ua),
       acquisitionChannel: classified.channel,
