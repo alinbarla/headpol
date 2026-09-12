@@ -69,6 +69,7 @@ export const HUB_PAGES: ClusterDoc[] = [
           "Nej. Vi kommer till den adress du anger: uppfart, arbetsplats eller innergård, så länge bilen står utomhus och vi kommer åt båda sidorna.",
       },
     ],
+    compareSlider: true,
     related: [
       { slug: "stralkastarrenovering", label: "Strålkastarrenovering" },
       { slug: "priser", label: "Priser" },
