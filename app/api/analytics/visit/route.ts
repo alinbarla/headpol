@@ -5,7 +5,10 @@ import { MAX_BATCH_BYTES } from "@/lib/analytics/constants";
 import { sanitizePagePath, sanitizeReferrerPath } from "@/lib/analytics/page";
 import { clientIpFromRequest, ingestAllowed } from "@/lib/analytics/rateLimit";
 import { getAnalyticsSettings } from "@/lib/analytics/settings";
-import { deviceFromUserAgent, upsertVisitSession } from "@/lib/analytics/store";
+import {
+  resolveHeatmapDevice,
+  upsertVisitSession,
+} from "@/lib/analytics/store";
 import { readJsonBody } from "@/lib/analytics/validate";
 import {
   classifyAcquisition,
@@ -47,9 +50,10 @@ const visitSchema = z.object({
 });
 
 /**
- * Lightweight visit beacon for the admin Visitors page. Uses the same Heatmap
- * enabled switch, but records every device (including mobile) without sample
- * rate so IP / device / traffic source show for each visitor.
+ * Lightweight visit beacon for the admin Visitors page and heatmap session
+ * list. Uses the same Heatmap enabled switch, but records every device
+ * (including mobile) without sample rate so IP / device / traffic source show
+ * for each visitor.
  */
 export async function POST(request: Request) {
   const settings = await getAnalyticsSettings();
@@ -86,7 +90,12 @@ export async function POST(request: Request) {
     (parsed.data.attribution ?? null) as Partial<AttributionInput> | null
   );
 
-  const device = parsed.data.device ?? deviceFromUserAgent(ua);
+  // Prefer UA for phones/tablets so landscape / desktop-site mode still lists
+  // under Mobile/Tablet — matching heatmap event ingest.
+  const device = resolveHeatmapDevice(
+    parsed.data.device ?? "desktop",
+    ua
+  );
   const geo = visitorGeo(request.headers);
 
   try {

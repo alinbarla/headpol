@@ -84,11 +84,15 @@ export default async function HeatmapPage({
   const pages = await listTrackedPages(fromIso).catch(() => []);
   const page = readParam(params, "page") ?? pages[0] ?? "/";
 
+  // Sessions list matches Visitors: every visit in range for the device filter,
+  // not only the page selected for the visual heatmap grid.
   const [sessions, scrolls, eventCount] = await Promise.all([
-    listRecentSessions({ page, fromIso, device }).catch(() => []),
+    listRecentSessions({ fromIso, device, limit: 100 }).catch(() => []),
     listSessionScrolls({ page, fromIso, device }).catch(() => []),
     countEventsSince(fromIso).catch(() => 0),
   ]);
+  const pageSession =
+    sessions.find((session) => session.page === page) ?? sessions[0];
 
   const gridType = mode === "scroll" ? "click" : mode;
   const gridRows =
@@ -134,7 +138,7 @@ export default async function HeatmapPage({
 
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             <StatCard label="Events in range" value={String(eventCount)} />
-            <StatCard label="Sessions on this page" value={String(sessions.length)} />
+            <StatCard label="Recent sessions" value={String(sessions.length)} />
             <StatCard
               label="Grid points"
               value={mode === "scroll" ? "—" : String(grid.eventCount)}
@@ -175,13 +179,13 @@ export default async function HeatmapPage({
                     page={page}
                     cells={grid.cells}
                     maxCount={grid.maxCount}
-                    sourceWidth={grid.viewportW || sessions[0]?.viewport_w || 1200}
+                    sourceWidth={grid.viewportW || pageSession?.viewport_w || 1200}
                     sourceHeight={grid.documentH || 2000}
-                    previewW={sessions[0]?.viewport_w || grid.viewportW || 1200}
-                    previewH={sessions[0]?.viewport_h || 800}
+                    previewW={pageSession?.viewport_w || grid.viewportW || 1200}
+                    previewH={pageSession?.viewport_h || 800}
                     device={
                       device === "all"
-                        ? (sessions[0]?.device ?? "desktop")
+                        ? (pageSession?.device ?? "desktop")
                         : device
                     }
                   />
@@ -193,9 +197,16 @@ export default async function HeatmapPage({
 
           <Card className="mt-6">
             <CardHeader>
-              <CardTitle className="text-sm">Recent sessions</CardTitle>
+              <CardTitle className="text-sm">
+                Recent sessions
+                {device === "all" ? " (all devices)" : ` (${device})`}
+              </CardTitle>
             </CardHeader>
             <CardContent>
+              <p className="mb-3 text-xs text-muted-foreground">
+                Same visits as Visitors — every device and landing page in this
+                range, including sessions that only sent a visit beacon.
+              </p>
               <SessionTable sessions={sessions} />
             </CardContent>
           </Card>

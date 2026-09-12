@@ -7,7 +7,7 @@ import {
   SESSION_STORAGE_KEY,
   VISITOR_STORAGE_KEY,
 } from "@/lib/analytics/constants";
-import type { HeatmapDevice } from "@/lib/analytics/types";
+import { deviceFromViewport } from "@/lib/analytics/device";
 import { parseLandingAttribution } from "@/lib/attribution/classify";
 import {
   attributionForBookingPost,
@@ -54,13 +54,6 @@ function readOrCreateSessionId(): string {
   } catch {
     return randomId();
   }
-}
-
-function deviceFromViewport(): HeatmapDevice {
-  const width = window.innerWidth;
-  if (width < 768) return "mobile";
-  if (width < 1024) return "tablet";
-  return "desktop";
 }
 
 function referrerPath(): string | null {
