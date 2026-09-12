@@ -136,9 +136,20 @@ function scrollPercent(scrollY: number, documentH: number, viewportH: number): n
 export function deviceFromUserAgent(ua: string | null): HeatmapDevice {
   if (!ua) return "desktop";
   const value = ua.toLowerCase();
-  if (/ipad|tablet/.test(value)) return "tablet";
-  if (/mobi|iphone|android/.test(value)) return "mobile";
+  // Android tablets usually omit "mobile"; phones include it.
+  if (/ipad|tablet|android(?!.*mobile)/.test(value)) return "tablet";
+  if (/mobi|iphone|ipod|android/.test(value)) return "mobile";
   return "desktop";
+}
+
+/** Prefer UA for phones/tablets so landscape / desktop-site mode still filters correctly. */
+export function resolveHeatmapDevice(
+  clientDevice: HeatmapDevice,
+  ua: string | null
+): HeatmapDevice {
+  const fromUa = deviceFromUserAgent(ua);
+  if (fromUa === "mobile" || fromUa === "tablet") return fromUa;
+  return clientDevice;
 }
 
 export async function startOrTouchSession(

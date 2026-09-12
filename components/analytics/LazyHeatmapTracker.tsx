@@ -2,11 +2,6 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import {
-  allowsFirstPartyAnalytics,
-  CONSENT_UPDATED_EVENT,
-  readStoredPrefs,
-} from "@/lib/analytics/consent";
 
 const HeatmapTracker = dynamic(
   () =>
@@ -17,30 +12,13 @@ const HeatmapTracker = dynamic(
 );
 
 /**
- * Idle-loads heatmap JS only after the visitor grants Analys in the cookie
- * banner. Without that checkbox, no sessions/events are collected.
+ * Idle-loads heatmap JS from the first landing. First-party collection is not
+ * gated on the Analys cookie checkbox (that toggle is cosmetic for GTM only).
  */
 export function LazyHeatmapTracker() {
-  const [allowed, setAllowed] = useState(false);
   const [idleReady, setIdleReady] = useState(false);
 
   useEffect(() => {
-    const sync = () => {
-      const next = allowsFirstPartyAnalytics(readStoredPrefs());
-      setAllowed(next);
-      if (!next) setIdleReady(false);
-    };
-    const frame = requestAnimationFrame(sync);
-    window.addEventListener(CONSENT_UPDATED_EVENT, sync);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener(CONSENT_UPDATED_EVENT, sync);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!allowed) return;
-
     let idleId: number | undefined;
     let timeoutId: number | undefined;
     let cancelled = false;
@@ -69,8 +47,8 @@ export function LazyHeatmapTracker() {
       }
       if (timeoutId !== undefined) window.clearTimeout(timeoutId);
     };
-  }, [allowed]);
+  }, []);
 
-  if (!allowed || !idleReady) return null;
+  if (!idleReady) return null;
   return <HeatmapTracker />;
 }

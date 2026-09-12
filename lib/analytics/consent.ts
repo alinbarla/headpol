@@ -63,7 +63,12 @@ export function persistPrefs(prefs: CookiePrefs) {
   pushConsentUpdate(prefs);
 }
 
-/** First-party visitors / heatmap / form capture require the Analys toggle. */
+/**
+ * First-party visitors / heatmap / channel capture always run from landing.
+ * The Analys checkbox stays in the banner for UI/Consent Mode only — it feeds
+ * Google `analytics_storage` for third-party tags, not our own beacons.
+ */
 export function allowsFirstPartyAnalytics(prefs: CookiePrefs | null): boolean {
-  return Boolean(prefs?.analytics);
+  void prefs;
+  return true;
 }

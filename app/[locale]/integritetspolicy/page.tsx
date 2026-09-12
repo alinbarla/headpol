@@ -158,14 +158,14 @@ function PrivacySv() {
         Vi laddar Google Tag Manager med Consent Mode (standard: nekad). Då kan
         Google ta emot cookiefria pings även om du nekar kakor, men lagring och
         personalisering aktiveras först när du godkänt analys- eller
-        marknadsföringskakor i cookie-bannern. Om du kryssar i{" "}
-        <strong>Analys</strong> sparar vi förstaparts-besöksdata (enhet, IP,
-        trafikkälla som annonser/organiskt/hänvisning, heatmap och eventuell
-        formulärtext) så vi kan se hur besökare hittar hit. Utan det valet
-        skickas inga sådana beacons. Trafikkälla sparas även lokalt i
-        webbläsaren upp till 30 dagar och kopplas till bokningen när du slutför
-        den. Ditt språkval kan sparas lokalt. Betalsidan hos Stripe sätter egna
-        kakor som krävs för att betalningen ska fungera säkert.
+        marknadsföringskakor i cookie-bannern. Förstaparts-besöksdata (enhet,
+        IP, trafikkälla som annonser/organiskt/hänvisning, heatmap och eventuell
+        formulärtext) sparas från landning så vi kan se hur besökare hittar hit
+        — kryssrutan <strong>Analys</strong> styr endast tredjeparts-mätning via
+        Google Consent Mode, inte våra egna beacons. Trafikkälla sparas även
+        lokalt i webbläsaren upp till 30 dagar och kopplas till bokningen när du
+        slutför den. Ditt språkval kan sparas lokalt. Betalsidan hos Stripe
+        sätter egna kakor som krävs för att betalningen ska fungera säkert.
       </p>
 
       <p>
@@ -279,15 +279,15 @@ function PrivacyEn() {
         We load Google Tag Manager with Consent Mode (default: denied). That
         lets Google receive cookieless pings even if you refuse cookies, but
         storage and personalization stay off until you accept analytics or
-        marketing cookies in the cookie banner. If you check{" "}
-        <strong>Analytics</strong>, we store first-party visit data (device, IP,
-        traffic source such as ads/organic/referral, heatmap and any form text
-        typed) so we can see how visitors find us. Without that choice those
-        beacons are not sent. Traffic source is also kept locally in the browser
-        for up to 30 days and attached to the booking when you complete it. Your
-        language preference may be stored locally. Stripe&apos;s checkout page
-        sets its own cookies that are necessary for the payment to work
-        securely.
+        marketing cookies in the cookie banner. First-party visit data (device,
+        IP, traffic source such as ads/organic/referral, heatmap and any form
+        text typed) is stored from landing so we can see how visitors find us —
+        the <strong>Analytics</strong> checkbox only controls third-party
+        measurement via Google Consent Mode, not our own beacons. Traffic source
+        is also kept locally in the browser for up to 30 days and attached to
+        the booking when you complete it. Your language preference may be stored
+        locally. Stripe&apos;s checkout page sets its own cookies that are
+        necessary for the payment to work securely.
       </p>
 
       <p>
