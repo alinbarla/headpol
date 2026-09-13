@@ -415,6 +415,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       "Vi kommer till dig och polerar strålkastare i Stockholms län. Fast pris 899 kr/par, UV-keramiskt skydd och 12 månaders garanti — ingen inlämningsverkstad.",
     h1: "Om oss",
     lead: "Vi är en mobil tjänst som hjälper dig polera strålkastare där bilen står. Fast pris, UV-keramiskt skydd och 12 månaders garanti i Stockholms län.",
+    compareSlider: true,
     sections: [
       {
         heading: "Hur vi arbetar",
