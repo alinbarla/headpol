@@ -41,6 +41,20 @@ function readOrCreate(key: string): string {
   }
 }
 
+function readOrCreateVisitorId(key: string): string {
+  try {
+    const existing = localStorage.getItem(key);
+    if (existing) return existing;
+    const next = randomId();
+    localStorage.setItem(key, next);
+    return next;
+  } catch {
+    // localStorage blocked — fall back to sessionStorage so at least
+    // requests within the same tab share one id.
+    return readOrCreate(key);
+  }
+}
+
 const SKIPPED_INPUT_TYPES = new Set([
   "password",
   "hidden",
@@ -363,7 +377,7 @@ export function HeatmapTracker() {
         if (cancelled || !config?.enabled) return;
         if (!passedSample(config.sampleRate)) return;
 
-        visitorId = readOrCreate(VISITOR_STORAGE_KEY);
+        visitorId = readOrCreateVisitorId(VISITOR_STORAGE_KEY);
         sessionId = readOrCreate(SESSION_STORAGE_KEY);
 
         function onVisibility() {
