@@ -236,14 +236,16 @@ function buildPieModel(rows: VisitorChartRow[], dimension: PieDimension) {
     visitors: { label: "Visitors" },
   };
   const data = top.map((item, index) => {
+    const chartColor = CHART_COLORS[index % CHART_COLORS.length];
     config[item.key] = {
       label: item.label,
-      color: CHART_COLORS[index % CHART_COLORS.length],
+      color: chartColor,
     };
     return {
       key: item.key,
       label: item.label,
       visitors: item.value,
+      chartColor,
       fill: `var(--color-${item.key})`,
     };
   });
@@ -556,7 +558,7 @@ export function VisitorCharts({
           >
             <PieChart>
               <ChartTooltip
-                content={<ChartTooltipContent nameKey="visitors" hideLabel />}
+                content={<ChartTooltipContent nameKey="key" hideLabel />}
               />
               <Pie
                 data={pie.data}
@@ -587,8 +589,9 @@ export function VisitorCharts({
               >
                 <span className="flex min-w-0 items-center gap-2 truncate">
                   <span
-                    className="h-2 w-2 shrink-0 rounded-[2px]"
-                    style={{ background: `var(--color-${item.key})` }}
+                    className="h-2.5 w-2.5 shrink-0 rounded-[2px]"
+                    style={{ background: item.chartColor }}
+                    aria-hidden
                   />
                   <span className="truncate text-foreground">{item.label}</span>
                 </span>
