@@ -30,7 +30,7 @@ export const PUBLISHED_DATE =
   process.env.NEXT_PUBLIC_PUBLISHED_DATE ?? "2026-01-01";
 
 /** Last meaningful public-content change. Do not use `new Date()` in schema. */
-export const DATE_MODIFIED = "2026-09-07";
+export const DATE_MODIFIED = "2026-09-13";
 
 /** Optional Google Search Console verification token. */
 export const GOOGLE_SITE_VERIFICATION =
@@ -107,8 +107,16 @@ export const SERVICE_AREAS = MUNICIPALITY_NAMES;
 /** Swedish cluster pages — every SERVICE_AREAS entry has a unique local page. */
 export const AREA_PAGE_SLUGS: Record<string, string> = MUNICIPALITY_PAGE_SLUGS;
 
+/**
+ * Public Google Business Profile (Maps CID). Stable sameAs target for
+ * Organization / LocalBusiness — strip tracking params if copying from Places.
+ */
+export const GOOGLE_BUSINESS_PROFILE_URL =
+  "https://maps.google.com/?cid=9387102077781906057";
+
 export const SOCIAL_PROFILES: string[] = [
-  // Add real profiles (Google Business, Facebook, Instagram) when available.
+  GOOGLE_BUSINESS_PROFILE_URL,
+  // Add Facebook / Instagram when available.
 ];
 
 /** Keywords used in <meta keywords> and content guidance. */

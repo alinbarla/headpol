@@ -1,6 +1,7 @@
 import "server-only";
 
 import { revalidatePath } from "next/cache";
+import { GOOGLE_BUSINESS_PROFILE_URL } from "@/lib/seo";
 import {
   getSupabaseAdminClient,
   withSupabaseTimeout,
@@ -68,12 +69,29 @@ const EMPTY: PlaceReviewsData = {
 /** Best URL for the public Google Business / Maps profile. */
 export function getGoogleBusinessProfileUrl(
   data?: Pick<PlaceReviewsData, "googleMapsUri" | "reviewsUri"> | null
-): string | null {
-  if (data?.reviewsUri?.trim()) return data.reviewsUri.trim();
-  if (data?.googleMapsUri?.trim()) return data.googleMapsUri.trim();
+): string {
+  if (data?.googleMapsUri?.trim()) {
+    return stripMapsTracking(data.googleMapsUri.trim());
+  }
+  if (data?.reviewsUri?.trim()) {
+    return stripMapsTracking(data.reviewsUri.trim());
+  }
   const placeId = getGooglePlaceId();
-  if (!placeId) return null;
-  return `https://www.google.com/maps/search/?api=1&query_place_id=${encodeURIComponent(placeId)}`;
+  if (placeId) {
+    return `https://www.google.com/maps/search/?api=1&query_place_id=${encodeURIComponent(placeId)}`;
+  }
+  return GOOGLE_BUSINESS_PROFILE_URL;
+}
+
+/** Drop Places API `g_mp` tracking so schema/UI share a stable Maps URL. */
+function stripMapsTracking(url: string): string {
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.delete("g_mp");
+    return parsed.toString();
+  } catch {
+    return url;
+  }
 }
 
 export function getGooglePlaceId(): string | null {
