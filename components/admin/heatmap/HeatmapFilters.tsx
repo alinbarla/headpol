@@ -8,7 +8,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/shadcn/select";
-import type { HeatmapDevice, HeatmapRange } from "@/lib/analytics/types";
+import type {
+  HeatmapDevice,
+  HeatmapRange,
+  SessionListOrder,
+} from "@/lib/analytics/types";
+import { SESSION_LIST_ORDER_LABELS } from "@/lib/analytics/types";
 
 export function HeatmapFilters({
   page,
@@ -16,6 +21,7 @@ export function HeatmapFilters({
   range,
   device,
   mode,
+  order = "newest",
   includeMine = false,
 }: {
   page: string;
@@ -23,6 +29,7 @@ export function HeatmapFilters({
   range: HeatmapRange;
   device: HeatmapDevice | "all";
   mode: string;
+  order?: SessionListOrder;
   includeMine?: boolean;
 }) {
   const router = useRouter();
@@ -32,18 +39,21 @@ export function HeatmapFilters({
     page?: string;
     range?: string;
     device?: string;
+    order?: string;
   }) {
     const search = new URLSearchParams();
     search.set("page", next.page ?? page);
     search.set("range", next.range ?? range);
     search.set("device", next.device ?? device);
     search.set("mode", mode);
+    const nextOrder = next.order ?? order;
+    if (nextOrder !== "newest") search.set("order", nextOrder);
     if (includeMine) search.set("includeMine", "1");
     router.replace(`/admin/heatmap?${search.toString()}`);
   }
 
   return (
-    <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+    <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
       <Select value={page} onValueChange={(value) => replace({ page: value })}>
         <SelectTrigger className="sm:w-56" aria-label="Heatmap page">
           <SelectValue placeholder="Page" />
@@ -79,9 +89,20 @@ export function HeatmapFilters({
           <SelectItem value="mobile">Mobile</SelectItem>
         </SelectContent>
       </Select>
+
+      <Select value={order} onValueChange={(value) => replace({ order: value })}>
+        <SelectTrigger className="sm:w-40" aria-label="Order sessions by">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="newest">{SESSION_LIST_ORDER_LABELS.newest}</SelectItem>
+          <SelectItem value="device">{SESSION_LIST_ORDER_LABELS.device}</SelectItem>
+          <SelectItem value="source">{SESSION_LIST_ORDER_LABELS.source}</SelectItem>
+        </SelectContent>
+      </Select>
       <p className="w-full text-xs text-muted-foreground sm:pl-0.5">
         Page filter applies to the heatmap grid. Session list includes every
-        visit in range for the device filter.
+        visit in range for the device filter. Order sorts the session list.
       </p>
     </div>
   );

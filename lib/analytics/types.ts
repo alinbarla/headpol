@@ -8,6 +8,30 @@ export type HeatmapMode = Exclude<HeatmapEventType, "input">;
 
 export type HeatmapRange = "24h" | "7d" | "30d";
 
+/** Sort order for Visitors and Heatmap session lists. Default: newest first. */
+export type SessionListOrder = "newest" | "device" | "source";
+
+export const SESSION_LIST_ORDERS: SessionListOrder[] = [
+  "newest",
+  "device",
+  "source",
+];
+
+export const SESSION_LIST_ORDER_LABELS: Record<SessionListOrder, string> = {
+  newest: "Newest first",
+  device: "Device",
+  source: "Source",
+};
+
+export function parseSessionListOrder(
+  value: string | undefined
+): SessionListOrder {
+  if (value === "device" || value === "source" || value === "newest") {
+    return value;
+  }
+  return "newest";
+}
+
 export type UserEvent =
   | {
       type: "click";

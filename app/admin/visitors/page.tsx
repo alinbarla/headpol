@@ -9,7 +9,14 @@ import {
   listVisitors,
 } from "@/lib/analytics/store";
 import { VisitorCharts } from "@/components/admin/VisitorCharts";
-import type { HeatmapDevice, HeatmapRange } from "@/lib/analytics/types";
+import {
+  parseSessionListOrder,
+  SESSION_LIST_ORDER_LABELS,
+  SESSION_LIST_ORDERS,
+  type HeatmapDevice,
+  type HeatmapRange,
+  type SessionListOrder,
+} from "@/lib/analytics/types";
 import { ACQUISITION_LABELS } from "@/lib/admin/labels";
 import type { AcquisitionChannel } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -78,6 +85,7 @@ function hrefFor(opts: {
   range: HeatmapRange;
   device: HeatmapDevice | "all";
   channel: AcquisitionChannel | "all";
+  order: SessionListOrder;
   includeMine?: boolean;
   page?: number;
 }): string {
@@ -85,6 +93,7 @@ function hrefFor(opts: {
   search.set("range", opts.range);
   if (opts.device !== "all") search.set("device", opts.device);
   if (opts.channel !== "all") search.set("channel", opts.channel);
+  if (opts.order !== "newest") search.set("order", opts.order);
   if (opts.includeMine) search.set("includeMine", "1");
   if (opts.page && opts.page > 1) search.set("page", String(opts.page));
   return `/admin/visitors?${search.toString()}`;
@@ -102,6 +111,7 @@ export default async function VisitorsPage({
   const range = parseRange(readParam(params, "range"));
   const device = parseDevice(readParam(params, "device"));
   const channel = parseChannel(readParam(params, "channel"));
+  const order = parseSessionListOrder(readParam(params, "order"));
   const includeMine = readParam(params, "includeMine") === "1";
   const page = parsePage(readParam(params, "page"));
   const fromIso = new Date(Date.now() - RANGE_MS[range]).toISOString();
@@ -118,6 +128,7 @@ export default async function VisitorsPage({
         fromIso,
         device,
         channel,
+        order,
         includeExcludedIps: includeMine,
         limit: PAGE_SIZE,
         offset,
@@ -160,7 +171,7 @@ export default async function VisitorsPage({
         {(["24h", "7d", "30d"] as const).map((value) => (
           <Link
             key={value}
-            href={hrefFor({ range: value, device, channel, includeMine })}
+            href={hrefFor({ range: value, device, channel, order, includeMine })}
             className={cn(
               "rounded-md border px-3 py-1.5 text-xs",
               range === value
@@ -175,7 +186,7 @@ export default async function VisitorsPage({
         {(["all", "desktop", "tablet", "mobile"] as const).map((value) => (
           <Link
             key={value}
-            href={hrefFor({ range, device: value, channel, includeMine })}
+            href={hrefFor({ range, device: value, channel, order, includeMine })}
             className={cn(
               "rounded-md border px-3 py-1.5 text-xs capitalize",
               device === value
@@ -199,7 +210,7 @@ export default async function VisitorsPage({
         ).map((value) => (
           <Link
             key={value}
-            href={hrefFor({ range, device, channel: value, includeMine })}
+            href={hrefFor({ range, device, channel: value, order, includeMine })}
             className={cn(
               "rounded-md border px-3 py-1.5 text-xs",
               channel === value
@@ -210,6 +221,21 @@ export default async function VisitorsPage({
             {value === "all"
               ? "All sources"
               : ACQUISITION_LABELS[value]}
+          </Link>
+        ))}
+        <span className="mx-1 self-center text-border">|</span>
+        {SESSION_LIST_ORDERS.map((value) => (
+          <Link
+            key={value}
+            href={hrefFor({ range, device, channel, order: value, includeMine })}
+            className={cn(
+              "rounded-md border px-3 py-1.5 text-xs",
+              order === value
+                ? "border-primary bg-secondary text-foreground"
+                : "border-border text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {SESSION_LIST_ORDER_LABELS[value]}
           </Link>
         ))}
       </div>
@@ -258,6 +284,7 @@ export default async function VisitorsPage({
                     range,
                     device,
                     channel,
+                    order,
                     includeMine,
                     page: page - 1,
                   })}
@@ -279,6 +306,7 @@ export default async function VisitorsPage({
                     range,
                     device,
                     channel,
+                    order,
                     includeMine,
                     page: page + 1,
                   })}
