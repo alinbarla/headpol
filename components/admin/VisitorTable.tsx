@@ -79,7 +79,7 @@ export function VisitorTable({
         categoriesLabel="Device & source"
         lastLabel="When"
         strengthLabel="Session depth"
-        linksLabel="Replay"
+        linksLabel="Details"
         strengthLabels={SESSION_STRENGTH_LABELS}
         selectedIds={selected}
         onSelectedChange={setSelected}

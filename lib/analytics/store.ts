@@ -15,7 +15,7 @@ import type { AcquisitionChannel } from "@/lib/supabase/server";
 import { getSupabaseAdminClient, withSupabaseTimeout } from "@/lib/supabase/server";
 
 const SESSION_SELECT =
-  "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, ip, city, region, country, postal_code, latitude, longitude, is_bot, user_agent, started_at, ended_at, event_count, max_scroll_pct, acquisition_channel, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, landing_path, referrer_host";
+  "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, ip, city, region, country, postal_code, latitude, longitude, is_bot, user_agent, started_at, ended_at, event_count, max_scroll_pct, acquisition_channel, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, landing_path, referrer_host, booked_override";
 
 
 type IpFilterOptions = {
@@ -677,6 +677,30 @@ export async function listSessionsByIp(options: {
       .limit(options.limit ?? 20)
   );
 
+  if (error) throw new Error(error.message);
+  return (data ?? []) as AnalyticsSession[];
+}
+
+/** Other visits sharing the same first-party visitor_id. */
+export async function listSessionsByVisitorId(options: {
+  visitorId: string;
+  excludeSessionId?: string;
+  limit?: number;
+}): Promise<AnalyticsSession[]> {
+  const supabase = getSupabaseAdminClient();
+  let query = supabase
+    .from("analytics_sessions")
+    .select(SESSION_SELECT)
+    .eq("is_bot", false)
+    .eq("visitor_id", options.visitorId)
+    .order("started_at", { ascending: false })
+    .limit(options.limit ?? 10);
+
+  if (options.excludeSessionId) {
+    query = query.neq("id", options.excludeSessionId);
+  }
+
+  const { data, error } = await withSupabaseTimeout(query);
   if (error) throw new Error(error.message);
   return (data ?? []) as AnalyticsSession[];
 }

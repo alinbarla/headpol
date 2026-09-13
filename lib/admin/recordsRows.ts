@@ -52,8 +52,8 @@ export function visitorToRecord(
       session.event_count,
       Number(session.max_scroll_pct)
     ),
-    href: `/admin/heatmap/sessions/${session.id}`,
-    linkLabel: "Replay",
+    href: `/admin/visitors/${session.id}`,
+    linkLabel: "Open",
   };
 }
 
@@ -63,11 +63,13 @@ export function sessionCsvRows(
 ) {
   return sessions.map((session) => {
     const booked =
-      options?.bookedSessionIds?.has(session.id) ||
-      (session.visitor_id
-        ? options?.bookedVisitorIds?.has(session.visitor_id)
-        : false) ||
-      (session.ip ? options?.bookedIps?.has(session.ip) : false);
+      session.booked_override === true ||
+      (session.booked_override !== false &&
+        (options?.bookedSessionIds?.has(session.id) ||
+          (session.visitor_id
+            ? options?.bookedVisitorIds?.has(session.visitor_id)
+            : false) ||
+          (session.ip ? options?.bookedIps?.has(session.ip) : false)));
     return {
       id: session.id,
       started_at: session.started_at,

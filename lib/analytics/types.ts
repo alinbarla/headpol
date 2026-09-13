@@ -109,6 +109,11 @@ export type AnalyticsSession = {
   gclid: string | null;
   landing_path: string | null;
   referrer_host: string | null;
+  /**
+   * null = derive Booked from linked bookings; true/false force the tag
+   * when automatic wiring is wrong.
+   */
+  booked_override: boolean | null;
 };
 
 export type AnalyticsEventRow = {

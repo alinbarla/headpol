@@ -163,7 +163,8 @@ export default async function VisitorsPage({
           <h1 className="text-2xl font-bold">Visitors</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Every recorded visit with device, IP and traffic source. Each row is
-            tagged Booked or Not booked. Replay and delete live here; the Heatmap
+            tagged Booked or Not booked. Open a visit for full details and to
+            correct Booked status; replay and delete live here; the Heatmap
             page is the visual overlay only
             {settings.enabled ? " (collection on)" : " (collection off)"}.
           </p>

@@ -258,15 +258,87 @@ export type BookedVisitorMarkers = {
 };
 
 export function isVisitorBooked(
-  session: { id: string; ip: string | null; visitor_id: string },
+  session: {
+    id: string;
+    ip: string | null;
+    visitor_id: string;
+    booked_override?: boolean | null;
+  },
   markers: BookedVisitorMarkers
 ): boolean {
+  if (session.booked_override === true) return true;
+  if (session.booked_override === false) return false;
   if (markers.sessionIds.has(session.id)) return true;
   if (session.visitor_id && markers.visitorIds.has(session.visitor_id)) {
     return true;
   }
   if (session.ip && markers.ips.has(session.ip)) return true;
   return false;
+}
+
+/** Bookings linked to this visit by session id or matching visitor IP. */
+export async function listBookingsForVisitor(session: {
+  id: string;
+  ip: string | null;
+}): Promise<BookingRecord[]> {
+  const supabase = getSupabaseAdminClient();
+
+  const { data: bySession, error: sessionError } = await supabase
+    .from("bookings")
+    .select(BOOKING_COLUMNS)
+    .eq("analytics_session_id", session.id)
+    .neq("status", "expired")
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  if (sessionError) {
+    console.error("[admin] listBookingsForVisitor session", sessionError.message);
+  }
+
+  let byIp: BookingRecord[] = [];
+  if (session.ip) {
+    const { data, error } = await supabase
+      .from("bookings")
+      .select(BOOKING_COLUMNS)
+      .eq("visitor_ip", session.ip)
+      .neq("status", "expired")
+      .order("created_at", { ascending: false })
+      .limit(20);
+
+    if (error) {
+      console.error("[admin] listBookingsForVisitor ip", error.message);
+    } else {
+      byIp = (data ?? []) as BookingRecord[];
+    }
+  }
+
+  const seen = new Set<string>();
+  const merged: BookingRecord[] = [];
+  for (const booking of [
+    ...((bySession ?? []) as BookingRecord[]),
+    ...byIp,
+  ]) {
+    if (seen.has(booking.id)) continue;
+    seen.add(booking.id);
+    merged.push(booking);
+  }
+
+  return merged;
+}
+
+export async function setVisitorBookedOverride(
+  sessionId: string,
+  bookedOverride: boolean | null
+): Promise<void> {
+  const supabase = getSupabaseAdminClient();
+  const { error } = await supabase
+    .from("analytics_sessions")
+    .update({ booked_override: bookedOverride })
+    .eq("id", sessionId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
 }
 
 /**
