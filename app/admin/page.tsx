@@ -3,24 +3,43 @@ import { AlertTriangleIcon, PlusIcon } from "lucide-react";
 import { requireAdmin } from "@/lib/admin/auth";
 import { getDashboardData } from "@/lib/admin/data";
 import { getAcquisitionFunnel } from "@/lib/admin/funnel";
+import { engagementStrength } from "@/lib/admin/recordsRows";
 import { ADMIN_LOCALE } from "@/lib/admin/labels";
+import { listRecentSessions } from "@/lib/analytics/store";
 import { formatOre } from "@/lib/booking";
+import { describeLocation } from "@/lib/geo";
 import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
 import { getStripeWebhookStatus, isStripeConfigured } from "@/lib/stripe";
 import { formatDateKey } from "@/lib/time";
 import { AcquisitionFunnelCard } from "@/components/admin/AcquisitionFunnelCard";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BookingCard } from "@/components/admin/BookingCard";
+import { CsvDownloadButton } from "@/components/admin/CsvDownloadButton";
+import { DashboardInsights } from "@/components/admin/DashboardInsights";
 import { StripeBalanceCard } from "@/components/admin/StripeBalanceCard";
 import { Button } from "@/components/shadcn/button";
 import { StatsBento } from "@/components/ui/stats-bento";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminTodayPage() {
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+export default async function AdminTodayPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
   await requireAdmin();
+  const params = await searchParams;
+  const insightRaw = Array.isArray(params.insight) ? params.insight[0] : params.insight;
+  const insightDays: 7 | 30 = insightRaw === "7" ? 7 : 30;
   let data = await getDashboardData();
-  const funnel = await getAcquisitionFunnel(30);
+  const funnel = await getAcquisitionFunnel(insightDays);
+  const insightSessions = await listRecentSessions({
+    fromIso: new Date(Date.now() - insightDays * 86_400_000).toISOString(),
+    device: "all",
+    limit: 400,
+  }).catch(() => []);
   const webhookStatus = isStripeConfigured()
     ? await getStripeWebhookStatus()
     : null;
@@ -70,12 +89,33 @@ export default async function AdminTodayPage() {
             {formatDateKey(data.today, ADMIN_LOCALE)}
           </p>
         </div>
-        <Button asChild size="sm">
-          <Link href="/admin/bookings/new">
-            <PlusIcon className="size-4" />
-            New booking
-          </Link>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <CsvDownloadButton
+            filename="today-bookings.csv"
+            rows={[...data.todayBookings, ...data.tomorrowBookings, ...data.needsAttention].map(
+              (booking) => ({
+                id: booking.id,
+                date: booking.booking_date,
+                time: booking.booking_time,
+                status: booking.status,
+                payment: booking.payment_status,
+                name: booking.customer_name,
+                email: booking.customer_email,
+                phone: booking.customer_phone,
+                address: booking.customer_address,
+                price_ore: booking.price_ore,
+                source: booking.source,
+              })
+            )}
+            label="Download CSV"
+          />
+          <Button asChild size="sm">
+            <Link href="/admin/bookings/new">
+              <PlusIcon className="size-4" />
+              New booking
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {webhookStatus && !webhookStatus.healthy && (
@@ -143,6 +183,46 @@ export default async function AdminTodayPage() {
           </div>
         </div>
       </div>
+
+      <DashboardInsights
+        days={insightDays}
+        funnel={funnel}
+        devices={insightSessions.reduce(
+          (acc, session) => {
+            acc[session.device] += 1;
+            return acc;
+          },
+          { mobile: 0, tablet: 0, desktop: 0 }
+        )}
+        quality={insightSessions.reduce(
+          (acc, session) => {
+            const strength = engagementStrength(
+              session.event_count,
+              Number(session.max_scroll_pct)
+            );
+            if (strength === "strong") acc.deep += 1;
+            else if (strength === "weak") acc.active += 1;
+            else if (strength === "veryweak") acc.light += 1;
+            else acc.beacon += 1;
+            return acc;
+          },
+          { deep: 0, active: 0, light: 0, beacon: 0 }
+        )}
+        people={insightSessions
+          .filter(
+            (session, index, all) =>
+              all.findIndex((row) => row.visitor_id === session.visitor_id) ===
+              index
+          )
+          .slice(0, 4)
+          .map((session) => ({
+            id: session.visitor_id,
+            name: describeLocation(session) ?? session.device,
+          }))}
+        uniqueVisitors={
+          new Set(insightSessions.map((session) => session.visitor_id)).size
+        }
+      />
 
       <div className="mt-6">
         <AcquisitionFunnelCard data={funnel} />

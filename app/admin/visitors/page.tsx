@@ -10,14 +10,16 @@ import {
 } from "@/lib/analytics/store";
 import { VisitorCharts } from "@/components/admin/VisitorCharts";
 import type { HeatmapDevice, HeatmapRange } from "@/lib/analytics/types";
-import {
-  ACQUISITION_LABELS,
-  acquisitionLabel,
-} from "@/lib/admin/labels";
-import { describeLocation } from "@/lib/geo";
+import { ACQUISITION_LABELS } from "@/lib/admin/labels";
 import type { AcquisitionChannel } from "@/lib/supabase/server";
-import { formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { CsvDownloadButton } from "@/components/admin/CsvDownloadButton";
+import RecordsTable from "@/components/ui/records-table";
+import {
+  SESSION_STRENGTH_LABELS,
+  sessionCsvRows,
+  visitorToRecord,
+} from "@/lib/admin/recordsRows";
 import { Button } from "@/components/shadcn/button";
 import {
   Card,
@@ -141,11 +143,17 @@ export default async function VisitorsPage({
             {settings.enabled ? " (collection on)" : " (collection off)"}.
           </p>
         </div>
-        {!settings.enabled && (
-          <Button asChild variant="outline" size="sm">
-            <Link href="/admin/settings">Enable in Settings</Link>
-          </Button>
-        )}
+        <div className="flex flex-wrap gap-2">
+          <CsvDownloadButton
+            filename="visitors.csv"
+            rows={sessionCsvRows(visitors)}
+          />
+          {!settings.enabled && (
+            <Button asChild variant="outline" size="sm">
+              <Link href="/admin/settings">Enable in Settings</Link>
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
@@ -230,99 +238,16 @@ export default async function VisitorsPage({
                 : "Turn on Heatmap collection in Settings to start recording visitors."}
             </p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="text-xs text-muted-foreground">
-                  <tr className="border-b border-border">
-                    <th className="py-2 pr-3 font-medium">When</th>
-                    <th className="py-2 pr-3 font-medium">Device</th>
-                    <th className="py-2 pr-3 font-medium">IP</th>
-                    <th className="py-2 pr-3 font-medium">
-                      Source
-                      <span className="block font-normal text-[10px] text-muted-foreground">
-                        channel · utm/referrer
-                      </span>
-                    </th>
-                    <th className="py-2 pr-3 font-medium">Page</th>
-                    <th className="py-2 pr-3 font-medium">Campaign</th>
-                    <th className="py-2 pr-3 font-medium">Visitor</th>
-                    <th className="py-2 font-medium">Session</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {visitors.map((visit) => (
-                    <tr
-                      key={visit.id}
-                      className="border-b border-border last:border-0"
-                    >
-                      <td className="py-2 pr-3 whitespace-nowrap text-muted-foreground">
-                        {formatTimestamp(visit.started_at)}
-                      </td>
-                      <td className="py-2 pr-3 capitalize">{visit.device}</td>
-                      <td className="py-2 pr-3 font-mono text-xs">
-                        <div>{visit.ip ?? "—"}</div>
-                        <div className="mt-0.5 text-[11px] text-muted-foreground">
-                          {describeLocation(visit) ?? "—"}
-                          {Number.isFinite(visit.latitude) &&
-                          Number.isFinite(visit.longitude) ? (
-                            <>
-                              {" "}
-                              <a
-                                href={`https://www.google.com/maps?q=${visit.latitude},${visit.longitude}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="underline decoration-dotted underline-offset-2 hover:text-foreground"
-                              >
-                                karta
-                              </a>
-                            </>
-                          ) : null}
-                        </div>
-                      </td>
-                      <td className="py-2 pr-3">
-                        <div>
-                          {acquisitionLabel(visit.acquisition_channel) ?? "—"}
-                        </div>
-                        <div className="mt-0.5 font-mono text-[11px] text-muted-foreground">
-                          {visit.utm_source
-                            ? [
-                                visit.utm_source,
-                                visit.utm_medium,
-                              ]
-                                .filter(Boolean)
-                                .join(" / ")
-                            : visit.referrer_host
-                              ? visit.referrer_host
-                              : "—"}
-                        </div>
-                      </td>
-                      <td className="py-2 pr-3 font-mono text-xs">
-                        {visit.page}
-                      </td>
-                      <td className="py-2 pr-3 text-xs text-muted-foreground">
-                        {visit.utm_campaign ??
-                          (visit.referrer_host
-                            ? visit.referrer_host
-                            : "—")}
-                      </td>
-                      <td className="py-2 pr-3 font-mono text-[11px] text-muted-foreground">
-                        {visit.visitor_id.length > 14
-                          ? `${visit.visitor_id.slice(0, 14)}…`
-                          : visit.visitor_id}
-                      </td>
-                      <td className="py-2">
-                        <Link
-                          href={`/admin/heatmap/sessions/${visit.id}`}
-                          className="text-primary hover:underline"
-                        >
-                          Open
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <RecordsTable
+              rows={visitors.map(visitorToRecord)}
+              nameLabel="Visitor"
+              categoriesLabel="Source"
+              lastLabel="When"
+              strengthLabel="Session depth"
+              linksLabel="Session"
+              strengthLabels={SESSION_STRENGTH_LABELS}
+              emptyLabel="No visitors in this range yet."
+            />
           )}
 
           {pageCount > 1 && (

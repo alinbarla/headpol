@@ -3,6 +3,7 @@ import { listOverrides } from "@/lib/admin/data";
 import { getBookingRules } from "@/lib/bookingRules";
 import { addDaysToDateKey, stockholmDateKey } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { CsvDownloadButton } from "@/components/admin/CsvDownloadButton";
 import {
   OverrideForm,
   OverrideList,
@@ -27,7 +28,20 @@ export default async function AvailabilityPage() {
 
   return (
     <AdminShell>
-      <h1 className="text-2xl font-bold">Availability</h1>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <h1 className="text-2xl font-bold">Availability</h1>
+        <CsvDownloadButton
+          filename="availability.csv"
+          rows={overrides.map((row) => ({
+            id: row.id,
+            date: row.override_date,
+            start: row.start_time,
+            end: row.end_time,
+            kind: row.kind,
+            note: row.note,
+          }))}
+        />
+      </div>
       <p className="mt-1 text-sm text-muted-foreground">
         Regular opening hours: {openDays || "no days"}. Weekdays{" "}
         {String(rules.startHour).padStart(2, "0")}:00–

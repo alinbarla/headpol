@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState, useState } from "react";
 import type { ActionState } from "@/app/admin/actions";
 import { dismissDroppedVisitorsAction } from "@/app/admin/mail-list/actions";
+import { CsvDownloadButton } from "@/components/admin/CsvDownloadButton";
 import { ActionToast, SubmitButton } from "@/components/admin/SubmitButton";
 import { Button } from "@/components/shadcn/button";
 import type { DroppedVisitor } from "@/lib/analytics/types";
@@ -79,6 +80,19 @@ export function DroppedVisitorTable({ leads }: { leads: DroppedVisitor[] }) {
         >
           Copy emails
         </Button>
+        <CsvDownloadButton
+          filename="mail-list.csv"
+          rows={leads.map((lead) => ({
+            email: lead.email,
+            name: lead.name,
+            phone: lead.phone,
+            address: lead.address,
+            postal_code: lead.postal_code,
+            last_seen_at: lead.last_seen_at,
+            page: lead.page,
+            session_id: lead.session_id,
+          }))}
+        />
       </div>
 
       <div className="overflow-x-auto">

@@ -6,6 +6,7 @@ import { getBookingRules } from "@/lib/bookingRules";
 import { addDaysToDateKey, stockholmDateKey, stockholmTime } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BookingCalendar } from "@/components/admin/BookingCalendar";
+import { CsvDownloadButton } from "@/components/admin/CsvDownloadButton";
 import { Button } from "@/components/shadcn/button";
 
 export const dynamic = "force-dynamic";
@@ -55,12 +56,29 @@ export default async function CalendarPage() {
             </span>
           </p>
         </div>
-        <Button asChild size="sm">
-          <Link href="/admin/bookings/new">
-            <PlusIcon className="size-4" />
-            New booking
-          </Link>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <CsvDownloadButton
+            filename="calendar-bookings.csv"
+            rows={bookings.map((booking) => ({
+              id: booking.id,
+              date: booking.booking_date,
+              time: booking.booking_time,
+              status: booking.status,
+              payment: booking.payment_status,
+              name: booking.customer_name,
+              email: booking.customer_email,
+              phone: booking.customer_phone,
+              address: booking.customer_address,
+              price_ore: booking.price_ore,
+            }))}
+          />
+          <Button asChild size="sm">
+            <Link href="/admin/bookings/new">
+              <PlusIcon className="size-4" />
+              New booking
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <div className="mt-6">

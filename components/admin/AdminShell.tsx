@@ -12,6 +12,7 @@ import {
   LogOutIcon,
   MailIcon,
   MessageSquareIcon,
+  MoreHorizontalIcon,
   SearchIcon,
   SettingsIcon,
   SlidersHorizontalIcon,
@@ -20,6 +21,12 @@ import {
 import { logoutAction } from "@/app/admin/actions";
 import { NotificationBell } from "@/components/admin/NotificationBell";
 import { Button } from "@/components/shadcn/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/shadcn/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -40,11 +47,24 @@ const NAV = [
   { href: "/admin/settings", label: "Settings", icon: SettingsIcon },
 ];
 
+const DOCK = [
+  NAV[0],
+  NAV[2],
+  NAV[5],
+  NAV[6],
+] as const;
+
+const MORE = NAV.filter(
+  (item) => !DOCK.some((dock) => dock.href === item.href)
+);
+
 export function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   const isActive = (href: string, exact?: boolean) =>
     exact ? pathname === href : pathname.startsWith(href);
+
+  const moreActive = MORE.some((item) => isActive(item.href, item.exact));
 
   return (
     <div className="min-h-dvh">
@@ -85,29 +105,59 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      {/* Padding-bottom clears the mobile tab bar. */}
-      <main className="mx-auto max-w-6xl px-4 py-6 pb-24 md:pb-10">
+      <main className="mx-auto max-w-6xl px-4 py-6 pb-28 md:pb-10">
         {children}
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 flex overflow-x-auto border-t border-border bg-background/95 backdrop-blur md:hidden">
-        {NAV.map((item) => {
-          const Icon = item.icon;
-          const active = isActive(item.href, item.exact);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex min-h-14 min-w-16 flex-1 flex-col items-center justify-center gap-0.5 px-2 text-[10px]",
-                active ? "text-primary" : "text-muted-foreground"
-              )}
-            >
-              <Icon className="size-5" />
-              {item.label}
-            </Link>
-          );
-        })}
+      <nav
+        className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center md:hidden"
+        aria-label="Admin"
+      >
+        <div className="pointer-events-auto flex w-[min(100%-1.5rem,26rem)] items-center justify-around rounded-full border border-white/10 bg-zinc-950/80 px-2 py-2 shadow-[0_16px_40px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+          {DOCK.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.href, item.exact);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex min-w-12 flex-col items-center gap-0.5 rounded-full px-3 py-1.5 text-[10px] transition-transform",
+                  active
+                    ? "scale-105 bg-primary/15 text-primary"
+                    : "text-muted-foreground"
+                )}
+              >
+                <Icon className="size-5" />
+                {item.label}
+              </Link>
+            );
+          })}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className={cn(
+                  "flex min-w-12 flex-col items-center gap-0.5 rounded-full px-3 py-1.5 text-[10px]",
+                  moreActive
+                    ? "scale-105 bg-primary/15 text-primary"
+                    : "text-muted-foreground"
+                )}
+                aria-label="More admin pages"
+              >
+                <MoreHorizontalIcon className="size-5" />
+                More
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="top" align="end" className="mb-2 w-48">
+              {MORE.map((item) => (
+                <DropdownMenuItem key={item.href} asChild>
+                  <Link href={item.href}>{item.label}</Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </nav>
     </div>
   );

@@ -20,6 +20,7 @@ import { isPageSpeedConfigured } from "@/lib/seo/pagespeed";
 import { listAuditHistory, latestAuditLogs } from "@/lib/seo/store";
 import { SEO_AUDIT_TYPES, type SeoAuditType } from "@/lib/seo/types";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { CsvDownloadButton } from "@/components/admin/CsvDownloadButton";
 import {
   SeoScoreboard,
   historyToSparks,
@@ -184,11 +185,23 @@ export default async function SeoOverviewPage() {
             tool. Daily tools cool down for an hour; manual tools do not.
           </p>
         </div>
-        <SeoRunForm
-          action={runAllSeoToolsAction}
-          label="Update data"
-          pendingLabel="Updating…"
-        />
+        <div className="flex flex-wrap gap-2">
+          <CsvDownloadButton
+            filename="seo-audits.csv"
+            rows={Object.values(logs)
+              .filter((log): log is NonNullable<typeof log> => Boolean(log))
+              .map((log) => ({
+                type: log.type,
+                created_at: log.created_at,
+                summary: JSON.stringify(log.summary),
+              }))}
+          />
+          <SeoRunForm
+            action={runAllSeoToolsAction}
+            label="Update data"
+            pendingLabel="Updating…"
+          />
+        </div>
       </div>
 
       <SeoScoreboard

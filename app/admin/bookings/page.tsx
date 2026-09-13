@@ -13,6 +13,7 @@ import {
 import { formatOre, fromDbTime } from "@/lib/booking";
 import type { BookingStatus } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { CsvDownloadButton } from "@/components/admin/CsvDownloadButton";
 import { BookingFilters } from "@/components/admin/BookingFilters";
 import { DeleteAllExpiredForm, DeleteBookingButton } from "@/components/admin/BookingActions";
 import { Button } from "@/components/shadcn/button";
@@ -75,12 +76,31 @@ export default async function BookingsPage({
             {total} results. Search by name, phone, email or address.
           </p>
         </div>
-        <Button asChild size="sm">
-          <Link href="/admin/bookings/new">
-            <PlusIcon className="size-4" />
-            New
-          </Link>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <CsvDownloadButton
+            filename="bookings.csv"
+            rows={rows.map((booking) => ({
+              id: booking.id,
+              date: booking.booking_date,
+              time: booking.booking_time,
+              status: booking.status,
+              payment: booking.payment_status,
+              name: booking.customer_name,
+              email: booking.customer_email,
+              phone: booking.customer_phone,
+              address: booking.customer_address,
+              price_ore: booking.price_ore,
+              source: booking.source,
+              channel: booking.acquisition_channel,
+            }))}
+          />
+          <Button asChild size="sm">
+            <Link href="/admin/bookings/new">
+              <PlusIcon className="size-4" />
+              New
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <BookingFilters query={query ?? ""} status={status} />
