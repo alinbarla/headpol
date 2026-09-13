@@ -655,6 +655,32 @@ export async function getSessionById(
   return (data as AnalyticsSession | null) ?? null;
 }
 
+/** Recent human sessions for a known visitor IP (manual booking matcher). */
+export async function listSessionsByIp(options: {
+  ip: string;
+  fromIso?: string;
+  limit?: number;
+}): Promise<AnalyticsSession[]> {
+  const supabase = getSupabaseAdminClient();
+  const fromIso =
+    options.fromIso ??
+    new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+  const { data, error } = await withSupabaseTimeout(
+    supabase
+      .from("analytics_sessions")
+      .select(SESSION_SELECT)
+      .eq("is_bot", false)
+      .eq("ip", options.ip)
+      .gte("started_at", fromIso)
+      .order("started_at", { ascending: false })
+      .limit(options.limit ?? 20)
+  );
+
+  if (error) throw new Error(error.message);
+  return (data ?? []) as AnalyticsSession[];
+}
+
 export async function listSessionEvents(
   sessionId: string
 ): Promise<AnalyticsEventRow[]> {

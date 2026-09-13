@@ -26,7 +26,8 @@ export default async function NewBookingPage() {
       <h1 className="mt-4 text-2xl font-bold">New booking</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         For bookings taken by phone or in person. The slot is confirmed
-        immediately.
+        immediately. You can record how they found you and optionally link a
+        visitor IP or session.
       </p>
 
       <div className="mt-6 max-w-xl">

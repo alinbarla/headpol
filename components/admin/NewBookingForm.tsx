@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { createBookingAction, type ActionState } from "@/app/admin/actions";
 import { ActionToast, SubmitButton } from "@/components/admin/SubmitButton";
+import { ManualBookingTrafficFields } from "@/components/admin/ManualBookingTrafficFields";
 import { Card, CardContent } from "@/components/shadcn/card";
 import { Input } from "@/components/shadcn/input";
 import { Label } from "@/components/shadcn/label";
@@ -134,6 +135,8 @@ export function NewBookingForm({
               </Select>
             </div>
           </div>
+
+          <ManualBookingTrafficFields />
 
           <div className="space-y-1.5">
             <Label htmlFor="priceOre">Price in öre</Label>

@@ -20,7 +20,7 @@ import {
 } from "@/lib/supabase/server";
 
 const BOOKING_COLUMNS =
-  "id, booking_date, booking_time, status, created_at, updated_at, customer_name, customer_email, customer_phone, customer_address, locale, source, payment_status, price_ore, internal_notes, hold_expires_at, rescheduled_from_id, cancelled_at, cancellation_reason, reminder_sent_at, acquisition_channel, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, landing_path, referrer_host";
+  "id, booking_date, booking_time, status, created_at, updated_at, customer_name, customer_email, customer_phone, customer_address, locale, source, payment_status, price_ore, internal_notes, hold_expires_at, rescheduled_from_id, cancelled_at, cancellation_reason, reminder_sent_at, acquisition_channel, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, landing_path, referrer_host, geo_city, geo_region, geo_country, geo_postal_code, geo_latitude, geo_longitude, customer_postal_code, analytics_session_id, visitor_ip";
 
 /** Statuses that occupy a slot; `cancelled` and `expired` release it. */
 export const ACTIVE_STATUSES: BookingStatus[] = [

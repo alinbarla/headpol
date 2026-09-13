@@ -61,6 +61,10 @@ export type BookingRecord = {
   geo_latitude: number | null;
   geo_longitude: number | null;
   customer_postal_code: string | null;
+  /** Optional first-party session linked from a manual booking. */
+  analytics_session_id: string | null;
+  /** Optional visitor IP when the owner knows it (phone booking). */
+  visitor_ip: string | null;
 };
 
 export type PaymentRecord = {
