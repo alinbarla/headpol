@@ -12,11 +12,10 @@ import {
   listSessionScrolls,
   listTrackedPages,
 } from "@/lib/analytics/store";
-import {
-  parseSessionListOrder,
-  type HeatmapDevice,
-  type HeatmapMode,
-  type HeatmapRange,
+import type {
+  HeatmapDevice,
+  HeatmapMode,
+  HeatmapRange,
 } from "@/lib/analytics/types";
 import { SITE_URL } from "@/lib/seo";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -26,8 +25,6 @@ import { HeatmapFilters } from "@/components/admin/heatmap/HeatmapFilters";
 import { HeatmapTabs } from "@/components/admin/heatmap/HeatmapTabs";
 import { HeatmapViewer } from "@/components/admin/heatmap/HeatmapViewer";
 import { ScrollDepthChart } from "@/components/admin/heatmap/ScrollDepthChart";
-import { SessionTable } from "@/components/admin/heatmap/SessionTable";
-import { SessionOrderSelect } from "@/components/admin/SessionOrderSelect";
 import { IncludeOwnIpCheckbox } from "@/components/admin/IncludeOwnIpCheckbox";
 import { Button } from "@/components/shadcn/button";
 import {
@@ -83,7 +80,6 @@ export default async function HeatmapPage({
   const range = parseRange(readParam(params, "range"));
   const device = parseDevice(readParam(params, "device"));
   const mode = parseMode(readParam(params, "mode"));
-  const order = parseSessionListOrder(readParam(params, "order"));
   const includeMine = readParam(params, "includeMine") === "1";
   const fromIso = new Date(Date.now() - RANGE_MS[range]).toISOString();
 
@@ -92,14 +88,12 @@ export default async function HeatmapPage({
   }).catch(() => []);
   const page = readParam(params, "page") ?? pages[0] ?? "/";
 
-  // Sessions list matches Visitors: every visit in range for the device filter,
-  // not only the page selected for the visual heatmap grid.
-  const [sessions, scrolls, eventCount] = await Promise.all([
+  const [pageSessions, scrolls, eventCount] = await Promise.all([
     listRecentSessions({
+      page,
       fromIso,
       device,
-      order,
-      limit: 100,
+      limit: 1,
       includeExcludedIps: includeMine,
     }).catch(() => []),
     listSessionScrolls({
@@ -111,8 +105,7 @@ export default async function HeatmapPage({
     countEventsSince(fromIso, { includeExcludedIps: includeMine }).catch(() => 0),
   ]);
 
-  const pageSession =
-    sessions.find((session) => session.page === page) ?? sessions[0];
+  const pageSession = pageSessions[0];
 
   const gridType = mode === "scroll" ? "click" : mode;
   const gridRows =
@@ -134,6 +127,11 @@ export default async function HeatmapPage({
       <h1 className="text-2xl font-bold">Heatmap</h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Clicks, cursor movement, scroll depth and attention on the public site.
+        Visit lists, replay and delete are on{" "}
+        <Link href="/admin/visitors" className="text-primary hover:underline">
+          Visitors
+        </Link>
+        .
       </p>
 
       {!settings.enabled ? (
@@ -154,7 +152,6 @@ export default async function HeatmapPage({
             range={range}
             device={device}
             mode={mode}
-            order={order}
             includeMine={includeMine}
           />
           <div className="mt-3">
@@ -167,13 +164,11 @@ export default async function HeatmapPage({
             range={range}
             device={device}
             mode={mode}
-            order={order}
             includeMine={includeMine}
           />
 
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <StatCard label="Events in range" value={String(eventCount)} />
-            <StatCard label="Recent sessions" value={String(sessions.length)} />
             <StatCard
               label="Grid points"
               value={mode === "scroll" ? "—" : String(grid.eventCount)}
@@ -227,27 +222,6 @@ export default async function HeatmapPage({
                   <HeatmapLegend />
                 </HeatmapDesktopOnly>
               )}
-            </CardContent>
-          </Card>
-
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle className="text-sm">
-                Recent sessions
-                {device === "all" ? " (all devices)" : ` (${device})`}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-3 text-xs text-muted-foreground">
-                Same visits as Visitors — every device and landing page in this
-                range, including sessions that only sent a visit beacon.
-              </p>
-              <div className="mb-3">
-                <Suspense fallback={null}>
-                  <SessionOrderSelect value={order} />
-                </Suspense>
-              </div>
-              <SessionTable sessions={sessions} listOrder={order} />
             </CardContent>
           </Card>
         </>

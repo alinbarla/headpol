@@ -23,12 +23,8 @@ import { ACQUISITION_LABELS } from "@/lib/admin/labels";
 import type { AcquisitionChannel } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { CsvDownloadButton } from "@/components/admin/CsvDownloadButton";
-import RecordsTable from "@/components/ui/records-table";
-import {
-  SESSION_STRENGTH_LABELS,
-  sessionCsvRows,
-  visitorToRecord,
-} from "@/lib/admin/recordsRows";
+import { VisitorTable } from "@/components/admin/VisitorTable";
+import { sessionCsvRows, visitorToRecord } from "@/lib/admin/recordsRows";
 import { Button } from "@/components/shadcn/button";
 import {
   Card,
@@ -166,9 +162,9 @@ export default async function VisitorsPage({
         <div>
           <h1 className="text-2xl font-bold">Visitors</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Every recorded visit with device, IP and traffic source. Booked visitors
-            are tagged when linked by session or IP. Uses the same Heatmap
-            collection switch in Settings
+            Every recorded visit with device, IP and traffic source. Each row is
+            tagged Booked or Not booked. Replay and delete live here; the Heatmap
+            page is the visual overlay only
             {settings.enabled ? " (collection on)" : " (collection off)"}.
           </p>
         </div>
@@ -272,18 +268,7 @@ export default async function VisitorsPage({
                 : "Turn on Heatmap collection in Settings to start recording visitors."}
             </p>
           ) : (
-            <RecordsTable
-              key={order}
-              rows={tableRows}
-              nameLabel="Visitor"
-              categoriesLabel="Source"
-              lastLabel="When"
-              strengthLabel="Session depth"
-              linksLabel="Session"
-              strengthLabels={SESSION_STRENGTH_LABELS}
-              listOrder={order}
-              emptyLabel="No visitors in this range yet."
-            />
+            <VisitorTable rows={tableRows} listOrder={order} />
           )}
 
           {pageCount > 1 && (

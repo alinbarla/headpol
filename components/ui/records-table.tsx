@@ -52,6 +52,8 @@ const TAG_COLORS: Record<string, string> = {
   Referral: "#3f78ff",
   Unknown: "#7f858d",
   Booked: "#25a878",
+  "Not booked": "#7f858d",
+  "Organic search": "#92b72d",
 };
 
 export const INITIAL_ROWS: RecordsTableRow[] = [
@@ -320,11 +322,11 @@ export default function RecordsTable({
 
   const renderTags = (row: RecordsTableRow) => (
     <div className="records-tags">
-      {row.tags.slice(0, 4).map((tag) => (
+      {row.tags.slice(0, 6).map((tag) => (
         <Tag key={tag} name={tag} />
       ))}
-      {row.tags.length > 4 ? (
-        <span className="records-more-tag">+{row.tags.length - 4}</span>
+      {row.tags.length > 6 ? (
+        <span className="records-more-tag">+{row.tags.length - 6}</span>
       ) : null}
     </div>
   );

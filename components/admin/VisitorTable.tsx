@@ -3,36 +3,31 @@
 import { useActionState, useState } from "react";
 import type { ActionState } from "@/app/admin/actions";
 import { deleteSessionsAction } from "@/app/admin/heatmap/actions";
-import { CsvDownloadButton } from "@/components/admin/CsvDownloadButton";
 import { ActionToast, SubmitButton } from "@/components/admin/SubmitButton";
 import { Button } from "@/components/shadcn/button";
-import RecordsTable from "@/components/ui/records-table";
-import type { AnalyticsSession, SessionListOrder } from "@/lib/analytics/types";
-import {
-  SESSION_STRENGTH_LABELS,
-  sessionCsvRows,
-  sessionToRecord,
-} from "@/lib/admin/recordsRows";
+import RecordsTable, { type RecordsTableRow } from "@/components/ui/records-table";
+import type { SessionListOrder } from "@/lib/analytics/types";
+import { SESSION_STRENGTH_LABELS } from "@/lib/admin/recordsRows";
 
 const initial: ActionState = { ok: true };
 
-export function SessionTable({
-  sessions,
+export function VisitorTable({
+  rows,
   listOrder = "newest",
 }: {
-  sessions: AnalyticsSession[];
+  rows: RecordsTableRow[];
   listOrder?: SessionListOrder;
 }) {
   const [state, formAction] = useActionState(deleteSessionsAction, initial);
   const [selected, setSelected] = useState<string[]>([]);
 
-  if (sessions.length === 0) {
+  if (rows.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground">No sessions in this range.</p>
+      <p className="text-sm text-muted-foreground">No visitors in this range yet.</p>
     );
   }
 
-  const visibleIds = sessions.map((session) => session.id);
+  const visibleIds = rows.map((row) => row.id);
   const allSelected = visibleIds.every((id) => selected.includes(id));
 
   return (
@@ -45,8 +40,8 @@ export function SessionTable({
         }
         const label =
           selected.length === 1
-            ? "Delete this recording permanently?"
-            : `Delete ${selected.length} recordings permanently?`;
+            ? "Delete this visit permanently?"
+            : `Delete ${selected.length} visits permanently?`;
         if (!window.confirm(`${label} This cannot be undone.`)) {
           event.preventDefault();
         }
@@ -74,22 +69,21 @@ export function SessionTable({
         >
           {allSelected ? "Clear selection" : "Select all"}
         </Button>
-        <CsvDownloadButton filename="heatmap-sessions.csv" rows={sessionCsvRows(sessions)} />
       </div>
 
       <RecordsTable
         key={listOrder}
-        rows={sessions.map(sessionToRecord)}
+        rows={rows}
         listOrder={listOrder}
-        nameLabel="Page"
-        categoriesLabel="Device & place"
-        lastLabel="Started"
+        nameLabel="Visitor"
+        categoriesLabel="Device & source"
+        lastLabel="When"
         strengthLabel="Session depth"
         linksLabel="Replay"
         strengthLabels={SESSION_STRENGTH_LABELS}
         selectedIds={selected}
         onSelectedChange={setSelected}
-        emptyLabel="No sessions in this range."
+        emptyLabel="No visitors in this range yet."
       />
     </form>
   );

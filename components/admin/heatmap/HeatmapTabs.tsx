@@ -6,7 +6,6 @@ import type {
   HeatmapDevice,
   HeatmapMode,
   HeatmapRange,
-  SessionListOrder,
 } from "@/lib/analytics/types";
 
 const TABS: Array<{ mode: HeatmapMode; label: string }> = [
@@ -21,14 +20,12 @@ export function HeatmapTabs({
   range,
   device,
   mode,
-  order = "newest",
   includeMine = false,
 }: {
   page: string;
   range: HeatmapRange;
   device: HeatmapDevice | "all";
   mode: HeatmapMode;
-  order?: SessionListOrder;
   includeMine?: boolean;
 }) {
   return (
@@ -40,7 +37,6 @@ export function HeatmapTabs({
           device,
           mode: tab.mode,
         });
-        if (order !== "newest") search.set("order", order);
         if (includeMine) search.set("includeMine", "1");
         const active = tab.mode === mode;
         return (

@@ -25,42 +25,24 @@ function deviceTag(device: string): string {
   return device.charAt(0).toUpperCase() + device.slice(1);
 }
 
-export function sessionToRecord(session: AnalyticsSession): RecordsTableRow {
-  const location = describeLocation(session);
-  const channel = acquisitionLabel(session.acquisition_channel);
-  return {
-    id: session.id,
-    name: session.page,
-    tags: [deviceTag(session.device), location, channel].filter(
-      (value): value is string => Boolean(value)
-    ),
-    last: formatTimestamp(session.started_at),
-    lastAt: session.started_at,
-    device: session.device,
-    source: session.acquisition_channel ?? "unknown",
-    strength: engagementStrength(
-      session.event_count,
-      Number(session.max_scroll_pct)
-    ),
-    href: `/admin/heatmap/sessions/${session.id}`,
-    linkLabel: "Replay",
-  };
-}
-
 export function visitorToRecord(
   session: AnalyticsSession,
-  options?: { booked?: boolean }
+  options: { booked: boolean }
 ): RecordsTableRow {
   const location = describeLocation(session);
   const channel = acquisitionLabel(session.acquisition_channel);
+  const campaign = session.utm_campaign?.trim() || null;
+  const referrer = session.referrer_host?.trim() || null;
   return {
     id: session.id,
     name: location ?? session.ip ?? session.visitor_id,
     tags: [
-      options?.booked ? "Booked" : null,
+      options.booked ? "Booked" : "Not booked",
       deviceTag(session.device),
       channel,
       session.page,
+      campaign,
+      referrer,
     ].filter((value): value is string => Boolean(value)),
     last: formatTimestamp(session.started_at),
     lastAt: session.started_at,
@@ -71,7 +53,7 @@ export function visitorToRecord(
       Number(session.max_scroll_pct)
     ),
     href: `/admin/heatmap/sessions/${session.id}`,
-    linkLabel: "Open",
+    linkLabel: "Replay",
   };
 }
 

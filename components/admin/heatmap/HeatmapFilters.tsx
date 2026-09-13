@@ -8,11 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/shadcn/select";
-import type {
-  HeatmapDevice,
-  HeatmapRange,
-  SessionListOrder,
-} from "@/lib/analytics/types";
+import type { HeatmapDevice, HeatmapRange } from "@/lib/analytics/types";
 
 export function HeatmapFilters({
   page,
@@ -20,7 +16,6 @@ export function HeatmapFilters({
   range,
   device,
   mode,
-  order = "newest",
   includeMine = false,
 }: {
   page: string;
@@ -28,8 +23,6 @@ export function HeatmapFilters({
   range: HeatmapRange;
   device: HeatmapDevice | "all";
   mode: string;
-  /** Kept so page/range/device changes preserve the session-list order. */
-  order?: SessionListOrder;
   includeMine?: boolean;
 }) {
   const router = useRouter();
@@ -45,7 +38,6 @@ export function HeatmapFilters({
     search.set("range", next.range ?? range);
     search.set("device", next.device ?? device);
     search.set("mode", mode);
-    if (order !== "newest") search.set("order", order);
     if (includeMine) search.set("includeMine", "1");
     router.replace(`/admin/heatmap?${search.toString()}`);
   }
@@ -88,8 +80,8 @@ export function HeatmapFilters({
         </SelectContent>
       </Select>
       <p className="w-full text-xs text-muted-foreground sm:pl-0.5">
-        Page filter applies to the heatmap grid. Session list includes every
-        visit in range for the device filter.
+        Page, range and device apply to the heatmap grid. Visit lists live on
+        Visitors.
       </p>
     </div>
   );

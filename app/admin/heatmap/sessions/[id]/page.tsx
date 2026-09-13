@@ -33,7 +33,7 @@ export default async function HeatmapSessionPage({
           </p>
         </div>
         <Button asChild variant="outline" size="sm">
-          <Link href="/admin/heatmap">Back to heatmap</Link>
+          <Link href="/admin/visitors">Back to visitors</Link>
         </Button>
       </div>
 

@@ -75,6 +75,7 @@ export async function deleteSessionsAction(
       details: { ids: parsed.data, deleted },
     });
     revalidatePath("/admin/heatmap");
+    revalidatePath("/admin/visitors");
     return {
       ok: true,
       message:

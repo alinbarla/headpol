@@ -17,13 +17,13 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * Shared Order-by control for Visitors and Heatmap session lists.
+ * Shared Order-by control for the Visitors list.
  * Default is newest → oldest. Persists via the `order` search param.
  */
 export function SessionOrderSelect({
   value,
   className,
-  /** Heatmap keeps `page` as a path; visitors uses numeric pagination. */
+  /** Visitors uses numeric pagination; reset it when changing order. */
   resetPageOnChange = false,
 }: {
   value: SessionListOrder;
