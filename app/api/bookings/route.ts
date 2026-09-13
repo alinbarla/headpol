@@ -16,6 +16,7 @@ import { getAvailabilityOverrides, getBookingRules } from "@/lib/bookingRules";
 import { parseBookingContact } from "@/lib/bookingNotify";
 import { createBookingCheckoutSession, isStripeConfigured } from "@/lib/stripe";
 import { addDaysToDateKey, stockholmDateKey } from "@/lib/time";
+import { clientIpFromRequest } from "@/lib/analytics/rateLimit";
 import { visitorGeo, type VisitorGeo } from "@/lib/geo";
 import {
   getSupabaseAdminClient,
@@ -202,6 +203,7 @@ export async function POST(request: Request) {
       priceOre: rules.priceOre,
       attribution: body.attribution ?? null,
       geo: visitorGeo(request.headers),
+      visitorIp: clientIpFromRequest(request),
     });
 
     if ("error" in booking) {
@@ -271,6 +273,7 @@ async function insertBooking(input: {
   priceOre: number;
   attribution?: Partial<AttributionInput> | null;
   geo?: VisitorGeo | null;
+  visitorIp?: string | null;
 }): Promise<InsertResult> {
   const supabase = getSupabaseAdminClient();
   const classified = classifyAcquisition(input.attribution);
@@ -308,6 +311,7 @@ async function insertBooking(input: {
     geo_postal_code: geo?.postal_code ?? null,
     geo_latitude: geo?.latitude ?? null,
     geo_longitude: geo?.longitude ?? null,
+    visitor_ip: input.visitorIp ?? null,
   };
 
   const attempt = async () =>

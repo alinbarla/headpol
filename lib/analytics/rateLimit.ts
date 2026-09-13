@@ -40,12 +40,17 @@ export function ingestAllowed(ip: string | null): boolean {
   return true;
 }
 
-function sanitizeIp(value: string | null): string | null {
+/** Normalize a typed or header IP; returns null when empty or invalid. */
+export function sanitizeVisitorIp(value: string | null | undefined): string | null {
   if (!value) return null;
   const ip = value.trim();
   if (!ip || ip.length > MAX_IP_LENGTH) return null;
   if (!/^[0-9a-fA-F.:]+$/.test(ip)) return null;
   return ip;
+}
+
+function sanitizeIp(value: string | null): string | null {
+  return sanitizeVisitorIp(value);
 }
 
 export function clientIpFromRequest(request: Request): string | null {

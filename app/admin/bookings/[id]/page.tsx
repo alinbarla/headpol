@@ -268,6 +268,16 @@ export default async function BookingDetailPage({
             />
             <Row label="Landing" value={booking.landing_path} />
             <Row label="Referrer" value={booking.referrer_host} />
+            <Row label="Visitor IP" value={booking.visitor_ip} />
+            <Row
+              label="Visitor session"
+              value={booking.analytics_session_id ? "Open replay" : null}
+              href={
+                booking.analytics_session_id
+                  ? `/admin/heatmap/sessions/${booking.analytics_session_id}`
+                  : undefined
+              }
+            />
             <Row
               label="Google Ads click"
               value={

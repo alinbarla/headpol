@@ -7,6 +7,17 @@ import { logAdminAction, login, logout, requireAdmin } from "@/lib/admin/auth";
 import { getBookingById, getPaymentsForBooking } from "@/lib/admin/data";
 import { BOOKING_STATUS_LABELS } from "@/lib/admin/labels";
 import {
+  getSessionById,
+  listSessionsByIp,
+} from "@/lib/analytics/store";
+import { sanitizeVisitorIp } from "@/lib/analytics/rateLimit";
+import type { AnalyticsSession } from "@/lib/analytics/types";
+import {
+  MANUAL_REFERRAL_OTHER,
+  MAX_REFERRER_HOST_LENGTH,
+} from "@/lib/attribution/constants";
+import { sanitizeReferrerHost } from "@/lib/attribution/classify";
+import {
   isSlotOpen,
   mergeHourSlotsToRanges,
   parseBookingRules,
@@ -21,9 +32,9 @@ import {
 } from "@/lib/bookingNotify";
 import {
   createBookingCheckoutSession,
-    fetchStripeReceipt,
+  fetchStripeReceipt,
   isStripeConfigured,
-    repairStripeWebhookEndpoint,
+  repairStripeWebhookEndpoint,
   sendStripeReceiptEmail,
 } from "@/lib/stripe";
 import {
@@ -34,7 +45,10 @@ import {
 } from "@/lib/admin/notifications";
 import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
 import { refundBookingPayment } from "@/lib/stripeRefund";
-import { getSupabaseAdminClient } from "@/lib/supabase/server";
+import {
+  getSupabaseAdminClient,
+  type AcquisitionChannel,
+} from "@/lib/supabase/server";
 import {
   addDaysToDateKey,
   slotIsPast,
@@ -111,6 +125,14 @@ export async function logoutAction(): Promise<void> {
 
 // -- Bookings ---------------------------------------------------------------
 
+const acquisitionChannel = z.enum([
+  "google_ads",
+  "organic_search",
+  "direct",
+  "referral",
+  "unknown",
+]);
+
 const createBookingSchema = z.object({
   date: dateKey,
   time: timeKey,
@@ -123,13 +145,142 @@ const createBookingSchema = z.object({
   priceOre: z.coerce.number().int().min(0).max(10_000_000),
   notes: z.string().trim().max(2000).optional(),
   sendPaymentLink: z.boolean().default(false),
+  acquisitionChannel: acquisitionChannel.optional().nullable(),
+  referrerHost: z.string().trim().max(MAX_REFERRER_HOST_LENGTH).optional(),
+  visitorIp: z.string().trim().max(45).optional(),
+  analyticsSessionId: uuid.optional().nullable(),
 });
+
+export type SessionMatch = {
+  id: string;
+  page: string;
+  device: string;
+  started_at: string;
+  acquisition_channel: AcquisitionChannel | null;
+  referrer_host: string | null;
+  ip: string | null;
+  city: string | null;
+  country: string | null;
+};
+
+function toSessionMatch(session: AnalyticsSession): SessionMatch {
+  return {
+    id: session.id,
+    page: session.page,
+    device: session.device,
+    started_at: session.started_at,
+    acquisition_channel: session.acquisition_channel,
+    referrer_host: session.referrer_host,
+    ip: session.ip,
+    city: session.city,
+    country: session.country,
+  };
+}
+
+export async function findSessionsByIpAction(
+  ipRaw: string
+): Promise<{ ok: boolean; message?: string; sessions?: SessionMatch[] }> {
+  await requireAdmin();
+
+  const ip = sanitizeVisitorIp(ipRaw);
+  if (!ip) {
+    return { ok: false, message: "Enter a valid IPv4 or IPv6 address" };
+  }
+
+  try {
+    const sessions = await listSessionsByIp({ ip });
+    return { ok: true, sessions: sessions.map(toSessionMatch) };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Lookup failed",
+    };
+  }
+}
+
+function resolveManualAcquisition(input: {
+  acquisitionChannel: AcquisitionChannel | null | undefined;
+  referrerHost?: string;
+  session: AnalyticsSession | null;
+}): {
+  acquisition_channel: AcquisitionChannel | null;
+  referrer_host: string | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_content: string | null;
+  utm_term: string | null;
+  gclid: string | null;
+  landing_path: string | null;
+} {
+  const manualChannel =
+    input.acquisitionChannel && input.acquisitionChannel !== "unknown"
+      ? input.acquisitionChannel
+      : null;
+
+  if (manualChannel) {
+    const referrerHost =
+      manualChannel === "referral"
+        ? sanitizeReferrerHost(input.referrerHost) ??
+          (input.session?.acquisition_channel === "referral"
+            ? input.session.referrer_host
+            : null)
+        : null;
+
+    return {
+      acquisition_channel: manualChannel,
+      referrer_host: referrerHost,
+      utm_source: null,
+      utm_medium: null,
+      utm_campaign: null,
+      utm_content: null,
+      utm_term: null,
+      gclid: null,
+      landing_path: null,
+    };
+  }
+
+  if (input.session) {
+    return {
+      acquisition_channel: input.session.acquisition_channel,
+      referrer_host: input.session.referrer_host,
+      utm_source: input.session.utm_source,
+      utm_medium: input.session.utm_medium,
+      utm_campaign: input.session.utm_campaign,
+      utm_content: input.session.utm_content,
+      utm_term: input.session.utm_term,
+      gclid: input.session.gclid,
+      landing_path: input.session.landing_path,
+    };
+  }
+
+  return {
+    acquisition_channel: null,
+    referrer_host: null,
+    utm_source: null,
+    utm_medium: null,
+    utm_campaign: null,
+    utm_content: null,
+    utm_term: null,
+    gclid: null,
+    landing_path: null,
+  };
+}
 
 export async function createBookingAction(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
   await requireAdmin();
+
+  const acquisitionRaw = String(formData.get("acquisitionChannel") ?? "").trim();
+  const sessionRaw = String(formData.get("analyticsSessionId") ?? "").trim();
+  const referrerPreset = String(formData.get("referrerPreset") ?? "").trim();
+  const referrerOther = String(formData.get("referrerHost") ?? "").trim();
+  const referrerHost =
+    referrerPreset && referrerPreset !== MANUAL_REFERRAL_OTHER
+      ? referrerPreset
+      : referrerOther;
 
   const parsed = createBookingSchema.safeParse({
     date: formData.get("date"),
@@ -143,6 +294,13 @@ export async function createBookingAction(
     priceOre: formData.get("priceOre"),
     notes: formData.get("notes") ?? undefined,
     sendPaymentLink: formData.get("sendPaymentLink") === "on",
+    acquisitionChannel:
+      acquisitionRaw === "" || acquisitionRaw === "none"
+        ? null
+        : acquisitionRaw,
+    referrerHost: referrerHost || undefined,
+    visitorIp: String(formData.get("visitorIp") ?? "").trim() || undefined,
+    analyticsSessionId: sessionRaw === "" ? null : sessionRaw,
   });
 
   if (!parsed.success) return fail(firstIssue(parsed.error));
@@ -150,6 +308,33 @@ export async function createBookingAction(
 
   const conflict = await slotConflict(input.date, input.time);
   if (conflict) return fail(conflict);
+
+  const visitorIp = sanitizeVisitorIp(input.visitorIp);
+  if (input.visitorIp && !visitorIp) {
+    return fail("Enter a valid IPv4 or IPv6 address, or leave IP blank");
+  }
+
+  let session: AnalyticsSession | null = null;
+  if (input.analyticsSessionId) {
+    session = await getSessionById(input.analyticsSessionId);
+    if (!session) return fail("That visitor session was not found");
+    if (visitorIp && session.ip && session.ip !== visitorIp) {
+      return fail("The selected session does not match that IP");
+    }
+  }
+
+  const attribution = resolveManualAcquisition({
+    acquisitionChannel: input.acquisitionChannel,
+    referrerHost: input.referrerHost,
+    session,
+  });
+
+  if (
+    attribution.acquisition_channel === "referral" &&
+    !attribution.referrer_host
+  ) {
+    return fail("Choose where the referral came from (e.g. ChatGPT)");
+  }
 
   const supabase = getSupabaseAdminClient();
   const { data, error } = await supabase
@@ -168,6 +353,23 @@ export async function createBookingAction(
       customer_address: input.address,
       locale: input.locale,
       internal_notes: input.notes ?? null,
+      acquisition_channel: attribution.acquisition_channel,
+      utm_source: attribution.utm_source,
+      utm_medium: attribution.utm_medium,
+      utm_campaign: attribution.utm_campaign,
+      utm_content: attribution.utm_content,
+      utm_term: attribution.utm_term,
+      gclid: attribution.gclid,
+      landing_path: attribution.landing_path,
+      referrer_host: attribution.referrer_host,
+      analytics_session_id: session?.id ?? null,
+      visitor_ip: visitorIp ?? session?.ip ?? null,
+      geo_city: session?.city ?? null,
+      geo_region: session?.region ?? null,
+      geo_country: session?.country ?? null,
+      geo_postal_code: session?.postal_code ?? null,
+      geo_latitude: session?.latitude ?? null,
+      geo_longitude: session?.longitude ?? null,
     })
     .select("id")
     .single();
@@ -182,7 +384,14 @@ export async function createBookingAction(
   await logAdminAction("booking.create", {
     entityType: "booking",
     entityId: bookingId,
-    details: { date: input.date, time: input.time, source: input.source },
+    details: {
+      date: input.date,
+      time: input.time,
+      source: input.source,
+      acquisitionChannel: attribution.acquisition_channel,
+      visitorIp: visitorIp ?? session?.ip ?? null,
+      analyticsSessionId: session?.id ?? null,
+    },
   });
 
   await notifyOwnerBooking({
