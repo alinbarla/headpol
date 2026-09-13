@@ -35,6 +35,7 @@ import {
   CardTitle,
 } from "@/components/shadcn/card";
 import { cn } from "@/lib/utils";
+import { referrerSourceLabel } from "@/lib/attribution/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -174,6 +175,13 @@ export default async function VisitorDetailPage({
           <CardContent className="space-y-2 text-sm">
             <Row label="Channel" value={channel ?? "Unknown"} />
             <Row label="Landing" value={session.landing_path} />
+            <Row
+              label="Source"
+              value={referrerSourceLabel(
+                session.referrer_host,
+                session.utm_source
+              )}
+            />
             <Row label="Referrer host" value={session.referrer_host} />
             <Row label="Referrer" value={session.referrer} />
             <Row label="UTM source" value={session.utm_source} />

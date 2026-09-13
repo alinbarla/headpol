@@ -9,6 +9,7 @@ import type {
   FunnelMetrics,
 } from "@/lib/admin/funnel";
 import { formatOre } from "@/lib/booking";
+import { referrerSourceLabel } from "@/lib/attribution/constants";
 
 function rate(numerator: number, denominator: number): string {
   if (denominator <= 0) return "—";
@@ -135,8 +136,24 @@ export function AcquisitionFunnelCard({
                           key={`${row.channel}:${row.referrerHost}`}
                           className="border-b border-border/70 last:border-0"
                         >
-                          <td className="px-3 py-2 font-mono text-xs">
-                            {row.referrerHost}
+                          <td className="px-3 py-2 text-xs">
+                            {(() => {
+                              const label = referrerSourceLabel(row.referrerHost);
+                              const showHost =
+                                Boolean(label) && label !== row.referrerHost;
+                              return (
+                                <>
+                                  <span className="font-medium">
+                                    {label ?? row.referrerHost}
+                                  </span>
+                                  {showHost ? (
+                                    <span className="mt-0.5 block font-mono text-[10px] text-muted-foreground">
+                                      {row.referrerHost}
+                                    </span>
+                                  ) : null}
+                                </>
+                              );
+                            })()}
                           </td>
                           <td className="px-3 py-2 text-muted-foreground">
                             {row.channelLabel}

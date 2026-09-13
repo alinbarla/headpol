@@ -1,4 +1,5 @@
 import { acquisitionLabel } from "@/lib/admin/labels";
+import { referrerSourceLabel } from "@/lib/attribution/constants";
 import type { RecordsTableRow, Strength } from "@/components/ui/records-table";
 import type { AnalyticsSession } from "@/lib/analytics/types";
 import { describeLocation } from "@/lib/geo";
@@ -32,7 +33,10 @@ export function visitorToRecord(
   const location = describeLocation(session);
   const channel = acquisitionLabel(session.acquisition_channel);
   const campaign = session.utm_campaign?.trim() || null;
-  const referrer = session.referrer_host?.trim() || null;
+  const referrer = referrerSourceLabel(
+    session.referrer_host,
+    session.utm_source
+  );
   return {
     id: session.id,
     name: location ?? session.ip ?? session.visitor_id,
