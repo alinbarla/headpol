@@ -250,6 +250,79 @@ export async function listPayments(
   return (data ?? []) as PaymentLedgerRow[];
 }
 
+/** Session / IP / visitor keys that belong to a real (non-expired) booking. */
+export type BookedVisitorMarkers = {
+  sessionIds: Set<string>;
+  ips: Set<string>;
+  visitorIds: Set<string>;
+};
+
+export function isVisitorBooked(
+  session: { id: string; ip: string | null; visitor_id: string },
+  markers: BookedVisitorMarkers
+): boolean {
+  if (markers.sessionIds.has(session.id)) return true;
+  if (session.visitor_id && markers.visitorIds.has(session.visitor_id)) {
+    return true;
+  }
+  if (session.ip && markers.ips.has(session.ip)) return true;
+  return false;
+}
+
+/**
+ * Builds lookup sets so the Visitors list can tag rows as Booked when a
+ * booking is linked by session id or visitor IP (manual or web).
+ */
+export async function getBookedVisitorMarkers(): Promise<BookedVisitorMarkers> {
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("analytics_session_id, visitor_ip")
+    .neq("status", "expired")
+    .or("analytics_session_id.not.is.null,visitor_ip.not.is.null")
+    .limit(2000);
+
+  if (error) {
+    console.error("[admin] getBookedVisitorMarkers failed", error.message);
+    return {
+      sessionIds: new Set(),
+      ips: new Set(),
+      visitorIds: new Set(),
+    };
+  }
+
+  const sessionIds = new Set<string>();
+  const ips = new Set<string>();
+  for (const row of data ?? []) {
+    const sessionId = row.analytics_session_id as string | null;
+    const ip = row.visitor_ip as string | null;
+    if (sessionId) sessionIds.add(sessionId);
+    if (ip) ips.add(ip);
+  }
+
+  const visitorIds = new Set<string>();
+  if (sessionIds.size > 0) {
+    const { data: sessions, error: sessionError } = await supabase
+      .from("analytics_sessions")
+      .select("id, visitor_id")
+      .in("id", [...sessionIds]);
+
+    if (sessionError) {
+      console.error(
+        "[admin] getBookedVisitorMarkers sessions failed",
+        sessionError.message
+      );
+    } else {
+      for (const session of sessions ?? []) {
+        const visitorId = session.visitor_id as string | null;
+        if (visitorId) visitorIds.add(visitorId);
+      }
+    }
+  }
+
+  return { sessionIds, ips, visitorIds };
+}
+
 export async function listRefunds(
   fromDateKey: string,
   toDateKey: string

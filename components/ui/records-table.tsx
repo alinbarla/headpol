@@ -51,6 +51,7 @@ const TAG_COLORS: Record<string, string> = {
   Direct: "#25a878",
   Referral: "#3f78ff",
   Unknown: "#7f858d",
+  Booked: "#25a878",
 };
 
 export const INITIAL_ROWS: RecordsTableRow[] = [

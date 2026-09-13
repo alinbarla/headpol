@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { requireAdmin } from "@/lib/admin/auth";
+import {
+  getBookedVisitorMarkers,
+  isVisitorBooked,
+} from "@/lib/admin/data";
 import { RANGE_MS } from "@/lib/analytics/constants";
 import { getAnalyticsSettings } from "@/lib/analytics/settings";
 import {
@@ -119,10 +123,15 @@ export default async function VisitorsPage({
   let visitors: Awaited<ReturnType<typeof listVisitors>> = [];
   let total = 0;
   let chartRows: Awaited<ReturnType<typeof listVisitorChartRows>> = [];
+  let bookedMarkers: Awaited<ReturnType<typeof getBookedVisitorMarkers>> = {
+    sessionIds: new Set(),
+    ips: new Set(),
+    visitorIds: new Set(),
+  };
   let loadError: string | null = null;
 
   try {
-    [visitors, total, chartRows] = await Promise.all([
+    [visitors, total, chartRows, bookedMarkers] = await Promise.all([
       listVisitors({
         fromIso,
         device,
@@ -134,6 +143,7 @@ export default async function VisitorsPage({
       }),
       countVisitors({ fromIso, device, channel, includeExcludedIps: includeMine }),
       listVisitorChartRows({ fromIso, device, channel, includeExcludedIps: includeMine }),
+      getBookedVisitorMarkers(),
     ]);
   } catch (error) {
     loadError =
@@ -141,6 +151,14 @@ export default async function VisitorsPage({
   }
 
   const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const tableRows = visitors.map((session) =>
+    visitorToRecord(session, { booked: isVisitorBooked(session, bookedMarkers) })
+  );
+  const csvRows = sessionCsvRows(visitors, {
+    bookedSessionIds: bookedMarkers.sessionIds,
+    bookedIps: bookedMarkers.ips,
+    bookedVisitorIds: bookedMarkers.visitorIds,
+  });
 
   return (
     <AdminShell>
@@ -148,15 +166,16 @@ export default async function VisitorsPage({
         <div>
           <h1 className="text-2xl font-bold">Visitors</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Every recorded visit with device, IP and traffic source. Uses the
-            same Heatmap collection switch in Settings
+            Every recorded visit with device, IP and traffic source. Booked visitors
+            are tagged when linked by session or IP. Uses the same Heatmap
+            collection switch in Settings
             {settings.enabled ? " (collection on)" : " (collection off)"}.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <CsvDownloadButton
             filename="visitors.csv"
-            rows={sessionCsvRows(visitors)}
+            rows={csvRows}
           />
           {!settings.enabled && (
             <Button asChild variant="outline" size="sm">
@@ -255,7 +274,7 @@ export default async function VisitorsPage({
           ) : (
             <RecordsTable
               key={order}
-              rows={visitors.map(visitorToRecord)}
+              rows={tableRows}
               nameLabel="Visitor"
               categoriesLabel="Source"
               lastLabel="When"

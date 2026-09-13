@@ -47,15 +47,21 @@ export function sessionToRecord(session: AnalyticsSession): RecordsTableRow {
   };
 }
 
-export function visitorToRecord(session: AnalyticsSession): RecordsTableRow {
+export function visitorToRecord(
+  session: AnalyticsSession,
+  options?: { booked?: boolean }
+): RecordsTableRow {
   const location = describeLocation(session);
   const channel = acquisitionLabel(session.acquisition_channel);
   return {
     id: session.id,
     name: location ?? session.ip ?? session.visitor_id,
-    tags: [deviceTag(session.device), channel, session.page].filter(
-      (value): value is string => Boolean(value)
-    ),
+    tags: [
+      options?.booked ? "Booked" : null,
+      deviceTag(session.device),
+      channel,
+      session.page,
+    ].filter((value): value is string => Boolean(value)),
     last: formatTimestamp(session.started_at),
     lastAt: session.started_at,
     device: session.device,
@@ -69,23 +75,35 @@ export function visitorToRecord(session: AnalyticsSession): RecordsTableRow {
   };
 }
 
-export function sessionCsvRows(sessions: AnalyticsSession[]) {
-  return sessions.map((session) => ({
-    id: session.id,
-    started_at: session.started_at,
-    page: session.page,
-    device: session.device,
-    ip: session.ip,
-    city: session.city,
-    region: session.region,
-    country: session.country,
-    events: session.event_count,
-    max_scroll_pct: session.max_scroll_pct,
-    visitor_id: session.visitor_id,
-    channel: session.acquisition_channel,
-    utm_source: session.utm_source,
-    utm_medium: session.utm_medium,
-    utm_campaign: session.utm_campaign,
-    referrer: session.referrer_host ?? session.referrer,
-  }));
+export function sessionCsvRows(
+  sessions: AnalyticsSession[],
+  options?: { bookedSessionIds?: Set<string>; bookedIps?: Set<string>; bookedVisitorIds?: Set<string> }
+) {
+  return sessions.map((session) => {
+    const booked =
+      options?.bookedSessionIds?.has(session.id) ||
+      (session.visitor_id
+        ? options?.bookedVisitorIds?.has(session.visitor_id)
+        : false) ||
+      (session.ip ? options?.bookedIps?.has(session.ip) : false);
+    return {
+      id: session.id,
+      started_at: session.started_at,
+      page: session.page,
+      device: session.device,
+      ip: session.ip,
+      city: session.city,
+      region: session.region,
+      country: session.country,
+      events: session.event_count,
+      max_scroll_pct: session.max_scroll_pct,
+      visitor_id: session.visitor_id,
+      channel: session.acquisition_channel,
+      utm_source: session.utm_source,
+      utm_medium: session.utm_medium,
+      utm_campaign: session.utm_campaign,
+      referrer: session.referrer_host ?? session.referrer,
+      booked: booked ? "yes" : "no",
+    };
+  });
 }
