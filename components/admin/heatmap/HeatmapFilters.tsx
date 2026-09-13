@@ -13,7 +13,6 @@ import type {
   HeatmapRange,
   SessionListOrder,
 } from "@/lib/analytics/types";
-import { SESSION_LIST_ORDER_LABELS } from "@/lib/analytics/types";
 
 export function HeatmapFilters({
   page,
@@ -29,6 +28,7 @@ export function HeatmapFilters({
   range: HeatmapRange;
   device: HeatmapDevice | "all";
   mode: string;
+  /** Kept so page/range/device changes preserve the session-list order. */
   order?: SessionListOrder;
   includeMine?: boolean;
 }) {
@@ -39,15 +39,13 @@ export function HeatmapFilters({
     page?: string;
     range?: string;
     device?: string;
-    order?: string;
   }) {
     const search = new URLSearchParams();
     search.set("page", next.page ?? page);
     search.set("range", next.range ?? range);
     search.set("device", next.device ?? device);
     search.set("mode", mode);
-    const nextOrder = next.order ?? order;
-    if (nextOrder !== "newest") search.set("order", nextOrder);
+    if (order !== "newest") search.set("order", order);
     if (includeMine) search.set("includeMine", "1");
     router.replace(`/admin/heatmap?${search.toString()}`);
   }
@@ -89,23 +87,9 @@ export function HeatmapFilters({
           <SelectItem value="mobile">Mobile</SelectItem>
         </SelectContent>
       </Select>
-
-      <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">
-        <span className="font-medium text-foreground">Order by</span>
-        <Select value={order} onValueChange={(value) => replace({ order: value })}>
-          <SelectTrigger className="h-9 sm:w-40" aria-label="Order sessions by">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="newest">{SESSION_LIST_ORDER_LABELS.newest}</SelectItem>
-            <SelectItem value="device">{SESSION_LIST_ORDER_LABELS.device}</SelectItem>
-            <SelectItem value="source">{SESSION_LIST_ORDER_LABELS.source}</SelectItem>
-          </SelectContent>
-        </Select>
-      </label>
       <p className="w-full text-xs text-muted-foreground sm:pl-0.5">
         Page filter applies to the heatmap grid. Session list includes every
-        visit in range for the device filter. Order sorts the session list.
+        visit in range for the device filter.
       </p>
     </div>
   );

@@ -27,6 +27,7 @@ import { HeatmapTabs } from "@/components/admin/heatmap/HeatmapTabs";
 import { HeatmapViewer } from "@/components/admin/heatmap/HeatmapViewer";
 import { ScrollDepthChart } from "@/components/admin/heatmap/ScrollDepthChart";
 import { SessionTable } from "@/components/admin/heatmap/SessionTable";
+import { SessionOrderSelect } from "@/components/admin/SessionOrderSelect";
 import { IncludeOwnIpCheckbox } from "@/components/admin/IncludeOwnIpCheckbox";
 import { Button } from "@/components/shadcn/button";
 import {
@@ -241,6 +242,11 @@ export default async function HeatmapPage({
                 Same visits as Visitors — every device and landing page in this
                 range, including sessions that only sent a visit beacon.
               </p>
+              <div className="mb-3">
+                <Suspense fallback={null}>
+                  <SessionOrderSelect value={order} />
+                </Suspense>
+              </div>
               <SessionTable sessions={sessions} listOrder={order} />
             </CardContent>
           </Card>
