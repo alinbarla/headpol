@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { revalidatePath } from "next/cache";
 import {
   getSupabaseAdminClient,
@@ -7,8 +8,6 @@ import {
 } from "@/lib/supabase/server";
 
 const MAX_REVIEWS = 5;
-/** Prefer the stored snapshot unless it is older than this. */
-const STORE_MAX_AGE_MS = 36 * 60 * 60 * 1000;
 const GOOGLE_REVIEWS_SETTINGS_KEY = "google_place_reviews";
 const FIELD_MASK = [
   "rating",
@@ -215,17 +214,6 @@ export async function getStoredPlaceReviewsSnapshot(): Promise<PlaceReviewsSnaps
   };
 }
 
-function isFresh(stored: StoredPlaceReviews, now = Date.now()): boolean {
-  const fetchedAt = Date.parse(stored.fetchedAt);
-  if (!Number.isFinite(fetchedAt)) return false;
-  return now - fetchedAt < STORE_MAX_AGE_MS;
-}
-
-/** Older snapshots predate Maps profile URIs — refresh once. */
-function hasMapsLinks(stored: StoredPlaceReviews): boolean {
-  return Boolean(stored.googleMapsUri || stored.reviewsUri);
-}
-
 async function readStoredPlaceReviews(): Promise<StoredPlaceReviews | null> {
   try {
     const supabase = getSupabaseAdminClient();
@@ -269,8 +257,8 @@ async function writeStoredPlaceReviews(
 }
 
 /**
- * Live Place Details call. Always uncached — used by the background refresh
- * and as a bootstrap when the store is empty.
+ * Live Place Details call. Always uncached (`cache: "no-store"`) — used on
+ * every public page load and by the background / admin refresh.
  */
 export async function fetchPlaceReviewsFromGoogle(): Promise<PlaceReviewsData> {
   const apiKey = getPlacesApiKey();
@@ -407,19 +395,13 @@ export async function refreshPlaceReviews(): Promise<RefreshPlaceReviewsResult> 
 }
 
 /**
- * Homepage reader. Prefer the background-fetched snapshot; bootstrap from
- * Google when the store is empty or stale so the section still appears.
+ * Public reader (layout AggregateRating, homepage reviews, LiveReviewRating,
+ * /api/reviews). Always hits Google on each request; React `cache` dedupes
+ * within a single render. Falls back to the stored snapshot if Places is
+ * misconfigured or Google returns nothing.
  */
-export async function getPlaceReviews(): Promise<PlaceReviewsData> {
+export const getPlaceReviews = cache(async (): Promise<PlaceReviewsData> => {
   const stored = await readStoredPlaceReviews();
-  if (
-    stored &&
-    isFresh(stored) &&
-    stored.reviews.length > 0 &&
-    hasMapsLinks(stored)
-  ) {
-    return toPublicPlaceReviews(stored);
-  }
 
   if (!isPlacesConfigured()) {
     if (stored?.reviews.length) {
@@ -439,8 +421,8 @@ export async function getPlaceReviews(): Promise<PlaceReviewsData> {
   try {
     await writeStoredPlaceReviews(live);
   } catch (err) {
-    console.error("[places] Bootstrap store failed:", err);
+    console.error("[places] Store update after live fetch failed:", err);
   }
 
   return live;
-}
+});
