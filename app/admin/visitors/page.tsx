@@ -224,10 +224,7 @@ export default async function VisitorsPage({
         ))}
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-3">
-        <Suspense fallback={null}>
-          <SessionOrderSelect value={order} resetPageOnChange />
-        </Suspense>
+      <div className="mt-3">
         <Suspense fallback={null}>
           <IncludeOwnIpCheckbox checked={includeMine} />
         </Suspense>
@@ -242,6 +239,11 @@ export default async function VisitorsPage({
           </CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="mb-3">
+            <Suspense fallback={null}>
+              <SessionOrderSelect value={order} resetPageOnChange />
+            </Suspense>
+          </div>
           {loadError ? (
             <p className="text-sm text-destructive">{loadError}</p>
           ) : visitors.length === 0 ? (
