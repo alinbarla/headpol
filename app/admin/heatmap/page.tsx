@@ -241,7 +241,7 @@ export default async function HeatmapPage({
                 Same visits as Visitors — every device and landing page in this
                 range, including sessions that only sent a visit beacon.
               </p>
-              <SessionTable sessions={sessions} />
+              <SessionTable sessions={sessions} listOrder={order} />
             </CardContent>
           </Card>
         </>

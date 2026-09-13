@@ -10,6 +10,10 @@ export type RecordsTableRow = {
   name: string;
   tags: string[];
   last: string;
+  /** ISO timestamp for chronological sorting (preferred over formatted `last`). */
+  lastAt?: string;
+  device?: string;
+  source?: string;
   strength: Strength;
   website?: string;
   href?: string;
@@ -191,10 +195,11 @@ function HeaderCell({
   label: string;
   icon: ReactNode;
   sortKey?: SortKey;
-  sort: { key: SortKey; dir: 1 | -1 };
+  sort: { key: SortKey; dir: 1 | -1 } | null;
   onSort: (key: SortKey) => void;
   className?: string;
 }) {
+  const active = Boolean(sortKey && sort && sort.key === sortKey);
   return (
     <th className={`records-header-cell ${className}`}>
       <button
@@ -206,12 +211,10 @@ function HeaderCell({
         <span className="truncate">{label}</span>
         {sortKey && (
           <span
-            className={`records-sort ${sort.key === sortKey ? "is-visible" : ""}`}
+            className={`records-sort ${active ? "is-visible" : ""}`}
             style={{
               transform:
-                sort.key === sortKey && sort.dir === -1
-                  ? "rotate(180deg)"
-                  : undefined,
+                active && sort?.dir === -1 ? "rotate(180deg)" : undefined,
             }}
           >
             <Icon size={12}>
@@ -235,6 +238,11 @@ export type RecordsTableProps = {
   selectedIds?: string[];
   onSelectedChange?: (ids: string[]) => void;
   emptyLabel?: string;
+  /**
+   * Server-driven list order. When set, the table keeps that order until the
+   * user clicks a column header. Changing this resets column sorting.
+   */
+  listOrder?: "newest" | "device" | "source";
 };
 
 export default function RecordsTable({
@@ -248,24 +256,31 @@ export default function RecordsTable({
   selectedIds,
   onSelectedChange,
   emptyLabel = "No records.",
+  listOrder = "newest",
 }: RecordsTableProps) {
   const [uncontrolled, setUncontrolled] = useState<string[]>([]);
-  const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 }>({
-    key: "name",
-    dir: 1,
-  });
+  // null = keep the server/listOrder sequence (newest→oldest by default).
+  const [sort, setSort] = useState<{ key: SortKey; dir: 1 | -1 } | null>(null);
 
   const selected = selectedIds ?? uncontrolled;
   const setSelected = onSelectedChange ?? setUncontrolled;
 
   const visibleRows = useMemo(() => {
+    if (!sort) return rows;
     return [...rows].sort((a, b) => {
-      const value =
-        sort.key === "name"
-          ? a.name.localeCompare(b.name)
-          : sort.key === "last"
-            ? a.last.localeCompare(b.last)
-            : STRENGTH[a.strength].rank - STRENGTH[b.strength].rank;
+      let value = 0;
+      if (sort.key === "name") {
+        value = a.name.localeCompare(b.name);
+      } else if (sort.key === "last") {
+        const aTime = a.lastAt ? Date.parse(a.lastAt) : Number.NaN;
+        const bTime = b.lastAt ? Date.parse(b.lastAt) : Number.NaN;
+        value =
+          Number.isFinite(aTime) && Number.isFinite(bTime)
+            ? aTime - bTime
+            : a.last.localeCompare(b.last);
+      } else {
+        value = STRENGTH[a.strength].rank - STRENGTH[b.strength].rank;
+      }
       return value * sort.dir;
     });
   }, [rows, sort]);
@@ -276,11 +291,13 @@ export default function RecordsTable({
     !allSelected && visibleRows.some((row) => selected.includes(row.id));
 
   const toggleSort = (key: SortKey) =>
-    setSort((current) =>
-      current.key === key
-        ? { key, dir: (current.dir * -1) as 1 | -1 }
-        : { key, dir: 1 }
-    );
+    setSort((current) => {
+      if (current && current.key === key) {
+        return { key, dir: (current.dir * -1) as 1 | -1 };
+      }
+      // Newest-first feels natural for the When/Started column.
+      return { key, dir: key === "last" ? -1 : 1 };
+    });
 
   const toggleRow = (id: string) =>
     setSelected(
@@ -392,7 +409,7 @@ export default function RecordsTable({
       <div
         className="records-scroll"
         tabIndex={0}
-        aria-label={`${nameLabel} table. Scroll horizontally and vertically to view all columns and records.`}
+        aria-label={`${nameLabel} table, ordered by ${listOrder}. Scroll horizontally and vertically to view all columns and records.`}
       >
         <table className="records-table">
           <colgroup>

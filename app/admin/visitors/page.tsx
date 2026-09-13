@@ -11,8 +11,6 @@ import {
 import { VisitorCharts } from "@/components/admin/VisitorCharts";
 import {
   parseSessionListOrder,
-  SESSION_LIST_ORDER_LABELS,
-  SESSION_LIST_ORDERS,
   type HeatmapDevice,
   type HeatmapRange,
   type SessionListOrder,
@@ -35,6 +33,7 @@ import {
   CardTitle,
 } from "@/components/shadcn/card";
 import { IncludeOwnIpCheckbox } from "@/components/admin/IncludeOwnIpCheckbox";
+import { SessionOrderSelect } from "@/components/admin/SessionOrderSelect";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -223,27 +222,15 @@ export default async function VisitorsPage({
               : ACQUISITION_LABELS[value]}
           </Link>
         ))}
-        <span className="mx-1 self-center text-border">|</span>
-        {SESSION_LIST_ORDERS.map((value) => (
-          <Link
-            key={value}
-            href={hrefFor({ range, device, channel, order: value, includeMine })}
-            className={cn(
-              "rounded-md border px-3 py-1.5 text-xs",
-              order === value
-                ? "border-primary bg-secondary text-foreground"
-                : "border-border text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {SESSION_LIST_ORDER_LABELS[value]}
-          </Link>
-        ))}
       </div>
 
-      <div className="mt-3">
+      <div className="mt-3 flex flex-wrap items-center gap-3">
         <Suspense fallback={null}>
-        <IncludeOwnIpCheckbox checked={includeMine} />
-      </Suspense>
+          <SessionOrderSelect value={order} resetPageOnChange />
+        </Suspense>
+        <Suspense fallback={null}>
+          <IncludeOwnIpCheckbox checked={includeMine} />
+        </Suspense>
       </div>
 
       {!loadError ? <VisitorCharts rows={chartRows} range={range} /> : null}
@@ -265,6 +252,7 @@ export default async function VisitorsPage({
             </p>
           ) : (
             <RecordsTable
+              key={order}
               rows={visitors.map(visitorToRecord)}
               nameLabel="Visitor"
               categoriesLabel="Source"
@@ -272,6 +260,7 @@ export default async function VisitorsPage({
               strengthLabel="Session depth"
               linksLabel="Session"
               strengthLabels={SESSION_STRENGTH_LABELS}
+              listOrder={order}
               emptyLabel="No visitors in this range yet."
             />
           )}

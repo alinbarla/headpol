@@ -90,16 +90,19 @@ export function HeatmapFilters({
         </SelectContent>
       </Select>
 
-      <Select value={order} onValueChange={(value) => replace({ order: value })}>
-        <SelectTrigger className="sm:w-40" aria-label="Order sessions by">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="newest">{SESSION_LIST_ORDER_LABELS.newest}</SelectItem>
-          <SelectItem value="device">{SESSION_LIST_ORDER_LABELS.device}</SelectItem>
-          <SelectItem value="source">{SESSION_LIST_ORDER_LABELS.source}</SelectItem>
-        </SelectContent>
-      </Select>
+      <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">
+        <span className="font-medium text-foreground">Order by</span>
+        <Select value={order} onValueChange={(value) => replace({ order: value })}>
+          <SelectTrigger className="h-9 sm:w-40" aria-label="Order sessions by">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">{SESSION_LIST_ORDER_LABELS.newest}</SelectItem>
+            <SelectItem value="device">{SESSION_LIST_ORDER_LABELS.device}</SelectItem>
+            <SelectItem value="source">{SESSION_LIST_ORDER_LABELS.source}</SelectItem>
+          </SelectContent>
+        </Select>
+      </label>
       <p className="w-full text-xs text-muted-foreground sm:pl-0.5">
         Page filter applies to the heatmap grid. Session list includes every
         visit in range for the device filter. Order sorts the session list.
