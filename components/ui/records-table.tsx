@@ -300,8 +300,95 @@ export default function RecordsTable({
     return <p className="text-sm text-muted-foreground">{emptyLabel}</p>;
   }
 
+  const renderTags = (row: RecordsTableRow) => (
+    <div className="records-tags">
+      {row.tags.slice(0, 4).map((tag) => (
+        <Tag key={tag} name={tag} />
+      ))}
+      {row.tags.length > 4 ? (
+        <span className="records-more-tag">+{row.tags.length - 4}</span>
+      ) : null}
+    </div>
+  );
+
+  const renderStrength = (row: RecordsTableRow) => {
+    const strength = STRENGTH[row.strength];
+    const label = strengthLabels?.[row.strength] ?? strength.label;
+    return (
+      <span className="records-strength">
+        <span
+          className="records-strength-dot"
+          style={{ background: strength.color }}
+        />
+        {label}
+      </span>
+    );
+  };
+
+  const renderLink = (row: RecordsTableRow) => {
+    const href = row.href ?? (row.website ? `https://${row.website}` : undefined);
+    const linkText = row.linkLabel ?? row.website ?? "Open";
+    if (!href) return <span className="records-muted">—</span>;
+    return (
+      <a
+        className="records-link"
+        href={href}
+        target={row.website ? "_blank" : undefined}
+        rel={row.website ? "noreferrer" : undefined}
+      >
+        {linkText}
+        <Icon size={12}>
+          <path d="M14 5h5v5M19 5l-8 8" />
+        </Icon>
+      </a>
+    );
+  };
+
   return (
     <div className="records-shell">
+      <ul className="records-mobile-list">
+        {visibleRows.map((row) => {
+          const selectedRow = selected.includes(row.id);
+          const href = row.href ?? (row.website ? `https://${row.website}` : undefined);
+          return (
+            <li
+              key={row.id}
+              className={`records-mobile-card ${selectedRow ? "is-selected" : ""}`}
+            >
+              <div className="records-mobile-card-top">
+                <Checkbox
+                  checked={selectedRow}
+                  onChange={() => toggleRow(row.id)}
+                  label={`Select ${row.name}`}
+                />
+                <span className="records-company-mark">
+                  {row.name.slice(0, 1).toUpperCase()}
+                </span>
+                <div className="records-mobile-card-title">
+                  {href ? (
+                    <a href={href} className="records-company-name has-link">
+                      {row.name}
+                    </a>
+                  ) : (
+                    <span className="records-company-name">{row.name}</span>
+                  )}
+                  <span
+                    className={`records-mobile-last ${row.last === "No contact" ? "records-muted" : ""}`}
+                  >
+                    {row.last}
+                  </span>
+                </div>
+                {renderLink(row)}
+              </div>
+              {row.tags.length > 0 ? (
+                <div className="records-mobile-card-tags">{renderTags(row)}</div>
+              ) : null}
+              <div className="records-mobile-card-meta">{renderStrength(row)}</div>
+            </li>
+          );
+        })}
+      </ul>
+
       <div
         className="records-scroll"
         tabIndex={0}
@@ -375,78 +462,42 @@ export default function RecordsTable({
           <tbody>
             {visibleRows.map((row) => {
               const selectedRow = selected.includes(row.id);
-              const strength = STRENGTH[row.strength];
-              const label = strengthLabels?.[row.strength] ?? strength.label;
               const href = row.href ?? (row.website ? `https://${row.website}` : undefined);
-              const linkText = row.linkLabel ?? row.website ?? "Open";
               return (
                 <tr
                   key={row.id}
                   className={`records-row ${selectedRow ? "is-selected" : ""}`}
                 >
                   <td className="records-cell records-sticky-cell records-company-cell">
-                    <Checkbox
-                      checked={selectedRow}
-                      onChange={() => toggleRow(row.id)}
-                      label={`Select ${row.name}`}
-                    />
-                    <span className="records-company-mark">
-                      {row.name.slice(0, 1).toUpperCase()}
-                    </span>
-                    {href ? (
-                      <a
-                        href={href}
-                        className="records-company-name has-link"
-                      >
-                        {row.name}
-                      </a>
-                    ) : (
-                      <span className="records-company-name">{row.name}</span>
-                    )}
-                  </td>
-                  <td className="records-cell">
-                    <div className="records-tags">
-                      {row.tags.slice(0, 4).map((tag) => (
-                        <Tag key={tag} name={tag} />
-                      ))}
-                      {row.tags.length > 4 ? (
-                        <span className="records-more-tag">
-                          +{row.tags.length - 4}
-                        </span>
-                      ) : null}
+                    <div className="records-company-header">
+                      <Checkbox
+                        checked={selectedRow}
+                        onChange={() => toggleRow(row.id)}
+                        label={`Select ${row.name}`}
+                      />
+                      <span className="records-company-mark">
+                        {row.name.slice(0, 1).toUpperCase()}
+                      </span>
+                      {href ? (
+                        <a
+                          href={href}
+                          className="records-company-name has-link"
+                        >
+                          {row.name}
+                        </a>
+                      ) : (
+                        <span className="records-company-name">{row.name}</span>
+                      )}
                     </div>
                   </td>
+                  <td className="records-cell">{renderTags(row)}</td>
                   <td
                     className={`records-cell ${row.last === "No contact" ? "records-muted" : ""}`}
                   >
                     {row.last}
                   </td>
-                  <td className="records-cell">
-                    <span className="records-strength">
-                      <span
-                        className="records-strength-dot"
-                        style={{ background: strength.color }}
-                      />
-                      {label}
-                    </span>
-                  </td>
-                  <td className="records-cell">
-                    {href ? (
-                      <a
-                        className="records-link"
-                        href={href}
-                        target={row.website ? "_blank" : undefined}
-                        rel={row.website ? "noreferrer" : undefined}
-                      >
-                        {linkText}
-                        <Icon size={12}>
-                          <path d="M14 5h5v5M19 5l-8 8" />
-                        </Icon>
-                      </a>
-                    ) : (
-                      <span className="records-muted">—</span>
-                    )}
-                  </td>
+                  <td className="records-cell">{renderStrength(row)}</td>
+                  <td className="records-cell">{renderLink(row)}</td>
                 </tr>
               );
             })}

@@ -666,7 +666,6 @@ a[aria-disabled="true"] {
 }
 
 .records-company-header,
-.records-company-cell,
 .records-strength,
 .records-average,
 .records-link,
@@ -674,7 +673,9 @@ a[aria-disabled="true"] {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  min-width: 0;
 }
+
 
 .records-company-name {
   min-width: 0;
@@ -796,3 +797,90 @@ a[aria-disabled="true"] {
   font: inherit;
 }
 
+
+/* Mobile: stacked cards. Desktop keeps the CRM grid. */
+.records-mobile-list {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0.65rem;
+}
+
+.records-mobile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card, 10px);
+  background: var(--surface);
+  padding: 0.85rem 0.9rem;
+}
+
+.records-mobile-card.is-selected {
+  background: color-mix(in oklab, var(--accent) 10%, var(--surface));
+  border-color: color-mix(in oklab, var(--accent) 35%, var(--line));
+}
+
+.records-mobile-card-top {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.records-mobile-card-title {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.records-mobile-card-title .records-company-name {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  line-height: 1.25;
+}
+
+.records-mobile-last {
+  color: var(--ink-3);
+  font-size: 0.72rem;
+}
+
+.records-mobile-card-tags,
+.records-mobile-card-meta {
+  min-width: 0;
+}
+
+.records-mobile-card .records-link {
+  justify-self: end;
+  flex-shrink: 0;
+}
+
+.records-calculation-label {
+  font-weight: 600;
+}
+
+@media (max-width: 767px) {
+  .records-mobile-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .records-scroll {
+    display: none;
+  }
+
+  .records-shell {
+    /* Pull out of CardContent px-6 so cards use the full width. */
+    margin-inline: -0.5rem;
+    width: calc(100% + 1rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .records-mobile-list {
+    display: none;
+  }
+}

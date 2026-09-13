@@ -25,15 +25,29 @@ function randomId(): string {
   });
 }
 
-function readOrCreateVisitorId(): string {
+function readOrCreate(key: string): string {
   try {
-    const existing = sessionStorage.getItem(VISITOR_STORAGE_KEY);
+    const existing = sessionStorage.getItem(key);
     if (existing) return existing;
     const next = randomId();
-    sessionStorage.setItem(VISITOR_STORAGE_KEY, next);
+    sessionStorage.setItem(key, next);
     return next;
   } catch {
     return randomId();
+  }
+}
+
+function readOrCreateVisitorId(): string {
+  try {
+    const existing = localStorage.getItem(VISITOR_STORAGE_KEY);
+    if (existing) return existing;
+    const next = randomId();
+    localStorage.setItem(VISITOR_STORAGE_KEY, next);
+    return next;
+  } catch {
+    // localStorage blocked — fall back to sessionStorage so at least
+    // requests within the same tab share one id.
+    return readOrCreate(VISITOR_STORAGE_KEY);
   }
 }
 
