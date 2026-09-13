@@ -8,6 +8,7 @@ import type {
   AnalyticsEventRow,
   AnalyticsSession,
   HeatmapDevice,
+  SessionListOrder,
   UserEvent,
 } from "@/lib/analytics/types";
 import type { AcquisitionChannel } from "@/lib/supabase/server";
@@ -21,6 +22,31 @@ type IpFilterOptions = {
   /** When true, include sessions from EXCLUDED_VIEWER_IPS. Default false. */
   includeExcludedIps?: boolean;
 };
+
+type OrderableQuery<T> = {
+  order: (
+    column: string,
+    options?: { ascending?: boolean; nullsFirst?: boolean }
+  ) => T;
+};
+
+/** Newest→oldest by default; device/source group with newest within each group. */
+function withSessionListOrder<T extends OrderableQuery<T>>(
+  query: T,
+  order: SessionListOrder = "newest"
+): T {
+  if (order === "device") {
+    return query
+      .order("device", { ascending: true })
+      .order("started_at", { ascending: false });
+  }
+  if (order === "source") {
+    return query
+      .order("acquisition_channel", { ascending: true })
+      .order("started_at", { ascending: false });
+  }
+  return query.order("started_at", { ascending: false });
+}
 
 function withoutExcludedIps<
   T extends { neq: (column: string, value: string) => T },
@@ -449,6 +475,7 @@ export async function listVisitors(options: {
   fromIso: string;
   device: HeatmapDevice | "all";
   channel?: AcquisitionChannel | "all";
+  order?: SessionListOrder;
   limit?: number;
   offset?: number;
   includeExcludedIps?: boolean;
@@ -459,7 +486,6 @@ export async function listVisitors(options: {
     .select(SESSION_SELECT)
     .eq("is_bot", false)
     .gte("started_at", options.fromIso)
-    .order("started_at", { ascending: false })
     .range(
       options.offset ?? 0,
       (options.offset ?? 0) + (options.limit ?? 100) - 1
@@ -473,6 +499,8 @@ export async function listVisitors(options: {
   if (options.channel && options.channel !== "all") {
     query = query.eq("acquisition_channel", options.channel);
   }
+
+  query = withSessionListOrder(query, options.order ?? "newest");
 
   const { data, error } = await withSupabaseTimeout(query);
   if (error) throw new Error(error.message);
@@ -583,6 +611,7 @@ export async function listRecentSessions(options: {
   page?: string | "all";
   fromIso: string;
   device: HeatmapDevice | "all";
+  order?: SessionListOrder;
   limit?: number;
   includeExcludedIps?: boolean;
 }): Promise<AnalyticsSession[]> {
@@ -592,7 +621,6 @@ export async function listRecentSessions(options: {
     .select(SESSION_SELECT)
     .eq("is_bot", false)
     .gte("started_at", options.fromIso)
-    .order("started_at", { ascending: false })
     .limit(options.limit ?? 100);
   query = withoutExcludedIps(query, options.includeExcludedIps);
 
@@ -603,6 +631,8 @@ export async function listRecentSessions(options: {
   if (options.device !== "all") {
     query = query.eq("device", options.device);
   }
+
+  query = withSessionListOrder(query, options.order ?? "newest");
 
   const { data, error } = await withSupabaseTimeout(query);
   if (error) throw new Error(error.message);

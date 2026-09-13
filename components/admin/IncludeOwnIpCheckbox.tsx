@@ -27,8 +27,12 @@ export function IncludeOwnIpCheckbox({
     const params = new URLSearchParams(searchParams.toString());
     if (next) params.set("includeMine", "1");
     else params.delete("includeMine");
-    // Reset pagination when toggling so counts stay coherent.
-    params.delete("page");
+    // Reset visitors pagination (numeric `page`) when toggling. Heatmap uses
+    // `page` for the tracked path — leave those alone.
+    const pageValue = params.get("page");
+    if (pageValue && /^\d+$/.test(pageValue)) {
+      params.delete("page");
+    }
     startTransition(() => {
       const qs = params.toString();
       router.replace(qs ? `${pathname}?${qs}` : pathname);

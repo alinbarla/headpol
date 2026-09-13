@@ -12,10 +12,11 @@ import {
   listSessionScrolls,
   listTrackedPages,
 } from "@/lib/analytics/store";
-import type {
-  HeatmapDevice,
-  HeatmapMode,
-  HeatmapRange,
+import {
+  parseSessionListOrder,
+  type HeatmapDevice,
+  type HeatmapMode,
+  type HeatmapRange,
 } from "@/lib/analytics/types";
 import { SITE_URL } from "@/lib/seo";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -81,6 +82,7 @@ export default async function HeatmapPage({
   const range = parseRange(readParam(params, "range"));
   const device = parseDevice(readParam(params, "device"));
   const mode = parseMode(readParam(params, "mode"));
+  const order = parseSessionListOrder(readParam(params, "order"));
   const includeMine = readParam(params, "includeMine") === "1";
   const fromIso = new Date(Date.now() - RANGE_MS[range]).toISOString();
 
@@ -95,6 +97,7 @@ export default async function HeatmapPage({
     listRecentSessions({
       fromIso,
       device,
+      order,
       limit: 100,
       includeExcludedIps: includeMine,
     }).catch(() => []),
@@ -150,6 +153,7 @@ export default async function HeatmapPage({
             range={range}
             device={device}
             mode={mode}
+            order={order}
             includeMine={includeMine}
           />
           <div className="mt-3">
@@ -162,6 +166,7 @@ export default async function HeatmapPage({
             range={range}
             device={device}
             mode={mode}
+            order={order}
             includeMine={includeMine}
           />
 
