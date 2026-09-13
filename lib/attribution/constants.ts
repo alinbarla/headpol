@@ -73,6 +73,17 @@ function normalizeHost(host: string): string {
   return host.trim().toLowerCase().replace(/^www\./, "");
 }
 
+/** Infra hosts that are never a marketing source (incl. historical rows). */
+export function isInfrastructureReferrerHost(
+  host: string | null | undefined
+): boolean {
+  if (!host?.trim()) return false;
+  const normalized = normalizeHost(host);
+  return (
+    normalized === "supabase.co" || normalized.endsWith(".supabase.co")
+  );
+}
+
 /** True when host is exactly knownHost or a subdomain of it. */
 export function hostMatchesReferrer(
   host: string,
@@ -116,13 +127,17 @@ export function knownReferrerLabelForUtmSource(
 /**
  * Friendly referral/product label for admin UI.
  * Prefers referrer host, then utm_source. Unknown hosts fall back to the raw
- * hostname so existing behaviour stays readable.
+ * hostname so existing behaviour stays readable. Infrastructure hosts
+ * (e.g. *.supabase.co) are hidden so they never appear as a traffic source.
  */
 export function referrerSourceLabel(
   host: string | null | undefined,
   utmSource?: string | null
 ): string | null {
   if (host?.trim()) {
+    if (isInfrastructureReferrerHost(host)) {
+      return knownReferrerLabelForUtmSource(utmSource);
+    }
     return knownReferrerLabelForHost(host) ?? normalizeHost(host);
   }
   return knownReferrerLabelForUtmSource(utmSource);
