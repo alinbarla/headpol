@@ -109,6 +109,12 @@ export type AnalyticsSession = {
   gclid: string | null;
   landing_path: string | null;
   referrer_host: string | null;
+  /**
+   * null = derive Booked from linked bookings; true/false force the tag
+   * when automatic wiring is wrong. Loaded separately from the session
+   * row so the visitors list still works before the migration is applied.
+   */
+  booked_override?: boolean | null;
 };
 
 export type AnalyticsEventRow = {

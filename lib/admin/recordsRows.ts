@@ -52,22 +52,35 @@ export function visitorToRecord(
       session.event_count,
       Number(session.max_scroll_pct)
     ),
-    href: `/admin/heatmap/sessions/${session.id}`,
-    linkLabel: "Replay",
+    href: `/admin/visitors/${session.id}`,
+    linkLabel: "Open",
   };
 }
 
 export function sessionCsvRows(
   sessions: AnalyticsSession[],
-  options?: { bookedSessionIds?: Set<string>; bookedIps?: Set<string>; bookedVisitorIds?: Set<string> }
+  options?: {
+    bookedSessionIds?: Set<string>;
+    bookedIps?: Set<string>;
+    bookedVisitorIds?: Set<string>;
+    forcedBookedSessionIds?: Set<string>;
+    forcedNotBookedSessionIds?: Set<string>;
+  }
 ) {
   return sessions.map((session) => {
+    const forcedBooked = options?.forcedBookedSessionIds?.has(session.id);
+    const forcedNotBooked =
+      options?.forcedNotBookedSessionIds?.has(session.id);
     const booked =
-      options?.bookedSessionIds?.has(session.id) ||
-      (session.visitor_id
-        ? options?.bookedVisitorIds?.has(session.visitor_id)
-        : false) ||
-      (session.ip ? options?.bookedIps?.has(session.ip) : false);
+      session.booked_override === true ||
+      forcedBooked ||
+      (session.booked_override !== false &&
+        !forcedNotBooked &&
+        (options?.bookedSessionIds?.has(session.id) ||
+          (session.visitor_id
+            ? options?.bookedVisitorIds?.has(session.visitor_id)
+            : false) ||
+          (session.ip ? options?.bookedIps?.has(session.ip) : false)));
     return {
       id: session.id,
       started_at: session.started_at,
