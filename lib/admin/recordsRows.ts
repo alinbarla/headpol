@@ -59,12 +59,23 @@ export function visitorToRecord(
 
 export function sessionCsvRows(
   sessions: AnalyticsSession[],
-  options?: { bookedSessionIds?: Set<string>; bookedIps?: Set<string>; bookedVisitorIds?: Set<string> }
+  options?: {
+    bookedSessionIds?: Set<string>;
+    bookedIps?: Set<string>;
+    bookedVisitorIds?: Set<string>;
+    forcedBookedSessionIds?: Set<string>;
+    forcedNotBookedSessionIds?: Set<string>;
+  }
 ) {
   return sessions.map((session) => {
+    const forcedBooked = options?.forcedBookedSessionIds?.has(session.id);
+    const forcedNotBooked =
+      options?.forcedNotBookedSessionIds?.has(session.id);
     const booked =
       session.booked_override === true ||
+      forcedBooked ||
       (session.booked_override !== false &&
+        !forcedNotBooked &&
         (options?.bookedSessionIds?.has(session.id) ||
           (session.visitor_id
             ? options?.bookedVisitorIds?.has(session.visitor_id)

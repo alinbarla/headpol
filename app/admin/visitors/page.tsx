@@ -123,6 +123,8 @@ export default async function VisitorsPage({
     sessionIds: new Set(),
     ips: new Set(),
     visitorIds: new Set(),
+    forcedBookedSessionIds: new Set(),
+    forcedNotBookedSessionIds: new Set(),
   };
   let loadError: string | null = null;
 
@@ -154,6 +156,8 @@ export default async function VisitorsPage({
     bookedSessionIds: bookedMarkers.sessionIds,
     bookedIps: bookedMarkers.ips,
     bookedVisitorIds: bookedMarkers.visitorIds,
+    forcedBookedSessionIds: bookedMarkers.forcedBookedSessionIds,
+    forcedNotBookedSessionIds: bookedMarkers.forcedNotBookedSessionIds,
   });
 
   return (

@@ -4,6 +4,7 @@ import { ArrowLeftIcon } from "lucide-react";
 import { requireAdmin } from "@/lib/admin/auth";
 import {
   getBookedVisitorMarkers,
+  getSessionBookedOverride,
   isVisitorBooked,
   listBookingsForVisitor,
 } from "@/lib/admin/data";
@@ -48,21 +49,28 @@ export default async function VisitorDetailPage({
   const session = await getSessionById(id).catch(() => null);
   if (!session) notFound();
 
-  const [bookedMarkers, linkedBookings, relatedSessions] = await Promise.all([
-    getBookedVisitorMarkers(),
-    listBookingsForVisitor({ id: session.id, ip: session.ip }),
-    listSessionsByVisitorId({
-      visitorId: session.visitor_id,
-      excludeSessionId: session.id,
-      limit: 8,
-    }),
-  ]);
+  const [bookedMarkers, linkedBookings, relatedSessions, bookedOverride] =
+    await Promise.all([
+      getBookedVisitorMarkers(),
+      listBookingsForVisitor({ id: session.id, ip: session.ip }),
+      listSessionsByVisitorId({
+        visitorId: session.visitor_id,
+        excludeSessionId: session.id,
+        limit: 8,
+      }),
+      getSessionBookedOverride(session.id),
+    ]);
 
+  const sessionWithOverride = { ...session, booked_override: bookedOverride };
   const autoBooked = isVisitorBooked(
     { ...session, booked_override: null },
-    bookedMarkers
+    {
+      ...bookedMarkers,
+      forcedBookedSessionIds: new Set(),
+      forcedNotBookedSessionIds: new Set(),
+    }
   );
-  const booked = isVisitorBooked(session, bookedMarkers);
+  const booked = isVisitorBooked(sessionWithOverride, bookedMarkers);
   const location = describeLocation(session);
   const channel = acquisitionLabel(session.acquisition_channel);
   const strength = engagementStrength(
@@ -101,7 +109,7 @@ export default async function VisitorDetailPage({
           >
             {booked ? "Booked" : "Not booked"}
           </span>
-          {session.booked_override != null ? (
+          {bookedOverride != null ? (
             <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
               Manual
             </span>
@@ -189,7 +197,7 @@ export default async function VisitorDetailPage({
         <VisitorBookedCard
           sessionId={session.id}
           booked={booked}
-          bookedOverride={session.booked_override}
+          bookedOverride={bookedOverride}
           autoBooked={autoBooked}
         />
 

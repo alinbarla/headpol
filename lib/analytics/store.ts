@@ -15,7 +15,7 @@ import type { AcquisitionChannel } from "@/lib/supabase/server";
 import { getSupabaseAdminClient, withSupabaseTimeout } from "@/lib/supabase/server";
 
 const SESSION_SELECT =
-  "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, ip, city, region, country, postal_code, latitude, longitude, is_bot, user_agent, started_at, ended_at, event_count, max_scroll_pct, acquisition_channel, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, landing_path, referrer_host, booked_override";
+  "id, visitor_id, page, referrer, viewport_w, viewport_h, document_h, device, ip, city, region, country, postal_code, latitude, longitude, is_bot, user_agent, started_at, ended_at, event_count, max_scroll_pct, acquisition_channel, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, landing_path, referrer_host";
 
 
 type IpFilterOptions = {
