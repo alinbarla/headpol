@@ -35,7 +35,10 @@ import {
   CardTitle,
 } from "@/components/shadcn/card";
 import { cn } from "@/lib/utils";
-import { referrerSourceLabel } from "@/lib/attribution/constants";
+import {
+  isInfrastructureReferrerHost,
+  referrerSourceLabel,
+} from "@/lib/attribution/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -182,7 +185,7 @@ export default async function VisitorDetailPage({
                 session.utm_source
               )}
             />
-            <Row label="Referrer host" value={session.referrer_host} />
+            <Row label="Referrer host" value={isInfrastructureReferrerHost(session.referrer_host) ? null : session.referrer_host} />
             <Row label="Referrer" value={session.referrer} />
             <Row label="UTM source" value={session.utm_source} />
             <Row label="UTM medium" value={session.utm_medium} />

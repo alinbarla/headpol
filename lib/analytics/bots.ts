@@ -5,8 +5,10 @@ import "server-only";
  * visitors free of automated traffic. Prefer rejecting at ingest; queries also
  * exclude rows marked is_bot.
  */
+// Use gptbot / chatgpt-user / oai-searchbot — not bare "chatgpt" — so real
+// browsers opened from the ChatGPT app are not dropped as bots.
 const BOT_UA_PATTERN =
-  /bot|spider|crawl|slurp|scrapy|curl\/|wget|python-requests|python-urllib|go-http-client|httpclient|java\/|libwww|okhttp|axios\/|node-fetch|undici|postman|insomnia|httpie|aiohttp|guzzle|phantom|headless|puppeteer|playwright|selenium|webdriver|chrome-lighthouse|pagespeed|gtmetrix|pingdom|uptimerobot|statuscake|site24x7|monitor|preview|facebookexternalhit|facebot|twitterbot|linkedinbot|slackbot|discordbot|telegrambot|whatsapp|embedly|quora link|redditbot|pinterest|applebot|bingpreview|yandex|baiduspider|duckduckbot|semrush|ahrefs|mj12bot|dotbot|petalbot|bytespider|gptbot|chatgpt|claudebot|anthropic|ccbot|amazonbot|ia_archiver|archive\.org|wayback|google-inspectiontool|adsbot-google|mediapartners-google|feedfetcher|bingbot|googlebot|storebot|dataforseo|screaming frog|lighthouse/i;
+  /bot|spider|crawl|slurp|scrapy|curl\/|wget|python-requests|python-urllib|go-http-client|httpclient|java\/|libwww|okhttp|axios\/|node-fetch|undici|postman|insomnia|httpie|aiohttp|guzzle|phantom|headless|puppeteer|playwright|selenium|webdriver|chrome-lighthouse|pagespeed|gtmetrix|pingdom|uptimerobot|statuscake|site24x7|monitor|preview|facebookexternalhit|facebot|twitterbot|linkedinbot|slackbot|discordbot|telegrambot|whatsapp|embedly|quora link|redditbot|pinterest|applebot|bingpreview|yandex|baiduspider|duckduckbot|semrush|ahrefs|mj12bot|dotbot|petalbot|bytespider|gptbot|chatgpt-user|oai-searchbot|claudebot|claude-web|anthropic-ai|ccbot|amazonbot|ia_archiver|archive\.org|wayback|google-inspectiontool|adsbot-google|mediapartners-google|feedfetcher|bingbot|googlebot|storebot|dataforseo|screaming frog|lighthouse/i;
 
 export function isBotUserAgent(ua: string | null | undefined): boolean {
   const value = ua?.trim() ?? "";
