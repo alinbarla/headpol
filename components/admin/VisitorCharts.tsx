@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from "@/components/shadcn/select";
 import { ACQUISITION_LABELS } from "@/lib/admin/labels";
+import { referrerSourceLabel } from "@/lib/attribution/constants";
 import type { VisitorChartRow } from "@/lib/analytics/store";
 import type { HeatmapRange } from "@/lib/analytics/types";
 import type { AcquisitionChannel } from "@/lib/supabase/server";
@@ -199,9 +200,12 @@ function buildPieModel(rows: VisitorChartRow[], dimension: PieDimension) {
       case "device":
         label = visit.device;
         break;
-      case "utm_source":
-        label = visit.utm_source?.trim() || "(none)";
+      case "utm_source": {
+        const raw = visit.utm_source?.trim() || null;
+        label =
+          (raw ? referrerSourceLabel(null, raw) ?? raw : null) || "(none)";
         break;
+      }
       case "page":
         label = visit.page || "/";
         break;
@@ -209,7 +213,9 @@ function buildPieModel(rows: VisitorChartRow[], dimension: PieDimension) {
         label = visit.country?.trim() || "Unknown";
         break;
       case "referrer":
-        label = visit.referrer_host?.trim() || "(direct)";
+        label =
+          referrerSourceLabel(visit.referrer_host, visit.utm_source) ||
+          "(direct)";
         break;
     }
     const key = slugKey(label);

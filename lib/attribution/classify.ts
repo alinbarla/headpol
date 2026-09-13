@@ -1,4 +1,5 @@
 import {
+  isKnownProductReferrerHost,
   MAX_GCLID_LENGTH,
   MAX_LANDING_PATH_LENGTH,
   MAX_REFERRER_HOST_LENGTH,
@@ -65,6 +66,9 @@ export function sanitizeReferrerHost(
 
   host = host.replace(/^www\./i, "").toLowerCase();
   if (!host || host === "localhost" || host === "127.0.0.1") return null;
+
+  // Supabase project URLs are infrastructure noise, not marketing referrers.
+  if (host === "supabase.co" || host.endsWith(".supabase.co")) return null;
 
   if (siteHost) {
     const site = siteHost.replace(/^www\./i, "").toLowerCase();
@@ -137,6 +141,8 @@ export function isPaidTouch(input: AttributionInput): boolean {
 export function isOrganicSearchTouch(input: AttributionInput): boolean {
   if (!input.referrerHost) return false;
   if (isPaidTouch(input)) return false;
+  // gemini.google.com etc. match the google search regex — keep them as referral.
+  if (isKnownProductReferrerHost(input.referrerHost)) return false;
   return SEARCH_ENGINE_HOST_RE.test(input.referrerHost);
 }
 
