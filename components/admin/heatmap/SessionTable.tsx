@@ -7,7 +7,7 @@ import { CsvDownloadButton } from "@/components/admin/CsvDownloadButton";
 import { ActionToast, SubmitButton } from "@/components/admin/SubmitButton";
 import { Button } from "@/components/shadcn/button";
 import RecordsTable from "@/components/ui/records-table";
-import type { AnalyticsSession } from "@/lib/analytics/types";
+import type { AnalyticsSession, SessionListOrder } from "@/lib/analytics/types";
 import {
   SESSION_STRENGTH_LABELS,
   sessionCsvRows,
@@ -16,7 +16,13 @@ import {
 
 const initial: ActionState = { ok: true };
 
-export function SessionTable({ sessions }: { sessions: AnalyticsSession[] }) {
+export function SessionTable({
+  sessions,
+  listOrder = "newest",
+}: {
+  sessions: AnalyticsSession[];
+  listOrder?: SessionListOrder;
+}) {
   const [state, formAction] = useActionState(deleteSessionsAction, initial);
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -72,7 +78,9 @@ export function SessionTable({ sessions }: { sessions: AnalyticsSession[] }) {
       </div>
 
       <RecordsTable
+        key={listOrder}
         rows={sessions.map(sessionToRecord)}
+        listOrder={listOrder}
         nameLabel="Page"
         categoriesLabel="Device & place"
         lastLabel="Started"

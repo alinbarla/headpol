@@ -35,6 +35,9 @@ export function sessionToRecord(session: AnalyticsSession): RecordsTableRow {
       (value): value is string => Boolean(value)
     ),
     last: formatTimestamp(session.started_at),
+    lastAt: session.started_at,
+    device: session.device,
+    source: session.acquisition_channel ?? "unknown",
     strength: engagementStrength(
       session.event_count,
       Number(session.max_scroll_pct)
@@ -54,6 +57,9 @@ export function visitorToRecord(session: AnalyticsSession): RecordsTableRow {
       (value): value is string => Boolean(value)
     ),
     last: formatTimestamp(session.started_at),
+    lastAt: session.started_at,
+    device: session.device,
+    source: session.acquisition_channel ?? "unknown",
     strength: engagementStrength(
       session.event_count,
       Number(session.max_scroll_pct)
