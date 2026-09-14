@@ -24,6 +24,7 @@ import {
   slotKey,
   toDateKey,
 } from "@/lib/booking";
+import { SMOOTHERLY_PRICE_ORE } from "@/lib/routes";
 import { addDaysToDateKey, slotIsPast, stockholmDateKey, stockholmTime } from "@/lib/time";
 import { useMounted } from "@/lib/useMounted";
 import { Button } from "@/components/ui/Button";
@@ -68,6 +69,8 @@ export function BookingPicker({
   const [postalTouched, setPostalTouched] = useState(false);
   const [message, setMessage] = useState("");
   const [withdrawalConsent, setWithdrawalConsent] = useState(false);
+
+  const displayPriceOre = isSmootherly ? SMOOTHERLY_PRICE_ORE : rules.priceOre;
 
   const dateLocale = locale === "sv" ? sv : enGB;
 
@@ -601,7 +604,7 @@ export function BookingPicker({
                   <div className="mt-3 rounded-2xl border border-beam/40 bg-beam/5 px-4 py-3">
                     <p className="text-sm font-semibold text-text-primary">
                       {t("smootherlyPriceNote", {
-                        price: formatOre(rules.priceOre),
+                        price: formatOre(displayPriceOre),
                       })}
                     </p>
                     <p className="mt-0.5 text-xs text-text-muted">

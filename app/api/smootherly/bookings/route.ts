@@ -13,7 +13,7 @@ import {
   notifySmootherlyBooking,
   parseBookingContact,
 } from "@/lib/bookingNotify";
-import { SMOOTHERLY_PATH } from "@/lib/routes";
+import { SMOOTHERLY_PATH, SMOOTHERLY_PRICE_ORE } from "@/lib/routes";
 import { addDaysToDateKey, stockholmDateKey } from "@/lib/time";
 import { clientIpFromRequest } from "@/lib/analytics/rateLimit";
 import { visitorGeo, type VisitorGeo } from "@/lib/geo";
@@ -107,7 +107,7 @@ export async function POST(request: Request) {
       time,
       contact,
       message,
-      priceOre: rules.priceOre,
+      priceOre: SMOOTHERLY_PRICE_ORE,
       attribution: body.attribution ?? null,
       geo: visitorGeo(request.headers),
       visitorIp: clientIpFromRequest(request),
@@ -131,7 +131,7 @@ export async function POST(request: Request) {
       address: fullAddress,
       locale: contact.locale,
       message,
-      amountOre: rules.priceOre,
+      amountOre: SMOOTHERLY_PRICE_ORE,
     });
 
     return NextResponse.json(

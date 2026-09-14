@@ -9,6 +9,9 @@ export const CONFIRMATION_PATH = "bokningsbekraftelse";
 /** Smootherly.se collaboration landing. Never indexed, never in the sitemap. */
 export const SMOOTHERLY_PATH = "smootherly";
 
+/** Partner price for Smootherly bookings (799 kr incl. VAT). */
+export const SMOOTHERLY_PRICE_ORE = 79900;
+
 /** Public confirmation page for a Checkout Session, relative to the site origin. */
 export function confirmationPath(_locale: string, sessionId: string): string {
   return `/${CONFIRMATION_PATH}?session_id=${encodeURIComponent(sessionId)}`;
