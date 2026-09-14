@@ -295,7 +295,15 @@
     "payNow": "Betala vid bokning · {price}",
     "payNowHint": "Kort, Apple Pay eller Google Pay. Tiden hålls i 20 minuter medan du betalar.",
     "continueToPayment": "Gå vidare till betalning",
-    "withdrawalConsent": "Jag förstår att jag kan få pengarna tillbaka endast om jag avbokar senast 24 timmar före den bokade tiden."
+    "withdrawalConsent": "Jag förstår att jag kan få pengarna tillbaka endast om jag avbokar senast 24 timmar före den bokade tiden.",
+    "message": "Meddelande",
+    "messageOptional": "Meddelande (valfritt)",
+    "messagePlaceholder": "T.ex. portkod, bilmodell eller andra önskemål",
+    "smootherlyPaymentTitle": "Bekräftelse",
+    "smootherlyPayHint": "Ingen onlinebetalning. Du får en bekräftelse på e-post från Smootherly.se.",
+    "smootherlyPriceNote": "Pris · {price}",
+    "smootherlySubmit": "Boka tid",
+    "smootherlySuccess": "Din tid är bokad. En bekräftelse har skickats till din e-post från Smootherly.se."
   },
   "bookingConfirmation": {
     "metaTitle": "Bokningsbekräftelse",

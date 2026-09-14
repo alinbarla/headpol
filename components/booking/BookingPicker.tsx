@@ -30,7 +30,7 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import "react-day-picker/style.css";
 
-type BookingStatus = "idle" | "submitting" | "error";
+type BookingStatus = "idle" | "submitting" | "error" | "success";
 
 type BookingsResponse = {
   slots?: string[];
@@ -39,11 +39,18 @@ type BookingsResponse = {
   error?: string;
 };
 
-export function BookingPicker() {
+export type BookingPickerVariant = "default" | "smootherly";
+
+export function BookingPicker({
+  variant = "default",
+}: {
+  variant?: BookingPickerVariant;
+}) {
   const t = useTranslations("booking");
   const tContact = useTranslations("contact");
   const locale = useLocale();
   const mounted = useMounted();
+  const isSmootherly = variant === "smootherly";
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -59,6 +66,7 @@ export function BookingPicker() {
   const [address, setAddress] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [postalTouched, setPostalTouched] = useState(false);
+  const [message, setMessage] = useState("");
   const [withdrawalConsent, setWithdrawalConsent] = useState(false);
 
   const dateLocale = locale === "sv" ? sv : enGB;
@@ -98,10 +106,10 @@ export function BookingPicker() {
   // Stripe sends the customer back here with a marker on the URL. Derived
   // rather than stored so the banner survives the cleanup below.
   const stripeOutcome = useMemo<"paid" | "cancelled" | null>(() => {
-    if (!mounted) return null;
+    if (!mounted || isSmootherly) return null;
     const value = new URLSearchParams(window.location.search).get("booking");
     return value === "paid" || value === "cancelled" ? value : null;
-  }, [mounted]);
+  }, [mounted, isSmootherly]);
 
   // Drop the marker so a refresh does not resurrect the banner.
   useEffect(() => {
@@ -226,7 +234,7 @@ export function BookingPicker() {
     selectedKey &&
       selectedTime &&
       detailsReady &&
-      withdrawalConsent &&
+      (isSmootherly || withdrawalConsent) &&
       openTimes.includes(selectedTime) &&
       !bookedSlots.has(slotKey(selectedKey, selectedTime)) &&
       !(nowDate && nowTime && slotIsPast(selectedKey, selectedTime, nowDate, nowTime)) &&
@@ -241,7 +249,11 @@ export function BookingPicker() {
     setErrorMessage(null);
 
     try {
-      const response = await fetch("/api/bookings", {
+      const endpoint = isSmootherly
+        ? "/api/smootherly/bookings"
+        : "/api/bookings";
+
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -253,7 +265,9 @@ export function BookingPicker() {
           address: address.trim(),
           postalCode: formatSwedishPostalCode(postalCode),
           locale,
-          withdrawalConsent,
+          ...(isSmootherly
+            ? { message: message.trim() || undefined }
+            : { withdrawalConsent }),
           attribution: attributionForBookingPost(),
         }),
       });
@@ -261,6 +275,7 @@ export function BookingPicker() {
       const data = (await response.json()) as {
         error?: string;
         checkoutUrl?: string;
+        ok?: boolean;
       };
 
       if (response.status === 409) {
@@ -278,6 +293,21 @@ export function BookingPicker() {
 
       if (!response.ok) {
         throw new Error(data.error ?? t("bookingError"));
+      }
+
+      if (isSmootherly) {
+        setStatus("success");
+        setSelectedDate(undefined);
+        setSelectedTime(null);
+        setName("");
+        setEmail("");
+        setPhone("");
+        setAddress("");
+        setPostalCode("");
+        setPostalTouched(false);
+        setMessage("");
+        await loadBookings();
+        return;
       }
 
       if (!data.checkoutUrl) {
@@ -319,6 +349,7 @@ export function BookingPicker() {
                     setSelectedDate(date);
                     setSelectedTime(null);
                     setErrorMessage(null);
+                    if (status === "success") setStatus("idle");
                   }}
                   disabled={disabledDays}
                   locale={dateLocale}
@@ -370,6 +401,7 @@ export function BookingPicker() {
                     onClick={() => {
                       setSelectedTime(slot);
                       setErrorMessage(null);
+                      if (status === "success") setStatus("idle");
                     }}
                     aria-label={isBooked ? t("slotBooked", { time: slot }) : slot}
                     className={`min-h-11 rounded-xl border px-2 py-2 text-sm font-medium transition-colors ${
@@ -541,33 +573,66 @@ export function BookingPicker() {
                     {t("invalidPostalCode")}
                   </p>
                 )}
+                {isSmootherly && (
+                  <label className="block text-xs text-text-muted">
+                    {t("messageOptional")}
+                    <textarea
+                      className="booking-field mt-1 min-h-24 resize-y"
+                      name="message"
+                      maxLength={1000}
+                      placeholder={t("messagePlaceholder")}
+                      value={message}
+                      onChange={(event) => {
+                        setMessage(event.target.value);
+                        if (status === "success") setStatus("idle");
+                      }}
+                    />
+                  </label>
+                )}
               </div>
 
               <fieldset className="mt-6">
                 <legend className="text-xs uppercase tracking-wider text-text-muted">
-                  {t("paymentTitle")}
+                  {isSmootherly
+                    ? t("smootherlyPaymentTitle")
+                    : t("paymentTitle")}
                 </legend>
-                <div className="mt-3 rounded-2xl border border-beam/40 bg-beam/5 px-4 py-3">
-                  <p className="text-sm font-semibold text-text-primary">
-                    {t("payNow", { price: formatOre(rules.priceOre) })}
-                  </p>
-                  <p className="mt-0.5 text-xs text-text-muted">
-                    {t("payNowHint")}
-                  </p>
-                </div>
+                {isSmootherly ? (
+                  <div className="mt-3 rounded-2xl border border-beam/40 bg-beam/5 px-4 py-3">
+                    <p className="text-sm font-semibold text-text-primary">
+                      {t("smootherlyPriceNote", {
+                        price: formatOre(rules.priceOre),
+                      })}
+                    </p>
+                    <p className="mt-0.5 text-xs text-text-muted">
+                      {t("smootherlyPayHint")}
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="mt-3 rounded-2xl border border-beam/40 bg-beam/5 px-4 py-3">
+                      <p className="text-sm font-semibold text-text-primary">
+                        {t("payNow", { price: formatOre(rules.priceOre) })}
+                      </p>
+                      <p className="mt-0.5 text-xs text-text-muted">
+                        {t("payNowHint")}
+                      </p>
+                    </div>
 
-                <label className="mt-3 flex cursor-pointer items-start gap-2 text-xs text-text-secondary">
-                  <input
-                    type="checkbox"
-                    className="mt-0.5 size-4 accent-[var(--beam)]"
-                    checked={withdrawalConsent}
-                    onChange={(event) => {
-                      setWithdrawalConsent(event.target.checked);
-                      setErrorMessage(null);
-                    }}
-                  />
-                  <span>{t("withdrawalConsent")}</span>
-                </label>
+                    <label className="mt-3 flex cursor-pointer items-start gap-2 text-xs text-text-secondary">
+                      <input
+                        type="checkbox"
+                        className="mt-0.5 size-4 accent-[var(--beam)]"
+                        checked={withdrawalConsent}
+                        onChange={(event) => {
+                          setWithdrawalConsent(event.target.checked);
+                          setErrorMessage(null);
+                        }}
+                      />
+                      <span>{t("withdrawalConsent")}</span>
+                    </label>
+                  </>
+                )}
               </fieldset>
 
               <p className="mt-6 text-xs uppercase tracking-wider text-text-muted">
@@ -581,12 +646,12 @@ export function BookingPicker() {
                     : t("noTime")}
               </p>
 
-              {stripeOutcome === "paid" && (
+              {(status === "success" || stripeOutcome === "paid") && (
                 <p
                   role="status"
                   className="mt-4 rounded-xl border border-success/30 bg-success/10 px-4 py-3 text-sm text-success"
                 >
-                  {t("bookingSuccess")}
+                  {isSmootherly ? t("smootherlySuccess") : t("bookingSuccess")}
                 </p>
               )}
 
@@ -606,7 +671,9 @@ export function BookingPicker() {
               >
                 {status === "submitting"
                   ? t("submitting")
-                  : t("continueToPayment")}
+                  : isSmootherly
+                    ? t("smootherlySubmit")
+                    : t("continueToPayment")}
               </Button>
             </div>
           </div>

@@ -24,6 +24,12 @@ const BookingPicker = dynamic(
   }
 );
 
-export function BookingPickerDynamic() {
-  return <BookingPicker />;
+export type BookingPickerVariant = "default" | "smootherly";
+
+export function BookingPickerDynamic({
+  variant = "default",
+}: {
+  variant?: BookingPickerVariant;
+}) {
+  return <BookingPicker variant={variant} />;
 }

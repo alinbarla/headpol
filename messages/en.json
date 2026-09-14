@@ -282,7 +282,15 @@
     "payNow": "Pay when booking · {price}",
     "payNowHint": "Card, Apple Pay or Google Pay. Your slot is held for 20 minutes while you pay.",
     "continueToPayment": "Continue to payment",
-    "withdrawalConsent": "I understand that I can get a refund only if I cancel at least 24 hours before the booked time."
+    "withdrawalConsent": "I understand that I can get a refund only if I cancel at least 24 hours before the booked time.",
+    "message": "Message",
+    "messageOptional": "Message (optional)",
+    "messagePlaceholder": "E.g. gate code, car model or other requests",
+    "smootherlyPaymentTitle": "Confirmation",
+    "smootherlyPayHint": "No online payment. You will get a confirmation email from Smootherly.se.",
+    "smootherlyPriceNote": "Price · {price}",
+    "smootherlySubmit": "Book slot",
+    "smootherlySuccess": "Your slot is booked. A confirmation has been sent to your email from Smootherly.se."
   },
   "bookingConfirmation": {
     "metaTitle": "Booking confirmation",

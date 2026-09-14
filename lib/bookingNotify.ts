@@ -40,11 +40,13 @@ async function sendMail(input: {
   subject: string;
   html: string;
   replyTo?: string;
+  /** Display name in the From header. Defaults to the site brand. */
+  fromName?: string;
 }): Promise<void> {
   const user = process.env.GMAIL_USER ?? BOOKING_MAILBOX;
   const transporter = getTransporter();
   await transporter.sendMail({
-    from: `${BRAND} <${user}>`,
+    from: `${input.fromName ?? BRAND} <${user}>`,
     to: input.to,
     subject: input.subject,
     html: input.html,
@@ -422,4 +424,113 @@ export function parseBookingContact(body: {
   }
 
   return { name, email, phone, address, postalCode, locale };
+}
+
+export const SMOOTHERLY_FROM_NAME = "Smootherly.se";
+
+function smootherlySignature(): string {
+  return `<p>${escapeHtml(SMOOTHERLY_FROM_NAME)} · ${escapeHtml(BRAND)}<br/>${escapeHtml(
+    BOOKING_MAILBOX
+  )}<br/>${escapeHtml(CONTACT_PHONE_DISPLAY)}</p>`;
+}
+
+/**
+ * Dual confirmation for the unpaid Smootherly.se collaboration landing.
+ * Both messages use the Smootherly.se From display name.
+ */
+export async function notifySmootherlyBooking(notice: {
+  date: string;
+  time: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  locale: string;
+  message?: string | null;
+  amountOre?: number;
+}): Promise<void> {
+  const locale = localeOf(notice);
+  const when = whenLine(notice);
+  const address = escapeHtml(notice.address);
+  const messageLabel = locale === "en" ? "Message" : "Meddelande";
+  const priceLabel = locale === "en" ? "Price" : "Pris";
+  const messageHtml = notice.message?.trim()
+    ? `<p>${messageLabel}: ${escapeHtml(notice.message.trim())}</p>`
+    : "";
+  const priceHtml =
+    typeof notice.amountOre === "number"
+      ? `<p>${priceLabel}: <strong>${escapeHtml(formatOre(notice.amountOre))}</strong></p>`
+      : "";
+
+  const customerCopy =
+    locale === "en"
+      ? {
+          subject: `Booking confirmed — ${SMOOTHERLY_FROM_NAME} ${notice.date} ${notice.time}`,
+          html: `
+        <p>Hi ${escapeHtml(notice.name)},</p>
+        <p>Thanks for booking through <strong>${escapeHtml(SMOOTHERLY_FROM_NAME)}</strong>. Your slot is confirmed.</p>
+        <p><strong>${when}</strong></p>
+        <p>We come to you at:<br/>${address}</p>
+        ${priceHtml}
+        ${messageHtml}
+        <p>If anything changes, call ${escapeHtml(CONTACT_PHONE_DISPLAY)} or reply to this email.</p>
+        ${smootherlySignature()}
+      `,
+        }
+      : {
+          subject: `Bokning bekräftad — ${SMOOTHERLY_FROM_NAME} ${notice.date} ${notice.time}`,
+          html: `
+        <p>Hej ${escapeHtml(notice.name)},</p>
+        <p>Tack för din bokning via <strong>${escapeHtml(SMOOTHERLY_FROM_NAME)}</strong>. Din tid är bekräftad.</p>
+        <p><strong>${when}</strong></p>
+        <p>Vi kommer till dig på:<br/>${address}</p>
+        ${priceHtml}
+        ${messageHtml}
+        <p>Har något ändrats, ring ${escapeHtml(CONTACT_PHONE_DISPLAY)} eller svara på det här mejlet.</p>
+        ${smootherlySignature()}
+      `,
+        };
+
+  const mailbox = process.env.GMAIL_USER ?? BOOKING_MAILBOX;
+
+  try {
+    await sendMail({
+      to: notice.email,
+      subject: customerCopy.subject,
+      html: customerCopy.html,
+      replyTo: mailbox,
+      fromName: SMOOTHERLY_FROM_NAME,
+    });
+  } catch (error) {
+    console.error("Smootherly customer email failed", error);
+  }
+
+  const ownerLines = [
+    `Namn: ${escapeHtml(notice.name)}`,
+    `Telefon: ${escapeHtml(notice.phone)}`,
+    `E-post: ${escapeHtml(notice.email)}`,
+    `Adress: ${address}`,
+    typeof notice.amountOre === "number"
+      ? `Pris: ${escapeHtml(formatOre(notice.amountOre))} (obetald)`
+      : null,
+    notice.message?.trim()
+      ? `Meddelande: ${escapeHtml(notice.message.trim())}`
+      : null,
+  ].filter(Boolean);
+
+  try {
+    await sendMail({
+      to: mailbox,
+      subject: `Ny Smootherly-bokning ${notice.date} ${notice.time} — ${notice.name}`,
+      html: `
+        <p>Ny bokning via ${escapeHtml(SMOOTHERLY_FROM_NAME)} (ingen Stripe-betalning).</p>
+        <p><strong>${escapeHtml(notice.date)} · ${escapeHtml(notice.time)}</strong></p>
+        <p>${ownerLines.join("<br/>")}</p>
+      `,
+      replyTo: notice.email,
+      fromName: SMOOTHERLY_FROM_NAME,
+    });
+  } catch (error) {
+    console.error("Smootherly owner email failed", error);
+  }
 }
