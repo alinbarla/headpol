@@ -285,11 +285,11 @@ function overrideHourRange(
 }
 
 /**
- * Open slots for one day: the weekly rules, plus `open` overrides, minus
- * `block` overrides. Bookings are subtracted separately by the caller so this
- * stays a pure function of the schedule.
+ * Hours the schedule would offer before `block` overrides: weekly rules plus
+ * `open` exceptions. Used by the admin calendar to tell "blocked" apart from
+ * "never scheduled".
  */
-export function openSlotsForDate(
+export function baseOpenSlotsForDate(
   dateKey: string,
   rules: BookingRules,
   overrides: AvailabilityOverride[]
@@ -312,6 +312,24 @@ export function openSlotsForDate(
     for (let hour = from; hour < to; hour++) hours.add(hour);
   }
 
+  return [...hours].sort((a, b) => a - b).map(hourToTime);
+}
+
+/**
+ * Open slots for one day: the weekly rules, plus `open` overrides, minus
+ * `block` overrides. Bookings are subtracted separately by the caller so this
+ * stays a pure function of the schedule.
+ */
+export function openSlotsForDate(
+  dateKey: string,
+  rules: BookingRules,
+  overrides: AvailabilityOverride[]
+): string[] {
+  const dayOverrides = overrides.filter((o) => o.override_date === dateKey);
+  const hours = new Set(
+    baseOpenSlotsForDate(dateKey, rules, overrides).map(timeToHour)
+  );
+
   // Blocks win over opens, so they are applied last.
   for (const override of dayOverrides) {
     if (override.kind !== "block") continue;
@@ -325,6 +343,112 @@ export function openSlotsForDate(
   }
 
   return [...hours].sort((a, b) => a - b).map(hourToTime);
+}
+
+/**
+ * Hours a single block override covers. Whole-day blocks expand to the day's
+ * base open hours (rules + open exceptions) so unlocking one hour can leave
+ * residual ranged blocks for the rest.
+ */
+export function blockOverrideHours(
+  override: AvailabilityOverride,
+  rules: BookingRules,
+  baseOpenHours: number[]
+): number[] {
+  if (override.kind !== "block") return [];
+  if (!override.start_time || !override.end_time) {
+    return [...baseOpenHours];
+  }
+  const from = timeToHour(override.start_time);
+  const to = timeToHour(override.end_time);
+  const hours: number[] = [];
+  for (let hour = from; hour < to; hour++) hours.push(hour);
+  return hours;
+}
+
+export type UnlockBlockPlan = {
+  deleteIds: string[];
+  insert: Array<{
+    override_date: string;
+    kind: "block";
+    startTime: string;
+    endTime: string;
+    note: string | null;
+  }>;
+  unlockedCount: number;
+};
+
+/**
+ * Subtract painted hours from existing `block` overrides. Touched rows are
+ * deleted and residual contiguous ranges re-inserted so partial unlocks do
+ * not leave the original merged range intact.
+ */
+export function planUnlockBlockHours(input: {
+  blocks: AvailabilityOverride[];
+  slots: Array<{ date: string; time: string }>;
+  rules: BookingRules;
+  /** All overrides for the dates (needed to expand whole-day blocks). */
+  dayOverridesByDate: Map<string, AvailabilityOverride[]>;
+}): UnlockBlockPlan {
+  const unlockByDate = new Map<string, Set<number>>();
+  for (const slot of input.slots) {
+    const hours = unlockByDate.get(slot.date) ?? new Set<number>();
+    hours.add(timeToHour(slot.time));
+    unlockByDate.set(slot.date, hours);
+  }
+
+  const deleteIds: string[] = [];
+  const insert: UnlockBlockPlan["insert"] = [];
+  const unlocked = new Set<string>();
+
+  for (const block of input.blocks) {
+    if (block.kind !== "block") continue;
+    const dateKey = block.override_date;
+    const unlockHours = unlockByDate.get(dateKey);
+    if (!unlockHours || unlockHours.size === 0) continue;
+
+    const dayOverrides = input.dayOverridesByDate.get(dateKey) ?? [];
+    const baseHours = baseOpenSlotsForDate(
+      dateKey,
+      input.rules,
+      dayOverrides
+    ).map(timeToHour);
+    const covered = blockOverrideHours(block, input.rules, baseHours);
+    const remaining: number[] = [];
+    let touched = false;
+
+    for (const hour of covered) {
+      if (unlockHours.has(hour)) {
+        touched = true;
+        unlocked.add(`${dateKey}T${hourToTime(hour)}`);
+        continue;
+      }
+      remaining.push(hour);
+    }
+
+    if (!touched) continue;
+
+    deleteIds.push(block.id);
+
+    const residual = mergeHourSlotsToRanges(
+      remaining.map((hour) => ({ date: dateKey, time: hourToTime(hour) }))
+    );
+    for (const range of residual) {
+      insert.push({
+        override_date: range.date,
+        kind: "block",
+        startTime: range.startTime,
+        endTime: range.endTime,
+        note: block.note ?? "Blocked from calendar",
+      });
+    }
+  }
+
+  return {
+    deleteIds,
+    insert,
+    unlockedCount: unlocked.size,
+  };
 }
 
 export type AvailabilityMap = Record<string, string[]>;

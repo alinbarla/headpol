@@ -11,9 +11,13 @@ import {
 } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BanIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { BanIcon, ChevronLeftIcon, ChevronRightIcon, UnlockIcon } from "lucide-react";
 import { toast } from "sonner";
-import { blockCalendarSlots, rescheduleBooking } from "@/app/admin/actions";
+import {
+  blockCalendarSlots,
+  rescheduleBooking,
+  unlockCalendarSlots,
+} from "@/app/admin/actions";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -30,6 +34,7 @@ import {
   SOURCE_LABELS,
 } from "@/lib/admin/labels";
 import {
+  baseOpenSlotsForDate,
   openSlotsForDate,
   scheduleHourSpan,
   type AvailabilityOverride,
@@ -44,6 +49,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/shadcn/tabs";
 import { cn } from "@/lib/utils";
 
 type View = "month" | "week" | "day";
+type SelectionMode = "block" | "unblock";
 
 const WEEKDAY_SHORT = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -74,8 +80,12 @@ export function BookingCalendar({
   const [isMoving, startMove] = useTransition();
   const [isBlocking, startBlock] = useTransition();
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
+  const [selectionMode, setSelectionMode] = useState<SelectionMode | null>(
+    null
+  );
   const [confirmOpen, setConfirmOpen] = useState(false);
   const paintMode = useRef<"add" | "remove" | null>(null);
+  const selectionModeRef = useRef<SelectionMode | null>(null);
   const [nowDate, setNowDate] = useState(anchorDate);
   const [nowTime, setNowTime] = useState(anchorTime);
 
@@ -149,6 +159,33 @@ export function BookingCalendar({
     [rules, overridesByDate]
   );
 
+  const baseOpenSlotCache = useCallback(
+    (dateKey: string) =>
+      baseOpenSlotsForDate(dateKey, rules, overridesByDate.get(dateKey) ?? []),
+    [rules, overridesByDate]
+  );
+
+  const slotSelectionKind = useCallback(
+    (slotKey: string): SelectionMode | null => {
+      const [dateKey, time] = slotKey.split("T");
+      if (!dateKey || !time) return null;
+      if (slotIsPast(dateKey, time, nowDate, nowTime)) return null;
+      if (bySlot.has(slotKey)) return null;
+      const open = openSlotCache(dateKey);
+      if (open.includes(time)) return "block";
+      const base = baseOpenSlotCache(dateKey);
+      if (base.includes(time)) return "unblock";
+      return null;
+    },
+    [baseOpenSlotCache, bySlot, nowDate, nowTime, openSlotCache]
+  );
+
+  function clearSelection() {
+    selectionModeRef.current = null;
+    setSelectionMode(null);
+    setSelected(new Set());
+  }
+
   function shift(direction: 1 | -1) {
     const step = view === "month" ? 0 : view === "week" ? 7 : 1;
     if (step === 0) {
@@ -163,25 +200,38 @@ export function BookingCalendar({
   }
 
   function paintSlot(slotKey: string, mode: "add" | "remove") {
+    const kind = slotSelectionKind(slotKey);
     setSelected((current) => {
-      if (mode === "add" && current.has(slotKey)) return current;
-      if (mode === "remove" && !current.has(slotKey)) return current;
+      if (mode === "add") {
+        if (!kind) return current;
+        const locked = selectionModeRef.current;
+        if (locked && locked !== kind) return current;
+        if (current.has(slotKey)) return current;
+        if (!locked) {
+          selectionModeRef.current = kind;
+          setSelectionMode(kind);
+        }
+        const next = new Set(current);
+        next.add(slotKey);
+        return next;
+      }
+
+      if (!current.has(slotKey)) return current;
       const next = new Set(current);
-      if (mode === "add") next.add(slotKey);
-      else next.delete(slotKey);
+      next.delete(slotKey);
+      if (next.size === 0) {
+        selectionModeRef.current = null;
+        setSelectionMode(null);
+      }
       return next;
     });
   }
 
   function handlePaintStart(slotKey: string) {
-    setSelected((current) => {
-      const mode = current.has(slotKey) ? "remove" : "add";
-      paintMode.current = mode;
-      const next = new Set(current);
-      if (mode === "add") next.add(slotKey);
-      else next.delete(slotKey);
-      return next;
-    });
+    const removing = selected.has(slotKey);
+    const mode = removing ? "remove" : "add";
+    paintMode.current = mode;
+    paintSlot(slotKey, mode);
   }
 
   function handlePaintOver(slotKey: string) {
@@ -193,23 +243,43 @@ export function BookingCalendar({
     paintMode.current = null;
   }
 
-  function confirmBlock() {
-    const slots = [...selected]
+  function selectedSlots() {
+    return [...selected]
       .map((key) => {
         const [date, time] = key.split("T");
         return date && time ? { date, time } : null;
       })
       .filter((slot): slot is { date: string; time: string } => slot !== null);
+  }
+
+  function confirmBlock() {
+    const slots = selectedSlots();
 
     startBlock(async () => {
       const result = await blockCalendarSlots({ slots });
       if (result.ok) {
         toast.success(result.message ?? "Slots blocked");
-        setSelected(new Set());
+        clearSelection();
         setConfirmOpen(false);
         router.refresh();
       } else {
         toast.error(result.message ?? "Could not block those slots");
+      }
+    });
+  }
+
+  function confirmUnlock() {
+    const slots = selectedSlots();
+
+    startBlock(async () => {
+      const result = await unlockCalendarSlots({ slots });
+      if (result.ok) {
+        toast.success(result.message ?? "Slots unlocked");
+        clearSelection();
+        setConfirmOpen(false);
+        router.refresh();
+      } else {
+        toast.error(result.message ?? "Could not unlock those slots");
       }
     });
   }
@@ -287,16 +357,24 @@ export function BookingCalendar({
       </div>
 
       {selected.size > 0 && (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2">
+        <div
+          className={cn(
+            "mt-3 flex flex-wrap items-center justify-between gap-3 rounded-lg border px-3 py-2",
+            selectionMode === "unblock"
+              ? "border-amber-500/40 bg-amber-500/10"
+              : "border-primary/30 bg-primary/10"
+          )}
+        >
           <p className="text-sm font-medium">
             {selected.size} slot{selected.size === 1 ? "" : "s"} selected
+            {selectionMode === "unblock" ? " to unlock" : " to block"}
           </p>
           <div className="flex items-center gap-2">
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => setSelected(new Set())}
+              onClick={clearSelection}
             >
               Clear
             </Button>
@@ -305,8 +383,17 @@ export function BookingCalendar({
               size="sm"
               onClick={() => setConfirmOpen(true)}
             >
-              <BanIcon />
-              Block selected
+              {selectionMode === "unblock" ? (
+                <>
+                  <UnlockIcon />
+                  Unlock selected
+                </>
+              ) : (
+                <>
+                  <BanIcon />
+                  Block selected
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -336,7 +423,9 @@ export function BookingCalendar({
             hours={hours}
             bySlot={bySlot}
             openSlots={openSlotCache}
+            baseOpenSlots={baseOpenSlotCache}
             selected={selected}
+            selectionMode={selectionMode}
             dragging={dragging}
             nowDate={nowDate}
             nowTime={nowTime}
@@ -362,11 +451,14 @@ export function BookingCalendar({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Block {selected.size} slot{selected.size === 1 ? "" : "s"}?
+              {selectionMode === "unblock"
+                ? `Unlock ${selected.size} slot${selected.size === 1 ? "" : "s"}?`
+                : `Block ${selected.size} slot${selected.size === 1 ? "" : "s"}?`}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              These hours will close on the public booking calendar. Existing
-              bookings are not moved or cancelled.
+              {selectionMode === "unblock"
+                ? "These hours will reopen on the public booking calendar."
+                : "These hours will close on the public booking calendar. Existing bookings are not moved or cancelled."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <ul className="max-h-48 overflow-y-auto text-sm">
@@ -386,11 +478,15 @@ export function BookingCalendar({
             <AlertDialogCancel disabled={isBlocking}>Cancel</AlertDialogCancel>
             <Button
               type="button"
-              variant="destructive"
-              onClick={confirmBlock}
+              variant={selectionMode === "unblock" ? "default" : "destructive"}
+              onClick={
+                selectionMode === "unblock" ? confirmUnlock : confirmBlock
+              }
               disabled={isBlocking}
             >
-              Confirm blocking
+              {selectionMode === "unblock"
+                ? "Confirm unlocking"
+                : "Confirm blocking"}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -404,7 +500,9 @@ function TimeGrid({
   hours,
   bySlot,
   openSlots,
+  baseOpenSlots,
   selected,
+  selectionMode,
   dragging,
   nowDate,
   nowTime,
@@ -420,7 +518,9 @@ function TimeGrid({
   hours: number[];
   bySlot: Map<string, BookingRecord>;
   openSlots: (dateKey: string) => string[];
+  baseOpenSlots: (dateKey: string) => string[];
   selected: Set<string>;
+  selectionMode: SelectionMode | null;
   dragging: string | null;
   nowDate: string;
   nowTime: string;
@@ -503,8 +603,20 @@ function TimeGrid({
                 const slotKey = `${dateKey}T${time}`;
                 const booking = bySlot.get(slotKey);
                 const isOpen = openSlots(dateKey).includes(time);
+                const isBaseOpen = baseOpenSlots(dateKey).includes(time);
+                const isBlocked = isBaseOpen && !isOpen;
                 const passed = slotIsPast(dateKey, time, nowDate, nowTime);
-                const selectable = isOpen && !passed && !booking;
+                const kind: SelectionMode | null =
+                  !passed && !booking
+                    ? isOpen
+                      ? "block"
+                      : isBlocked
+                        ? "unblock"
+                        : null
+                    : null;
+                const selectable =
+                  kind !== null &&
+                  (selectionMode === null || selectionMode === kind);
                 const isSelected = selected.has(slotKey);
 
                 return (
@@ -540,9 +652,19 @@ function TimeGrid({
                     className={cn(
                       "min-h-16 border-b border-l border-border p-1 transition-colors",
                       !isOpen && !passed && "bg-secondary/30",
+                      isBlocked && !passed && !booking && "bg-secondary/50",
                       passed && "bg-zinc-900/80",
-                      selectable && "cursor-pointer hover:bg-primary/10",
+                      selectable &&
+                        kind === "block" &&
+                        "cursor-pointer hover:bg-primary/10",
+                      selectable &&
+                        kind === "unblock" &&
+                        "cursor-pointer hover:bg-amber-500/15",
                       isSelected &&
+                        kind === "unblock" &&
+                        "bg-amber-500/25 ring-2 ring-inset ring-amber-500/70",
+                      isSelected &&
+                        kind !== "unblock" &&
                         "bg-primary/25 ring-2 ring-inset ring-primary/70",
                       dragging && !booking && "hover:bg-primary/10"
                     )}

@@ -21,6 +21,8 @@ import {
   isSlotOpen,
   mergeHourSlotsToRanges,
   parseBookingRules,
+  planUnlockBlockHours,
+  type AvailabilityOverride,
 } from "@/lib/availability";
 import { fromDbTime, toDbTime } from "@/lib/booking";
 import { getAvailabilityOverrides, getBookingRules } from "@/lib/bookingRules";
@@ -1200,6 +1202,103 @@ export async function blockCalendarSlots(input: {
   return {
     ok: true,
     message: skipped > 0 ? `${blocked} (${skipped} skipped)` : blocked,
+  };
+}
+
+const unlockCalendarSlotsSchema = z.object({
+  slots: z.array(calendarSlotSchema).min(1, "Select at least one slot").max(80),
+});
+
+/**
+ * Used by the calendar: the owner paints blocked hours, then confirms.
+ * Matching `block` override rows are rewritten so those hours reopen.
+ */
+export async function unlockCalendarSlots(input: {
+  slots: Array<{ date: string; time: string }>;
+}): Promise<ActionState> {
+  await requireAdmin();
+
+  const parsed = unlockCalendarSlotsSchema.safeParse(input);
+  if (!parsed.success) return fail(firstIssue(parsed.error));
+
+  const nowDate = stockholmDateKey();
+  const nowTime = stockholmTime();
+  const future = parsed.data.slots.filter(
+    (slot) => !slotIsPast(slot.date, slot.time, nowDate, nowTime)
+  );
+  if (future.length === 0) {
+    return fail("Those slots have already passed");
+  }
+
+  const dates = [...new Set(future.map((slot) => slot.date))];
+  const supabase = getSupabaseAdminClient();
+  const { data: overrideRows, error: overrideError } = await supabase
+    .from("availability_overrides")
+    .select("id, override_date, start_time, end_time, kind, note")
+    .in("override_date", dates);
+
+  if (overrideError) return fail(overrideError.message);
+
+  const overrides = (overrideRows ?? []) as AvailabilityOverride[];
+  const dayOverridesByDate = new Map<string, AvailabilityOverride[]>();
+  for (const override of overrides) {
+    const list = dayOverridesByDate.get(override.override_date) ?? [];
+    list.push(override);
+    dayOverridesByDate.set(override.override_date, list);
+  }
+
+  const rules = await getBookingRules();
+  const blocks = overrides.filter((row) => row.kind === "block");
+  const plan = planUnlockBlockHours({
+    blocks,
+    slots: future,
+    rules,
+    dayOverridesByDate,
+  });
+
+  if (plan.unlockedCount === 0) {
+    return fail("Those slots are not blocked");
+  }
+
+  if (plan.deleteIds.length > 0) {
+    const { error: deleteError } = await supabase
+      .from("availability_overrides")
+      .delete()
+      .in("id", plan.deleteIds);
+    if (deleteError) return fail(deleteError.message);
+  }
+
+  if (plan.insert.length > 0) {
+    const { error: insertError } = await supabase
+      .from("availability_overrides")
+      .insert(
+        plan.insert.map((row) => ({
+          override_date: row.override_date,
+          kind: row.kind,
+          start_time: toDbTime(row.startTime),
+          end_time: toDbTime(row.endTime),
+          note: row.note,
+        }))
+      );
+    if (insertError) return fail(insertError.message);
+  }
+
+  await logAdminAction("availability.unblock_slots", {
+    entityType: "availability",
+    details: {
+      slots: plan.unlockedCount,
+      deleted: plan.deleteIds.length,
+      residual: plan.insert.length,
+    },
+  });
+
+  refreshAdmin();
+
+  const skipped = parsed.data.slots.length - plan.unlockedCount;
+  const unlocked = `${plan.unlockedCount} slot${plan.unlockedCount === 1 ? "" : "s"} unlocked`;
+  return {
+    ok: true,
+    message: skipped > 0 ? `${unlocked} (${skipped} skipped)` : unlocked,
   };
 }
 
