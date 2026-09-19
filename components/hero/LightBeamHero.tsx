@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
 import { CONTACT_PHONE } from "@/lib/booking";
+import { bookingUrl, isProductId } from "@/lib/products";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { PriceSticker } from "@/components/ui/PriceSticker";
@@ -13,7 +14,11 @@ export async function LightBeamHero({
   reviewRating?: ReactNode;
 }) {
   const t = await getTranslations("hero");
-  const stats = t.raw("stats") as Array<{ value: string; label: string }>;
+  const stats = t.raw("stats") as Array<{
+    id?: string;
+    value: string;
+    label: string;
+  }>;
 
   return (
     <section
@@ -85,20 +90,45 @@ export async function LightBeamHero({
               <Button href="#booking">{t("ctaSecondary")}</Button>
             </div>
 
-            <dl className="mt-12 grid max-w-lg grid-cols-2 gap-6 border-t border-white/10 pt-8 sm:grid-cols-3">
-              {stats.map((stat) => (
-                <div key={stat.label}>
-                  <dt className="sr-only">{stat.label}</dt>
-                  <dd>
-                    <span className="headline-display block text-2xl font-bold text-beam sm:text-3xl">
-                      {stat.value}
-                    </span>
-                    <span className="mt-1 block text-xs leading-snug text-text-muted">
-                      {stat.label}
-                    </span>
-                  </dd>
-                </div>
-              ))}
+            <dl
+              className="mt-12 grid max-w-lg grid-cols-2 gap-6 border-t border-white/10 pt-8 sm:grid-cols-3"
+              aria-label={t("offersLabel")}
+            >
+              {stats.map((stat) => {
+                const href = isProductId(stat.id) ? bookingUrl(stat.id) : undefined;
+                const value = (
+                  <span className="headline-display block text-2xl font-bold text-beam sm:text-3xl">
+                    {stat.value}
+                  </span>
+                );
+                const label = (
+                  <span className="mt-1 block text-xs leading-snug text-text-muted">
+                    {stat.label}
+                  </span>
+                );
+
+                return (
+                  <div key={stat.label}>
+                    <dt className="sr-only">{stat.label}</dt>
+                    <dd>
+                      {href ? (
+                        <a
+                          href={href}
+                          className="block rounded-lg outline-offset-4 transition-colors hover:text-beam"
+                        >
+                          {value}
+                          {label}
+                        </a>
+                      ) : (
+                        <>
+                          {value}
+                          {label}
+                        </>
+                      )}
+                    </dd>
+                  </div>
+                );
+              })}
             </dl>
           </div>
         </div>

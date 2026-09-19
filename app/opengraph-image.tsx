@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Strålkastarpolering — Strålkastarepolering i Stockholm";
+export const alt =
+  "Strålkastarpolering — polering, PPF-folie och paket i Stockholm";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -54,25 +55,31 @@ export default function OpengraphImage() {
           >
             Kristallklara strålkastare igen
           </div>
-          <div style={{ color: "#aaaaaa", fontSize: 34, fontWeight: 500, maxWidth: 900 }}>
-            Premiumrestaurering + UV-keramiskt skydd. 12 månaders garanti. Vi kommer till dig.
+          <div style={{ color: "#aaaaaa", fontSize: 30, fontWeight: 500, maxWidth: 920 }}>
+            Polering 899 kr · PPF 1899 kr · Paket 2599 kr. 12 mån garanti. Vi kommer till dig.
           </div>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div
-            style={{
-              background: "#fff326",
-              color: "#111111",
-              fontSize: 28,
-              fontWeight: 700,
-              padding: "12px 28px",
-              borderRadius: 999,
-            }}
-          >
-            899kr/par
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {["899kr", "1899kr", "2599kr"].map((price) => (
+            <div
+              key={price}
+              style={{
+                display: "flex",
+                background: "#fff326",
+                color: "#111111",
+                fontSize: 24,
+                fontWeight: 700,
+                padding: "10px 20px",
+                borderRadius: 999,
+              }}
+            >
+              {price}
+            </div>
+          ))}
+          <div style={{ color: "#888888", fontSize: 24, marginLeft: 8 }}>
+            stralkastarpolering.se
           </div>
-          <div style={{ color: "#888888", fontSize: 26 }}>stralkastarpolering.se</div>
         </div>
       </div>
     ),

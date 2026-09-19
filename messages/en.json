@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Polish headlights in Stockholm – from 899 SEK/pair",
-    "description": "Mobile headlight polishing in Stockholm County. Polishing 899 SEK/pair, PPF film 1899 SEK, package 2599 SEK. 12-month warranty. We come to your address."
+    "title": "Polish headlights & PPF Stockholm – from 899 SEK",
+    "description": "Sanding, polishing and UV protection 899 SEK/pair. PPF film 1899 SEK. Package 2599 SEK. 12-month warranty. We come to you in Stockholm County."
   },
   "nav": {
     "brand": "Strålkastarpolering",
@@ -25,8 +25,9 @@
     "title": "<lead>Polish headlights in Stockholm – </lead><visible>crystal clear again</visible>",
     "ratingLabel": "Reviews",
     "ratingSr": "{rating} out of 5 stars based on {count, plural, one {# review} other {# reviews}}",
-    "subtitle": "Premium restoration + UV ceramic protection = headlights like new, money saved and a <guarantee>12-month warranty</guarantee>.",
-    "semantic": "Polish headlights in Stockholm at your address. We remove oxidation, yellowing and scratches from plastic headlights and finish with UV ceramic protection.",
+    "subtitle": "We sand, polish and add UV ceramic protection. Polishing 899 SEK, PPF 1899 SEK, package 2599 SEK. <guarantee>12-month warranty</guarantee>. We come to you.",
+    "semantic": "Polish headlights in Stockholm at your address. Sanding, polishing and UV ceramic protection 899 SEK/pair. PPF film 1899 SEK or the package 2599 SEK. 12-month warranty.",
+    "offersLabel": "Book a service",
     "ctaPrimary": "Call now — we come to you!",
     "ctaSecondary": "Book a time",
     "oldPrice": "1499kr",
@@ -42,16 +43,19 @@
     "imageAlt": "Before and after of a restored headlight in Stockholm",
     "stats": [
       {
-        "value": "899kr/pair",
-        "label": "Premium restoration"
+        "id": "polering",
+        "value": "899kr",
+        "label": "Polishing"
       },
       {
-        "value": "12 months",
-        "label": "Warranty"
+        "id": "ppf",
+        "value": "1899kr",
+        "label": "PPF film"
       },
       {
-        "value": "We come to you",
-        "label": "Mobile service"
+        "id": "polering-ppf",
+        "value": "2599kr",
+        "label": "Package"
       }
     ]
   },

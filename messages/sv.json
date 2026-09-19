@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Polera strålkastare Stockholm – från 899 kr/par",
-    "description": "Mobil strålkastarpolering i Stockholms län. Polering 899 kr/par, PPF-folie 1899 kr, paket 2599 kr. 12 månaders garanti. Vi kommer till din adress."
+    "title": "Polera strålkastare & PPF Stockholm – från 899 kr",
+    "description": "Slipning, polering och UV-skydd 899 kr/par. PPF-folie 1899 kr. Paket 2599 kr. 12 mån garanti. Vi kommer till dig i Stockholms län."
   },
   "nav": {
     "brand": "Strålkastarpolering",
@@ -25,8 +25,9 @@
     "title": "<lead>Polera strålkastare i Stockholm – </lead><visible>kristallklara igen</visible>",
     "ratingLabel": "Recensioner",
     "ratingSr": "{rating} av 5 stjärnor baserat på {count, plural, one {# recension} other {# recensioner}}",
-    "subtitle": "Vi slipar, polerar och lägger UV-keramiskt skydd när du vill polera strålkastare. 899 kr/par och <guarantee>12 månaders garanti</guarantee>. Vi kommer till dig.",
-    "semantic": "Polera strålkastare i Stockholm på din adress. Vi tar bort oxidation, gulnad och repor från plaststrålkastare och avslutar med UV-keramiskt skydd.",
+    "subtitle": "Vi slipar, polerar och lägger UV-keramiskt skydd. Polering 899 kr, PPF 1899 kr, paket 2599 kr. <guarantee>12 mån garanti</guarantee>. Vi kommer till dig.",
+    "semantic": "Polera strålkastare i Stockholm på din adress. Slipning, polering och UV-keramiskt skydd 899 kr/par. PPF-folie 1899 kr eller paketet 2599 kr. 12 månaders garanti.",
+    "offersLabel": "Boka en tjänst",
     "ctaPrimary": "Ring nu – vi kommer till dig!",
     "ctaSecondary": "Boka tid",
     "oldPrice": "1499kr",
@@ -42,16 +43,19 @@
     "imageAlt": "Gulnad plaststrålkastare före polering, samma lampa efter",
     "stats": [
       {
-        "value": "899kr/par",
-        "label": "Fast pris"
+        "id": "polering",
+        "value": "899kr",
+        "label": "Polering"
       },
       {
-        "value": "12 mån",
-        "label": "Garanti"
+        "id": "ppf",
+        "value": "1899kr",
+        "label": "PPF-folie"
       },
       {
-        "value": "Hem till dig",
-        "label": "Vi kommer till dig"
+        "id": "polering-ppf",
+        "value": "2599kr",
+        "label": "Paket"
       }
     ]
   },

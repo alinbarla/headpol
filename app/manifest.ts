@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: `${BRAND} — Strålkastarpolering Stockholm`,
     short_name: BRAND,
     description:
-      "Professionell strålkastarpolering och strålkastarrenovering i Stockholm. Klarare ljus, säkrare körning och godkänd besiktning.",
+      "Mobil strålkastarpolering, PPF-folie och paket i Stockholm. Från 899 kr/par, 12 månaders garanti. Vi kommer till dig.",
     start_url: "/",
     scope: "/",
     display: "standalone",
