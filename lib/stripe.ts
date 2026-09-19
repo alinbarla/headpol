@@ -2,6 +2,11 @@ import "server-only";
 
 import Stripe from "stripe";
 import { CONFIRMATION_PATH } from "@/lib/routes";
+import {
+  DEFAULT_PRODUCT_ID,
+  isProductId,
+  type ProductId,
+} from "@/lib/products";
 import { formatDateKey } from "@/lib/time";
 
 let client: Stripe | null = null;
@@ -42,17 +47,6 @@ export function getStripe(): Stripe {
   return client;
 }
 
-/**
- * Products created in the Stripe Dashboard, one per language, so the name and
- * description on the Checkout page and the receipt are already localised.
- * The amount still comes from the booking rules, so a price change in the
- * admin does not require touching Stripe.
- */
-const STRIPE_PRODUCTS: Record<"sv" | "en", string> = {
-  sv: process.env.STRIPE_PRODUCT_ID_SV ?? "prod_V8HEVqnCcTf9mv",
-  en: process.env.STRIPE_PRODUCT_ID_EN ?? "prod_V8HFUt4NzFNtz1",
-};
-
 function getSiteUrl(): string {
   const configured =
     process.env.NEXT_PUBLIC_SITE_URL ??
@@ -64,6 +58,34 @@ function getSiteUrl(): string {
   return (configured ?? "http://localhost:3000").replace(/\/$/, "");
 }
 
+/**
+ * Dashboard products, one per bookable SKU. Polering still has a Swedish and
+ * English product so Checkout and the receipt stay localised. Amounts always
+ * come from the catalog via `unit_amount`, not from Stripe Prices.
+ */
+const STRIPE_PRODUCTS = {
+  polering: {
+    sv: process.env.STRIPE_PRODUCT_ID_SV ?? "prod_V8HEVqnCcTf9mv",
+    en: process.env.STRIPE_PRODUCT_ID_EN ?? "prod_V8HFUt4NzFNtz1",
+  },
+  ppf: process.env.STRIPE_PRODUCT_ID_PPF ?? "prod_VHrkNll8ISAgkh",
+  "polering-ppf":
+    process.env.STRIPE_PRODUCT_ID_POLERING_PPF ?? "prod_VHrlohDJW1gelD",
+} as const;
+
+export function stripeProductId(
+  serviceId: string | null | undefined,
+  locale: string
+): string {
+  const id: ProductId = isProductId(serviceId)
+    ? serviceId
+    : DEFAULT_PRODUCT_ID;
+  if (id === "polering") {
+    return STRIPE_PRODUCTS.polering[locale === "en" ? "en" : "sv"];
+  }
+  return STRIPE_PRODUCTS[id];
+}
+
 export type CheckoutSessionInput = {
   bookingId: string;
   amountOre: number;
@@ -73,6 +95,7 @@ export type CheckoutSessionInput = {
   locale: string;
   /** Session lifetime; also the slot hold window. Stripe requires >= 30 min. */
   holdMinutes: number;
+  serviceId: ProductId;
 };
 
 export type CheckoutSessionResult = {
@@ -129,7 +152,7 @@ export async function createBookingCheckoutSession(
           price_data: {
             currency: "sek",
             unit_amount: input.amountOre,
-            product: STRIPE_PRODUCTS[locale],
+            product: stripeProductId(input.serviceId, locale),
           },
         },
       ],
@@ -147,9 +170,13 @@ export async function createBookingCheckoutSession(
         booking_id: input.bookingId,
         booking_date: input.dateKey,
         booking_time: input.time,
+        service_id: input.serviceId,
       },
       payment_intent_data: {
-        metadata: { booking_id: input.bookingId },
+        metadata: {
+          booking_id: input.bookingId,
+          service_id: input.serviceId,
+        },
       },
     });
 

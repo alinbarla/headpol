@@ -83,7 +83,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Arenastaden och kontor",
         paragraphs: [
-          "Många bokar efter 16 vid kontoret. Mall of Scandinavia och Friends-området har korttids- och garage-P som sällan är bra arbetsytor. En tjänstebilsplats utomhus på gården, eller hemma i Huvudsta, är bättre. Flera bilar samma kväll: se företagssidan.",
+          "Många bokar efter 16 vid kontoret. Mall of Scandinavia och Friends-området har korttids- och garage-P som sällan är bra arbetsytor. En tjänstebilsplats utomhus på gården, eller hemma i Huvudsta, är bättre. Flera bilar samma kväll: boka en tid per bil i kalendern.",
         ],
       },
       {
@@ -115,7 +115,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       [
         { slug: "stralkastarpolering-arenastaden", label: "Arenastaden" },
         { slug: "stralkastarpolering-sundbyberg", label: "Sundbyberg" },
-        { slug: "foretagskunder", label: "Företag" },
+        { slug: "ppf", label: "PPF-folie" },
         { slug: "priser", label: "Priser" },
       ]
     ),
@@ -349,7 +349,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Pris",
         paragraphs: [
-          "899 kr/par, samma som i stan. Ingen extra avgift för Huddinge. MC från 499 kr. Skydd och 12 månaders garanti ingår.",
+          "899 kr/par för polering, samma som i stan. Ingen extra avgift för Huddinge. PPF-folie och paketet polering + PPF finns som tillval. Skydd och 12 månaders garanti ingår.",
         ],
       },
       {
@@ -501,7 +501,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
         heading: "Stad, Pershagen och Järna-hållet",
         paragraphs: [
           "I tätorten är det uppfart eller p-plats vid bostaden som gäller. Pershagen, Östertälje, Geneta och Hovsjö funkar som vanliga bostadsadresser. Mot Järna och Hölö tar vi jobb när adressen fortfarande ligger inom länet och kalendern släpper postnumret.",
-          "Scania-området och andra industriadresser passar när flera bilar kan stå ute samma eftermiddag. Då är företagssidan mer relevant än en enskild privatbokning.",
+          "Scania-området och andra industriadresser passar när flera bilar kan stå ute samma eftermiddag. Boka en tid per bil i kalendern.",
         ],
       },
       {
@@ -530,13 +530,13 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       },
       {
         question: "Kan ni göra flera tjänstebilar samma kväll?",
-        answer: "Ja. Se företagssidan och mejla antal. Styckpriset blir lägre när restiden bara sker en gång.",
+        answer: "Ja. Boka en tid per bil i kalendern. Samma fastpris som i stan.",
       },
     ],
     related: relatedForMunicipality(
       "Södertälje",
       [
-        { slug: "foretagskunder", label: "Företag" },
+        { slug: "ppf", label: "PPF-folie" },
         { slug: "priser", label: "Priser" },
       ]
     ),
@@ -626,7 +626,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       {
         heading: "Flera bilar på företagsgård",
         paragraphs: [
-          "Barkarby och industri nära har flottor som passar företagssidan — mejla antal så planerar vi en runda.",
+          "Barkarby och industri nära har flera bilar på samma gård — boka en tid per bil i kalendern så planerar vi rundan.",
         ],
       },
     ],
@@ -644,7 +644,7 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       "Järfälla",
       [
         { slug: "stralkastarpolering-barkarby", label: "Barkarby" },
-        { slug: "foretagskunder", label: "Företag" },
+        { slug: "ppf", label: "PPF-folie" },
         { slug: "priser", label: "Priser" },
       ]
     ),
@@ -847,13 +847,13 @@ export const LOCATION_PAGES: ClusterDoc[] = [
       },
       {
         question: "Kan ni ta flera bilar samma dag?",
-        answer: "Ja, mejla antal via företagssidan om det är flotta.",
+        answer: "Ja. Boka en tid per bil i kalendern om det är flera fordon.",
       },
     ],
     related: relatedForMunicipality(
       "Nykvarn",
       [
-        { slug: "foretagskunder", label: "Företag" },
+        { slug: "ppf", label: "PPF-folie" },
         { slug: "priser", label: "Priser" },
       ]
     ),

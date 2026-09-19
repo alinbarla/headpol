@@ -35,11 +35,15 @@ export type ClusterPriceTier = {
   includes?: string[];
   href: string;
   cta: string;
+  moreHref?: string;
+  moreCta?: string;
 };
 
 export type ClusterKind =
   | "service-polering"
   | "service-renovering"
+  | "service-ppf"
+  | "service-combo"
   | "location"
   | "faq"
   | "other";

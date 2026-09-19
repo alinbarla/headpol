@@ -5,6 +5,7 @@ import {
   BOOKING_STATUS_LABELS,
   PAYMENT_STATUS_LABELS,
   PAYMENT_TONE,
+  SERVICE_LABELS,
   STATUS_TONE,
   mapsLink,
   telLink,
@@ -33,6 +34,9 @@ export function BookingCard({ booking }: { booking: BookingRecord }) {
           >
             {booking.customer_name ?? "No name"}
           </Link>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {SERVICE_LABELS[booking.service_id] ?? booking.service_id ?? "Polishing"}
+          </p>
         </div>
 
         <div className="flex shrink-0 flex-col items-end gap-1">

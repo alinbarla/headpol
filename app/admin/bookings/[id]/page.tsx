@@ -12,6 +12,7 @@ import {
   BOOKING_STATUS_LABELS,
   PAYMENT_STATUS_LABELS,
   PAYMENT_TONE,
+  SERVICE_LABELS,
   SOURCE_LABELS,
   STATUS_TONE,
   acquisitionLabel,
@@ -223,6 +224,10 @@ export default async function BookingDetailPage({
             <Row
               label="Language"
               value={booking.locale === "en" ? "English" : "Swedish"}
+            />
+            <Row
+              label="Service"
+              value={SERVICE_LABELS[booking.service_id] ?? booking.service_id}
             />
             <Row label="Price" value={formatOre(booking.price_ore)} />
             <Row label="Booked" value={formatTimestamp(booking.created_at)} />

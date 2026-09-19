@@ -1,4 +1,5 @@
 import type { ClusterDoc } from "@/lib/content/types";
+import { bookingUrl, PRODUCTS } from "@/lib/products";
 
 export const HUB_PAGES: ClusterDoc[] = [
   {
@@ -20,7 +21,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         heading: "Vem det passar att polera strålkastare för",
         paragraphs: [
-          "De flesta moderna bilar, motorcyklar och mopeder har strålkastare av polykarbonat. Du kan polera strålkastare så länge glaset inte är sprucket eller fyllt med fukt på insidan.",
+          "De flesta moderna bilar och motorcyklar har strålkastare av polykarbonat. Du kan polera strålkastare så länge glaset inte är sprucket eller fyllt med fukt på insidan.",
         ],
         bullets: [
           "Gulnade eller mjölkiga glas före besiktning",
@@ -47,7 +48,7 @@ export const HUB_PAGES: ClusterDoc[] = [
         heading: "När ska man boka att polera strålkastare?",
         paragraphs: [
           "Boka när glasen syns gula i dagsljus, när ljusbilden känns svag på landsväg, eller inför besiktning och försäljning. Ju tidigare du polerar strålkastare efter att UV-skyddet slitits, desto enklare är slipningen.",
-          "Ett par strålkastare på personbil kostar 899 kr inklusive moms, skydd och 12 månaders garanti. Motorcykel och moped från 499 kr. Ett vanligt jobb tar 45–60 minuter. Du kan vänta eller lämna bilen.",
+          "Ett par strålkastare kostar 899 kr inklusive moms, UV-keramiskt skydd och 12 månaders garanti. Vill du ha extra skydd mot stenskott finns PPF-folie och paketet polering + PPF. Ett vanligt poleringsjobb tar 45–60 minuter. Du kan vänta eller lämna bilen.",
           "Samma pris i hela vårt område. Ingen zonavgift för kommunerna i Stockholms län vi tar — från Solna och Sundbyberg till Södertälje, Värmdö och Nynäshamn.",
         ],
       },
@@ -72,11 +73,12 @@ export const HUB_PAGES: ClusterDoc[] = [
     compareSlider: true,
     related: [
       { slug: "stralkastarrenovering", label: "Strålkastarrenovering" },
+      { slug: "ppf", label: "PPF-folie" },
+      { slug: "polering-ppf", label: "Polering + PPF" },
       { slug: "priser", label: "Priser" },
       { slug: "stralkastarpolering-stockholm", label: "Stockholm" },
       { slug: "stralkastarpolering-huddinge", label: "Huddinge" },
       { slug: "stralkastarpolering-solna", label: "Solna" },
-      { slug: "stralkastarpolering-nacka", label: "Nacka" },
       { slug: "faq", label: "FAQ" },
     ],
   },
@@ -176,30 +178,30 @@ export const HUB_PAGES: ClusterDoc[] = [
     ],
     related: [
       { slug: "stralkastarpolering", label: "Polera strålkastare" },
+      { slug: "ppf", label: "PPF-folie" },
+      { slug: "polering-ppf", label: "Polering + PPF" },
       { slug: "fore-bilder", label: "Före och efter" },
       { slug: "priser", label: "Priser" },
       { slug: "stralkastarpolering-stockholm", label: "Stockholm" },
-      { slug: "stralkastarpolering-botkyrka", label: "Botkyrka" },
       { slug: "faq", label: "FAQ" },
     ],
   },
   {
     slug: "priser",
     kind: "other",
-    title: "Pris för att polera strålkastare – 899 kr/par, 12 mån garanti",
+    title: "Priser: polering 899 kr, PPF 1899 kr, paket 2599 kr",
     description:
-      "Polera strålkastare till fast pris i Stockholms län: 899 kr/par för personbil, från 499 kr för MC. UV-skydd och 12 månaders garanti ingår. Ingen zonavgift.",
-    h1: "Priser för att polera strålkastare",
-    lead: "Vill du polera strålkastare utan överraskningar? Ett par på personbil kostar 899 kr inklusive moms. UV-keramiskt skydd och 12 månaders garanti ingår. Samma pris i hela Stockholmsområdet.",
+      "Fast pris i Stockholms län: polera strålkastare 899 kr/par, PPF-folie 1899 kr/par, polering + PPF 2599 kr/par. 12 månaders garanti. Ingen zonavgift.",
+    h1: "Priser för strålkastare",
+    lead: "Tre fasta priser per par, inklusive moms. Polering 899 kr, PPF-folie 1899 kr, paketet 2599 kr. Samma pris i hela Stockholmsområdet.",
     priceTiers: [
       {
-        title: "Personbil",
+        title: PRODUCTS.polering.nameSv,
         description:
           "Slipning, polering och UV-skydd av båda strålkastarna. Vi kommer till din adress. Ingen startavgift och ingen milersättning inom området.",
-        oldPrice: "1499kr",
-        price: "899kr",
-        unit: "par",
-        featured: true,
+        oldPrice: PRODUCTS.polering.listPriceLabel,
+        price: PRODUCTS.polering.priceLabel,
+        unit: PRODUCTS.polering.unit,
         badge: "Mest bokad",
         includes: [
           "Båda strålkastarna",
@@ -209,24 +211,49 @@ export const HUB_PAGES: ClusterDoc[] = [
           "Kontroll av ljusbild",
           "12 månaders garanti",
         ],
-        href: "/#booking",
+        href: bookingUrl("polering"),
         cta: "Boka tid",
+        moreHref: `/${PRODUCTS.polering.slug}`,
+        moreCta: "Läs mer",
       },
       {
-        title: "MC & moped",
+        title: PRODUCTS.ppf.nameSv,
         description:
-          "Kompakta enheter med samma material, finish och UV-skydd som för personbil.",
-        price: "Från 499 kr",
-        href: "/#booking",
+          "Skyddsfolie på båda strålkastarna. Passar när glaset redan är klart, eller som extra skydd efter polering.",
+        oldPrice: PRODUCTS.ppf.listPriceLabel,
+        price: PRODUCTS.ppf.priceLabel,
+        unit: PRODUCTS.ppf.unit,
+        includes: [
+          "Båda strålkastarna",
+          "PPF-folie (TPU)",
+          "Skydd mot stenskott och ny UV-skada",
+          "12 månaders garanti",
+        ],
+        href: bookingUrl("ppf"),
         cta: "Boka tid",
+        moreHref: `/${PRODUCTS.ppf.slug}`,
+        moreCta: "Läs mer",
       },
       {
-        title: "Företag & flotta",
+        title: PRODUCTS["polering-ppf"].nameSv,
         description:
-          "Åkerier, bilhandlare och vagnparker. Flera bilar på samma plats ger lägre styckpris.",
-        price: "Offert",
-        href: "/foretagskunder",
-        cta: "Till företagssidan",
+          "Vi polerar först och lägger PPF-folie samma besök. 199 kr billigare än att boka dem var för sig.",
+        oldPrice: PRODUCTS["polering-ppf"].listPriceLabel,
+        price: PRODUCTS["polering-ppf"].priceLabel,
+        unit: PRODUCTS["polering-ppf"].unit,
+        featured: true,
+        badge: "Paket · spara 199 kr",
+        includes: [
+          "Båda strålkastarna",
+          "Hela poleringskedjan",
+          "PPF-folie ovanpå",
+          "Samma besök",
+          "12 månaders garanti",
+        ],
+        href: bookingUrl("polering-ppf"),
+        cta: "Boka tid",
+        moreHref: `/${PRODUCTS["polering-ppf"].slug}`,
+        moreCta: "Läs mer",
       },
     ],
     sections: [
@@ -248,7 +275,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         question: "Är det billigare att renovera än att byta?",
         answer:
-          "Ja, så länge glaset är helt. 899 kr/par mot ofta femsiffriga belopp per sida för nya enheter.",
+          "Ja, så länge glaset är helt. Polering 899 kr/par, PPF 1899 kr/par, paket 2599 kr/par — mot ofta femsiffriga belopp per sida för nya enheter.",
       },
       {
         question: "Kostar det extra utanför innerstan?",
@@ -258,42 +285,162 @@ export const HUB_PAGES: ClusterDoc[] = [
     ],
     related: [
       { slug: "stralkastarpolering", label: "Polera strålkastare" },
-      { slug: "foretagskunder", label: "Företag och bilhandlare" },
+      { slug: "ppf", label: "PPF-folie" },
+      { slug: "polering-ppf", label: "Polering + PPF" },
       { slug: "faq", label: "FAQ" },
     ],
   },
   {
-    slug: "foretagskunder",
-    kind: "other",
-    title: "Polera strålkastare för företag – från 899 kr/par, 12 mån garanti",
+    slug: "ppf",
+    kind: "service-ppf",
+    title: "PPF-folie för strålkastare – 1899 kr/par, Stockholm",
     description:
-      "Volympris när ni behöver polera strålkastare på flera bilar. Från 899 kr/par med UV-skydd och 12 månaders garanti. Mobil service för bilhandlare och vagnparker i Stockholm.",
-    h1: "Polera strålkastare för företag",
-    lead: "Gula strålkastare på en bil i lager sänker intrycket av hela bilen. När ni vill polera strålkastare i volym tar vi flera bilar på samma adress — bilhandlare, åkeri och vagnpark.",
+      "PPF-folie på strålkastare i Stockholms län: 1899 kr/par (ord. 2499 kr). TPU-skydd mot stenskott och ny UV-skada. Vi kommer till din adress.",
+    h1: "PPF-folie för strålkastare",
+    lead: "PPF är en klar TPU-folie som sitter på strålkastarglaset. Den tar stenskott och ny UV-belastning så att polykarbonatet under inte oxiderar om. Det är inte samma sak som UV-keramiskt skydd efter polering — folien är ett fysiskt skikt, inte en beläggning.",
     sections: [
       {
-        heading: "Bilhandlare",
+        heading: "Vad PPF gör på en strålkastare",
         paragraphs: [
-          "Inbytesbilar med oxiderade glas ser äldre ut än mätarställningen. Vi kan stå på er gård och ta en rad bilar samma eftermiddag, så att fotot mot rutan och visningen matchar resten av lacken.",
+          "Strålkastarglas är polykarbonat. När fabrikens hard-coat är borta tar solen och vägsmuts i plasten. PPF-folie lägger ett offerlager utanpå: stenskott och mikrosprickor stannar i filmen i stället för i glaset.",
+          "Filmen är optiskt klar när den är rätt applicerad. Den ersätter inte en lampa som redan är mjölkig inuti. Den skyddar en yta som redan är klar — eller en yta vi just polerat.",
         ],
       },
       {
-        heading: "Åkeri och tjänstebilar",
+        heading: "PPF eller UV-keramiskt skydd",
         paragraphs: [
-          "Yrkestrafik kör mycket i mörker. Matta glas märks på landsväg och i regn. Vi kommer till depån när bilarna ändå står still — kvällar vardagar och dagtid söndag.",
+          "UV-keramiskt skydd är det tunna skiktet vi alltid lägger efter polering. Det bromsar gulning men är inte ett pansar mot stenskott.",
+          "PPF är tjockare. Den tar träffar som keramik inte klarar. Därför finns den som eget jobb när glaset redan är blankt, och som sista steg i paketet polering + PPF.",
         ],
       },
       {
-        heading: "Så funkar offerten",
+        heading: "När räcker folie utan polering",
         paragraphs: [
-          "Personbilspriset 899 kr/par är utgångspunkten. Flera bilar på samma plats ger lägre styckpris eftersom restid och uppställning bara sker en gång. Mejla antal, adress och ungefärligt skick, eller ring.",
+          "Om glaset redan är klart — nyare bil, nyligen polerat, ingen synlig gulnad — kan vi lägga PPF direkt. Då betalar du 1899 kr för paret.",
+          "Är plasten gul, mjölkig eller matt måste oxidationen bort först. Folie på oxiderat glas låser in diset. Då är paketet rätt val: vi polerar och lägger filmen samma besök.",
+        ],
+        bullets: [
+          "Klara glas: PPF räcker ofta",
+          "Gulnade eller matta glas: polera först",
+          "Spricka eller fukt inuti: varken polering eller PPF hjälper",
+        ],
+      },
+      {
+        heading: "Pris och bokning",
+        paragraphs: [
+          "PPF-folie kostar 1899 kr för båda strålkastarna, ned från 2499 kr. Moms och 12 månaders garanti ingår. Samma pris i hela området vi tar. Boka i kalendern eller ring.",
         ],
       },
     ],
+    faqs: [
+      {
+        question: "Kan man lägga PPF på gula strålkastare?",
+        answer:
+          "Inte som enda åtgärd. Gulnad sitter i plasten. Folie ovanpå låser in diset. Polera först, eller boka paketet polering + PPF.",
+      },
+      {
+        question: "Vad är skillnaden mellan PPF och keramiskt UV-skydd?",
+        answer:
+          "Keramiskt skydd är en tunn beläggning efter polering. PPF är en TPU-folie, ett fysiskt skikt som tar stenskott. De kompletterar varandra, de är inte samma produkt.",
+      },
+      {
+        question: "Hur länge håller PPF på strålkastare?",
+        answer:
+          "Vi lämnar 12 månaders garanti, samma som på polering. Filmen är till för att ta träffar och UV så att glaset under inte oxiderar om.",
+      },
+      {
+        question: "Måste jag lämna in bilen?",
+        answer:
+          "Nej. Vi kommer till den adress du anger, så länge bilen står utomhus och vi kommer åt båda sidorna.",
+      },
+      {
+        question: "Vad kostar PPF-folie för strålkastare?",
+        answer:
+          "1899 kr för båda sidorna, ned från 2499 kr. Paketet med polering samma besök kostar 2599 kr.",
+      },
+    ],
     related: [
+      { slug: "polering-ppf", label: "Polering + PPF" },
+      { slug: "stralkastarpolering", label: "Polera strålkastare" },
       { slug: "priser", label: "Priser" },
-      { slug: "om-oss", label: "Om oss" },
       { slug: "stralkastarpolering-stockholm", label: "Stockholm" },
+      { slug: "faq", label: "FAQ" },
+    ],
+  },
+  {
+    slug: "polering-ppf",
+    kind: "service-combo",
+    title: "Polering + PPF – 2599 kr/par, 12 mån garanti",
+    description:
+      "Polera strålkastare och lägg PPF-folie samma besök i Stockholm: 2599 kr/par (ord. 3499 kr). Sparar 199 kr mot att boka var för sig.",
+    h1: "Polering + PPF för strålkastare",
+    lead: "Paketet är ett besök: vi tar bort oxidationen, polerar till klar yta och lägger PPF-folie ovanpå. Du betalar 2599 kr för paret — 199 kr mindre än 899 + 1899 om du bokar jobben separat.",
+    sections: [
+      {
+        heading: "Varför samma besök",
+        paragraphs: [
+          "PPF ska sitta på en klar yta. Om glaset är gult måste vi polera först, annars syns diset genom filmen. Att göra båda på en gång betyder en uppställning, en maskering och en kontroll av ljusbilden.",
+          "Separata bokningar fungerar, men du betalar mer och bilen ska stå framme två gånger.",
+        ],
+      },
+      {
+        heading: "Vem paketet passar",
+        paragraphs: [
+          "Det är rätt val när glasen är matta eller gula och du vill att resultatet ska tåla stenskott och UV efteråt — inför besiktning, försäljning eller bara för att slippa göra om poleringen i tid.",
+          "Redan klara glas behöver sällan hela kedjan. Då räcker PPF. Sprucket glas eller fukt inuti går inte att rädda med något av jobben.",
+        ],
+        bullets: [
+          "Gulnade glas som också ska skyddas",
+          "Besiktning plus längre skydd mot ny skada",
+          "Ett besök i stället för två",
+        ],
+      },
+      {
+        heading: "Så går det till",
+        paragraphs: [
+          "Först samma poleringskedja som på poleringssidan: maskering, våtslipning, polymerpolering och UV-keramiskt skydd. Därefter PPF-folie på båda sidorna. Du kan vänta eller lämna bilen.",
+        ],
+      },
+      {
+        heading: "Pris",
+        paragraphs: [
+          "2599 kr för paret, ned från 3499 kr. Moms och 12 månaders garanti ingår. Samma pris i hela Stockholmsområdet vi tar. Boka paketet i kalendern.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Varför är paketet billigare än polering och PPF var för sig?",
+        answer:
+          "Restid, maskering och uppställning sker en gång. 2599 kr mot 899 + 1899 kr.",
+      },
+      {
+        question: "Kan jag bara polera nu och lägga PPF senare?",
+        answer:
+          "Ja. Boka polering först. När du vill ha folie bokar du PPF. Paketet är billigare om du redan vet att du vill ha båda.",
+      },
+      {
+        question: "Ingår 12 månaders garanti?",
+        answer:
+          "Ja. Samma garanti som på polering och PPF var för sig.",
+      },
+      {
+        question: "Hur lång tid tar polering + PPF?",
+        answer:
+          "Samma kalenderlucka som övriga jobb. Du kan vänta eller lämna bilen utomhus med plats runt båda strålkastarna.",
+      },
+      {
+        question: "Kommer ni till mig?",
+        answer:
+          "Ja, i Stockholms län (inte Norrtälje och inte Sigtuna kommun). Ingen zonavgift.",
+      },
+    ],
+    related: [
+      { slug: "stralkastarpolering", label: "Polera strålkastare" },
+      { slug: "ppf", label: "PPF-folie" },
+      { slug: "priser", label: "Priser" },
+      { slug: "stralkastarrenovering", label: "Så går poleringen till" },
+      { slug: "faq", label: "FAQ" },
     ],
   },
   {
@@ -315,8 +462,9 @@ export const HUB_PAGES: ClusterDoc[] = [
     ],
     compareSlider: true,
     related: [
-      { slug: "stralkastarrenovering", label: "Strålkastarrenovering" },
       { slug: "stralkastarpolering", label: "Polera strålkastare" },
+      { slug: "ppf", label: "PPF-folie" },
+      { slug: "polering-ppf", label: "Polering + PPF" },
       { slug: "priser", label: "Priser" },
     ],
   },
@@ -393,6 +541,16 @@ export const HUB_PAGES: ClusterDoc[] = [
           "Cirka 45–60 minuter för en personbil. Bilen behöver stå utomhus och vara åtkomlig från båda sidorna.",
       },
       {
+        question: "Vad kostar PPF-folie för strålkastare?",
+        answer:
+          "1899 kr för båda strålkastarna, ned från 2499 kr. Gulnade glas måste poleras först — då är paketet polering + PPF 2599 kr.",
+      },
+      {
+        question: "Vad är skillnaden mellan PPF och UV-keramiskt skydd?",
+        answer:
+          "UV-keramiskt skydd är en tunn beläggning efter polering. PPF är en TPU-folie, ett fysiskt skikt som tar stenskott. De är inte samma sak.",
+      },
+      {
         question: "Kommer ni till mig?",
         answer:
           "Ja, i Stockholms län (inte Norrtälje och inte Sigtuna kommun). Vi har lokala sidor för kommunerna och tätorter vi tar — bland annat Huddinge, Flemingsberg, Botkyrka, Tumba, Tullinge, Södertälje, Haninge, Handen, Nacka, Sickla, Solna, Arenastaden, Sundbyberg, Täby, Lidingö, Sollentuna, Tureberg och Värmdö. Samma pris, ingen zonavgift.",
@@ -400,11 +558,10 @@ export const HUB_PAGES: ClusterDoc[] = [
     ],
     related: [
       { slug: "stralkastarpolering", label: "Polera strålkastare" },
-      { slug: "stralkastarrenovering", label: "Strålkastarrenovering" },
+      { slug: "ppf", label: "PPF-folie" },
+      { slug: "polering-ppf", label: "Polering + PPF" },
       { slug: "priser", label: "Priser" },
       { slug: "stralkastarpolering-stockholm", label: "Stockholm" },
-      { slug: "stralkastarpolering-taby", label: "Täby" },
-      { slug: "stralkastarpolering-sodertalje", label: "Södertälje" },
     ],
   },
   {
@@ -433,7 +590,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       {
         heading: "Garanti och tydligt pris",
         paragraphs: [
-          "899 kr/par för personbil, samma i hela området vi tar. Går inte glaset att rädda tar vi inte betalt. Avbokning senast 24 timmar före tiden.",
+          "Polering 899 kr/par, PPF-folie 1899 kr/par och paketet 2599 kr/par — samma i hela området vi tar. Går inte glaset att rädda tar vi inte betalt. Avbokning senast 24 timmar före tiden.",
         ],
       },
       {
@@ -446,7 +603,7 @@ export const HUB_PAGES: ClusterDoc[] = [
     related: [
       { slug: "stralkastarrenovering", label: "Metoden" },
       { slug: "priser", label: "Priser" },
-      { slug: "foretagskunder", label: "Företag" },
+      { slug: "ppf", label: "PPF-folie" },
       { slug: "stralkastarpolering-stockholm", label: "Områden i länet" },
     ],
   },

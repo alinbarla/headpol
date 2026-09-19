@@ -25,6 +25,12 @@ import {
   toDateKey,
 } from "@/lib/booking";
 import { SMOOTHERLY_PRICE_ORE } from "@/lib/routes";
+import {
+  DEFAULT_PRODUCT_ID,
+  PRODUCT_LIST,
+  getProduct,
+  type ProductId,
+} from "@/lib/products";
 import { addDaysToDateKey, slotIsPast, stockholmDateKey, stockholmTime } from "@/lib/time";
 import { useMounted } from "@/lib/useMounted";
 import { Button } from "@/components/ui/Button";
@@ -69,8 +75,11 @@ export function BookingPicker({
   const [postalTouched, setPostalTouched] = useState(false);
   const [message, setMessage] = useState("");
   const [withdrawalConsent, setWithdrawalConsent] = useState(false);
+  const [serviceId, setServiceId] = useState<ProductId>(DEFAULT_PRODUCT_ID);
 
-  const displayPriceOre = isSmootherly ? SMOOTHERLY_PRICE_ORE : rules.priceOre;
+  const displayPriceOre = isSmootherly
+    ? SMOOTHERLY_PRICE_ORE
+    : getProduct(serviceId).priceOre;
 
   const dateLocale = locale === "sv" ? sv : enGB;
 
@@ -128,6 +137,12 @@ export function BookingPicker({
       `${window.location.pathname}${query ? `?${query}` : ""}#booking`
     );
   }, [stripeOutcome]);
+
+  useEffect(() => {
+    if (!mounted || isSmootherly) return;
+    const fromUrl = new URLSearchParams(window.location.search).get("service");
+    setServiceId(getProduct(fromUrl).id);
+  }, [mounted, isSmootherly]);
 
   useEffect(() => {
     if (!today || !horizonKey) return;
@@ -270,7 +285,7 @@ export function BookingPicker({
           locale,
           ...(isSmootherly
             ? { message: message.trim() || undefined }
-            : { withdrawalConsent }),
+            : { withdrawalConsent, serviceId }),
           attribution: attributionForBookingPost(),
         }),
       });
@@ -337,6 +352,57 @@ export function BookingPicker({
           </h2>
           <p className="mt-4 text-lg text-text-secondary">{t("subtitle")}</p>
         </div>
+
+        {!isSmootherly && (
+          <fieldset className="mb-8">
+            <legend className="text-sm font-semibold uppercase tracking-wider text-beam">
+              {t("selectService")}
+            </legend>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {PRODUCT_LIST.map((product) => {
+                const active = serviceId === product.id;
+                const label = locale === "en" ? product.nameEn : product.nameSv;
+                return (
+                  <label
+                    key={product.id}
+                    className={`cursor-pointer rounded-2xl border p-4 transition-colors ${
+                      active
+                        ? "border-beam bg-beam/10"
+                        : "border-white/10 bg-void-elevated hover:border-beam/50"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="booking-service"
+                      value={product.id}
+                      className="sr-only"
+                      checked={active}
+                      onChange={() => {
+                        setServiceId(product.id);
+                        const url = new URL(window.location.href);
+                        url.searchParams.set("service", product.id);
+                        window.history.replaceState(
+                          null,
+                          "",
+                          `${url.pathname}${url.search}${url.hash || "#booking"}`
+                        );
+                      }}
+                    />
+                    <span className="block font-display text-base font-semibold text-text-primary">
+                      {label}
+                    </span>
+                    <span className="mt-1 flex items-baseline gap-2 text-sm">
+                      <s className="text-text-muted">{product.listPriceLabel}</s>
+                      <span className="font-semibold text-beam">
+                        {product.priceLabel}/{product.unit}
+                      </span>
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </fieldset>
+        )}
 
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="glass-panel rounded-3xl p-6 sm:p-8">
@@ -615,7 +681,7 @@ export function BookingPicker({
                   <>
                     <div className="mt-3 rounded-2xl border border-beam/40 bg-beam/5 px-4 py-3">
                       <p className="text-sm font-semibold text-text-primary">
-                        {t("payNow", { price: formatOre(rules.priceOre) })}
+                        {t("payNow", { price: formatOre(displayPriceOre) })}
                       </p>
                       <p className="mt-0.5 text-xs text-text-muted">
                         {t("payNowHint")}

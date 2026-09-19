@@ -14,6 +14,7 @@ import {
 import { fromDbTime, slotKey, toDbTime, SLOT_OCCUPYING_STATUSES } from "@/lib/booking";
 import { getAvailabilityOverrides, getBookingRules } from "@/lib/bookingRules";
 import { parseBookingContact } from "@/lib/bookingNotify";
+import { getProduct } from "@/lib/products";
 import { createBookingCheckoutSession, isStripeConfigured } from "@/lib/stripe";
 import { addDaysToDateKey, stockholmDateKey } from "@/lib/time";
 import { clientIpFromRequest } from "@/lib/analytics/rateLimit";
@@ -127,6 +128,7 @@ export async function POST(request: Request) {
       postalCode?: string;
       locale?: string;
       withdrawalConsent?: boolean;
+      serviceId?: string;
       attribution?: Partial<AttributionInput> | null;
     };
 
@@ -188,6 +190,9 @@ export async function POST(request: Request) {
       );
     }
 
+    const product = getProduct(body.serviceId);
+    const priceOre = product.priceOre;
+
     const dayCap = await dayBookingCount(date);
     if (isDateAtBookingCap(date, dayCap, rules)) {
       return NextResponse.json(
@@ -200,7 +205,8 @@ export async function POST(request: Request) {
       date,
       time,
       contact,
-      priceOre: rules.priceOre,
+      priceOre,
+      serviceId: product.id,
       attribution: body.attribution ?? null,
       geo: visitorGeo(request.headers),
       visitorIp: clientIpFromRequest(request),
@@ -215,12 +221,13 @@ export async function POST(request: Request) {
 
     const checkout = await createBookingCheckoutSession({
       bookingId: booking.data.id,
-      amountOre: rules.priceOre,
+      amountOre: priceOre,
       dateKey: date,
       time,
       email: contact.email,
       locale: contact.locale,
       holdMinutes: CHECKOUT_HOLD_MINUTES,
+      serviceId: product.id,
     });
 
     if (!checkout) {
@@ -238,7 +245,7 @@ export async function POST(request: Request) {
       bookingId: booking.data.id,
       sessionId: checkout.id,
       checkoutUrl: checkout.url,
-      amountOre: rules.priceOre,
+      amountOre: priceOre,
     });
 
     return NextResponse.json(
@@ -271,6 +278,7 @@ async function insertBooking(input: {
     locale: string;
   };
   priceOre: number;
+  serviceId: string;
   attribution?: Partial<AttributionInput> | null;
   geo?: VisitorGeo | null;
   visitorIp?: string | null;
@@ -285,6 +293,7 @@ async function insertBooking(input: {
     status: "pending" as const,
     payment_status: "awaiting_payment" as const,
     price_ore: input.priceOre,
+    service_id: input.serviceId,
     source: "web" as const,
     // The partial unique index holds the slot for exactly as long as this.
     hold_expires_at: new Date(

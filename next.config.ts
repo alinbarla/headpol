@@ -107,6 +107,11 @@ const nextConfig: NextConfig = {
         destination: "/stralkastarpolering-upplands-vasby",
         permanent: true,
       },
+      {
+        source: "/foretagskunder",
+        destination: "/priser",
+        permanent: true,
+      },
     ];
   },
   images: {

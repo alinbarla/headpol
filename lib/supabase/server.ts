@@ -39,6 +39,7 @@ export type BookingRecord = {
   source: BookingSource;
   payment_status: PaymentStatus;
   price_ore: number;
+  service_id: string;
   internal_notes: string | null;
   hold_expires_at: string | null;
   rescheduled_from_id: string | null;

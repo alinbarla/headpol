@@ -116,7 +116,13 @@ export async function BookingConfirmationView({
               <Detail
                 icon={SparklesIcon}
                 label={t("serviceLabel")}
-                value={t("serviceValue")}
+                value={
+                  confirmation.serviceId === "ppf"
+                    ? t("serviceValuePpf")
+                    : confirmation.serviceId === "polering-ppf"
+                      ? t("serviceValueCombo")
+                      : t("serviceValuePolering")
+                }
               />
               <Detail
                 icon={CalendarClockIcon}

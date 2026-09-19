@@ -200,6 +200,7 @@ async function insertSmootherlyBooking(input: {
     status: "confirmed" as const,
     payment_status: "unpaid" as const,
     price_ore: input.priceOre,
+    service_id: "polering",
     source: "web" as const,
     hold_expires_at: null,
     customer_name: input.contact.name,

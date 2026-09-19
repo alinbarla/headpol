@@ -96,7 +96,7 @@ export async function settlePaidCheckout(
     .eq("id", bookingId)
     .in("payment_status", ["awaiting_payment", "unpaid"])
     .select(
-      "id, booking_date, booking_time, customer_name, customer_email, customer_phone, customer_address, locale, price_ore, source"
+      "id, booking_date, booking_time, customer_name, customer_email, customer_phone, customer_address, locale, price_ore, source, service_id"
     )
     .maybeSingle();
 
@@ -145,6 +145,7 @@ export async function settlePaidCheckout(
     locale: updated.locale ?? "sv",
     amountOre,
     address: updated.customer_address ?? "",
+    serviceId: updated.service_id,
   });
 
   if (updated.source === "web") {
@@ -157,6 +158,7 @@ export async function settlePaidCheckout(
       email: updated.customer_email ?? "",
       amountOre,
       source: "web",
+      serviceId: updated.service_id,
     });
   }
 

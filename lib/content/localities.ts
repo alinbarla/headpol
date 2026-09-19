@@ -20,7 +20,7 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
         heading: "Kontor, tjänstebil och gård",
         paragraphs: [
           "Många bokar vardag efter 16 vid kontoret. En tjänsteplats utomhus på gården funkar. Korttids-P vid Mall of Scandinavia och garageplan under husen är sämre arbetsytor — våtslipning behöver avrinning och stillastående bil.",
-          "Har ni flera bilar samma kväll passar företagssidan bättre än en och en privatbokning. Hemma i Huvudsta, Råsunda eller Hagalund är ofta enklare än köpcentrumets angöring.",
+          "Har ni flera bilar samma kväll: boka en tid per bil i kalendern. Hemma i Huvudsta, Råsunda eller Hagalund är ofta enklare än köpcentrumets angöring.",
         ],
       },
       {
@@ -56,7 +56,7 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
     ],
     related: relatedForMunicipality("Arenastaden", [
       { slug: "stralkastarpolering-solna", label: "Solna" },
-      { slug: "foretagskunder", label: "Företag" },
+      { slug: "ppf", label: "PPF-folie" },
       { slug: "priser", label: "Priser" },
     ]),
   },
@@ -269,7 +269,7 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
     ],
     related: relatedForMunicipality("Tureberg", [
       { slug: "stralkastarpolering-sollentuna", label: "Sollentuna" },
-      { slug: "foretagskunder", label: "Företag" },
+      { slug: "ppf", label: "PPF-folie" },
       { slug: "priser", label: "Priser" },
     ]),
   },
@@ -429,7 +429,7 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
     ],
     related: relatedForMunicipality("Flemingsberg", [
       { slug: "stralkastarpolering-huddinge", label: "Huddinge" },
-      { slug: "foretagskunder", label: "Företag" },
+      { slug: "ppf", label: "PPF-folie" },
       { slug: "priser", label: "Priser" },
     ]),
   },
@@ -519,7 +519,7 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
       {
         heading: "Flera bilar på företagsgård",
         paragraphs: [
-          "Barkarby och industri nära har flottor som passar företagssidan — mejla antal så planerar vi en runda.",
+          "Barkarby och industri nära har flera bilar på samma gård — boka en tid per bil i kalendern så planerar vi rundan.",
         ],
       },
     ],
@@ -537,7 +537,7 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
     ],
     related: relatedForMunicipality("Barkarby", [
       { slug: "stralkastarpolering-jarfalla", label: "Järfälla" },
-      { slug: "foretagskunder", label: "Företag" },
+      { slug: "ppf", label: "PPF-folie" },
       { slug: "priser", label: "Priser" },
     ]),
   },

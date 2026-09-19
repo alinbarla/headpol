@@ -4,7 +4,6 @@ import { setRequestLocale } from "next-intl/server";
 import { LegalPage } from "@/components/layout/LegalPage";
 import { Footer } from "@/components/layout/Footer";
 import {
-  BOOKING_PRICE,
   CONTACT_EMAIL,
   CONTACT_PHONE_DISPLAY,
 } from "@/lib/booking";
@@ -61,8 +60,9 @@ function TermsSv() {
     >
       <h2>Tjänsten</h2>
       <p>
-        {BRAND} utför strålkastarpolering på plats hos dig inom Stockholms län.
-        Priset är {BOOKING_PRICE} inklusive moms för ett par strålkastare, om
+        {BRAND} utför strålkastarpolering och PPF-folie på plats hos dig inom Stockholms län.
+        Priserna vid bokning på webbplatsen är 899 kr för polering, 1899 kr för
+        PPF-folie och 2599 kr för polering + PPF, per par strålkastare inklusive moms, om
         inget annat avtalats. Ett besök tar normalt omkring en timme.
       </p>
 
@@ -157,8 +157,9 @@ function TermsEn() {
     >
       <h2>The service</h2>
       <p>
-        {BRAND} restores headlights at your address within Stockholm County.
-        The price is 899 kr including VAT for a pair of headlights unless
+        {BRAND} restores headlights and applies PPF film at your address within
+        Stockholm County. Website prices are 899 kr for polishing, 1899 kr for
+        PPF film and 2599 kr for polishing + PPF, per pair including VAT, unless
         otherwise agreed. A visit normally takes about an hour.
       </p>
 

@@ -9,6 +9,7 @@ import {
   parseDateKey,
 } from "@/lib/booking";
 import { BRAND } from "@/lib/seo";
+import { productName } from "@/lib/products";
 
 export const BOOKING_MAILBOX = "teo@stralkastarpolering.se";
 
@@ -64,6 +65,7 @@ type CustomerNotice = {
   name: string;
   email: string;
   locale: string;
+  serviceId?: string | null;
 };
 
 function localeOf(notice: { locale: string }): "sv" | "en" {
@@ -230,6 +232,7 @@ export async function notifyPaymentReceipt(
   // 899 kr is VAT-inclusive; Swedish moms on this service is 25%.
   const vat = escapeHtml(formatOre(Math.round(notice.amountOre * 0.2)));
   const address = escapeHtml(notice.address);
+  const service = escapeHtml(productName(notice.serviceId, locale));
 
   const copy =
     locale === "en"
@@ -238,6 +241,7 @@ export async function notifyPaymentReceipt(
           html: `
         <p>Hi ${escapeHtml(notice.name)},</p>
         <p>Thank you, your payment is confirmed and your slot is booked.</p>
+        <p>Service: <strong>${service}</strong></p>
         <p><strong>${whenLine(notice)}</strong></p>
         <p>Paid: <strong>${amount}</strong> (of which VAT 25%: ${vat})</p>
         <p>We come to you at:<br/>${address}</p>
@@ -249,6 +253,7 @@ export async function notifyPaymentReceipt(
           html: `
         <p>Hej ${escapeHtml(notice.name)},</p>
         <p>Tack! Din betalning är bekräftad och tiden är bokad.</p>
+        <p>Tjänst: <strong>${service}</strong></p>
         <p><strong>${whenLine(notice)}</strong></p>
         <p>Betalt: <strong>${amount}</strong> (varav moms 25%: ${vat})</p>
         <p>Vi kommer till dig på:<br/>${address}</p>
@@ -341,6 +346,7 @@ export async function notifyOwnerBooking(notice: {
   email?: string;
   amountOre?: number;
   source: "web" | "admin";
+  serviceId?: string | null;
 }): Promise<void> {
   const mailbox = process.env.GMAIL_USER ?? BOOKING_MAILBOX;
   const heading =
@@ -351,6 +357,7 @@ export async function notifyOwnerBooking(notice: {
 
   const lines = [
     `Namn: ${escapeHtml(notice.name)}`,
+    `Tjänst: ${escapeHtml(productName(notice.serviceId, "sv"))}`,
     `Telefon: ${escapeHtml(notice.phone)}`,
     notice.email ? `E-post: ${escapeHtml(notice.email)}` : null,
     `Adress: ${escapeHtml(notice.address)}`,

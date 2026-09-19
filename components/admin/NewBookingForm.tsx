@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/shadcn/select";
 import { formatOre } from "@/lib/booking";
+import { getProduct, PRODUCT_LIST, type ProductId } from "@/lib/products";
 
 const initial: ActionState = { ok: true };
 
@@ -33,6 +34,7 @@ export function NewBookingForm({
   const [state, formAction] = useActionState(createBookingAction, initial);
   const [priceOre, setPriceOre] = useState(defaultPriceOre);
   const [email, setEmail] = useState("");
+  const [serviceId, setServiceId] = useState<ProductId>("polering");
 
   return (
     <Card>
@@ -137,6 +139,30 @@ export function NewBookingForm({
           </div>
 
           <ManualBookingTrafficFields />
+
+          <div className="space-y-1.5">
+            <Label htmlFor="serviceId">Service</Label>
+            <input type="hidden" name="serviceId" value={serviceId} />
+            <Select
+              value={serviceId}
+              onValueChange={(value) => {
+                const next = getProduct(value).id;
+                setServiceId(next);
+                setPriceOre(getProduct(next).priceOre);
+              }}
+            >
+              <SelectTrigger id="serviceId">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PRODUCT_LIST.map((product) => (
+                  <SelectItem key={product.id} value={product.id}>
+                    {product.nameEn} ({formatOre(product.priceOre)})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
           <div className="space-y-1.5">
             <Label htmlFor="priceOre">Price in öre</Label>

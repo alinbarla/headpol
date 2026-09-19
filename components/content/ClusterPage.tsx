@@ -11,6 +11,17 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import type { ClusterDoc } from "@/lib/content/types";
 import { CONTACT_PHONE, CONTACT_PHONE_DISPLAY } from "@/lib/booking";
+import { bookingUrl, type ProductId } from "@/lib/products";
+
+function ctaBookingHref(kind: ClusterDoc["kind"]): string {
+  const byKind: Partial<Record<ClusterDoc["kind"], ProductId>> = {
+    "service-polering": "polering",
+    "service-ppf": "ppf",
+    "service-combo": "polering-ppf",
+  };
+  const id = byKind[kind];
+  return id ? bookingUrl(id) : "/#booking";
+}
 
 export async function ClusterPage({
   page,
@@ -231,7 +242,7 @@ export async function ClusterPage({
             </h2>
             <p className="mt-3 text-text-secondary">{t("ctaBody")}</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button href="/#booking">{t("ctaBook")}</Button>
+              <Button href={ctaBookingHref(page.kind)}>{t("ctaBook")}</Button>
               <Button href={`tel:${CONTACT_PHONE}`} variant="outline">
                 {t("ctaCall")} · {CONTACT_PHONE_DISPLAY}
               </Button>

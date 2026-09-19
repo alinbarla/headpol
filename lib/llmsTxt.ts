@@ -26,7 +26,12 @@ function pagesOf(...kinds: ClusterDoc["kind"][]): ClusterDoc[] {
  * list as the sitemap so new cluster URLs show up automatically.
  */
 export function buildLlmsTxt(): string {
-  const services = pagesOf("service-polering", "service-renovering");
+  const services = pagesOf(
+    "service-polering",
+    "service-renovering",
+    "service-ppf",
+    "service-combo"
+  );
   const info = pagesOf("other", "faq");
   const locations = pagesOf("location");
 
@@ -35,9 +40,9 @@ export function buildLlmsTxt(): string {
   return [
     `# ${BRAND}`,
     "",
-    `> Mobil strålkastarpolering och strålkastarrenovering i ${NAP.addressLocality}. UV-keramiskt skydd, ${NAP.priceRange}/par och 12 månaders garanti. Vi kommer till kunden — ingen inlämningsverkstad.`,
+    `> Mobil strålkastarpolering, PPF-folie och polering+PPF i ${NAP.addressLocality}. ${NAP.priceRange}/par och 12 månaders garanti. Vi kommer till kunden — ingen inlämningsverkstad.`,
     "",
-    `${BRAND} är en mobil tjänst i ${NAP.addressRegion}. Vi våtslipar, polerar och lägger UV-keramiskt skydd på oxiderade plaststrålkastare. Fast pris, ingen zonavgift inom ungefär 40 km från ${NAP.addressLocality}. Öppet ${hours}. Telefon ${CONTACT_PHONE_DISPLAY}, e-post ${CONTACT_EMAIL}. Områden: ${SERVICE_AREAS.join(", ")}.`,
+    `${BRAND} är en mobil tjänst i ${NAP.addressRegion}. Vi våtslipar, polerar och lägger UV-keramiskt skydd på oxiderade plaststrålkastare, och kan lägga PPF-folie som extra skydd. Polering 899 kr/par, PPF 1899 kr/par, paketet 2599 kr/par. Ingen zonavgift inom ungefär 40 km från ${NAP.addressLocality}. Öppet ${hours}. Telefon ${CONTACT_PHONE_DISPLAY}, e-post ${CONTACT_EMAIL}. Områden: ${SERVICE_AREAS.join(", ")}.`,
     "",
     "## Startsida",
     "",

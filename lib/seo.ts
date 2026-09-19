@@ -30,7 +30,7 @@ export const PUBLISHED_DATE =
   process.env.NEXT_PUBLIC_PUBLISHED_DATE ?? "2026-01-01";
 
 /** Last meaningful public-content change. Do not use `new Date()` in schema. */
-export const DATE_MODIFIED = "2026-09-13";
+export const DATE_MODIFIED = "2026-09-19";
 
 /** Optional Google Search Console verification token. */
 export const GOOGLE_SITE_VERIFICATION =
@@ -69,7 +69,7 @@ export const NAP = {
   geo: { latitude: 59.3293, longitude: 18.0686 },
   /** Travel radius in metres (~40 km around Stockholm). */
   serviceRadius: 40000,
-  priceRange: "899 kr",
+  priceRange: "899–2599 kr",
   currency: "SEK",
 } as const;
 
@@ -157,6 +157,10 @@ export const KEYWORDS: Record<Locale, string[]> = {
     "strålkastarpolering Flemingsberg",
     "strålkastarpolering Saltsjöbaden",
     "mobil strålkastarpolering",
+    "ppf strålkastare",
+    "strålkastarfolie",
+    "ppf folie",
+    "polering ppf",
   ],
 };
 

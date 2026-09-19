@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@/lib/i18n";
 import type { ClusterDoc } from "@/lib/content/types";
+import { PRODUCT_LIST, PRODUCTS, type CatalogProduct } from "@/lib/products";
 import {
   BRAND,
   DATE_MODIFIED,
@@ -35,6 +36,16 @@ const BUSINESS_ID = `${SITE_URL}/#localbusiness`;
 const WEBSITE_ID = `${SITE_URL}/#website`;
 const POLERING_ID = `${SITE_URL}/#service-polering`;
 const RENOVERING_ID = `${SITE_URL}/#service-renovering`;
+const PPF_ID = `${SITE_URL}/#service-ppf`;
+const COMBO_ID = `${SITE_URL}/#service-combo`;
+
+const SERVICE_KNOWLEDGE = [
+  "Polera strålkastare",
+  "Strålkastarpolering",
+  "Strålkastarrenovering",
+  "PPF-folie strålkastare",
+  "Polering + PPF",
+];
 
 function logoImage() {
   return {
@@ -87,17 +98,12 @@ function organizationNode() {
       areaServed: "SE",
       availableLanguage: ["sv-SE"],
     },
-    knowsAbout: [
-      "Polera strålkastare",
-      "Strålkastarpolering",
-      "Strålkastarrenovering",
-    ],
+    knowsAbout: SERVICE_KNOWLEDGE,
     ...(SOCIAL_PROFILES.length ? { sameAs: SOCIAL_PROFILES } : {}),
   };
 }
 
 function localBusinessNode(
-  makesOffer: Array<{ "@id": string }>,
   description?: string,
   reviews?: LocalBusinessReviewsInput
 ) {
@@ -169,12 +175,12 @@ function localBusinessNode(
         closes: OPENING_HOURS.weekdays.closes,
       },
     ],
-    makesOffer,
-    knowsAbout: [
-      "Polera strålkastare",
-      "Strålkastarpolering",
-      "Strålkastarrenovering",
+    makesOffer: [
+      { "@id": POLERING_ID },
+      { "@id": PPF_ID },
+      { "@id": COMBO_ID },
     ],
+    knowsAbout: SERVICE_KNOWLEDGE,
     ...(SOCIAL_PROFILES.length ? { sameAs: SOCIAL_PROFILES } : {}),
     ...(REVIEWS_ARE_REAL && rating != null && userRatingCount != null
       ? {
@@ -205,11 +211,7 @@ export function buildLocalBusinessJsonLd(
 ) {
   return {
     "@context": "https://schema.org",
-    ...localBusinessNode(
-      [{ "@id": POLERING_ID }, { "@id": RENOVERING_ID }],
-      description,
-      reviews
-    ),
+    ...localBusinessNode(description, reviews),
   };
 }
 
@@ -224,34 +226,53 @@ function websiteNode(locale: Locale) {
   };
 }
 
-function offerFromPrice(
-  name: string,
-  description: string,
-  price: string,
-  offerUrl: string
-): Record<string, unknown> {
-  const priceMatch = price.match(/\d[\d\s]*/);
-  const numericPrice = priceMatch
-    ? priceMatch[0].replace(/\s/g, "")
-    : undefined;
+function saleOffer(product: CatalogProduct): Record<string, unknown> {
+  const url = localeUrl("sv", product.slug);
+  const sale = String(Math.round(product.priceOre / 100));
+  const list = String(Math.round(product.listPriceOre / 100));
 
   return {
     "@type": "Offer",
-    name,
-    description,
-    url: offerUrl,
-    ...(numericPrice
-      ? {
-          price: numericPrice,
-          priceCurrency: NAP.currency,
-          priceSpecification: {
-            "@type": "PriceSpecification",
-            price: numericPrice,
-            priceCurrency: NAP.currency,
-            valueAddedTaxIncluded: true,
-          },
-        }
-        : {}),
+    "@id": `${url}#offer`,
+    name: product.nameSv,
+    description: product.shortSv,
+    url,
+    price: sale,
+    priceCurrency: NAP.currency,
+    availability: "https://schema.org/InStock",
+    itemOffered: { "@id": `${SITE_URL}/#${product.schemaFragment}` },
+    priceSpecification: [
+      {
+        "@type": "UnitPriceSpecification",
+        priceType: "https://schema.org/ListPrice",
+        price: list,
+        priceCurrency: NAP.currency,
+        valueAddedTaxIncluded: true,
+        unitText: "par",
+      },
+      {
+        "@type": "UnitPriceSpecification",
+        priceType: "https://schema.org/SalePrice",
+        price: sale,
+        priceCurrency: NAP.currency,
+        valueAddedTaxIncluded: true,
+        unitText: "par",
+      },
+    ],
+  };
+}
+
+function catalogService(product: CatalogProduct): Record<string, unknown> {
+  return {
+    "@type": "Service",
+    "@id": `${SITE_URL}/#${product.schemaFragment}`,
+    serviceType: product.nameSv,
+    name: product.nameSv,
+    description: product.shortSv,
+    provider: { "@id": BUSINESS_ID },
+    areaServed: areaServed(),
+    url: localeUrl("sv", product.slug),
+    offers: saleOffer(product),
   };
 }
 
@@ -324,50 +345,26 @@ export async function buildHomeStructuredData(
   locale: Locale
 ): Promise<Record<string, unknown>> {
   const tMeta = await getTranslations({ locale, namespace: "metadata" });
-  const tServices = await getTranslations({ locale, namespace: "services" });
   const tFaq = await getTranslations({ locale, namespace: "faq" });
 
   const url = localeUrl(locale);
-  const offersUrl = localeUrl("sv", "priser");
-  const serviceItems = tServices.raw("items") as Array<{
-    title: string;
-    description: string;
-    price: string;
-  }>;
-  const offers = serviceItems.map((item) =>
-    offerFromPrice(item.title, item.description, item.price, offersUrl)
-  );
   const faqItems = tFaq.raw("items") as Array<{
     question: string;
     answer: string;
   }>;
 
-  const poleringName =
-    locale === "sv" ? "Polera strålkastare" : "Polish headlights";
-  const poleringType =
-    locale === "sv" ? "Strålkastarpolering" : "Headlight polishing";
   const renoveringName =
     locale === "sv" ? "Strålkastarrenovering" : "Headlight restoration";
-
-  const polering = {
-    "@type": "Service",
-    "@id": POLERING_ID,
-    serviceType: poleringType,
-    name: poleringName,
-    alternateName: poleringType,
-    description: tServices("subtitle"),
-    provider: { "@id": BUSINESS_ID },
-    areaServed: areaServed(),
-    url: localeUrl("sv", "stralkastarpolering"),
-    offers,
-  };
 
   const renovering = {
     "@type": "Service",
     "@id": RENOVERING_ID,
     serviceType: renoveringName,
     name: renoveringName,
-    description: tServices("subtitle"),
+    description:
+      locale === "sv"
+        ? "Slipning, polering och UV-keramiskt skydd när du vill polera strålkastare."
+        : "Sanding, polishing and UV ceramic protection for oxidized headlights.",
     provider: { "@id": BUSINESS_ID },
     areaServed: areaServed(),
     url: localeUrl("sv", "stralkastarrenovering"),
@@ -380,7 +377,9 @@ export async function buildHomeStructuredData(
     "@graph": [
       organizationNode(),
       websiteNode(locale),
-      polering,
+      catalogService(PRODUCTS.polering),
+      catalogService(PRODUCTS.ppf),
+      catalogService(PRODUCTS["polering-ppf"]),
       renovering,
       webPageNode({
         url,
@@ -394,19 +393,26 @@ export async function buildHomeStructuredData(
   };
 }
 
+const KIND_SERVICE_ID: Partial<Record<ClusterDoc["kind"], string>> = {
+  "service-polering": POLERING_ID,
+  "service-renovering": RENOVERING_ID,
+  "service-ppf": PPF_ID,
+  "service-combo": COMBO_ID,
+};
+
 export function buildClusterStructuredData(
   page: ClusterDoc
 ): Record<string, unknown> {
   const url = localeUrl("sv", page.slug);
-  const isPolering = page.kind === "service-polering";
-  const isRenovering = page.kind === "service-renovering";
-  const mainEntityId = isPolering
-    ? POLERING_ID
-    : isRenovering
-      ? RENOVERING_ID
-      : page.kind === "location"
-        ? `${url}#service`
-        : undefined;
+  const catalogByKind: Partial<Record<ClusterDoc["kind"], CatalogProduct>> = {
+    "service-polering": PRODUCTS.polering,
+    "service-ppf": PRODUCTS.ppf,
+    "service-combo": PRODUCTS["polering-ppf"],
+  };
+  const catalog = catalogByKind[page.kind];
+  const mainEntityId =
+    KIND_SERVICE_ID[page.kind] ??
+    (page.kind === "location" ? `${url}#service` : undefined);
 
   const crumbs: Array<{ name: string; item: string }> = [
     { name: BRAND, item: localeUrl("sv") },
@@ -436,18 +442,38 @@ export function buildClusterStructuredData(
     breadcrumbList(url, crumbs),
   ];
 
-  if (isPolering || isRenovering) {
+  if (catalog) {
+    graph.push({
+      ...catalogService(catalog),
+      name: page.h1,
+      description: page.description,
+      url,
+    });
+  } else if (page.kind === "service-renovering") {
     graph.push({
       "@type": "Service",
-      "@id": isPolering ? POLERING_ID : RENOVERING_ID,
-      serviceType: isPolering
-        ? "Strålkastarpolering"
-        : "Strålkastarrenovering",
+      "@id": RENOVERING_ID,
+      serviceType: "Strålkastarrenovering",
       name: page.h1,
       description: page.description,
       provider: { "@id": BUSINESS_ID },
       areaServed: areaServed(),
       url,
+    });
+  }
+
+  if (page.slug === "priser") {
+    graph.push({
+      "@type": "ItemList",
+      "@id": `${url}#offers`,
+      name: page.h1,
+      numberOfItems: PRODUCT_LIST.length,
+      itemListElement: PRODUCT_LIST.map((product, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: localeUrl("sv", product.slug),
+        item: saleOffer(product),
+      })),
     });
   }
 

@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Polera strålkastare Stockholm – 899 kr/par, 12 mån garanti",
-    "description": "Polera strålkastare mobil i Stockholms län. 899 kr/par, UV-keramiskt skydd och 12 månaders garanti. Vi kommer till din adress."
+    "title": "Polera strålkastare Stockholm – från 899 kr/par",
+    "description": "Mobil strålkastarpolering i Stockholms län. Polering 899 kr/par, PPF-folie 1899 kr, paket 2599 kr. 12 månaders garanti. Vi kommer till din adress."
   },
   "nav": {
     "brand": "Strålkastarpolering",
@@ -11,6 +11,8 @@
     "process": "Process",
     "services": "Priser",
     "polishing": "Polering",
+    "ppf": "PPF",
+    "combo": "Polering+PPF",
     "restoration": "Renovering",
     "about": "Om oss",
     "faq": "Frågor",
@@ -118,26 +120,41 @@
     "title": "Priser för att polera strålkastare",
     "readMore": "Alla priser och vad som ingår",
     "readMorePolish": "Läs mer om att polera strålkastare",
-    "subtitle": "Slipning, polering och UV-keramiskt skydd när du vill polera strålkastare. 899 kr/par.",
+    "readMoreLabel": "Läs mer",
+    "bookLabel": "Boka",
+    "subtitle": "Tre fasta priser: polering, PPF-folie eller paketet. Vi kommer till dig i Stockholms län.",
     "exampleNote": "Tjänster & priser",
-    "guaranteeNote": "Slipning, polering och UV-keramiskt skydd ingår. 899 kr/par och 12 månaders garanti.",
+    "guaranteeNote": "Alla priser är per par, inklusive moms. 12 månaders garanti. Polering 899 kr, PPF 1899 kr, paket 2599 kr.",
     "priceUnit": "par",
+    "chipPolering": "Polering",
+    "chipPpf": "PPF",
+    "chipCombo": "Paket",
     "items": [
       {
-        "title": "Personbil",
+        "id": "polering",
+        "title": "Polering",
         "description": "Slipning, polering och UV-keramiskt skydd för båda strålkastarna. Vi kommer till dig.",
         "oldPrice": "1499kr",
-        "price": "899kr"
+        "price": "899kr",
+        "href": "/stralkastarpolering",
+        "badge": "Mest bokad"
       },
       {
-        "title": "MC & moped",
-        "description": "Polering av kompakta enheter med samma material och finish som för bil.",
-        "price": "Från 499 kr"
+        "id": "ppf",
+        "title": "PPF-folie",
+        "description": "Skyddsfolie på båda strålkastarna. Skyddar mot stenskott och ny UV-skada när glaset redan är klart.",
+        "oldPrice": "2499kr",
+        "price": "1899kr",
+        "href": "/ppf"
       },
       {
-        "title": "Företag & fordonsflotta",
-        "description": "Volympris för åkerier, bilhandlare och företag med flera fordon. Vi kommer till er.",
-        "price": "Offert"
+        "id": "polering-ppf",
+        "title": "Polering + PPF",
+        "description": "Vi polerar först och lägger PPF-folie samma besök. Sparar 199 kr mot att boka dem var för sig.",
+        "oldPrice": "3499kr",
+        "price": "2599kr",
+        "href": "/polering-ppf",
+        "badge": "Paket · spara 199 kr"
       }
     ]
   },
@@ -212,7 +229,7 @@
       },
       {
         "question": "Vad kostar det att polera strålkastarna?",
-        "answer": "Båda strålkastarna kostar 899 kr/par. UV-keramiskt skydd och 12 månaders garanti ingår. MC och moped från 499 kr. För företag lämnar vi offert."
+        "answer": "Polering av båda strålkastarna kostar 899 kr/par (ord. 1499 kr). PPF-folie 1899 kr/par (ord. 2499 kr). Polering + PPF samma besök 2599 kr/par (ord. 3499 kr). UV-skydd och 12 månaders garanti ingår i poleringen."
       },
       {
         "question": "Hur lång tid tar det?",
@@ -266,7 +283,8 @@
   },
   "booking": {
     "title": "Boka strålkastarpolering",
-    "subtitle": "Välj datum och tid. Du får en bekräftelse på e-post och upptagna tider visas utgråade.",
+    "subtitle": "Välj tjänst, datum och tid. Du får en bekräftelse på e-post och upptagna tider visas utgråade.",
+    "selectService": "Välj tjänst",
     "selectDate": "Välj datum",
     "selectTime": "Välj tid",
     "yourDetails": "Dina uppgifter",
@@ -320,7 +338,9 @@
     "leadMissing": "Länken kan ha gått ut. Har du betalat utan att få en bekräftelse på mejlen, ring oss så reder vi ut det direkt.",
     "detailsTitle": "Din bokning",
     "serviceLabel": "Tjänst",
-    "serviceValue": "Slipning, polering och UV-keramiskt skydd, båda strålkastarna",
+    "serviceValuePolering": "Slipning, polering och UV-keramiskt skydd, båda strålkastarna",
+    "serviceValuePpf": "PPF-folie på båda strålkastarna",
+    "serviceValueCombo": "Polering och PPF-folie, båda strålkastarna samma besök",
     "whenLabel": "Datum och tid",
     "durationNote": "Tar ungefär 45–60 minuter",
     "whereLabel": "Vi kommer till dig",
@@ -373,8 +393,8 @@
     "ratingSr": "{rating} av 5 stjärnor baserat på {count, plural, one {# recension} other {# recensioner}}",
     "compareTitle": "Före och efter: polera strålkastare",
     "compareLead": "Dra skjutreglaget och se resultatet när vi polerar strålkastare — samma finish vi gör hos dig.",
-    "ctaTitle": "Boka att polera strålkastare",
-    "ctaBody": "Vi kommer till dig och polerar strålkastare. Fast pris 899 kr/par, UV-keramiskt skydd och 12 månaders garanti.",
+    "ctaTitle": "Boka strålkastarpolering, PPF eller paketet",
+    "ctaBody": "Vi kommer till dig. Polering 899 kr/par, PPF-folie 1899 kr/par, polering + PPF 2599 kr/par. 12 månaders garanti.",
     "ctaBook": "Boka tid",
     "ctaCall": "Ring nu",
     "relatedTitle": "Läs också",

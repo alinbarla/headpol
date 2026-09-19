@@ -14,9 +14,10 @@ export async function Footer() {
   const links = [
     { href: "/", label: tNav("home") },
     { href: "/stralkastarpolering", label: "Polera strålkastare" },
+    { href: "/ppf", label: "PPF-folie" },
+    { href: "/polering-ppf", label: "Polering + PPF" },
     { href: "/stralkastarrenovering", label: "Strålkastarrenovering" },
     { href: "/priser", label: tNav("services") },
-    { href: "/foretagskunder", label: "Företag" },
     { href: "/fore-bilder", label: "Före & efter" },
     { href: "/faq", label: tNav("faq") },
     { href: "/om-oss", label: tNav("about") },

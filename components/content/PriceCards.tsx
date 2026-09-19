@@ -1,14 +1,14 @@
 import {
-  BikeIcon,
   CarFrontIcon,
   CheckIcon,
-  TruckIcon,
+  LayersIcon,
+  ShieldIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { PriceSticker } from "@/components/ui/PriceSticker";
 import type { ClusterPriceTier } from "@/lib/content/types";
 
-const ICONS = [CarFrontIcon, BikeIcon, TruckIcon];
+const ICONS = [CarFrontIcon, ShieldIcon, LayersIcon];
 
 export function PriceCards({ tiers }: { tiers: ClusterPriceTier[] }) {
   return (
@@ -79,13 +79,20 @@ export function PriceCards({ tiers }: { tiers: ClusterPriceTier[] }) {
               </ul>
             ) : null}
 
-            <Button
-              href={tier.href}
-              variant={featured ? "primary" : "outline"}
-              className="mt-8 w-full"
-            >
-              {tier.cta}
-            </Button>
+            <div className="mt-8 flex flex-col gap-3">
+              <Button
+                href={tier.href}
+                variant={featured ? "primary" : "outline"}
+                className="w-full"
+              >
+                {tier.cta}
+              </Button>
+              {tier.moreHref && tier.moreCta ? (
+                <Button href={tier.moreHref} variant="ghost" className="w-full">
+                  {tier.moreCta}
+                </Button>
+              ) : null}
+            </div>
           </article>
         );
       })}

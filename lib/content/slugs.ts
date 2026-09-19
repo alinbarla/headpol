@@ -3,9 +3,10 @@ import { LOCATION_SLUGS } from "@/lib/content/municipalities";
 export const CLUSTER_SLUGS = [
   "stralkastarpolering",
   "stralkastarrenovering",
+  "ppf",
+  "polering-ppf",
   ...LOCATION_SLUGS,
   "priser",
-  "foretagskunder",
   "fore-bilder",
   "faq",
   "om-oss",

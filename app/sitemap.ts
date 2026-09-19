@@ -31,7 +31,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: localeUrl("sv", slug),
     lastModified,
     changeFrequency: "monthly" as const,
-    priority: slug.startsWith("stralkastarpolering") ? 0.8 : 0.7,
+    priority:
+      slug.startsWith("stralkastarpolering") ||
+      slug === "ppf" ||
+      slug === "polering-ppf"
+        ? 0.8
+        : 0.7,
   }));
 
   return [...home, ...cluster, ...legal];

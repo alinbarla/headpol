@@ -62,9 +62,9 @@ export function SiteHeader() {
 
   const items: NavItem[] = [
     { href: "/stralkastarpolering", label: t("polishing") },
-    { href: "/stralkastarrenovering", label: t("restoration") },
+    { href: "/ppf", label: t("ppf") },
+    { href: "/polering-ppf", label: t("combo") },
     { href: "/priser", label: t("services") },
-    { href: "/faq", label: t("faq") },
     { href: bookingHref, label: t("booking") },
   ];
 
@@ -88,7 +88,7 @@ export function SiteHeader() {
           <NavLinks
             items={items}
             pathname={pathname}
-            className="flex items-center gap-5"
+            className="flex items-center gap-3 lg:gap-5"
           />
         </nav>
 

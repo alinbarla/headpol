@@ -36,6 +36,12 @@ export const SOURCE_LABELS: Record<BookingSource, string> = {
   admin: "Admin",
 };
 
+export const SERVICE_LABELS: Record<string, string> = {
+  polering: "Polishing",
+  ppf: "PPF film",
+  "polering-ppf": "Polishing + PPF",
+};
+
 export const ACQUISITION_LABELS: Record<AcquisitionChannel, string> = {
   google_ads: "Google Ads",
   organic_search: "Organic search",

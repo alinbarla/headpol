@@ -31,6 +31,7 @@ export type BookingConfirmation = {
   phone: string;
   address: string;
   amountOre: number;
+  serviceId: string;
 };
 
 type PaymentRow = {
@@ -49,6 +50,7 @@ type BookingRow = {
   customer_address: string | null;
   payment_status: string;
   price_ore: number;
+  service_id: string | null;
 };
 
 /**
@@ -80,7 +82,7 @@ export async function getConfirmationBySession(
       supabase
         .from("bookings")
         .select(
-          "id, booking_date, booking_time, customer_name, customer_email, customer_phone, customer_address, payment_status, price_ore"
+          "id, booking_date, booking_time, customer_name, customer_email, customer_phone, customer_address, payment_status, price_ore, service_id"
         )
         .eq("id", paymentRow.booking_id)
         .maybeSingle()
@@ -103,6 +105,7 @@ export async function getConfirmationBySession(
       phone: bookingRow.customer_phone ?? "",
       address: bookingRow.customer_address ?? "",
       amountOre: paymentRow.amount_ore || bookingRow.price_ore,
+      serviceId: bookingRow.service_id ?? "polering",
     };
   } catch (error) {
     // A missing service role key or a slow database must not turn a completed

@@ -26,6 +26,7 @@ import {
 } from "@/lib/availability";
 import { fromDbTime, toDbTime } from "@/lib/booking";
 import { getAvailabilityOverrides, getBookingRules } from "@/lib/bookingRules";
+import { getProduct, PRODUCT_IDS } from "@/lib/products";
 import {
   notifyBookingCancelled,
   notifyBookingRescheduled,
@@ -144,6 +145,7 @@ const createBookingSchema = z.object({
   address: z.string().trim().min(4).max(200),
   locale: z.enum(["sv", "en"]).default("sv"),
   source: z.enum(["phone", "walk_in", "admin"]).default("phone"),
+  serviceId: z.enum(PRODUCT_IDS).default("polering"),
   priceOre: z.coerce.number().int().min(0).max(10_000_000),
   notes: z.string().trim().max(2000).optional(),
   sendPaymentLink: z.boolean().default(false),
@@ -293,6 +295,7 @@ export async function createBookingAction(
     address: formData.get("address"),
     locale: formData.get("locale") ?? "sv",
     source: formData.get("source") ?? "phone",
+    serviceId: formData.get("serviceId") ?? "polering",
     priceOre: formData.get("priceOre"),
     notes: formData.get("notes") ?? undefined,
     sendPaymentLink: formData.get("sendPaymentLink") === "on",
@@ -349,6 +352,7 @@ export async function createBookingAction(
       source: input.source,
       payment_status: "unpaid",
       price_ore: input.priceOre,
+      service_id: input.serviceId,
       customer_name: input.name,
       customer_email: input.email || null,
       customer_phone: input.phone,
@@ -404,6 +408,7 @@ export async function createBookingAction(
     address: input.address,
     email: input.email || undefined,
     source: "admin",
+    serviceId: input.serviceId,
   });
 
   if (input.sendPaymentLink && input.email) {
@@ -930,16 +935,19 @@ async function issuePaymentLink(bookingId: string): Promise<ActionState> {
   if (!booking) return fail("That booking does not exist");
   if (!booking.customer_email) return fail("That booking has no email address");
 
+  const locale = booking.locale ?? "sv";
+  const product = getProduct(booking.service_id);
   const session = await createBookingCheckoutSession({
     bookingId,
     amountOre: booking.price_ore,
     dateKey: booking.booking_date,
     time: fromDbTime(booking.booking_time),
     email: booking.customer_email,
-    locale: booking.locale ?? "sv",
+    locale,
     // Admin links are sent ahead of the visit, so they should outlive the
     // 20-minute hold used for self-service checkout.
     holdMinutes: 60 * 24,
+    serviceId: product.id,
   });
 
   if (!session) return fail("Could not create a payment link");

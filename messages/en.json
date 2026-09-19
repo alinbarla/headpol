@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "Polish headlights in Stockholm – 899 SEK/pair, 12-month warranty",
-    "description": "Mobile headlight polishing in Stockholm County. 899 SEK/pair, UV ceramic protection and 12-month warranty. We come to your address."
+    "title": "Polish headlights in Stockholm – from 899 SEK/pair",
+    "description": "Mobile headlight polishing in Stockholm County. Polishing 899 SEK/pair, PPF film 1899 SEK, package 2599 SEK. 12-month warranty. We come to your address."
   },
   "nav": {
     "brand": "Strålkastarpolering",
@@ -11,6 +11,8 @@
     "process": "Process",
     "services": "Pricing",
     "polishing": "Polishing",
+    "ppf": "PPF",
+    "combo": "Polishing+PPF",
     "restoration": "Restoration",
     "about": "About",
     "faq": "FAQ",
@@ -117,26 +119,42 @@
   "services": {
     "title": "Headlight restoration pricing",
     "readMore": "Full prices and what's included",
-    "subtitle": "Premium restoration + UV ceramic protection for both headlights. 899kr/pair.",
+    "readMorePolish": "Read more about polishing headlights",
+    "readMoreLabel": "Read more",
+    "bookLabel": "Book",
+    "subtitle": "Three fixed prices: polishing, PPF film, or the package. We come to you in Stockholm County.",
     "exampleNote": "Services & pricing",
-    "guaranteeNote": "Premium restoration + UV ceramic protection = headlights like new, money saved and a 12-month warranty.",
+    "guaranteeNote": "All prices are per pair, including VAT. 12-month warranty. Polishing 899 SEK, PPF 1899 SEK, package 2599 SEK.",
     "priceUnit": "pair",
+    "chipPolering": "Polishing",
+    "chipPpf": "PPF",
+    "chipCombo": "Package",
     "items": [
       {
-        "title": "Cars",
-        "description": "Premium restoration + UV ceramic protection for both headlights. We come to you.",
+        "id": "polering",
+        "title": "Polishing",
+        "description": "Sanding, polishing and UV ceramic protection for both headlights. We come to you.",
         "oldPrice": "1499kr",
-        "price": "899kr"
+        "price": "899kr",
+        "href": "/stralkastarpolering",
+        "badge": "Most booked"
       },
       {
-        "title": "Motorcycles & mopeds",
-        "description": "Restoration of compact units with the same materials and finish as for cars.",
-        "price": "From 499 SEK"
+        "id": "ppf",
+        "title": "PPF film",
+        "description": "Protection film on both headlights. Guards against stone chips and new UV damage when the lens is already clear.",
+        "oldPrice": "2499kr",
+        "price": "1899kr",
+        "href": "/ppf"
       },
       {
-        "title": "Business & fleet",
-        "description": "Volume pricing for hauliers, dealerships and companies with several vehicles. We come to you.",
-        "price": "Quote"
+        "id": "polering-ppf",
+        "title": "Polishing + PPF",
+        "description": "We polish first and apply PPF film in the same visit. Save 199 SEK versus booking them separately.",
+        "oldPrice": "3499kr",
+        "price": "2599kr",
+        "href": "/polering-ppf",
+        "badge": "Package · save 199 SEK"
       }
     ]
   },
@@ -199,7 +217,7 @@
       },
       {
         "question": "How much does it cost to restore headlights?",
-        "answer": "Premium restoration of both headlights is 899kr/pair, down from 1499kr/pair. UV ceramic protection and a 12-month warranty are included. Motorcycles and mopeds from 499 SEK. For businesses we provide a quote."
+        "answer": "Polishing both headlights is 899 SEK/pair (was 1499). PPF film is 1899 SEK/pair (was 2499). Polishing + PPF in the same visit is 2599 SEK/pair (was 3499). UV protection and a 12-month warranty are included with polishing."
       },
       {
         "question": "How long does it take?",
@@ -253,7 +271,8 @@
   },
   "booking": {
     "title": "Book headlight restoration",
-    "subtitle": "Pick a date and time. We'll email you a confirmation and you'll see booked slots greyed out.",
+    "subtitle": "Pick a service, date and time. We'll email you a confirmation and you'll see booked slots greyed out.",
+    "selectService": "Choose a service",
     "selectDate": "Select date",
     "selectTime": "Select time",
     "yourDetails": "Your details",
@@ -307,7 +326,9 @@
     "leadMissing": "The link may have expired. If you paid but never got a confirmation email, call us and we'll sort it out right away.",
     "detailsTitle": "Your booking",
     "serviceLabel": "Service",
-    "serviceValue": "Premium restoration + UV ceramic protection, both headlights",
+    "serviceValuePolering": "Sanding, polishing and UV ceramic protection, both headlights",
+    "serviceValuePpf": "PPF film on both headlights",
+    "serviceValueCombo": "Polishing and PPF film, both headlights in the same visit",
     "whenLabel": "Date and time",
     "durationNote": "Takes about 45–60 minutes",
     "whereLabel": "We come to you",
@@ -359,8 +380,8 @@
     "ratingSr": "{rating} out of 5 stars based on {count, plural, one {# review} other {# reviews}}",
     "compareTitle": "Before and after: polish headlights",
     "compareLead": "Drag the slider to see cloudy headlights turn clear again — the same result we deliver at your address.",
-    "ctaTitle": "Book headlight polishing",
-    "ctaBody": "We come to you. Fixed price 899 SEK/pair, UV ceramic protection and a 12-month warranty.",
+    "ctaTitle": "Book polishing, PPF or the package",
+    "ctaBody": "We come to you. Polishing 899 SEK/pair, PPF film 1899 SEK/pair, polishing + PPF 2599 SEK/pair. 12-month warranty.",
     "ctaBook": "Book a time",
     "ctaCall": "Call now",
     "relatedTitle": "Read next",
