@@ -8,6 +8,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { YoutubeAutoplayEmbed } from "@/components/media/YoutubeAutoplayEmbed";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+import { bookingUrl } from "@/lib/products";
 import { cn } from "@/lib/utils";
 
 const STEP_IMAGES = [
@@ -93,6 +94,8 @@ export function ProcessStoryboard() {
     alt: string;
   }>;
 
+  const ppfAfterParagraphs = t.raw("ppfAfterParagraphs") as string[];
+  const ppfAfterPoints = t.raw("ppfAfterPoints") as string[];
   const isPpf = tab === "ppf";
 
   return (
@@ -200,6 +203,46 @@ export function ProcessStoryboard() {
               mutedLabel={t("videoMuted")}
             />
           ) : null}
+          <div className="mt-8 max-w-3xl">
+            <h3 className="headline-display text-2xl font-bold text-text-primary sm:text-3xl">
+              {t("ppfAfterTitle")}
+            </h3>
+            {ppfAfterParagraphs.map((paragraph) => (
+              <p
+                key={paragraph.slice(0, 48)}
+                className="mt-4 text-base leading-relaxed text-text-secondary"
+              >
+                {paragraph}
+              </p>
+            ))}
+            <ul className="mt-5 space-y-2 text-sm leading-relaxed text-text-secondary">
+              {ppfAfterPoints.map((item) => (
+                <li key={item} className="flex gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-beam" aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6">
+              <Link
+                href={bookingUrl("ppf")}
+                className="text-sm font-semibold text-beam hover:underline"
+              >
+                {t("ppfAfterBook")}
+              </Link>
+              {locale === "sv" ? (
+                <>
+                  {" · "}
+                  <Link
+                    href="/ppf"
+                    className="text-sm font-semibold text-beam hover:underline"
+                  >
+                    {t("ppfReadMore")}
+                  </Link>
+                </>
+              ) : null}
+            </p>
+          </div>
         </div>
       </Container>
     </section>

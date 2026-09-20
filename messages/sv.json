@@ -97,6 +97,18 @@
     "ppfCaption": "PPF-folie på strålkastare: före och efter. Filmen startar automatiskt utan ljud.",
     "ppfWatch": "Öppna på YouTube",
     "videoMuted": "Ljud av",
+    "ppfAfterTitle": "PPF-folie skyddar strålkastaren mot stenskott och UV",
+    "ppfAfterParagraphs": [
+      "I filmen ser du hur vi lägger PPF-folie på strålkastare: en klar TPU-film som sitter som ett offerlager på polykarbonatet. Stenskott och mikrosprickor stannar i folien i stället för i glaset, så strålkastaren under inte oxiderar om.",
+      "PPF-folie för strålkastare passar när glasen redan är klara — nyare bil, nyligen polerat, ingen synlig gulnad. Är plasten gul eller matt måste oxidationen bort först. Då är paketet polering + PPF rätt val, samma besök hos dig i Stockholms län.",
+      "Strålkastarfolie på båda sidorna kostar 1899 kr/par. Polering och PPF samma gång kostar 2599 kr/par. Moms och 12 månaders garanti ingår. Ingen inlämning — vi kommer till adressen du anger."
+    ],
+    "ppfAfterPoints": [
+      "Klara glas: PPF-folie räcker ofta",
+      "Gulnade eller matta glas: polera strålkastare först",
+      "Spricka eller fukt inuti: varken polering eller PPF hjälper"
+    ],
+    "ppfAfterBook": "Boka PPF-folie",
     "steps": [
       {
         "title": "Maskering & förberedelse",
@@ -213,8 +225,8 @@
     "googleReadLess": "Visa mindre"
   },
   "faq": {
-    "title": "Vanliga frågor om att polera strålkastare",
-    "subtitle": "Svar på det bilägare i Stockholm undrar mest om polering och renovering av strålkastare.",
+    "title": "Vanliga frågor om strålkastarpolering och PPF-folie",
+    "subtitle": "Svar på det bilägare i Stockholm undrar mest om polering, renovering och PPF-folie på strålkastare.",
     "readMore": "Alla frågor och längre svar",
     "items": [
       {
@@ -246,8 +258,30 @@
         "answer": "Polering av båda strålkastarna kostar 899 kr/par (ord. 1499 kr). PPF-folie 1899 kr/par (ord. 2499 kr). Polering + PPF samma besök 2599 kr/par (ord. 3499 kr). UV-skydd och 12 månaders garanti ingår i poleringen."
       },
       {
+        "question": "Vad är PPF-folie på strålkastare?",
+        "answer": "PPF-folie är en klar TPU-skyddsfolie som vi lägger på strålkastarglaset. Den tar stenskott och ny UV-belastning så att polykarbonatet under inte oxiderar om. Det är ett fysiskt skikt — strålkastarfolie — inte samma sak som det tunna UV-keramiska skyddet efter polering.",
+        "href": "/ppf",
+        "linkLabel": "Läs mer om PPF-folie för strålkastare"
+      },
+      {
+        "question": "Kan man lägga PPF-folie på gula strålkastare?",
+        "answer": "Inte som enda åtgärd. Gulnad sitter i plasten, och folie ovanpå låser in diset. Polera strålkastarna först, eller boka paketet polering + PPF samma besök.",
+        "href": "/polering-ppf",
+        "linkLabel": "Paketet polering + PPF"
+      },
+      {
+        "question": "Vad kostar PPF-folie för strålkastare?",
+        "answer": "PPF-folie på båda strålkastarna kostar 1899 kr/par (ord. 2499 kr). Vill du polera och lägga folie samma besök är paketet 2599 kr/par. Moms och 12 månaders garanti ingår. Vi kommer till din adress i Stockholms län.",
+        "href": "/ppf",
+        "linkLabel": "Pris och bokning för PPF-folie"
+      },
+      {
+        "question": "Behöver jag PPF-folie eller räcker det att polera strålkastare?",
+        "answer": "Polering räcker när du vill ha klara glas igen. PPF-folie är extra skydd mot stenskott när glaset redan är blankt, eller som sista steg efter polering. Keramiskt UV-skydd ingår alltid i poleringen; folien är tjockare och tar träffar som beläggningen inte klarar."
+      },
+      {
         "question": "Hur lång tid tar det?",
-        "answer": "En vanlig personbil tar ungefär 45–60 minuter. Du kan oftast vänta medan vi arbetar, eller låta bilen stå medan du gör annat."
+        "answer": "En vanlig polering tar ungefär 45–60 minuter. PPF-folie på strålkastare tar ungefär lika lång tid. Paketet polering + PPF tar längre eftersom båda jobben görs samma besök. Du kan oftast vänta medan vi arbetar, eller låta bilen stå medan du gör annat."
       },
       {
         "question": "Kan alla strålkastare poleras?",

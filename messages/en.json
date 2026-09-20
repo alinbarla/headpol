@@ -97,6 +97,18 @@
     "ppfCaption": "PPF film on headlights: before and after. The film starts automatically with sound off.",
     "ppfWatch": "Open on YouTube",
     "videoMuted": "Muted",
+    "ppfAfterTitle": "PPF film protects the headlight from stone chips and UV",
+    "ppfAfterParagraphs": [
+      "In the video we apply PPF film to headlights: a clear TPU layer that sits as a sacrificial skin on the polycarbonate. Stone chips and micro-cracks stay in the film instead of the lens, so the headlight underneath does not oxidise again.",
+      "PPF film for headlights fits when the lenses are already clear — a newer car, recently polished, no visible yellowing. If the plastic is yellow or dull the oxidation has to come off first. Then the polishing + PPF package is the right choice, one visit at your address in Stockholm County.",
+      "Headlight film on both sides is 1899 SEK/pair. Polishing and PPF in the same visit is 2599 SEK/pair. VAT and a 12-month warranty are included. No drop-off — we come to the address you give."
+    ],
+    "ppfAfterPoints": [
+      "Clear lenses: PPF film is often enough",
+      "Yellow or dull lenses: polish headlights first",
+      "A crack or moisture inside: neither polishing nor PPF will help"
+    ],
+    "ppfAfterBook": "Book PPF film",
     "steps": [
       {
         "title": "Masking & prep",
@@ -213,8 +225,8 @@
     "googleReadLess": "Show less"
   },
   "faq": {
-    "title": "Headlight restoration FAQ",
-    "subtitle": "Answers to what car owners in Stockholm ask most about headlight polishing and restoration.",
+    "title": "Headlight polishing and PPF film FAQ",
+    "subtitle": "Answers to what car owners in Stockholm ask most about polishing, restoration and PPF film on headlights.",
     "readMore": "All questions and longer answers",
     "items": [
       {
@@ -234,8 +246,30 @@
         "answer": "Polishing both headlights is 899 SEK/pair (was 1499). PPF film is 1899 SEK/pair (was 2499). Polishing + PPF in the same visit is 2599 SEK/pair (was 3499). UV protection and a 12-month warranty are included with polishing."
       },
       {
+        "question": "What is PPF film on headlights?",
+        "answer": "PPF film is a clear TPU protection film we apply on the headlight lens. It takes stone chips and new UV so the polycarbonate underneath does not oxidise again. It is a physical layer — headlight film — not the same thing as the thin UV ceramic coating after polishing.",
+        "href": "/ppf",
+        "linkLabel": "Read more about PPF film for headlights"
+      },
+      {
+        "question": "Can you apply PPF film on yellow headlights?",
+        "answer": "Not as the only step. Yellowing sits in the plastic, and film on top locks the haze in. Polish first, or book the polishing + PPF package in the same visit.",
+        "href": "/polering-ppf",
+        "linkLabel": "The polishing + PPF package"
+      },
+      {
+        "question": "How much does PPF film for headlights cost?",
+        "answer": "PPF film on both headlights is 1899 SEK/pair (was 2499). If you want polishing and film in the same visit the package is 2599 SEK/pair. VAT and a 12-month warranty are included. We come to your address in Stockholm County.",
+        "href": "/ppf",
+        "linkLabel": "PPF film price and booking"
+      },
+      {
+        "question": "Do I need PPF film or is polishing enough?",
+        "answer": "Polishing is enough when you want clear lenses again. PPF film is extra protection against stone chips when the lens is already clear, or as the last step after polishing. Ceramic UV protection is always included with polishing; the film is thicker and takes hits the coating cannot."
+      },
+      {
         "question": "How long does it take?",
-        "answer": "A typical car takes about 45–60 minutes. You can usually wait while we work, or leave the car while you do something else."
+        "answer": "A typical polish takes about 45–60 minutes. PPF film on headlights takes about as long. The polishing + PPF package takes longer because both jobs happen in the same visit. You can usually wait while we work, or leave the car while you do something else."
       },
       {
         "question": "Can all headlights be restored?",
