@@ -1,12 +1,14 @@
 "use client";
 
-import { useRef } from "react";
+import { useId, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView, MotionConfig } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
+import { YoutubeAutoplayEmbed } from "@/components/media/YoutubeAutoplayEmbed";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+import { cn } from "@/lib/utils";
 
 const STEP_IMAGES = [
   "/images/step-map/masking.webp",
@@ -16,6 +18,8 @@ const STEP_IMAGES = [
   "/images/step-map/quality-check.webp",
   "/images/step-map/ready-to-drive.webp",
 ];
+
+type ProcessTab = "polering" | "ppf";
 
 function StepCard({
   index,
@@ -79,52 +83,124 @@ function StepCard({
 export function ProcessStoryboard() {
   const t = useTranslations("process");
   const locale = useLocale();
+  const [tab, setTab] = useState<ProcessTab>("polering");
+  const tablistId = useId();
+  const poleringTabRef = useRef<HTMLButtonElement>(null);
+  const ppfTabRef = useRef<HTMLButtonElement>(null);
   const steps = t.raw("steps") as Array<{
     title: string;
     description: string;
     alt: string;
   }>;
 
+  const isPpf = tab === "ppf";
+
   return (
     <MotionConfig reducedMotion="user">
     <section id="process" className="section-anchor py-24 sm:py-32">
       <Container>
-        <div className="mb-12 max-w-3xl md:mb-16">
+        <div className="mb-10 max-w-3xl md:mb-12">
           <p className="font-mono text-xs uppercase tracking-[0.35em] text-beam/70">
-            {t("sequenceLabel")}
+            {isPpf ? t("ppfSequenceLabel") : t("sequenceLabel")}
           </p>
           <h2 className="headline-display mt-4 text-3xl font-extrabold text-text-primary sm:text-5xl">
-            {t("title")}
+            {isPpf ? t("ppfTitle") : t("title")}
           </h2>
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-text-secondary">
-            {t("subtitle")}
+            {isPpf ? t("ppfSubtitle") : t("subtitle")}
           </p>
           {locale === "sv" && (
             <p className="mt-4">
               <Link
-                href="/stralkastarrenovering"
+                href={isPpf ? "/ppf" : "/stralkastarrenovering"}
                 className="text-sm font-semibold text-beam hover:underline"
               >
-                {t("readMore")}
+                {isPpf ? t("ppfReadMore") : t("readMore")}
               </Link>
             </p>
           )}
         </div>
 
-        <ol className="grid list-none grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-          {steps.map((step, index) => (
-            <li key={step.title} className="min-h-0">
-              <StepCard
-                index={index}
-                title={step.title}
-                description={step.description}
-                imageAlt={step.alt}
-                imageSrc={STEP_IMAGES[index]}
-                stepLabel={t("stepLabel", { step: index + 1 })}
-              />
-            </li>
-          ))}
-        </ol>
+        <div
+          role="tablist"
+          aria-label={t("tablistLabel")}
+          id={tablistId}
+          className="mb-10 inline-flex rounded-full border border-white/10 bg-void-elevated p-1"
+        >
+          {(["polering", "ppf"] as const).map((value) => {
+            const selected = tab === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                role="tab"
+                id={`${tablistId}-${value}`}
+                ref={value === "polering" ? poleringTabRef : ppfTabRef}
+                aria-selected={selected}
+                aria-controls={`${tablistId}-panel-${value}`}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => setTab(value)}
+                onKeyDown={(event) => {
+                  if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+                    event.preventDefault();
+                    const next = value === "polering" ? "ppf" : "polering";
+                    setTab(next);
+                    (next === "ppf" ? ppfTabRef : poleringTabRef).current?.focus();
+                  }
+                }}
+                className={cn(
+                  "min-h-11 rounded-full px-5 py-2 text-sm font-semibold transition-colors",
+                  selected
+                    ? "bg-beam text-void"
+                    : "text-text-secondary hover:text-text-primary"
+                )}
+              >
+                {value === "polering" ? t("tabPolering") : t("tabPpf")}
+              </button>
+            );
+          })}
+        </div>
+
+        <div
+          role="tabpanel"
+          id={`${tablistId}-panel-polering`}
+          aria-labelledby={`${tablistId}-polering`}
+          hidden={isPpf}
+        >
+          {!isPpf ? (
+            <ol className="grid list-none grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+              {steps.map((step, index) => (
+                <li key={step.title} className="min-h-0">
+                  <StepCard
+                    index={index}
+                    title={step.title}
+                    description={step.description}
+                    imageAlt={step.alt}
+                    imageSrc={STEP_IMAGES[index]}
+                    stepLabel={t("stepLabel", { step: index + 1 })}
+                  />
+                </li>
+              ))}
+            </ol>
+          ) : null}
+        </div>
+
+        <div
+          role="tabpanel"
+          id={`${tablistId}-panel-ppf`}
+          aria-labelledby={`${tablistId}-ppf`}
+          hidden={!isPpf}
+        >
+          {isPpf ? (
+            <YoutubeAutoplayEmbed
+              id="process-ppf-video"
+              autoPlay
+              caption={t("ppfCaption")}
+              watchLabel={t("ppfWatch")}
+              mutedLabel={t("videoMuted")}
+            />
+          ) : null}
+        </div>
       </Container>
     </section>
     </MotionConfig>

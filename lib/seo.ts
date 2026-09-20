@@ -30,7 +30,7 @@ export const PUBLISHED_DATE =
   process.env.NEXT_PUBLIC_PUBLISHED_DATE ?? "2026-01-01";
 
 /** Last meaningful public-content change. Do not use `new Date()` in schema. */
-export const DATE_MODIFIED = "2026-09-19";
+export const DATE_MODIFIED = "2026-09-20";
 
 /** Optional Google Search Console verification token. */
 export const GOOGLE_SITE_VERIFICATION =
@@ -119,6 +119,7 @@ export const GOOGLE_BUSINESS_PROFILE_URL = `https://www.google.com/maps/search/?
 /** External profiles for Organization / LocalBusiness `sameAs`. */
 export const SOCIAL_PROFILES: string[] = [
   GOOGLE_BUSINESS_PROFILE_URL,
+  "https://www.youtube.com/@Strålkastarpolering",
   // Add Facebook / Instagram when available.
 ];
 
@@ -198,14 +199,44 @@ export function buildPageMetadata({
   title,
   description,
   absoluteTitle = false,
+  video,
 }: {
   locale: string;
   path?: string;
   title: string;
   description: string;
   absoluteTitle?: boolean;
+  video?: {
+    embedUrl: string;
+    thumbnailUrl: string;
+    width: number;
+    height: number;
+  };
 }): Metadata {
   const canonical = localeUrl(locale, path);
+  const images = video
+    ? [
+        {
+          url: video.thumbnailUrl,
+          width: video.width,
+          height: video.height,
+          alt: title,
+        },
+        {
+          url: OG_IMAGE.url,
+          width: OG_IMAGE.width,
+          height: OG_IMAGE.height,
+          alt: title,
+        },
+      ]
+    : [
+        {
+          url: OG_IMAGE.url,
+          width: OG_IMAGE.width,
+          height: OG_IMAGE.height,
+          alt: title,
+        },
+      ];
 
   return {
     title: absoluteTitle ? { absolute: title } : title,
@@ -215,24 +246,30 @@ export function buildPageMetadata({
       languages: languageAlternates(path),
     },
     openGraph: {
+      ...(video ? { type: "video.other" as const } : {}),
       title,
       description,
       url: canonical,
       locale: ogLocale(locale),
-      images: [
-        {
-          url: OG_IMAGE.url,
-          width: OG_IMAGE.width,
-          height: OG_IMAGE.height,
-          alt: title,
-        },
-      ],
+      images,
+      ...(video
+        ? {
+            videos: [
+              {
+                url: video.embedUrl,
+                width: video.width,
+                height: video.height,
+                type: "text/html",
+              },
+            ],
+          }
+        : {}),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [OG_IMAGE.url],
+      images: [video ? video.thumbnailUrl : OG_IMAGE.url],
     },
   };
 }

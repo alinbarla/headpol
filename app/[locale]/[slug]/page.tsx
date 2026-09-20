@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { ClusterPage } from "@/components/content/ClusterPage";
 import { CLUSTER_SLUGS, getClusterPage } from "@/lib/content/pages";
-import { buildPageMetadata } from "@/lib/seo";
+import { buildPageMetadata, SITE_URL } from "@/lib/seo";
 import { buildClusterStructuredData } from "@/lib/structuredData";
+import { PPF_YOUTUBE } from "@/lib/youtube";
 
 type PageProps = {
   params: Promise<{ locale: string; slug: string }>;
@@ -31,6 +32,15 @@ export async function generateMetadata({
     title: page.title,
     description: page.description,
     absoluteTitle: true,
+    video:
+      page.kind === "service-ppf"
+        ? {
+            embedUrl: PPF_YOUTUBE.embedUrl,
+            thumbnailUrl: `${SITE_URL.replace(/\/$/, "")}${PPF_YOUTUBE.posterSrc}`,
+            width: PPF_YOUTUBE.width,
+            height: PPF_YOUTUBE.height,
+          }
+        : undefined,
   });
 }
 

@@ -18,6 +18,7 @@ import {
   SOCIAL_PROFILES,
   localeUrl,
 } from "@/lib/seo";
+import { PPF_YOUTUBE } from "@/lib/youtube";
 
 /**
  * Whether Google Places rating may be emitted as AggregateRating on
@@ -312,18 +313,52 @@ function faqPageNode(
   };
 }
 
+const PPF_VIDEO_ID = `${SITE_URL}/ppf#video`;
+
+export function ppfVideoObject(): Record<string, unknown> {
+  const poster = `${SITE_URL}${PPF_YOUTUBE.posterSrc}`;
+  return {
+    "@type": "VideoObject",
+    "@id": PPF_VIDEO_ID,
+    name: PPF_YOUTUBE.title,
+    description: PPF_YOUTUBE.description,
+    thumbnailUrl: [
+      poster,
+      PPF_YOUTUBE.thumbnailUrl,
+      PPF_YOUTUBE.hqThumbnailUrl,
+    ],
+    uploadDate: PPF_YOUTUBE.uploadDate,
+    duration: PPF_YOUTUBE.duration,
+    embedUrl: PPF_YOUTUBE.embedUrl,
+    contentUrl: PPF_YOUTUBE.watchUrl,
+    url: PPF_VIDEO_ID,
+    width: PPF_YOUTUBE.width,
+    height: PPF_YOUTUBE.height,
+    inLanguage: "sv-SE",
+    isFamilyFriendly: true,
+    publisher: { "@id": ORG_ID },
+    author: { "@id": ORG_ID },
+    potentialAction: {
+      "@type": "WatchAction",
+      target: PPF_YOUTUBE.watchUrl,
+    },
+  };
+}
+
 function webPageNode({
   url,
   name,
   description,
   locale,
   mainEntity,
+  video,
 }: {
   url: string;
   name: string;
   description: string;
   locale: Locale;
   mainEntity?: { "@id": string };
+  video?: { "@id": string };
 }) {
   return {
     "@type": "WebPage",
@@ -338,6 +373,7 @@ function webPageNode({
     datePublished: PUBLISHED_DATE,
     dateModified: DATE_MODIFIED,
     ...(mainEntity ? { mainEntity } : {}),
+    ...(video ? { video, hasPart: video } : {}),
   };
 }
 
@@ -386,9 +422,11 @@ export async function buildHomeStructuredData(
         name: tMeta("title"),
         description: tMeta("description"),
         locale,
+        video: { "@id": PPF_VIDEO_ID },
       }),
       breadcrumbList(url, [{ name: BRAND, item: url }]),
       faqPageNode(url, locale, faqItems),
+      ppfVideoObject(),
     ],
   };
 }
@@ -438,6 +476,7 @@ export function buildClusterStructuredData(
       description: page.description,
       locale: "sv",
       mainEntity: mainEntityId ? { "@id": mainEntityId } : undefined,
+      video: page.kind === "service-ppf" ? { "@id": PPF_VIDEO_ID } : undefined,
     }),
     breadcrumbList(url, crumbs),
   ];
@@ -497,6 +536,10 @@ export function buildClusterStructuredData(
   // still describes visible Q&A for crawlers and other engines.
   if (page.faqs?.length) {
     graph.push(faqPageNode(url, "sv", page.faqs));
+  }
+
+  if (page.kind === "service-ppf") {
+    graph.push(ppfVideoObject());
   }
 
   return {

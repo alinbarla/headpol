@@ -87,6 +87,16 @@
     "readMore": "Read more about headlight restoration",
     "stepLabel": "Step {step}",
     "sequenceLabel": "Process · Steps 01–06",
+    "tablistLabel": "Choose process",
+    "tabPolering": "Polishing",
+    "tabPpf": "PPF film",
+    "ppfSequenceLabel": "PPF film · Before & after",
+    "ppfTitle": "How we apply PPF film to headlights",
+    "ppfSubtitle": "Watch how we protect the headlight lens with clear TPU film. The film takes stone chips and new UV so the plastic underneath does not oxidise again.",
+    "ppfReadMore": "Read more about PPF film",
+    "ppfCaption": "PPF film on headlights: before and after. The film starts automatically with sound off.",
+    "ppfWatch": "Open on YouTube",
+    "videoMuted": "Muted",
     "steps": [
       {
         "title": "Masking & prep",
@@ -389,6 +399,11 @@
     "ctaBook": "Book a time",
     "ctaCall": "Call now",
     "relatedTitle": "Read next",
-    "faqTitle": "FAQ"
+    "faqTitle": "FAQ",
+    "videoTitle": "PPF film on headlights: before and after",
+    "videoLead": "How we apply clear TPU film to the headlight lens. The film starts automatically with sound off.",
+    "videoCaption": "PPF film on headlights in Stockholm — before and after.",
+    "videoWatch": "Open on YouTube",
+    "videoMuted": "Muted"
   }
 }

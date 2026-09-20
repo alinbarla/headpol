@@ -87,6 +87,16 @@
     "readMore": "Läs mer om strålkastarrenovering",
     "stepLabel": "Steg {step}",
     "sequenceLabel": "Process · Steg 01–06",
+    "tablistLabel": "Välj process",
+    "tabPolering": "Polering",
+    "tabPpf": "PPF-folie",
+    "ppfSequenceLabel": "PPF-folie · Före & efter",
+    "ppfTitle": "Så lägger vi PPF-folie på strålkastare",
+    "ppfSubtitle": "Se hur vi skyddar strålkastarglaset med klar TPU-folie. Filmen tar stenskott och ny UV-belastning så att plasten under inte oxiderar om.",
+    "ppfReadMore": "Läs mer om PPF-folie",
+    "ppfCaption": "PPF-folie på strålkastare: före och efter. Filmen startar automatiskt utan ljud.",
+    "ppfWatch": "Öppna på YouTube",
+    "videoMuted": "Ljud av",
     "steps": [
       {
         "title": "Maskering & förberedelse",
@@ -402,6 +412,11 @@
     "ctaBook": "Boka tid",
     "ctaCall": "Ring nu",
     "relatedTitle": "Läs också",
-    "faqTitle": "Vanliga frågor"
+    "faqTitle": "Vanliga frågor",
+    "videoTitle": "PPF-folie på strålkastare: före och efter",
+    "videoLead": "Så lägger vi klar TPU-folie på strålkastarglaset. Filmen startar automatiskt utan ljud.",
+    "videoCaption": "PPF-folie på strålkastare i Stockholm — före och efter.",
+    "videoWatch": "Öppna på YouTube",
+    "videoMuted": "Ljud av"
   }
 }

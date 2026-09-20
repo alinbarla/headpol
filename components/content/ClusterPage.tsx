@@ -12,6 +12,7 @@ import { Container } from "@/components/ui/Container";
 import type { ClusterDoc } from "@/lib/content/types";
 import { CONTACT_PHONE, CONTACT_PHONE_DISPLAY } from "@/lib/booking";
 import { bookingUrl, type ProductId } from "@/lib/products";
+import { PpfYoutubeEmbed } from "@/components/media/PpfYoutubeEmbed";
 
 function ctaBookingHref(kind: ClusterDoc["kind"]): string {
   const byKind: Partial<Record<ClusterDoc["kind"], ProductId>> = {
@@ -72,6 +73,25 @@ export async function ClusterPage({
           <p className="mt-4 max-w-3xl text-lg leading-relaxed text-text-secondary">
             {page.lead}
           </p>
+
+          {page.kind === "service-ppf" ? (
+            <div className="mt-10 max-w-4xl">
+              <h2 className="headline-display text-xl font-bold text-text-primary sm:text-2xl">
+                {t("videoTitle")}
+              </h2>
+              <p className="mt-2 mb-5 max-w-2xl text-sm leading-relaxed text-text-secondary sm:text-base">
+                {t("videoLead")}
+              </p>
+              <PpfYoutubeEmbed
+                id="video"
+                priority
+                autoPlay
+                caption={t("videoCaption")}
+                watchLabel={t("videoWatch")}
+                mutedLabel={t("videoMuted")}
+              />
+            </div>
+          ) : null}
 
           {page.priceTiers && page.priceTiers.length > 0 ? (
             <PriceCards tiers={page.priceTiers} />
