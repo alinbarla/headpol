@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import { selectBookingService } from "@/lib/bookingNav";
 import { bookingUrl, type ProductId } from "@/lib/products";
@@ -27,7 +27,7 @@ export function BookServiceButton({
       href={bookingUrl(productId)}
       variant={variant}
       className={className}
-      onClick={(event) => {
+      onClick={(event: MouseEvent<HTMLAnchorElement>) => {
         if (selectBookingService(productId)) {
           event.preventDefault();
         }
