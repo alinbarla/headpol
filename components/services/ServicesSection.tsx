@@ -1,14 +1,11 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
+import { BookServiceButton } from "@/components/booking/BookServiceButton";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { PriceSticker } from "@/components/ui/PriceSticker";
-import {
-  bookingUrl,
-  isProductId,
-  type ProductId,
-} from "@/lib/products";
+import { isProductId, type ProductId } from "@/lib/products";
 
 const serviceIcons: Record<ProductId, ReactNode> = {
   polering: (
@@ -179,12 +176,12 @@ export async function ServicesSection() {
                   >
                     {t("readMoreLabel")}
                   </Button>
-                  <Button
-                    href={bookingUrl(productId)}
+                  <BookServiceButton
+                    productId={productId}
                     className="w-full px-5 sm:flex-1"
                   >
                     {t("bookLabel")}
-                  </Button>
+                  </BookServiceButton>
                 </div>
               </article>
             );

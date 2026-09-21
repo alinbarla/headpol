@@ -25,6 +25,7 @@ import {
   toDateKey,
 } from "@/lib/booking";
 import { SMOOTHERLY_PRICE_ORE } from "@/lib/routes";
+import { BOOKING_SET_SERVICE_EVENT } from "@/lib/bookingNav";
 import {
   DEFAULT_PRODUCT_ID,
   PRODUCT_LIST,
@@ -140,8 +141,27 @@ export function BookingPicker({
 
   useEffect(() => {
     if (!mounted || isSmootherly) return;
-    const fromUrl = new URLSearchParams(window.location.search).get("service");
-    setServiceId(getProduct(fromUrl).id);
+
+    const applyFromUrl = () => {
+      const fromUrl = new URLSearchParams(window.location.search).get("service");
+      setServiceId(getProduct(fromUrl).id);
+    };
+
+    applyFromUrl();
+
+    const onSetService = (event: Event) => {
+      const detail = (event as CustomEvent<ProductId>).detail;
+      setServiceId(getProduct(detail).id);
+      setErrorMessage(null);
+      setStatus((current) => (current === "success" ? "idle" : current));
+    };
+
+    window.addEventListener(BOOKING_SET_SERVICE_EVENT, onSetService);
+    window.addEventListener("popstate", applyFromUrl);
+    return () => {
+      window.removeEventListener(BOOKING_SET_SERVICE_EVENT, onSetService);
+      window.removeEventListener("popstate", applyFromUrl);
+    };
   }, [mounted, isSmootherly]);
 
   useEffect(() => {
