@@ -15,6 +15,8 @@ export default async function SitemapSeoPage() {
     robotsStatus?: number;
     urlCount?: number;
     robotsSitemapUrl?: string | null;
+    robotsHost?: string | null;
+    homepageInSitemap?: boolean;
     issues?: string[];
   };
 
@@ -37,6 +39,17 @@ export default async function SitemapSeoPage() {
           <Fact
             label="robots Sitemap"
             value={summary.robotsSitemapUrl ?? "—"}
+          />
+          <Fact label="robots Host" value={summary.robotsHost ?? "—"} />
+          <Fact
+            label="Homepage in sitemap"
+            value={
+              summary.homepageInSitemap == null
+                ? "—"
+                : summary.homepageInSitemap
+                  ? "Yes"
+                  : "Missing"
+            }
           />
         </dl>
       )}
