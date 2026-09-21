@@ -496,39 +496,6 @@ export function BookingPicker({
           <div className="flex flex-col gap-6">
             <div className="glass-panel rounded-3xl p-6 sm:p-8">
               <h3 className="text-sm font-semibold uppercase tracking-wider text-beam">
-                {tContact("title")}
-              </h3>
-              <div className="mt-6 space-y-4">
-                <a
-                  href={`tel:${CONTACT_PHONE}`}
-                  className="block cursor-pointer rounded-2xl border border-white/10 bg-void-surface/60 px-4 py-4 transition-colors hover:border-beam"
-                >
-                  <span className="text-xs uppercase tracking-wider text-text-muted">
-                    {tContact("call")}
-                  </span>
-                  <span className="mt-1 block text-lg font-semibold text-beam">
-                    {CONTACT_PHONE_DISPLAY}
-                  </span>
-                </a>
-                <a
-                  href={`mailto:${CONTACT_EMAIL}`}
-                  className="block cursor-pointer rounded-2xl border border-white/10 bg-void-surface/60 px-4 py-4 transition-colors hover:border-beam"
-                >
-                  <span className="text-xs uppercase tracking-wider text-text-muted">
-                    {tContact("emailAction")}
-                  </span>
-                  <span className="mt-1 block text-lg font-semibold text-beam">
-                    {CONTACT_EMAIL}
-                  </span>
-                </a>
-              </div>
-              <p className="mt-4 text-sm text-text-secondary">
-                {tContact("area")}
-              </p>
-            </div>
-
-            <div className="glass-panel rounded-3xl p-6 sm:p-8">
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-beam">
                 {t("yourDetails")}
               </h3>
               <div className="mt-4 space-y-3">
@@ -744,6 +711,39 @@ export function BookingPicker({
                     ? t("smootherlySubmit")
                     : t("continueToPayment")}
               </Button>
+            </div>
+
+            <div className="glass-panel rounded-3xl p-6 sm:p-8">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-beam">
+                {tContact("title")}
+              </h3>
+              <div className="mt-6 space-y-4">
+                <a
+                  href={`tel:${CONTACT_PHONE}`}
+                  className="block cursor-pointer rounded-2xl border border-white/10 bg-void-surface/60 px-4 py-4 transition-colors hover:border-beam"
+                >
+                  <span className="text-xs uppercase tracking-wider text-text-muted">
+                    {tContact("call")}
+                  </span>
+                  <span className="mt-1 block text-lg font-semibold text-beam">
+                    {CONTACT_PHONE_DISPLAY}
+                  </span>
+                </a>
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="block cursor-pointer rounded-2xl border border-white/10 bg-void-surface/60 px-4 py-4 transition-colors hover:border-beam"
+                >
+                  <span className="text-xs uppercase tracking-wider text-text-muted">
+                    {tContact("emailAction")}
+                  </span>
+                  <span className="mt-1 block text-lg font-semibold text-beam">
+                    {CONTACT_EMAIL}
+                  </span>
+                </a>
+              </div>
+              <p className="mt-4 text-sm text-text-secondary">
+                {tContact("area")}
+              </p>
             </div>
           </div>
         </div>
