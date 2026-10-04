@@ -194,6 +194,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       "Fast pris i Stockholms län: polera strålkastare 899 kr/par, PPF-folie 1899 kr/par, polering + PPF 2599 kr/par. 12 månaders garanti. Ingen zonavgift.",
     h1: "Priser för strålkastare",
     lead: "Tre fasta priser per par, inklusive moms. Polering 899 kr, PPF-folie 1899 kr, paketet 2599 kr. Samma pris i hela Stockholmsområdet.",
+    compareSlider: true,
     priceTiers: [
       {
         title: PRODUCTS.polering.nameSv,

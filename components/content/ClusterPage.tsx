@@ -93,9 +93,7 @@ export async function ClusterPage({
             </div>
           ) : null}
 
-          {page.priceTiers && page.priceTiers.length > 0 ? (
-            <PriceCards tiers={page.priceTiers} />
-          ) : page.kind === "location" || page.compareSlider ? (
+          {page.kind === "location" || page.compareSlider ? (
             <div className="mt-10 max-w-4xl">
               <div className="mb-5 max-w-2xl">
                 <h2 className="headline-display text-xl font-bold text-text-primary sm:text-2xl">
@@ -107,7 +105,14 @@ export async function ClusterPage({
               </div>
               <ResultCompareDynamic />
             </div>
-          ) : page.images && page.images.length > 0 ? (
+          ) : null}
+
+          {page.priceTiers && page.priceTiers.length > 0 ? (
+            <PriceCards tiers={page.priceTiers} />
+          ) : !page.compareSlider &&
+            page.kind !== "location" &&
+            page.images &&
+            page.images.length > 0 ? (
             <ul className="mt-10 grid gap-6 sm:grid-cols-2">
               {page.images.map((image) => (
                 <li key={image.src} className="overflow-hidden rounded-2xl border border-white/10">
