@@ -21,6 +21,9 @@ export async function runSitemapCheck(): Promise<SeoRunResult> {
     sitemap.text.includes("<sitemapindex");
   const robotsMentionsSitemap = /sitemap:/i.test(robots.text);
   const robotsSitemapUrl = robots.text.match(/sitemap:\s*(\S+)/i)?.[1] ?? null;
+  const robotsHost = robots.text.match(/^Host:\s*(\S+)/im)?.[1] ?? null;
+  const homepageLoc =
+    locs.find((loc) => loc.replace(/\/$/, "") === origin) ?? null;
 
   const issues: string[] = [];
   if (!sitemap.ok) issues.push(`sitemap.xml returned ${sitemap.status || "no response"}`);
@@ -33,12 +36,22 @@ export async function runSitemapCheck(): Promise<SeoRunResult> {
   if (robotsSitemapUrl && !robotsSitemapUrl.replace(/\/$/, "").endsWith("/sitemap.xml")) {
     issues.push(`robots.txt sitemap points at ${robotsSitemapUrl}`);
   }
+  if (robotsHost?.includes("://")) {
+    issues.push(
+      `robots.txt Host must be a hostname (got ${robotsHost}); omit Host for Google`
+    );
+  }
+  if (sitemap.ok && !homepageLoc) {
+    issues.push(`sitemap.xml is missing the homepage (${origin})`);
+  }
 
   const summary = {
     sitemapStatus: sitemap.status,
     robotsStatus: robots.status,
     urlCount: locs.length,
     robotsSitemapUrl,
+    robotsHost,
+    homepageInSitemap: Boolean(homepageLoc),
     issues,
   };
   await insertAuditLog("sitemap-check", summary);
