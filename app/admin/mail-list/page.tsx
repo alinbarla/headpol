@@ -15,11 +15,12 @@ export default async function MailListPage() {
   await requireAdmin();
 
   let leads: Awaited<ReturnType<typeof listDroppedVisitors>> = [];
-  let syncError: string | null = null;
+  let loadError: string | null = null;
   try {
     leads = await listDroppedVisitors();
   } catch (error) {
-    syncError = error instanceof Error ? error.message : "Could not load the mail list";
+    loadError =
+      error instanceof Error ? error.message : "Could not load the mail list";
   }
 
   return (
@@ -37,8 +38,8 @@ export default async function MailListPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {syncError ? (
-            <p className="text-sm text-destructive">{syncError}</p>
+          {loadError ? (
+            <p className="text-sm text-destructive">{loadError}</p>
           ) : (
             <DroppedVisitorTable leads={leads} />
           )}

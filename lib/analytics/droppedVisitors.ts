@@ -30,6 +30,7 @@ const FIELD_ALIASES: Record<string, keyof Pick<FormContact, "name" | "email" | "
   };
 
 const PAGE_SIZE = 1000;
+const QUERY_MS = 8000;
 
 export function emailKey(value: string): string {
   const email = value.trim().toLowerCase();
@@ -82,7 +83,7 @@ async function loadFormContacts(sessionId?: string): Promise<FormContact[]> {
       query = query.eq("session_id", sessionId);
     }
 
-    const { data, error } = await withSupabaseTimeout(query, 8000);
+    const { data, error } = await withSupabaseTimeout(query, QUERY_MS);
     if (error) throw new Error(error.message);
 
     const rows = (data ?? []) as Array<{
@@ -112,7 +113,8 @@ async function loadFormContacts(sessionId?: string): Promise<FormContact[]> {
       supabase
         .from("analytics_sessions")
         .select("id, visitor_id, ended_at")
-        .in("id", chunk)
+        .in("id", chunk),
+      QUERY_MS
     );
 
     for (const session of (sessions ?? []) as Array<{
@@ -141,7 +143,7 @@ async function loadBookingKeys(): Promise<{ emails: Set<string>; phones: Set<str
         .from("bookings")
         .select("customer_email, customer_phone")
         .range(from, from + PAGE_SIZE - 1),
-      8000
+      QUERY_MS
     );
     if (error) throw new Error(error.message);
 
@@ -171,6 +173,10 @@ function converted(contact: FormContact, keys: { emails: Set<string>; phones: Se
   return false;
 }
 
+/**
+ * Ingest-time sync for one session (or a full rebuild when sessionId is omitted).
+ * Prefer the session-scoped path — a full scan of analytics_events can time out.
+ */
 export async function syncDroppedVisitors(sessionId?: string): Promise<{
   added: number;
   removed: number;
@@ -189,9 +195,12 @@ export async function syncDroppedVisitors(sessionId?: string): Promise<{
     }
   }
 
-  const { data: current } = await withSupabaseTimeout(
-    supabase.from("dropped_visitors").select("id, email_key, phone, dismissed_at")
+  const { data: current, error: currentError } = await withSupabaseTimeout(
+    supabase.from("dropped_visitors").select("id, email_key, phone, dismissed_at"),
+    QUERY_MS
   );
+  if (currentError) throw new Error(currentError.message);
+
   const existingRows = (current ?? []) as Array<{
     id: string;
     email_key: string;
@@ -221,12 +230,14 @@ export async function syncDroppedVisitors(sessionId?: string): Promise<{
   if (rows.length > 0) {
     const { error } = await withSupabaseTimeout(
       supabase.from("dropped_visitors").upsert(rows, { onConflict: "email_key" }),
-      8000
+      QUERY_MS
     );
     if (error) throw new Error(error.message);
     added = rows.length;
   }
 
+  // Session-scoped sync only removes converted rows that match this batch's
+  // emails/phones when we also know the global booking keys (always loaded).
   const convertedIds = existingRows
     .filter((row) => {
       if (keys.emails.has(row.email_key)) return true;
@@ -238,13 +249,47 @@ export async function syncDroppedVisitors(sessionId?: string): Promise<{
   let removed = 0;
   if (convertedIds.length > 0) {
     const { error } = await withSupabaseTimeout(
-      supabase.from("dropped_visitors").delete().in("id", convertedIds)
+      supabase.from("dropped_visitors").delete().in("id", convertedIds),
+      QUERY_MS
     );
     if (error) throw new Error(error.message);
     removed = convertedIds.length;
   }
 
   return { added, removed };
+}
+
+/** Drop mail-list rows that now match a booking — cheap enough for page load. */
+export async function pruneConvertedDroppedVisitors(): Promise<number> {
+  const keys = await loadBookingKeys();
+  const supabase = getSupabaseAdminClient();
+
+  const { data, error } = await withSupabaseTimeout(
+    supabase.from("dropped_visitors").select("id, email_key, phone"),
+    QUERY_MS
+  );
+  if (error) throw new Error(error.message);
+
+  const ids = ((data ?? []) as Array<{
+    id: string;
+    email_key: string;
+    phone: string | null;
+  }>)
+    .filter((row) => {
+      if (keys.emails.has(row.email_key)) return true;
+      const phone = phoneKey(row.phone ?? "");
+      return Boolean(phone && keys.phones.has(phone));
+    })
+    .map((row) => row.id);
+
+  if (ids.length === 0) return 0;
+
+  const { error: deleteError } = await withSupabaseTimeout(
+    supabase.from("dropped_visitors").delete().in("id", ids),
+    QUERY_MS
+  );
+  if (deleteError) throw new Error(deleteError.message);
+  return ids.length;
 }
 
 export async function removeConvertedDroppedVisitor(email?: string | null, phone?: string | null) {
@@ -254,25 +299,38 @@ export async function removeConvertedDroppedVisitor(email?: string | null, phone
 
   if (key) {
     await withSupabaseTimeout(
-      supabase.from("dropped_visitors").delete().eq("email_key", key)
+      supabase.from("dropped_visitors").delete().eq("email_key", key),
+      QUERY_MS
     );
   }
 
   if (phoneDigits) {
     const { data } = await withSupabaseTimeout(
-      supabase.from("dropped_visitors").select("id, phone")
+      supabase.from("dropped_visitors").select("id, phone"),
+      QUERY_MS
     );
     const ids = ((data ?? []) as Array<{ id: string; phone: string | null }>)
       .filter((row) => phoneKey(row.phone ?? "") === phoneDigits)
       .map((row) => row.id);
     if (ids.length > 0) {
-      await withSupabaseTimeout(supabase.from("dropped_visitors").delete().in("id", ids));
+      await withSupabaseTimeout(
+        supabase.from("dropped_visitors").delete().in("id", ids),
+        QUERY_MS
+      );
     }
   }
 }
 
 export async function listDroppedVisitors(): Promise<DroppedVisitor[]> {
-  await syncDroppedVisitors();
+  // Ingest already upserts per session on form input. A full event-table resync
+  // on every admin page load times out once analytics_events grows, which blanked
+  // the mail list. Only prune converted leads here, then read the table.
+  try {
+    await pruneConvertedDroppedVisitors();
+  } catch (error) {
+    console.error("[mail-list] prune converted failed", error);
+  }
+
   const supabase = getSupabaseAdminClient();
   const { data, error } = await withSupabaseTimeout(
     supabase
@@ -282,7 +340,8 @@ export async function listDroppedVisitors(): Promise<DroppedVisitor[]> {
       )
       .is("dismissed_at", null)
       .order("last_seen_at", { ascending: false })
-      .limit(500)
+      .limit(500),
+    QUERY_MS
   );
   if (error) throw new Error(error.message);
   return (data ?? []) as DroppedVisitor[];
@@ -297,7 +356,8 @@ export async function dismissDroppedVisitors(ids: string[]): Promise<number> {
       .from("dropped_visitors")
       .update({ dismissed_at: new Date().toISOString() })
       .in("id", unique)
-      .select("id")
+      .select("id"),
+    QUERY_MS
   );
   if (error) throw new Error(error.message);
   return (data ?? []).length;

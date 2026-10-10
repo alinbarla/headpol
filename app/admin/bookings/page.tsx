@@ -81,6 +81,7 @@ export default async function BookingsPage({
             filename="bookings.csv"
             rows={rows.map((booking) => ({
               id: booking.id,
+              created_at: booking.created_at,
               date: booking.booking_date,
               time: booking.booking_time,
               status: booking.status,
@@ -92,6 +93,8 @@ export default async function BookingsPage({
               price_ore: booking.price_ore,
               source: booking.source,
               channel: booking.acquisition_channel,
+              referrer_host: booking.referrer_host,
+              analytics_session_id: booking.analytics_session_id,
             }))}
           />
           <Button asChild size="sm">
