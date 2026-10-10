@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { DayPicker, type Matcher } from "react-day-picker";
 import { sv, enGB } from "date-fns/locale";
 import { useLocale, useTranslations } from "next-intl";
+import { PhoneCallLink } from "@/components/analytics/PhoneCallLink";
 import { attributionForBookingPost } from "@/lib/attribution/storage";
 import {
   DEFAULT_BOOKING_RULES,
@@ -12,7 +13,6 @@ import {
 } from "@/lib/availability";
 import {
   CONTACT_EMAIL,
-  CONTACT_PHONE,
   CONTACT_PHONE_DISPLAY,
   digitsFromPostalCode,
   formatBookingDate,
@@ -738,17 +738,14 @@ export function BookingPicker({
                 {tContact("title")}
               </h3>
               <div className="mt-6 space-y-4">
-                <a
-                  href={`tel:${CONTACT_PHONE}`}
-                  className="block cursor-pointer rounded-2xl border border-white/10 bg-void-surface/60 px-4 py-4 transition-colors hover:border-beam"
-                >
+                <PhoneCallLink className="block cursor-pointer rounded-2xl border border-white/10 bg-void-surface/60 px-4 py-4 transition-colors hover:border-beam">
                   <span className="text-xs uppercase tracking-wider text-text-muted">
                     {tContact("call")}
                   </span>
                   <span className="mt-1 block text-lg font-semibold text-beam">
                     {CONTACT_PHONE_DISPLAY}
                   </span>
-                </a>
+                </PhoneCallLink>
                 <a
                   href={`mailto:${CONTACT_EMAIL}`}
                   className="block cursor-pointer rounded-2xl border border-white/10 bg-void-surface/60 px-4 py-4 transition-colors hover:border-beam"

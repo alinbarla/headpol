@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Libre_Franklin, Public_Sans } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { GoogleTagManager } from "@/components/analytics/GoogleTagManager";
+import { GoogleAdsCallTracking } from "@/components/analytics/GoogleAdsCallTracking";
 import { DeferredGoogleTagManager } from "@/components/analytics/DeferredGoogleTagManager";
 import { GTM_ID } from "@/lib/seo";
 import { AttributionCapture } from "@/components/analytics/AttributionCapture";
@@ -166,6 +167,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
     <html lang={htmlLang(locale)} className={`${libreFranklin.variable} ${libreFranklinRest.className} ${publicSans.variable} ${publicSansRest.className} h-full`}>
       <head>
         <GoogleTagManager />
+        <GoogleAdsCallTracking />
         <JsonLd
           id="local-business"
           data={buildLocalBusinessJsonLd(tMeta("description"), {

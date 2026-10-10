@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
-import { CONTACT_PHONE } from "@/lib/booking";
+import { PhoneCallButton } from "@/components/analytics/PhoneCallLink";
 import { bookingUrl, isProductId } from "@/lib/products";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
@@ -84,9 +84,9 @@ export async function LightBeamHero({
 
           <div className="hero-enter hero-enter-delay-2 lg:col-start-1">
             <div className="flex flex-wrap items-center gap-4">
-              <Button href={`tel:${CONTACT_PHONE}`} variant="dark">
+              <PhoneCallButton variant="dark">
                 {t("ctaPrimary")}
-              </Button>
+              </PhoneCallButton>
               <Button href="#booking">{t("ctaSecondary")}</Button>
             </div>
 

@@ -7,10 +7,11 @@ import { PriceCards } from "@/components/content/PriceCards";
 import { ResultCompareDynamic } from "@/components/reviews/ResultCompareDynamic";
 import { LiveReviewRating } from "@/components/reviews/LiveReviewRating";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { PhoneCallButton } from "@/components/analytics/PhoneCallLink";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import type { ClusterDoc } from "@/lib/content/types";
-import { CONTACT_PHONE, CONTACT_PHONE_DISPLAY } from "@/lib/booking";
+import { CONTACT_PHONE_DISPLAY } from "@/lib/booking";
 import { bookingUrl, type ProductId } from "@/lib/products";
 import { PpfYoutubeEmbed } from "@/components/media/PpfYoutubeEmbed";
 
@@ -268,9 +269,9 @@ export async function ClusterPage({
             <p className="mt-3 text-text-secondary">{t("ctaBody")}</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button href={ctaBookingHref(page.kind)}>{t("ctaBook")}</Button>
-              <Button href={`tel:${CONTACT_PHONE}`} variant="outline">
+              <PhoneCallButton variant="outline">
                 {t("ctaCall")} · {CONTACT_PHONE_DISPLAY}
-              </Button>
+              </PhoneCallButton>
             </div>
           </aside>
         </Container>

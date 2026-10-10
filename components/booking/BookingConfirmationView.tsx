@@ -13,13 +13,13 @@ import {
   UserIcon,
 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { PhoneCallButton } from "@/components/analytics/PhoneCallLink";
 import { PendingPaymentPoller } from "@/components/booking/PendingPaymentPoller";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import type { BookingConfirmation } from "@/lib/bookingConfirmation";
 import {
   CONTACT_EMAIL,
-  CONTACT_PHONE,
   CONTACT_PHONE_DISPLAY,
   formatBookingDate,
   formatOre,
@@ -216,10 +216,10 @@ export async function BookingConfirmationView({
           </p>
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Button href={`tel:${CONTACT_PHONE}`} className="sm:flex-1">
+            <PhoneCallButton className="sm:flex-1">
               <PhoneIcon className="mr-2 size-4" />
               {t("callCta", { phone: CONTACT_PHONE_DISPLAY })}
-            </Button>
+            </PhoneCallButton>
             <Button
               href={`mailto:${CONTACT_EMAIL}`}
               variant="outline"

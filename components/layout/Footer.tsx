@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
-import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_DISPLAY } from "@/lib/booking";
+import { PhoneCallLink } from "@/components/analytics/PhoneCallLink";
+import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY } from "@/lib/booking";
 import { AREA_PAGE_SLUGS, SERVICE_AREAS } from "@/lib/seo";
 
 export async function Footer() {
@@ -83,9 +84,9 @@ export async function Footer() {
               </h3>
               <ul className="mt-4 space-y-2 text-sm text-text-secondary">
                 <li>
-                  <a href={`tel:${CONTACT_PHONE}`} className="cursor-pointer transition-colors hover:text-beam">
+                  <PhoneCallLink className="cursor-pointer transition-colors hover:text-beam">
                     {CONTACT_PHONE_DISPLAY}
-                  </a>
+                  </PhoneCallLink>
                 </li>
                 <li>
                   <a href={`mailto:${CONTACT_EMAIL}`} className="cursor-pointer transition-colors hover:text-beam">
