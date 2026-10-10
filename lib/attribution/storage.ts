@@ -89,8 +89,16 @@ export function captureLandingAttribution(
 export function attributionForBookingPost(): AttributionInput | null {
   const stored = readStoredAttribution();
   if (!stored) return null;
-  const { capturedAt: _capturedAt, channel: _channel, ...input } = stored;
-  return input;
+  return {
+    utmSource: stored.utmSource,
+    utmMedium: stored.utmMedium,
+    utmCampaign: stored.utmCampaign,
+    utmContent: stored.utmContent,
+    utmTerm: stored.utmTerm,
+    gclid: stored.gclid,
+    landingPath: stored.landingPath,
+    referrerHost: stored.referrerHost,
+  };
 }
 
 /** First-party analytics session id for joining bookings ↔ visitors. */
