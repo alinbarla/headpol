@@ -1,7 +1,7 @@
-/** localStorage key for last non-direct marketing touch. */
-export const ATTRIBUTION_STORAGE_KEY = "booking_attribution_v1";
+/** localStorage key for first-touch marketing attribution. */
+export const ATTRIBUTION_STORAGE_KEY = "booking_attribution_v2";
 
-/** How long a stored non-direct touch stays valid. */
+/** How long a stored first-touch stays valid. */
 export const ATTRIBUTION_TTL_DAYS = 30;
 
 export const MAX_UTM_LENGTH = 200;
@@ -80,7 +80,12 @@ export function isInfrastructureReferrerHost(
   if (!host?.trim()) return false;
   const normalized = normalizeHost(host);
   return (
-    normalized === "supabase.co" || normalized.endsWith(".supabase.co")
+    normalized === "supabase.co" ||
+    normalized.endsWith(".supabase.co") ||
+    // Stripe Checkout return/cancel sets document.referrer to these hosts and
+    // must never overwrite a real marketing channel.
+    normalized === "stripe.com" ||
+    normalized.endsWith(".stripe.com")
   );
 }
 

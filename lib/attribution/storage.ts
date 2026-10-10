@@ -1,3 +1,4 @@
+import { SESSION_STORAGE_KEY } from "@/lib/analytics/constants";
 import {
   ATTRIBUTION_STORAGE_KEY,
   ATTRIBUTION_TTL_DAYS,
@@ -8,6 +9,9 @@ import {
   type AttributionInput,
   type ClassifiedAttribution,
 } from "@/lib/attribution/classify";
+
+const SESSION_UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export type StoredAttribution = AttributionInput & {
   channel: ClassifiedAttribution["channel"];
@@ -51,8 +55,12 @@ export function writeStoredAttribution(value: StoredAttribution): void {
 }
 
 /**
- * Last non-direct touch wins within the TTL. A direct landing never clears a
- * fresher Ads / organic / referral touch.
+ * First non-direct touch wins within the TTL.
+ *
+ * Returning from Stripe Checkout (or any later referral) must not replace the
+ * original Ads / organic / referral channel captured on the first visit.
+ * Direct landings never clear a stored first touch; a later non-direct touch
+ * may upgrade a stored direct landing.
  */
 export function captureLandingAttribution(
   input: AttributionInput,
@@ -61,19 +69,18 @@ export function captureLandingAttribution(
   const classified = classifyAcquisition(input);
   const existing = readStoredAttribution(now);
 
+  if (existing && isNonDirectChannel(existing.channel)) {
+    return existing;
+  }
+
+  if (existing && !isNonDirectChannel(classified.channel)) {
+    return existing;
+  }
+
   const next: StoredAttribution = {
     ...classified,
     capturedAt: now,
   };
-
-  if (!isNonDirectChannel(classified.channel)) {
-    if (existing && isNonDirectChannel(existing.channel)) {
-      return existing;
-    }
-    writeStoredAttribution(next);
-    return next;
-  }
-
   writeStoredAttribution(next);
   return next;
 }
@@ -84,4 +91,16 @@ export function attributionForBookingPost(): AttributionInput | null {
   if (!stored) return null;
   const { capturedAt: _capturedAt, channel: _channel, ...input } = stored;
   return input;
+}
+
+/** First-party analytics session id for joining bookings ↔ visitors. */
+export function analyticsSessionIdForBookingPost(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const value = sessionStorage.getItem(SESSION_STORAGE_KEY);
+    if (value && SESSION_UUID_RE.test(value)) return value;
+  } catch {
+    // Private mode / blocked storage.
+  }
+  return null;
 }

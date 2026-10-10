@@ -105,8 +105,9 @@ function sendVisitBeacon() {
 }
 
 /**
- * Stores marketing touch in localStorage for bookings and sends visit beacons
- * (Visitors / Channels) from the first landing — not gated on Analys consent.
+ * Stores first-touch marketing attribution in localStorage for bookings and
+ * sends visit beacons (Visitors / Channels) from the first landing — not gated
+ * on Analys consent.
  */
 export function AttributionCapture() {
   const pathname = usePathname();

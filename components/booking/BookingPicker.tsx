@@ -5,7 +5,10 @@ import { DayPicker, type Matcher } from "react-day-picker";
 import { sv, enGB } from "date-fns/locale";
 import { useLocale, useTranslations } from "next-intl";
 import { PhoneCallLink } from "@/components/analytics/PhoneCallLink";
-import { attributionForBookingPost } from "@/lib/attribution/storage";
+import {
+  analyticsSessionIdForBookingPost,
+  attributionForBookingPost,
+} from "@/lib/attribution/storage";
 import {
   DEFAULT_BOOKING_RULES,
   type AvailabilityMap,
@@ -307,6 +310,7 @@ export function BookingPicker({
             ? { message: message.trim() || undefined }
             : { withdrawalConsent, serviceId }),
           attribution: attributionForBookingPost(),
+          analyticsSessionId: analyticsSessionIdForBookingPost(),
         }),
       });
 

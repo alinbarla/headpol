@@ -1,4 +1,5 @@
 import {
+  isInfrastructureReferrerHost,
   isKnownProductReferrerHost,
   MAX_GCLID_LENGTH,
   MAX_LANDING_PATH_LENGTH,
@@ -67,8 +68,8 @@ export function sanitizeReferrerHost(
   host = host.replace(/^www\./i, "").toLowerCase();
   if (!host || host === "localhost" || host === "127.0.0.1") return null;
 
-  // Supabase project URLs are infrastructure noise, not marketing referrers.
-  if (host === "supabase.co" || host.endsWith(".supabase.co")) return null;
+  // Payment / backend hosts are infrastructure noise, not marketing referrers.
+  if (isInfrastructureReferrerHost(host)) return null;
 
   if (siteHost) {
     const site = siteHost.replace(/^www\./i, "").toLowerCase();

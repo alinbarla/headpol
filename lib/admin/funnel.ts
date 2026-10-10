@@ -3,6 +3,7 @@ import "server-only";
 import {
   ACQUISITION_LABELS,
 } from "@/lib/admin/labels";
+import { isInfrastructureReferrerHost } from "@/lib/attribution/constants";
 import {
   addDaysToDateKey,
   stockholmDateKey,
@@ -137,7 +138,7 @@ export async function getAcquisitionFunnel(
     byChannelMap.set(channel, channelMetrics);
 
     const host = row.referrer_host?.trim();
-    if (!host) continue;
+    if (!host || isInfrastructureReferrerHost(host)) continue;
     const key = `${channel}\0${host}`;
     const referrerMetrics =
       byReferrerMap.get(key) ??

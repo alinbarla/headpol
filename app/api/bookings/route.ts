@@ -130,6 +130,7 @@ export async function POST(request: Request) {
       withdrawalConsent?: boolean;
       serviceId?: string;
       attribution?: Partial<AttributionInput> | null;
+      analyticsSessionId?: string | null;
     };
 
     const { date, time } = body;
@@ -208,6 +209,7 @@ export async function POST(request: Request) {
       priceOre,
       serviceId: product.id,
       attribution: body.attribution ?? null,
+      analyticsSessionId: body.analyticsSessionId ?? null,
       geo: visitorGeo(request.headers),
       visitorIp: clientIpFromRequest(request),
     });
@@ -266,6 +268,17 @@ type InsertedBooking = {
 
 type InsertResult = { data: InsertedBooking } | { error: string; status: number };
 
+function sanitizeAnalyticsSessionId(
+  value: string | null | undefined
+): string | null {
+  if (!value) return null;
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    value
+  )
+    ? value
+    : null;
+}
+
 async function insertBooking(input: {
   date: string;
   time: string;
@@ -280,6 +293,7 @@ async function insertBooking(input: {
   priceOre: number;
   serviceId: string;
   attribution?: Partial<AttributionInput> | null;
+  analyticsSessionId?: string | null;
   geo?: VisitorGeo | null;
   visitorIp?: string | null;
 }): Promise<InsertResult> {
@@ -314,6 +328,7 @@ async function insertBooking(input: {
     gclid: classified.gclid,
     landing_path: classified.landingPath,
     referrer_host: classified.referrerHost,
+    analytics_session_id: sanitizeAnalyticsSessionId(input.analyticsSessionId),
     geo_city: geo?.city ?? null,
     geo_region: geo?.region ?? null,
     geo_country: geo?.country ?? null,
