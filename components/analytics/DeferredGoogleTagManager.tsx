@@ -52,9 +52,12 @@ export function DeferredGoogleTagManager({
       ads.id = "google-ads-gtag";
       ads.async = true;
       ads.src = `https://www.googletagmanager.com/gtag/js?id=${adsId}`;
-      // GTM goes in either way, even when a blocker stops gtag.js.
-      ads.addEventListener("load", injectGtm, { once: true });
-      ads.addEventListener("error", injectGtm, { once: true });
+      // GTM goes in either way, even when a blocker stops gtag.js. It starts
+      // in its own task: once gtag.js runs it handles every dataLayer.push
+      // synchronously, which would otherwise make one long task out of both.
+      const afterAds = () => window.setTimeout(injectGtm, 0);
+      ads.addEventListener("load", afterAds, { once: true });
+      ads.addEventListener("error", afterAds, { once: true });
       document.head.appendChild(ads);
     };
 
