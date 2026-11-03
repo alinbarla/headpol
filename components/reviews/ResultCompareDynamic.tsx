@@ -17,6 +17,6 @@ const ResultCompare = dynamic(
   }
 );
 
-export function ResultCompareDynamic() {
-  return <ResultCompare />;
+export function ResultCompareDynamic({ priority = false }: { priority?: boolean }) {
+  return <ResultCompare priority={priority} />;
 }

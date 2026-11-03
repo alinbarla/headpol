@@ -12,8 +12,9 @@ export async function HeroShowcaseImage() {
         src={HERO_IMAGE}
         alt={t("imageAlt")}
         fill
-        priority
-        sizes="(max-width: 1024px) 100vw, 50vw"
+        preload
+        fetchPriority="high"
+        sizes="(min-width: 1024px) 542px, (min-width: 640px) calc(100vw - 64px), calc(100vw - 40px)"
         className="object-cover"
       />
     </div>

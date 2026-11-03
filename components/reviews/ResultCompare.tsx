@@ -8,7 +8,12 @@ import { CompareReveal } from "@/components/ui/compare-reveal";
 const BEFORE_SRC = "/images/gallery/stralkastarpolering fore.webp";
 const AFTER_SRC = "/images/gallery/stralkastarpolering efter.webp";
 
-export function ResultCompare() {
+export function ResultCompare({
+  priority = false,
+}: {
+  /** Near the top of the page: the full "after" image is the LCP element. */
+  priority?: boolean;
+}) {
   const t = useTranslations("hero");
 
   return (
@@ -21,6 +26,7 @@ export function ResultCompare() {
             src={BEFORE_SRC}
             alt={t("sliderAltBefore")}
             fill
+            loading={priority ? "eager" : "lazy"}
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 960px"
           />
@@ -32,6 +38,8 @@ export function ResultCompare() {
             src={AFTER_SRC}
             alt={t("sliderAltAfter")}
             fill
+            preload={priority}
+            fetchPriority={priority ? "high" : undefined}
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 960px"
           />

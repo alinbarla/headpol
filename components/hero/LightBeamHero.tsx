@@ -64,7 +64,8 @@ export async function LightBeamHero({
             </p>
           </div>
 
-          <div className="hero-enter hero-enter-delay-1 relative lg:col-start-2 lg:row-span-2 lg:row-start-1">
+          {/* No entrance fade here: this image is the mobile LCP element. */}
+          <div className="relative lg:col-start-2 lg:row-span-2 lg:row-start-1">
             <div
               className="pointer-events-none absolute -inset-4 rounded-3xl bg-beam/10 blur-3xl"
               aria-hidden="true"
