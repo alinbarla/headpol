@@ -27,7 +27,7 @@ export async function generateMetadata({
     path: "integritetspolicy",
     title: sv ? "Integritetspolicy" : "Privacy policy",
     description: sv
-      ? `Så behandlar ${BRAND} dina personuppgifter enligt GDPR.`
+      ? `Så behandlar ${BRAND} dina personuppgifter enligt GDPR: vilka uppgifter vi sparar vid bokning, varför, hur länge och dina rättigheter.`
       : `How ${BRAND} handles your personal data under the GDPR.`,
   });
 }

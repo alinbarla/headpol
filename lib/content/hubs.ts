@@ -5,9 +5,9 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "stralkastarpolering",
     kind: "service-polering",
-    title: "Polera strålkastare – 899 kr/par, 12 mån garanti",
+    title: "Polera strålkastare: guide, tips & proffs för 899 kr/par",
     description:
-      "Polera strålkastare mobil i Stockholm: 899 kr/par, UV-keramiskt skydd och 12 månaders garanti. Vi kommer till dig.",
+      "Så polerar du strålkastare: varför glasen gulnar, vad tandkräm, Autosol och kit klarar och när proffs lönar sig. Vi gör det på din adress för 899 kr/par.",
     h1: "Polera strålkastare",
     lead: "När folk säger att de vill polera strålkastare menar de nästan alltid samma sak: glasen har blivit gula eller mjölkiga och de vill ha blanka strålkastare igen. Det är inte smuts. Det är plasten som oxiderat — och det går att fixa utan att byta hela enheten.",
     sections: [
@@ -35,6 +35,35 @@ export const HUB_PAGES: ClusterDoc[] = [
         paragraphs: [
           "Kit från affären kan se bra ut i några veckor när du försöker polera strålkastare själv. Många saknar ett UV-skydd som faktiskt ersätter fabrikslackeringen. Slipningen tar bort det som fanns kvar av originalskyddet, så utan nytt skydd kommer gulnaden tillbaka.",
           "Vi slipar vått från P400 upp till P3000, polerar med polymer och lägger UV-keramiskt skydd. Det är därför vi kan lämna 12 månaders garanti. Ett kit på uppfarten ger sällan samma sak.",
+        ],
+      },
+      {
+        heading: "Så polerar du strålkastare själv, steg för steg",
+        paragraphs: [
+          "Vill du testa själv är ordningen viktigare än produkten. Hoppar du över ett steg blir resultatet flammigt eller kortlivat.",
+          "Räkna med en till två timmar för ett par första gången. Jobba i skugga och aldrig på varm plast i direkt sol.",
+        ],
+        bullets: [
+          "Tvätta och torka glaset och maskera lacken runt om med tejp",
+          "Våtslipa med vatten och allt finare papper, till exempel P800, P1500 och P3000, tills ytan är jämnt matt",
+          "Polera med plastpolish för hand eller med maskin tills glaset blir klart",
+          "Torka av med isopropanol och lägg ett UV-skydd som är gjort för polykarbonat",
+          "Låt skyddet härda enligt anvisningen innan bilen tvättas",
+        ],
+      },
+      {
+        heading: "Tandkräm, Autosol eller kit från Biltema och Jula?",
+        paragraphs: [
+          "Tandkräm och metallpolish som Autosol slipar bort den översta hinnan. Glaset blir klarare en stund, men oxidationen längre in sitter kvar och inget nytt UV-skydd läggs på. Gulnaden brukar komma tillbaka inom några veckor.",
+          "Kit från Biltema, Jula, Mekonomen eller Turtle Wax kostar ofta ett par hundralappar och fungerar bäst på lätt matta glas. Välj ett kit med UV-försegling och följ alla steg. Är glaset djupt gult eller repigt behövs slipning i flera korn och ett riktigt UV-skydd.",
+          "Själv blir det billigare i kronor men kostar tid, och resultatet håller sällan lika länge. Hos oss kostar det 899 kr/par på din adress, tar cirka en timme och du får UV-keramiskt skydd och 12 månaders garanti.",
+        ],
+      },
+      {
+        heading: "Rengöra strålkastare: utsidan, insidan och imma",
+        paragraphs: [
+          "Smuts, insekter och vägsalt går bort med vanlig biltvätt och en mjuk svamp. Undvik lösningsmedel och grova svampar på plasten — de nöter bort det som finns kvar av skyddet.",
+          "Sitter gulnaden kvar efter tvätt är det oxidation i plasten, inte smuts. Då hjälper bara slipning och polering. Imma eller vatten på insidan betyder en läckande tätning eller ventil. Det går inte att polera bort och ska åtgärdas på verkstad.",
         ],
       },
       {
@@ -68,6 +97,21 @@ export const HUB_PAGES: ClusterDoc[] = [
         question: "Måste jag lämna in bilen för att polera strålkastare?",
         answer:
           "Nej. Vi kommer till den adress du anger: uppfart, arbetsplats eller innergård, så länge bilen står utomhus och vi kommer åt båda sidorna.",
+      },
+      {
+        question: "Kan man polera strålkastare med tandkräm?",
+        answer:
+          "Glaset kan bli lite klarare en kort tid, eftersom tandkräm slipar lätt. Men oxidationen längre in sitter kvar och inget UV-skydd läggs på, så gulnaden kommer snabbt tillbaka. För ett resultat som håller krävs våtslipning, polering och UV-skydd.",
+      },
+      {
+        question: "Kan man polera strålkastare med Autosol?",
+        answer:
+          "Autosol tar bort en lätt hinna, men det är en metallpolish utan UV-skydd. Använd den bara på lätt matta glas och avsluta med ett UV-skydd för plast, annars gulnar glaset igen.",
+      },
+      {
+        question: "Hur länge håller det att polera strålkastare själv?",
+        answer:
+          "Utan nytt UV-skydd ofta bara några veckor till några månader, med ett bra skydd längre. Vi lägger UV-keramiskt skydd och lämnar 12 månaders garanti.",
       },
     ],
     compareSlider: true,
@@ -189,10 +233,10 @@ export const HUB_PAGES: ClusterDoc[] = [
   {
     slug: "priser",
     kind: "other",
-    title: "Priser: polering 899 kr, PPF 1899 kr, paket 2599 kr",
+    title: "Pris: polera strålkastare 899 kr/par – PPF 1899 kr",
     description:
-      "Fast pris i Stockholms län: polera strålkastare 899 kr/par, PPF-folie 1899 kr/par, polering + PPF 2599 kr/par. 12 månaders garanti. Ingen zonavgift.",
-    h1: "Priser för strålkastare",
+      "Vad kostar det att polera strålkastare? 899 kr/par inkl. moms, UV-skydd och 12 mån garanti. PPF-folie 1899 kr, paket 2599 kr. Ingen zonavgift i Stockholms län.",
+    h1: "Pris för att polera strålkastare",
     lead: "Tre fasta priser per par, inklusive moms. Polering 899 kr, PPF-folie 1899 kr, paketet 2599 kr. Samma pris i hela Stockholmsområdet.",
     compareSlider: true,
     priceTiers: [
@@ -273,6 +317,11 @@ export const HUB_PAGES: ClusterDoc[] = [
       },
     ],
     faqs: [
+      {
+        question: "Vad kostar det att polera strålkastare?",
+        answer:
+          "899 kr för ett par, inklusive moms. I priset ingår slipning, polering, UV-keramiskt skydd och 12 månaders garanti, och vi kommer till din adress i Stockholms län utan resetillägg. Vill du skydda glasen mot stenskott kostar PPF-folie 1899 kr/par och paketet polering + PPF 2599 kr/par.",
+      },
       {
         question: "Är det billigare att renovera än att byta?",
         answer:
