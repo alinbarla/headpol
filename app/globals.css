@@ -522,11 +522,6 @@ a[aria-disabled="true"] {
   animation-delay: 0s;
 }
 
-.hero-enter-delay-1 {
-  animation-delay: 0.15s;
-  animation-duration: 0.8s;
-}
-
 .hero-enter-delay-2 {
   animation-delay: 0.1s;
 }

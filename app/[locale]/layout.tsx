@@ -2,7 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { Libre_Franklin, Public_Sans } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { GoogleTagManager } from "@/components/analytics/GoogleTagManager";
-import { GoogleAdsCallTracking } from "@/components/analytics/GoogleAdsCallTracking";
+import {
+  GOOGLE_ADS_ID,
+  GoogleAdsCallTracking,
+} from "@/components/analytics/GoogleAdsCallTracking";
 import { DeferredGoogleTagManager } from "@/components/analytics/DeferredGoogleTagManager";
 import { GTM_ID } from "@/lib/seo";
 import { AttributionCapture } from "@/components/analytics/AttributionCapture";
@@ -11,6 +14,7 @@ import { LazyReplayBridge } from "@/components/analytics/LazyReplayBridge";
 import { getAdminOrigins } from "@/lib/analytics/origins";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { CookiePanel } from "@/components/ui/cookie-banner-1";
+import { GrainOverlay } from "@/components/layout/GrainOverlay";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing, type Locale } from "@/lib/i18n";
@@ -27,37 +31,24 @@ import { buildLocalBusinessJsonLd } from "@/lib/structuredData";
 import { getPlaceReviews } from "@/lib/places/reviews";
 import "../globals.css";
 
+// Both families are variable fonts: Google serves one file for every weight
+// requested, so a single preloaded file per family covers all weights above
+// the fold and no weight swaps in after first paint (which shifted the hero).
 const libreFranklin = Libre_Franklin({
   variable: "--font-libre",
   subsets: ["latin"],
-  weight: ["700"],
+  weight: ["600", "700", "800"],
   display: "swap",
   preload: true,
-  fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
-});
-
-const libreFranklinRest = Libre_Franklin({
-  subsets: ["latin"],
-  weight: ["600", "800"],
-  display: "swap",
-  preload: false,
   fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
 });
 
 const publicSans = Public_Sans({
   variable: "--font-public",
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["400", "500", "600"],
   display: "swap",
   preload: true,
-  fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
-});
-
-const publicSansRest = Public_Sans({
-  subsets: ["latin"],
-  weight: ["500", "600"],
-  display: "swap",
-  preload: false,
   fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
 });
 
@@ -164,7 +155,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   const placeReviews = await getPlaceReviews();
 
   return (
-    <html lang={htmlLang(locale)} className={`${libreFranklin.variable} ${libreFranklinRest.className} ${publicSans.variable} ${publicSansRest.className} h-full`}>
+    <html lang={htmlLang(locale)} className={`${libreFranklin.variable} ${publicSans.variable} h-full`}>
       <head>
         <GoogleTagManager />
         <GoogleAdsCallTracking />
@@ -177,11 +168,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         />
       </head>
       <body className="min-h-full antialiased">
-        {GTM_ID ? <DeferredGoogleTagManager gtmId={GTM_ID} /> : null}
+        {GTM_ID ? (
+          <DeferredGoogleTagManager gtmId={GTM_ID} adsId={GOOGLE_ADS_ID} />
+        ) : null}
         <AttributionCapture />
         <LazyHeatmapTracker />
         <LazyReplayBridge adminOrigins={adminOrigins} />
-        <div className="grain-overlay" aria-hidden="true" />
+        <GrainOverlay />
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>

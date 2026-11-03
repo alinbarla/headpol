@@ -104,7 +104,7 @@ export async function ClusterPage({
                   {t("compareLead")}
                 </p>
               </div>
-              <ResultCompareDynamic />
+              <ResultCompareDynamic priority />
             </div>
           ) : null}
 

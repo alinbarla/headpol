@@ -1,9 +1,8 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type RefObject } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useInView, MotionConfig } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { YoutubeAutoplayEmbed } from "@/components/media/YoutubeAutoplayEmbed";
@@ -22,6 +21,31 @@ const STEP_IMAGES = [
 
 type ProcessTab = "polering" | "ppf";
 
+const REVEAL_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+
+/** True once the element has entered the viewport (minus 10% top and bottom). */
+function useInViewOnce(ref: RefObject<Element | null>) {
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || inView) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "-10% 0px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [ref, inView]);
+
+  return inView;
+}
+
 function StepCard({
   index,
   title,
@@ -38,20 +62,22 @@ function StepCard({
   stepLabel: string;
 }) {
   const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-10% 0px" });
+  const inView = useInViewOnce(ref);
   const reducedMotion = useReducedMotion();
   const frameNum = String(index + 1).padStart(2, "0");
+  const shown = inView || reducedMotion;
+  const delay = `${Math.min(index, 2) * 0.06}s`;
 
+  // CSS reveal (same curve and timing as before) instead of framer-motion,
+  // which kept ~40 KB of JS on the homepage's first load.
   return (
-    <motion.article
+    <article
       ref={ref}
-      initial={false}
-      animate={
-        inView
-          ? { opacity: 1, y: 0 }
-          : { opacity: reducedMotion ? 1 : 0, y: reducedMotion ? 0 : 24 }
-      }
-      transition={{ duration: 0.45, delay: Math.min(index, 2) * 0.06, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        opacity: shown ? 1 : 0,
+        transform: shown ? "none" : "translateY(24px)",
+        transition: `opacity 0.45s ${REVEAL_EASE} ${delay}, transform 0.45s ${REVEAL_EASE} ${delay}`,
+      }}
       className="glass-panel flex h-full flex-col overflow-hidden rounded-2xl"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -77,7 +103,7 @@ function StepCard({
           {description}
         </p>
       </div>
-    </motion.article>
+    </article>
   );
 }
 
@@ -99,7 +125,6 @@ export function ProcessStoryboard() {
   const isPpf = tab === "ppf";
 
   return (
-    <MotionConfig reducedMotion="user">
     <section id="process" className="section-anchor py-24 sm:py-32">
       <Container>
         <div className="mb-10 max-w-3xl md:mb-12">
@@ -246,6 +271,5 @@ export function ProcessStoryboard() {
         </div>
       </Container>
     </section>
-    </MotionConfig>
   );
 }
