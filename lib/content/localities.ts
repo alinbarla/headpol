@@ -225,7 +225,7 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
     kind: "location",
     title: "Polera strålkastare i Tureberg – 899 kr/par, 12 mån garanti",
     description:
-      "Polera strålkastare i Tureberg, Sollentuna. Hemadress, kontors-P utomhus och Edsberg-nära. Fast pris 899 kr/par, UV-skydd och 12 månaders garanti. Undvik centrumets korttids-P.",
+      "Polera strålkastare i Tureberg, Sollentuna, hemma eller på kontorets P utomhus. Fast pris 899 kr/par, UV-skydd och 12 månaders garanti.",
     h1: "Polera strålkastare i Tureberg",
     lead: "Vill du polera strålkastare i Tureberg? Tureberg är Sollentunas tätort längs E4: centrum, kontor och bostäder. Vi tar jobbet hemma eller på en utomhusplats ni får använda en timme — inte på korttids-P vid gallerian.",
     locationName: "Tureberg",
@@ -278,7 +278,7 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
     kind: "location",
     title: "Polera strålkastare i Djursholm – 899 kr/par, 12 mån garanti",
     description:
-      "Polera strålkastare i Djursholm, Danderyd. Långa villauppfarter, Stocksund-nära och sjönära tomter. Fast pris 899 kr/par, UV-skydd och 12 månaders garanti. Ingen zonavgift.",
+      "Polera strålkastare i Djursholm, Danderyd, på villauppfarten. Fast pris 899 kr/par, UV-skydd och 12 månaders garanti. Ingen zonavgift.",
     h1: "Polera strålkastare i Djursholm",
     lead: "Vill du polera strålkastare i Djursholm? Djursholm är Danderyds villaområden — långa uppfarter, ibland branta, mer sjönära än centrumparkering. Vi kommer till uppfarten till samma 899 kr/par som övriga länet.",
     locationName: "Djursholm",
@@ -331,7 +331,7 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
     kind: "location",
     title: "Polera strålkastare i Åkersberga – 899 kr/par, 12 mån garanti",
     description:
-      "Polera strålkastare i Åkersberga, Österåker. Villauppfart och radhusgård. Fast pris 899 kr/par, ingen zonavgift. Undvik centrumets korttids-P. UV-skydd och 12 månaders garanti.",
+      "Polera strålkastare i Åkersberga, Österåker, på villauppfart eller radhusgård. Fast pris 899 kr/par, UV-skydd och 12 månaders garanti. Ingen zonavgift.",
     h1: "Polera strålkastare i Åkersberga",
     lead: "Vill du polera strålkastare i Åkersberga? Åkersberga är Österåkers tätort norr/ost om Täby: villa, radhus och lite centrum. Vi tar jobbet på uppfarten — samma 899 kr/par som i Täby och Vaxholm.",
     locationName: "Åkersberga",
@@ -492,7 +492,7 @@ export const LOCALITY_PAGES: ClusterDoc[] = [
     kind: "location",
     title: "Polera strålkastare i Barkarby – 899 kr/par, 12 mån garanti",
     description:
-      "Polera strålkastare i Barkarby, Järfälla. Nybygge, tjänsteplats utomhus och villa i Viksjö-nära. Fast pris 899 kr/par, UV-skydd och 12 månaders garanti. Undvik handelsområdets korttids-P.",
+      "Polera strålkastare i Barkarby, Järfälla: nybygge, tjänsteplats eller villa mot Viksjö. Fast pris 899 kr/par, UV-skydd och 12 månaders garanti.",
     h1: "Polera strålkastare i Barkarby",
     lead: "Vill du polera strålkastare i Barkarby? Barkarby blandar handelsområde, nybygge och närhet till Jakobsberg. Vi tar jobbet när bilen står ute — hemma, på gården eller på en tjänsteplats — inte på köpcentrumets korttids-P.",
     locationName: "Barkarby",

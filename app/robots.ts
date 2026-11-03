@@ -20,7 +20,7 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
+    // No `host`: Google ignores it and the robots.txt report flags it.
     sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
   };
 }
