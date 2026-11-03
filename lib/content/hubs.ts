@@ -120,6 +120,8 @@ export const HUB_PAGES: ClusterDoc[] = [
       { slug: "ppf", label: "PPF-folie" },
       { slug: "polering-ppf", label: "Polering + PPF" },
       { slug: "priser", label: "Priser" },
+      { slug: "gula-stralkastare", label: "Gula strålkastare" },
+      { slug: "stralkastare-besiktning", label: "Strålkastare och besiktning" },
       { slug: "stralkastarpolering-stockholm", label: "Stockholm" },
       { slug: "stralkastarpolering-huddinge", label: "Huddinge" },
       { slug: "stralkastarpolering-solna", label: "Solna" },
@@ -225,6 +227,8 @@ export const HUB_PAGES: ClusterDoc[] = [
       { slug: "ppf", label: "PPF-folie" },
       { slug: "polering-ppf", label: "Polering + PPF" },
       { slug: "fore-bilder", label: "Före och efter" },
+      { slug: "byta-stralkastare-pris", label: "Byta eller polera" },
+      { slug: "gula-stralkastare", label: "Gula strålkastare" },
       { slug: "priser", label: "Priser" },
       { slug: "stralkastarpolering-stockholm", label: "Stockholm" },
       { slug: "faq", label: "FAQ" },
@@ -337,6 +341,7 @@ export const HUB_PAGES: ClusterDoc[] = [
       { slug: "stralkastarpolering", label: "Polera strålkastare" },
       { slug: "ppf", label: "PPF-folie" },
       { slug: "polering-ppf", label: "Polering + PPF" },
+      { slug: "byta-stralkastare-pris", label: "Byta eller polera" },
       { slug: "faq", label: "FAQ" },
     ],
   },
@@ -554,6 +559,8 @@ export const HUB_PAGES: ClusterDoc[] = [
         question: "Varför blir strålkastare gula?",
         answer:
           "UV bryter ner fabrikens hard-coat. Därefter oxiderar plasten och blir gul och mjölkig. Det är därför nytt UV-skydd alltid ingår efter slipning.",
+        href: "/gula-stralkastare",
+        linkLabel: "Gula strålkastare: orsak och åtgärd",
       },
       {
         question: "Hur länge håller en strålkastarrenovering?",
@@ -564,6 +571,8 @@ export const HUB_PAGES: ClusterDoc[] = [
         question: "Vad kostar det att byta strålkastare?",
         answer:
           "Ofta 5 000–20 000 kr styck plus montering, mer på LED- och matrix-enheter. Renovering av paret är 899 kr när glaset är oxiderat men helt.",
+        href: "/byta-stralkastare-pris",
+        linkLabel: "Byta eller polera – prisjämförelse",
       },
       {
         question: "Är det billigare att renovera strålkastaren än att byta den?",
@@ -574,6 +583,8 @@ export const HUB_PAGES: ClusterDoc[] = [
         question: "Kan man klara besiktningen med matta strålkastare?",
         answer:
           "Kraftigt gulnade eller matta glas är en vanlig anmärkning eftersom ljusbilden blir sämre. Efter renovering går de flesta igenom på den punkten. Vi kan inte lova utfallet av hela besiktningen.",
+        href: "/stralkastare-besiktning",
+        linkLabel: "Strålkastare och besiktning",
       },
       {
         question: "Kan spruckna strålkastare renoveras?",

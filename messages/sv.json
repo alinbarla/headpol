@@ -230,6 +230,12 @@
     "readMore": "Alla frågor och längre svar",
     "items": [
       {
+        "question": "Vad är strålkastarpolering?",
+        "answer": "Strålkastarpolering är när det gulnade, oxiderade skiktet på plaststrålkastare slipas bort, glaset poleras klart och får ett nytt UV-skydd. Hos oss görs det på din adress i Stockholms län för 899 kr/par, med 12 månaders garanti.",
+        "href": "/gula-stralkastare",
+        "linkLabel": "Därför blir strålkastare gula"
+      },
+      {
         "question": "Kan man polera strålkastare själv?",
         "answer": "Kit kan se bra ut i några veckor. De flesta saknar ett UV-skydd som faktiskt ersätter fabrikslackeringen, så gulnaden kommer tillbaka. Vi slipar till P3000 och lägger skyddet som gör att vi kan lämna 12 månaders garanti.",
         "href": "/stralkastarpolering",
@@ -251,7 +257,9 @@
       },
       {
         "question": "Klarar bilen besiktningen efter polering?",
-        "answer": "Ja. Kraftigt gulnade, matta eller spruckna strålkastare är en vanlig besiktningsanmärkning eftersom de försämrar ljusbilden. Vi återställer klarheten så att ljuset uppfyller kraven. I de flesta fall räcker polering för att gå igenom kontrollen."
+        "answer": "Ja. Kraftigt gulnade, matta eller spruckna strålkastare är en vanlig besiktningsanmärkning eftersom de försämrar ljusbilden. Vi återställer klarheten så att ljuset uppfyller kraven. I de flesta fall räcker polering för att gå igenom kontrollen.",
+        "href": "/stralkastare-besiktning",
+        "linkLabel": "Strålkastare och besiktning"
       },
       {
         "question": "Vad kostar det att polera strålkastarna?",
@@ -305,15 +313,21 @@
       },
       {
         "question": "Kan man polera matta strålkastare?",
-        "answer": "Ja. En matt yta är nästan alltid oxidation i polykarbonatplasten, inte smuts. Vi slipar bort det oxiderade skiktet och polerar tillbaka klarheten."
+        "answer": "Ja. En matt yta är nästan alltid oxidation i polykarbonatplasten, inte smuts. Vi slipar bort det oxiderade skiktet och polerar tillbaka klarheten.",
+        "href": "/gula-stralkastare",
+        "linkLabel": "Matta och gula strålkastare"
       },
       {
         "question": "Varför blir strålkastare gula?",
-        "answer": "Solens UV-ljus bryter ner fabriksskyddet på plasten. Därefter oxiderar polykarbonatet och blir gult och matt. Därför ingår UV-keramiskt skydd i varje jobb."
+        "answer": "Solens UV-ljus bryter ner fabriksskyddet på plasten. Därefter oxiderar polykarbonatet och blir gult och matt. Därför ingår UV-keramiskt skydd i varje jobb.",
+        "href": "/gula-stralkastare",
+        "linkLabel": "Gula strålkastare: orsak och åtgärd"
       },
       {
         "question": "Vad kostar det att byta strålkastare?",
-        "answer": "Nya originalstrålkastare kostar ofta 5 000–20 000 kr styck plus montering. En renovering av båda sidorna kostar 899 kr/par."
+        "answer": "Nya originalstrålkastare kostar ofta 5 000–20 000 kr styck plus montering. En renovering av båda sidorna kostar 899 kr/par.",
+        "href": "/byta-stralkastare-pris",
+        "linkLabel": "Byta eller polera – prisjämförelse"
       },
       {
         "question": "Är det billigare att renovera strålkastaren än att byta den?",

@@ -1,16 +1,17 @@
 import Link from "next/link";
-import { AlertTriangleIcon, PlusIcon } from "lucide-react";
+import { AlertTriangleIcon, PhoneIcon, PlusIcon } from "lucide-react";
 import { requireAdmin } from "@/lib/admin/auth";
 import { getDashboardData } from "@/lib/admin/data";
 import { getAcquisitionFunnel } from "@/lib/admin/funnel";
 import { engagementStrength } from "@/lib/admin/recordsRows";
 import { ADMIN_LOCALE } from "@/lib/admin/labels";
+import { listRecentDroppedVisitors } from "@/lib/analytics/droppedVisitors";
 import { listRecentSessions } from "@/lib/analytics/store";
 import { formatOre } from "@/lib/booking";
 import { describeLocation } from "@/lib/geo";
 import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
 import { getStripeWebhookStatus, isStripeConfigured } from "@/lib/stripe";
-import { formatDateKey } from "@/lib/time";
+import { formatDateKey, formatTimestamp } from "@/lib/time";
 import { AcquisitionFunnelCard } from "@/components/admin/AcquisitionFunnelCard";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { BookingCard } from "@/components/admin/BookingCard";
@@ -21,6 +22,9 @@ import { Button } from "@/components/shadcn/button";
 import { StatsBento } from "@/components/ui/stats-bento";
 
 export const dynamic = "force-dynamic";
+
+/** How far back the Today page lists people who left the booking form. */
+const UNFINISHED_DAYS = 14;
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -40,6 +44,13 @@ export default async function AdminTodayPage({
     device: "all",
     limit: 400,
   }).catch(() => []);
+  // Same source as the Mail list; converted leads are pruned on read.
+  const unfinished = await listRecentDroppedVisitors(UNFINISHED_DAYS).catch(
+    (error) => {
+      console.error("[today] unfinished bookings failed", error);
+      return [];
+    }
+  );
   const webhookStatus = isStripeConfigured()
     ? await getStripeWebhookStatus()
     : null;
@@ -242,6 +253,53 @@ export default async function AdminTodayPage({
               <BookingCard key={booking.id} booking={booking} />
             ))}
           </div>
+        </section>
+      )}
+
+      {unfinished.length > 0 && (
+        <section className="mt-8">
+          <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-amber-300">
+            <PhoneIcon className="size-4" />
+            Unfinished bookings
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Typed their details in the booking form in the last {UNFINISHED_DAYS}{" "}
+            days but never booked. Call while the need is fresh, then dismiss
+            them on the{" "}
+            <Link href="/admin/mail-list" className="underline">
+              Mail list
+            </Link>
+            .
+          </p>
+          <ul className="mt-3 space-y-3">
+            {unfinished.map((lead) => (
+              <li key={lead.id} className="rounded-xl border border-border p-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <p className="font-semibold">{lead.name || lead.email}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatTimestamp(lead.last_seen_at)}
+                    {lead.page ? ` · ${lead.page}` : ""}
+                  </p>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+                  {lead.phone ? (
+                    <a
+                      href={`tel:${lead.phone.replace(/[^\d+]/g, "")}`}
+                      className="text-primary hover:underline"
+                    >
+                      {lead.phone}
+                    </a>
+                  ) : null}
+                  <a href={`mailto:${lead.email}`} className="text-primary hover:underline">
+                    {lead.email}
+                  </a>
+                  {lead.address ? (
+                    <span className="text-muted-foreground">{lead.address}</span>
+                  ) : null}
+                </div>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 
