@@ -2,6 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { revalidatePath } from "next/cache";
+import { connection } from "next/server";
 import {
   getSupabaseAdminClient,
   withSupabaseTimeout,
@@ -9,6 +10,8 @@ import {
 
 const MAX_REVIEWS = 5;
 const GOOGLE_REVIEWS_SETTINGS_KEY = "google_place_reviews";
+/** Latest failed refresh, shown in admin until the next success clears it. */
+const GOOGLE_REVIEWS_ERROR_KEY = "google_place_reviews_error";
 const FIELD_MASK = [
   "rating",
   "userRatingCount",
@@ -114,6 +117,37 @@ type PlacesApiResponse = {
   };
 };
 
+type PlacesApiError = {
+  error?: {
+    status?: string;
+    message?: string;
+    details?: Array<{ metadata?: Record<string, string> }>;
+  };
+};
+
+/**
+ * One line for logs, the cron response and the admin card. Google lists the
+ * quota cap under `details[].metadata.quota_limit_value`, often several
+ * hundred characters into the body, so it is pulled out explicitly.
+ */
+function describePlacesError(status: number, body: string): string {
+  try {
+    const { error } = JSON.parse(body) as PlacesApiError;
+    if (error?.message) {
+      const label = [String(status), error.status].filter(Boolean).join(" ");
+      const limit = error.details?.find(
+        (detail) => detail.metadata?.quota_limit_value
+      )?.metadata?.quota_limit_value;
+      return `Places API ${label}: ${error.message}${
+        limit ? ` (quota limit: ${limit})` : ""
+      }`;
+    }
+  } catch {
+    // Not JSON; fall back to the raw text below.
+  }
+  return `Places API ${status}: ${body.slice(0, 300)}`;
+}
+
 function normalizeReview(review: PlacesApiReview, index: number): PlaceReview | null {
   const displayName = review.authorAttribution?.displayName?.trim();
   const rating = review.rating;
@@ -195,10 +229,17 @@ function toPublicPlaceReviews(
   };
 }
 
+export type PlaceReviewsRefreshError = {
+  at: string;
+  message: string;
+};
+
 export type PlaceReviewsSnapshot = {
   configured: boolean;
   fetchedAt: string | null;
   data: PlaceReviewsData;
+  /** Set while the latest refresh attempt (cron or admin) has failed. */
+  lastError: PlaceReviewsRefreshError | null;
 };
 
 /**
@@ -206,11 +247,15 @@ export type PlaceReviewsSnapshot = {
  * Does not bootstrap a live fetch — use `refreshPlaceReviews` for that.
  */
 export async function getStoredPlaceReviewsSnapshot(): Promise<PlaceReviewsSnapshot> {
-  const stored = await readStoredPlaceReviews();
+  const [stored, lastError] = await Promise.all([
+    readStoredPlaceReviews(),
+    readRefreshError(),
+  ]);
   return {
     configured: isPlacesConfigured(),
     fetchedAt: stored?.fetchedAt ?? null,
     data: stored ? toPublicPlaceReviews(stored) : EMPTY,
+    lastError,
   };
 }
 
@@ -256,14 +301,75 @@ async function writeStoredPlaceReviews(
   return stored;
 }
 
+async function readRefreshError(): Promise<PlaceReviewsRefreshError | null> {
+  try {
+    const supabase = getSupabaseAdminClient();
+    const { data, error } = await withSupabaseTimeout(
+      supabase
+        .from("settings")
+        .select("value")
+        .eq("key", GOOGLE_REVIEWS_ERROR_KEY)
+        .maybeSingle()
+    );
+
+    if (error || !data?.value || typeof data.value !== "object") return null;
+    const raw = data.value as Record<string, unknown>;
+    if (typeof raw.at !== "string" || typeof raw.message !== "string") {
+      return null;
+    }
+    return { at: raw.at, message: raw.message };
+  } catch (err) {
+    console.error("[places] Failed to read last refresh error:", err);
+    return null;
+  }
+}
+
 /**
- * Live Place Details call. Always uncached (`cache: "no-store"`) — used on
- * every public page load and by the background / admin refresh.
+ * The cron's response only lives in Vercel logs for about an hour on Hobby,
+ * so a failed refresh is also kept here for the admin card. `null` clears it.
  */
-export async function fetchPlaceReviewsFromGoogle(): Promise<PlaceReviewsData> {
+async function saveRefreshError(message: string | null): Promise<void> {
+  try {
+    const supabase = getSupabaseAdminClient();
+    const { error } = await withSupabaseTimeout(
+      message
+        ? supabase.from("settings").upsert(
+            {
+              key: GOOGLE_REVIEWS_ERROR_KEY,
+              value: { at: new Date().toISOString(), message },
+            },
+            { onConflict: "key" }
+          )
+        : supabase.from("settings").delete().eq("key", GOOGLE_REVIEWS_ERROR_KEY)
+    );
+
+    if (error) {
+      console.error("[places] Failed to save refresh error:", error.message);
+    }
+  } catch (err) {
+    console.error("[places] Failed to save refresh error:", err);
+  }
+}
+
+type GoogleFetchResult =
+  | { ok: true; data: PlaceReviewsData }
+  | { ok: false; error: string };
+
+/**
+ * Live Place Details call, uncached (`cache: "no-store"`). Only the daily
+ * cron and the admin "Fetch Google reviews" button call it: each request is
+ * billed and counts against the project's per-day GetPlace quota, so public
+ * pages read the stored snapshot instead.
+ */
+export async function fetchPlaceReviewsFromGoogle(): Promise<GoogleFetchResult> {
   const apiKey = getPlacesApiKey();
   const placeId = getGooglePlaceId();
-  if (!apiKey || !placeId) return EMPTY;
+  if (!apiKey || !placeId) {
+    return {
+      ok: false,
+      error: "Missing GOOGLE_PLACES_API_KEY or GOOGLE_PLACE_ID",
+    };
+  }
 
   try {
     const url = new URL(
@@ -280,9 +386,9 @@ export async function fetchPlaceReviewsFromGoogle(): Promise<PlaceReviewsData> {
     });
 
     if (!res.ok) {
-      const errBody = (await res.text()).slice(0, 500);
-      console.error("[places] Places API error:", res.status, errBody);
-      return EMPTY;
+      const error = describePlacesError(res.status, await res.text());
+      console.error("[places]", error);
+      return { ok: false, error };
     }
 
     const data = (await res.json()) as PlacesApiResponse;
@@ -290,6 +396,11 @@ export async function fetchPlaceReviewsFromGoogle(): Promise<PlaceReviewsData> {
       .map(normalizeReview)
       .filter((review): review is PlaceReview => review !== null)
       .slice(0, MAX_REVIEWS);
+    const rating = typeof data.rating === "number" ? data.rating : null;
+
+    if (reviews.length === 0 && rating == null) {
+      return { ok: false, error: "Places API returned no review data" };
+    }
 
     const placeUri =
       data.googleMapsLinks?.placeUri?.trim() ||
@@ -300,17 +411,25 @@ export async function fetchPlaceReviewsFromGoogle(): Promise<PlaceReviewsData> {
       data.googleMapsLinks?.writeAReviewUri?.trim() || undefined;
 
     return {
-      reviews,
-      rating: typeof data.rating === "number" ? data.rating : null,
-      userRatingCount:
-        typeof data.userRatingCount === "number" ? data.userRatingCount : null,
-      googleMapsUri: placeUri,
-      reviewsUri,
-      writeReviewUri,
+      ok: true,
+      data: {
+        reviews,
+        rating,
+        userRatingCount:
+          typeof data.userRatingCount === "number"
+            ? data.userRatingCount
+            : null,
+        googleMapsUri: placeUri,
+        reviewsUri,
+        writeReviewUri,
+      },
     };
   } catch (err) {
     console.error("[places] Reviews fetch error:", err);
-    return EMPTY;
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Places request failed",
+    };
   }
 }
 
@@ -356,7 +475,8 @@ export async function refreshPlaceReviews(): Promise<RefreshPlaceReviewsResult> 
   }
 
   const live = await fetchPlaceReviewsFromGoogle();
-  if (live.reviews.length === 0 && live.rating == null) {
+  if (!live.ok) {
+    await saveRefreshError(live.error);
     return {
       ok: false,
       source: "unchanged",
@@ -364,12 +484,13 @@ export async function refreshPlaceReviews(): Promise<RefreshPlaceReviewsResult> 
       rating: null,
       userRatingCount: null,
       fetchedAt: null,
-      error: "Places API returned no review data",
+      error: live.error,
     };
   }
 
   try {
-    const stored = await writeStoredPlaceReviews(live);
+    const stored = await writeStoredPlaceReviews(live.data);
+    await saveRefreshError(null);
     revalidatePlaceReviewsPages();
     return {
       ok: true,
@@ -382,12 +503,13 @@ export async function refreshPlaceReviews(): Promise<RefreshPlaceReviewsResult> 
   } catch (err) {
     const message = err instanceof Error ? err.message : "Store failed";
     console.error("[places] Failed to store reviews:", message);
+    await saveRefreshError(message);
     return {
       ok: false,
       source: "unchanged",
-      reviewCount: live.reviews.length,
-      rating: live.rating,
-      userRatingCount: live.userRatingCount,
+      reviewCount: live.data.reviews.length,
+      rating: live.data.rating,
+      userRatingCount: live.data.userRatingCount,
       fetchedAt: null,
       error: message,
     };
@@ -396,33 +518,13 @@ export async function refreshPlaceReviews(): Promise<RefreshPlaceReviewsResult> 
 
 /**
  * Public reader (layout AggregateRating, homepage reviews, LiveReviewRating,
- * /api/reviews). Always hits Google on each request; React `cache` dedupes
- * within a single render. Falls back to the stored snapshot if Places is
- * misconfigured or Google returns nothing.
+ * /api/reviews). Serves the stored snapshot and never calls Google, so page
+ * views do not spend the per-day Places quota the cron needs. React `cache`
+ * dedupes the read within a single render; `connection()` keeps these pages
+ * rendered per request, so a refresh shows up on the next page view.
  */
 export const getPlaceReviews = cache(async (): Promise<PlaceReviewsData> => {
+  await connection();
   const stored = await readStoredPlaceReviews();
-
-  if (!isPlacesConfigured()) {
-    if (stored?.reviews.length) {
-      return toPublicPlaceReviews(stored);
-    }
-    return EMPTY;
-  }
-
-  const live = await fetchPlaceReviewsFromGoogle();
-  if (live.reviews.length === 0 && live.rating == null) {
-    if (stored?.reviews.length) {
-      return toPublicPlaceReviews(stored);
-    }
-    return EMPTY;
-  }
-
-  try {
-    await writeStoredPlaceReviews(live);
-  } catch (err) {
-    console.error("[places] Store update after live fetch failed:", err);
-  }
-
-  return live;
+  return stored ? toPublicPlaceReviews(stored) : EMPTY;
 });

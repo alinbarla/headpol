@@ -28,6 +28,11 @@ import { fromDbTime, toDbTime } from "@/lib/booking";
 import { getAvailabilityOverrides, getBookingRules } from "@/lib/bookingRules";
 import { getProduct, PRODUCT_IDS } from "@/lib/products";
 import {
+  REVIEW_REQUEST_MAX_JOB_AGE_DAYS,
+  sendReviewRequestOnce,
+  type ReviewRequestOutcome,
+} from "@/lib/reviewRequest";
+import {
   notifyBookingCancelled,
   notifyBookingRescheduled,
   notifyOwnerBooking,
@@ -697,6 +702,18 @@ const statusSchema = z.object({
   status: z.enum(["pending", "confirmed", "completed", "no_show"]),
 });
 
+/** Appended to "Marked as Completed"; empty while review requests are off. */
+const REVIEW_REQUEST_NOTES: Record<ReviewRequestOutcome, string> = {
+  sent: " · Google review request emailed",
+  disabled: "",
+  no_email: " · no email on file, so no review request",
+  already_sent: " · review request was already sent earlier",
+  future_job: " · job date is in the future, so no review request yet",
+  old_job: ` · job is more than ${REVIEW_REQUEST_MAX_JOB_AGE_DAYS} days old, so no review request`,
+  failed:
+    " · review request email failed (set To do, then Completed again to retry)",
+};
+
 export async function setBookingStatusAction(
   _prev: ActionState,
   formData: FormData
@@ -724,10 +741,25 @@ export async function setBookingStatusAction(
     details: { status: parsed.data.status },
   });
 
+  let reviewNote = "";
+  if (parsed.data.status === "completed") {
+    const booking = await getBookingById(parsed.data.id);
+    const outcome = booking ? await sendReviewRequestOnce(booking) : "disabled";
+    reviewNote = REVIEW_REQUEST_NOTES[outcome];
+
+    if (outcome !== "disabled") {
+      await logAdminAction("booking.review_request", {
+        entityType: "booking",
+        entityId: parsed.data.id,
+        details: { outcome },
+      });
+    }
+  }
+
   refreshAdmin(parsed.data.id);
   return {
     ok: true,
-    message: `Marked as ${BOOKING_STATUS_LABELS[parsed.data.status]}`,
+    message: `Marked as ${BOOKING_STATUS_LABELS[parsed.data.status]}${reviewNote}`,
   };
 }
 

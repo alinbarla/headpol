@@ -9,6 +9,10 @@ export const maxDuration = 60;
 /**
  * Daily Hobby cron: refresh Google reviews and purge expired analytics
  * sessions (Visitors / heatmap) past the configured retention.
+ *
+ * Scheduled at 08:00 UTC because Google resets the per-day Places quota at
+ * midnight Pacific (07:00 or 08:00 UTC), and Hobby fires anywhere in the
+ * hour, so the refresh runs early in Google's day rather than at its end.
  */
 async function handle(request: Request) {
   if (!isAuthorizedCron(request)) return unauthorized();

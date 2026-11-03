@@ -1,17 +1,23 @@
 import { requireAdmin } from "@/lib/admin/auth";
 import { listRecentAudit } from "@/lib/admin/data";
 import { getAnalyticsSettings } from "@/lib/analytics/settings";
+import { reviewRequestCopy } from "@/lib/bookingNotify";
 import { getBookingRules } from "@/lib/bookingRules";
 import {
   getStoredPlaceReviewsSnapshot,
   isPlacesConfigured,
 } from "@/lib/places/reviews";
+import {
+  getReviewRequestSettings,
+  REVIEW_REQUEST_MAX_JOB_AGE_DAYS,
+} from "@/lib/reviewRequest";
 import { isDataForSeoConfigured } from "@/lib/seo/providers/dataforseo";
 import { getStripeWebhookStatus, isStripeConfigured } from "@/lib/stripe";
 import { formatTimestamp } from "@/lib/time";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { GoogleReviewsSettingsCard } from "@/components/admin/GoogleReviewsSettingsCard";
 import { HeatmapSettingsCard } from "@/components/admin/heatmap/HeatmapSettingsCard";
+import { ReviewRequestSettingsCard } from "@/components/admin/ReviewRequestSettingsCard";
 import { RulesForm } from "@/components/admin/RulesForm";
 import { StripeWebhookCard } from "@/components/admin/StripeWebhookCard";
 import {
@@ -26,14 +32,21 @@ export const dynamic = "force-dynamic";
 export default async function SettingsPage() {
   await requireAdmin();
 
-  const [rules, audit, webhookStatus, analyticsSettings, reviewsSnapshot] =
-    await Promise.all([
-      getBookingRules(),
-      listRecentAudit(40),
-      getStripeWebhookStatus(),
-      getAnalyticsSettings(),
-      getStoredPlaceReviewsSnapshot(),
-    ]);
+  const [
+    rules,
+    audit,
+    webhookStatus,
+    analyticsSettings,
+    reviewsSnapshot,
+    reviewRequestSettings,
+  ] = await Promise.all([
+    getBookingRules(),
+    listRecentAudit(40),
+    getStripeWebhookStatus(),
+    getAnalyticsSettings(),
+    getStoredPlaceReviewsSnapshot(),
+    getReviewRequestSettings(),
+  ]);
 
   return (
     <AdminShell>
@@ -52,6 +65,15 @@ export default async function SettingsPage() {
           <HeatmapSettingsCard settings={analyticsSettings} />
 
           <GoogleReviewsSettingsCard snapshot={reviewsSnapshot} />
+
+          <ReviewRequestSettingsCard
+            enabled={reviewRequestSettings.enabled}
+            maxJobAgeDays={REVIEW_REQUEST_MAX_JOB_AGE_DAYS}
+            preview={{
+              sv: reviewRequestCopy({ name: "Anna", locale: "sv" }),
+              en: reviewRequestCopy({ name: "Anna", locale: "en" }),
+            }}
+          />
 
           <Card>
             <CardHeader>
@@ -91,7 +113,7 @@ export default async function SettingsPage() {
               <StatusRow
                 label="Reviews schedule"
                 ok={Boolean(process.env.CRON_SECRET)}
-                okLabel="Route ready — schedule via Supabase pg_cron"
+                okLabel="Daily via Vercel cron (08:00–09:00 UTC)"
                 offLabel="CRON_SECRET missing; /api/cron/reviews will refuse"
               />
               <StatusRow

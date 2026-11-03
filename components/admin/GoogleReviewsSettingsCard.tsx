@@ -25,7 +25,7 @@ export function GoogleReviewsSettingsCard({
     initial
   );
 
-  const { data, fetchedAt, configured } = snapshot;
+  const { data, fetchedAt, configured, lastError } = snapshot;
   const ratingLabel =
     data.rating != null
       ? data.rating.toLocaleString("sv-SE", {
@@ -42,10 +42,10 @@ export function GoogleReviewsSettingsCard({
       <CardContent className="space-y-4">
         <ActionToast state={state} />
         <p className="text-sm text-muted-foreground">
-          Pull live rating and reviews from Google Places into Supabase. After
-          a successful fetch, every public page updates (hero rating, cluster
-          pages, and AggregateRating schema). The same job also runs on a
-          Supabase pg_cron schedule (and as a backup from analytics retention).
+          Pull live rating and reviews from Google Places into Supabase. Public
+          pages (hero rating, cluster pages, and AggregateRating schema) show
+          this stored copy and never call Google themselves. The daily cron
+          (/api/cron/reviews) runs the same fetch every morning.
         </p>
 
         <dl className="grid gap-2 text-sm">
@@ -82,6 +82,13 @@ export function GoogleReviewsSettingsCard({
             <dd className="font-mono text-xs">{data.reviews.length}</dd>
           </div>
         </dl>
+
+        {lastError && (
+          <p className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+            Last attempt failed {formatTimestamp(lastError.at)}:{" "}
+            <span className="break-words">{lastError.message}</span>
+          </p>
+        )}
 
         <form action={formAction}>
           <SubmitButton pendingLabel="Fetching…" disabled={!configured}>

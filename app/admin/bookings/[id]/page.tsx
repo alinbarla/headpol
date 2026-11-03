@@ -21,6 +21,7 @@ import {
   telLink,
 } from "@/lib/admin/labels";
 import { formatOre, fromDbTime } from "@/lib/booking";
+import { getReviewRequestSentAt } from "@/lib/reviewRequest";
 import { confirmationPath } from "@/lib/routes";
 import { SITE_URL } from "@/lib/seo";
 import { settleOpenPaymentsForBooking } from "@/lib/settleStripePayment";
@@ -70,9 +71,10 @@ export default async function BookingDetailPage({
     booking = (await getBookingById(id)) ?? booking;
   }
 
-  const [payments, refunds] = await Promise.all([
+  const [payments, refunds, reviewRequestSentAt] = await Promise.all([
     getPaymentsForBooking(id),
     getRefundsForBooking(id),
+    getReviewRequestSentAt(id),
   ]);
 
   const stripePayment = payments.find(
@@ -249,6 +251,12 @@ export default async function BookingDetailPage({
                     ? ` — ${booking.cancellation_reason}`
                     : ""
                 }`}
+              />
+            )}
+            {reviewRequestSentAt && (
+              <Row
+                label="Review request"
+                value={`Sent ${formatTimestamp(reviewRequestSentAt)}`}
               />
             )}
           </CardContent>

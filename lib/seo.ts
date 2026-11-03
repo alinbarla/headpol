@@ -116,6 +116,9 @@ export const GOOGLE_BUSINESS_PLACE_ID = "ChIJE1kTClV5X0YRiZKF0JqvRYI";
 /** Stable Maps URL for schema.org `sameAs` and profile links. */
 export const GOOGLE_BUSINESS_PROFILE_URL = `https://www.google.com/maps/search/?api=1&query_place_id=${GOOGLE_BUSINESS_PLACE_ID}`;
 
+/** Opens the "write a review" dialog for the profile (post-job email). */
+export const GOOGLE_WRITE_REVIEW_URL = `https://search.google.com/local/writereview?placeid=${GOOGLE_BUSINESS_PLACE_ID}`;
+
 /** External profiles for Organization / LocalBusiness `sameAs`. */
 export const SOCIAL_PROFILES: string[] = [
   GOOGLE_BUSINESS_PROFILE_URL,
