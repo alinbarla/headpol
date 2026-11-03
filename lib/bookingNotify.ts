@@ -8,7 +8,7 @@ import {
   isStockholmCountyPostalCode,
   parseDateKey,
 } from "@/lib/booking";
-import { BRAND } from "@/lib/seo";
+import { BRAND, GOOGLE_WRITE_REVIEW_URL } from "@/lib/seo";
 import { productName } from "@/lib/products";
 
 export const BOOKING_MAILBOX = "teo@stralkastarpolering.se";
@@ -84,12 +84,15 @@ function signature(): string {
   )}</p>`;
 }
 
-/** Fire-and-forget: a failed email must never roll back the change it reports. */
+/**
+ * Fire-and-forget: a failed email must never roll back the change it reports.
+ * Resolves to whether the message was handed to Gmail.
+ */
 async function sendToCustomer(
   notice: CustomerNotice,
   copy: { subject: string; html: string }
-): Promise<void> {
-  if (!notice.email) return;
+): Promise<boolean> {
+  if (!notice.email) return false;
 
   const mailbox = process.env.GMAIL_USER ?? BOOKING_MAILBOX;
   try {
@@ -99,8 +102,10 @@ async function sendToCustomer(
       html: copy.html,
       replyTo: mailbox,
     });
+    return true;
   } catch (error) {
     console.error(`Email failed: ${copy.subject}`, error);
+    return false;
   }
 }
 
@@ -330,6 +335,52 @@ export async function notifyReminder(
         };
 
   await sendToCustomer(notice, copy);
+}
+
+/**
+ * Post-job thank-you with the direct Google review link. Exported on its own
+ * so admin Settings can show the exact wording before the email is switched
+ * on. Every completed job gets the same message: Google's review policy
+ * forbids asking only the customers you expect to be happy.
+ */
+export function reviewRequestCopy(notice: {
+  name: string;
+  locale: string;
+}): { subject: string; html: string } {
+  const locale = localeOf(notice);
+  const url = escapeHtml(GOOGLE_WRITE_REVIEW_URL);
+  const phone = escapeHtml(CONTACT_PHONE_DISPLAY);
+
+  return locale === "en"
+    ? {
+        subject: `Thank you for choosing us — ${BRAND}`,
+        html: `
+        <p>Hi ${escapeHtml(notice.name)},</p>
+        <p>Thank you for choosing us! We hope you are happy with the result.</p>
+        <p>Do you have a minute? A Google review means a lot to a small business like ours and helps other drivers find us.</p>
+        <p><a href="${url}">Leave a review on Google</a></p>
+        <p>If anything is not right, call ${phone} or reply to this email.</p>
+        ${signature()}
+      `,
+      }
+    : {
+        subject: `Tack för att du anlitade oss — ${BRAND}`,
+        html: `
+        <p>Hej ${escapeHtml(notice.name)},</p>
+        <p>Tack för att du anlitade oss! Vi hoppas att du är nöjd med resultatet.</p>
+        <p>Har du en minut över? Ett omdöme på Google betyder mycket för ett litet företag som vårt och hjälper andra bilägare att hitta oss.</p>
+        <p><a href="${url}">Lämna ett omdöme på Google</a></p>
+        <p>Är något inte som det ska, ring ${phone} eller svara på det här mejlet.</p>
+        ${signature()}
+      `,
+      };
+}
+
+/** Resolves to whether Gmail accepted the message, so the caller can retry. */
+export async function notifyReviewRequest(
+  notice: CustomerNotice
+): Promise<boolean> {
+  return sendToCustomer(notice, reviewRequestCopy(notice));
 }
 
 /**
