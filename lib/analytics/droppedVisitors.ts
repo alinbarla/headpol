@@ -347,6 +347,13 @@ export async function listDroppedVisitors(): Promise<DroppedVisitor[]> {
   return (data ?? []) as DroppedVisitor[];
 }
 
+/** Undismissed leads last seen within `days` — the Today page's call list. */
+export async function listRecentDroppedVisitors(days: number): Promise<DroppedVisitor[]> {
+  const since = Date.now() - days * 86_400_000;
+  const leads = await listDroppedVisitors();
+  return leads.filter((lead) => Date.parse(lead.last_seen_at) >= since);
+}
+
 export async function dismissDroppedVisitors(ids: string[]): Promise<number> {
   const unique = [...new Set(ids)].filter(Boolean);
   if (unique.length === 0) return 0;
