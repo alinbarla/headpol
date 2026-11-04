@@ -14,7 +14,7 @@ export async function GET() {
     },
     {
       headers: {
-        "Cache-Control": `public, max-age=0, s-maxage=${Math.floor(CONFIG_CACHE_MS / 1000)}`,
+        "Cache-Control": `public, max-age=0, s-maxage=${Math.floor(CONFIG_CACHE_MS / 1000)}, stale-while-revalidate=3600`,
       },
     }
   );

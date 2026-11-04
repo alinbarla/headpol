@@ -6,6 +6,7 @@ import {
   BATCH_SIZE,
   FLUSH_INTERVAL_MS,
   HEATMAP_PREVIEW_PARAM,
+  MAX_BATCH_BYTES,
   MAX_INPUT_FIELD_LENGTH,
   MAX_INPUT_VALUE_LENGTH,
   MOVE_SAMPLE_MS,
@@ -190,9 +191,18 @@ function sendBatch(
     device: deviceFromViewport(),
     events,
   });
+  const blob = new Blob([body], { type: "text/plain" });
+
+  // A batch full of typed input can outgrow the ingest limit; halve it rather
+  // than have the endpoint reject the whole batch.
+  if (blob.size > MAX_BATCH_BYTES && events.length > 1) {
+    const half = Math.ceil(events.length / 2);
+    sendBatch(sessionId, visitorId, events.slice(0, half), beacon);
+    sendBatch(sessionId, visitorId, events.slice(half), beacon);
+    return;
+  }
 
   if (beacon && typeof navigator.sendBeacon === "function") {
-    const blob = new Blob([body], { type: "text/plain" });
     navigator.sendBeacon("/api/hp/events", blob);
     return;
   }
