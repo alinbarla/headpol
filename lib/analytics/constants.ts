@@ -9,12 +9,15 @@ export const DEFAULT_ANALYTICS_SETTINGS: AnalyticsSettings = {
 };
 
 export const GRID_SIZE_PX = 50;
-export const BATCH_SIZE = 40;
-export const FLUSH_INTERVAL_MS = 2000;
+/** Every flush is one function invocation, billed as Active CPU. Batches are
+ *  large and the timer slow so an active visitor costs ~4 calls a minute,
+ *  not ~30; pagehide still flushes whatever is queued. */
+export const BATCH_SIZE = 150;
+export const FLUSH_INTERVAL_MS = 15_000;
 export const MOVE_SAMPLE_MS = 100;
 export const INPUT_SAMPLE_MS = 80;
 export const ATTENTION_MIN_DWELL_MS = 300;
-export const MAX_EVENTS_PER_BATCH = 50;
+export const MAX_EVENTS_PER_BATCH = 200;
 export const MAX_BATCH_BYTES = 32_000;
 export const MAX_INPUT_VALUE_LENGTH = 500;
 export const MAX_INPUT_FIELD_LENGTH = 80;
@@ -23,7 +26,9 @@ export const MAX_EVENTS_PER_SESSION = 2_000;
 export const MAX_PAGE_LENGTH = 200;
 export const INGEST_RATE_LIMIT = 60;
 export const INGEST_RATE_WINDOW_MS = 5 * 60 * 1000;
-export const CONFIG_CACHE_MS = 30_000;
+/** CDN cache for /api/hp/config, which every page view requests. An admin
+ *  toggle takes up to five minutes to reach visitors. */
+export const CONFIG_CACHE_MS = 300_000;
 
 export const HEATMAP_PREVIEW_PARAM = "heatmapPreview";
 

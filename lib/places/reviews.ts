@@ -2,7 +2,6 @@ import "server-only";
 
 import { cache } from "react";
 import { revalidatePath } from "next/cache";
-import { connection } from "next/server";
 import {
   getSupabaseAdminClient,
   withSupabaseTimeout,
@@ -520,11 +519,13 @@ export async function refreshPlaceReviews(): Promise<RefreshPlaceReviewsResult> 
  * Public reader (layout AggregateRating, homepage reviews, LiveReviewRating,
  * /api/reviews). Serves the stored snapshot and never calls Google, so page
  * views do not spend the per-day Places quota the cron needs. React `cache`
- * dedupes the read within a single render; `connection()` keeps these pages
- * rendered per request, so a refresh shows up on the next page view.
+ * dedupes the read within a single render. Pages that embed it stay static:
+ * the cron calls revalidatePlaceReviewsPages() after a refresh, and the
+ * locale layout's daily `revalidate` covers days the refresh fails. Rendering
+ * per request instead ran every page view through a function and used up the
+ * Hobby plan's Active CPU allowance.
  */
 export const getPlaceReviews = cache(async (): Promise<PlaceReviewsData> => {
-  await connection();
   const stored = await readStoredPlaceReviews();
   return stored ? toPublicPlaceReviews(stored) : EMPTY;
 });

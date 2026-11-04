@@ -64,6 +64,11 @@ type LayoutProps = {
   params: Promise<{ locale: string }>;
 };
 
+// Public pages are prerendered and served from the CDN. The reviews cron
+// revalidates them on demand after each snapshot refresh; this daily window
+// is the fallback when Google's quota blocks a refresh.
+export const revalidate = 86400;
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
